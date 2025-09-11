@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const response = await loginUser({ email, password });
-      const token = response.data.token;
+      const token = response.token;
 
       if (token) {
         login(token);

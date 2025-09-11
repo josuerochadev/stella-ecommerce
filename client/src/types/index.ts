@@ -2,7 +2,7 @@
 
 // User related types
 export interface User {
-  token: any;
+  token: string;
   id: number;
   username: string;
   firstName: string;

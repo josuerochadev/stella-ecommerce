@@ -1,87 +1,87 @@
-# Stella - E-commerce d'étoiles 🌟
+# Stella - Star E-commerce 🌟
 
-Stella est une application e-commerce moderne permettant d'acheter des étoiles. Ce projet a été développé pour démontrer mes compétences en développement web full stack, en utilisant les technologies les plus récentes et les meilleures pratiques de l'industrie.
+Stella is a modern e-commerce application that allows you to buy stars. This project was developed to demonstrate my full stack web development skills, using the latest technologies and industry best practices.
 
-## Fonctionnalités
+## Features
 
-- Catalogue interactif d'étoiles avec filtres et recherche
-- Authentification sécurisée des utilisateurs (JWT)
-- Panier d'achat et liste des souhaits dynamiques
-- API RESTful développée avec Express
-- Interface utilisateur réactive grâce à React et TypeScript
-- Base de données relationnelle optimisée avec PostgreSQL et Sequelize
-- Linting et formatage automatiques avec Biome
-- Design moderne avec Tailwind CSS
+- Interactive star catalog with filters and search
+- Secure user authentication (JWT)
+- Dynamic shopping cart and wishlist
+- RESTful API developed with Express
+- Responsive user interface with React and TypeScript
+- Optimized relational database with PostgreSQL and Sequelize
+- Automatic linting and formatting with Biome
+- Modern design with Tailwind CSS
 
-## Aperçu du projet
+## Project Overview
 
-### Galerie d'Images
+### Image Gallery
 
-Voici quelques captures d'écran de l'application :
+Here are some screenshots of the application:
 
-<img src="./docs/screenshots/homepage.png" alt="Page d'accueil" width="500"/>
+<img src="./docs/screenshots/homepage.png" alt="Homepage" width="500"/>
 
-*Page d'accueil*
+*Homepage*
 
-<img src="./docs/screenshots/homepage2.png" alt="Sections de la page d'accueil" width="500"/>
+<img src="./docs/screenshots/homepage2.png" alt="Homepage sections" width="500"/>
 
-*Sections de la page d'accueil*
+*Homepage sections*
 
-<img src="./docs/screenshots/catalog.png" alt="Catalogue des étoiles" width="500"/>
+<img src="./docs/screenshots/catalog.png" alt="Star catalog" width="500"/>
 
-*Catalogue des étoiles*
+*Star catalog*
 
-<img src="./docs/screenshots/productdetail.png" alt="Détail d'une étoile" width="500"/>
+<img src="./docs/screenshots/productdetail.png" alt="Star detail" width="500"/>
 
-*Détail d'une étoile*
+*Star detail*
 
-<img src="./docs/screenshots/shoppingcart.png" alt="Panier d'achat" width="500"/>
+<img src="./docs/screenshots/shoppingcart.png" alt="Shopping cart" width="500"/>
 
-*Panier d'achat*
+*Shopping cart*
 
-<img src="./docs/screenshots/emptyshoppingcart.png" alt="Panier d'achat vide" width="500"/>
+<img src="./docs/screenshots/emptyshoppingcart.png" alt="Empty shopping cart" width="500"/>
 
-*Panier d'achat vide*
+*Empty shopping cart*
 
-<img src="./docs/screenshots/login.png" alt="Page de connexion" width="500"/>
+<img src="./docs/screenshots/login.png" alt="Login page" width="500"/>
 
-*Page de connexion*
+*Login page*
 
 <img src="./docs/screenshots/profile.png" alt="Profile" width="500"/>
 
 *Profile*
 
-## Technologies utilisées
+## Technologies Used
 
 ### Frontend
 
-- React avec TypeScript pour une interface robuste et typée
-- Tailwind CSS pour un design moderne et réactif
-- React Router pour la navigation côté client
-- Axios pour les requêtes HTTP
+- React with TypeScript for a robust and typed interface
+- Tailwind CSS for modern and responsive design
+- React Router for client-side navigation
+- Axios for HTTP requests
 
 ### Backend
 
-- Node.js avec Express pour une API RESTful performante
-- Sequelize comme ORM pour interagir avec PostgreSQL
-- JSON Web Tokens (JWT) pour l'authentification et la sécurité
-- Jest pour les tests unitaires et d'intégration
+- Node.js with Express for a performant RESTful API
+- Sequelize as ORM to interact with PostgreSQL
+- JSON Web Tokens (JWT) for authentication and security
+- Jest for unit and integration testing
 
-### Base de Données
+### Database
 
-- PostgreSQL pour une gestion efficace des données relationnelles
-- MoCoDo pour la modélisation conceptuelle des données
+- PostgreSQL for efficient relational data management
+- MoCoDo for conceptual data modeling
 
-### Outils et Pratiques
+### Tools and Practices
 
-- Biome pour le linting et le formatage du code
-- Git et GitHub pour le contrôle de version et la collaboration
-- Canva et Excalidraw pour la conception visuelle
-- Méthodologie MVC pour une architecture claire et maintenable
+- Biome for code linting and formatting
+- Git and GitHub for version control and collaboration
+- Canva and Excalidraw for visual design
+- MVC methodology for clear and maintainable architecture
 
 ## Architecture
 
-Le projet est structuré selon une architecture MVC (Modèle-Vue-Contrôleur) pour séparer les préoccupations et améliorer la maintenabilité.
+The project is structured according to an MVC (Model-View-Controller) architecture to separate concerns and improve maintainability.
 
 ```
 stella-ecommerce/
@@ -98,58 +98,112 @@ stella-ecommerce/
 │   ├── routes/
 │   ├── middlewares/
 │   └── utils/
-├── scripts/         # Scripts globaux
+├── scripts/         # Global scripts
 └── docs/            # Documentation
 
 ```
 
 ## Installation
 
-### Prérequis
+### Prerequisites
 
-- Node.js (version 14 ou supérieure)
-- npm ou yarn
-- PostgreSQL (pour la base de données)
+- Node.js (version 14 or higher)
+- npm or yarn
+- PostgreSQL (for the database)
 
-### Étapes
+### Steps
 
-1. Clonez le dépôt
-2. Installez les dépendances :
-3. Configurez les variables d'environnement
-- Copiez les fichiers .env.example dans les dossiers client/src/ et server/
-- Renommez-les en .env
-- Remplissez les variables nécessaires :
-  - Dans client/src/.env, modifiez l'URL de l'API si nécessaire
-  - Dans server/.env, configurez la base de données et la clé JWT
-4. Initialiser la base des données
+1. **Clone the repository**
+   ```bash
+   git clone [your-repo-url]
+   cd stella-ecommerce
+   ```
 
-## Utilisation
+2. **Install dependencies**
+   ```bash
+   # Install server dependencies
+   cd server
+   npm install
+   
+   # Install client dependencies
+   cd ../client
+   npm install
+   ```
 
-- Démarrer le serveur : `cd server && npm run dev`
-- Démarrer le client : `cd client && npm start`
-- Exécuter les tests : `cd server && npm test`
+3. **Configure environment variables**
+   - Copy the .env.example files in the client/src/ and server/ folders
+   - Rename them to .env
+   - Fill in the necessary variables:
+     - In client/src/.env, modify the API URL if necessary
+     - In server/.env, configure the database and JWT key
 
-## Scripts utiles
+4. **Setup PostgreSQL database**
+   ```bash
+   # Start PostgreSQL service
+   brew services start postgresql@15
+   
+   # Create database and user (if needed)
+   createdb stella_ecommerce
+   ```
 
-- Créer les tables : `npm run create-tables`
-- Générer des données de test : `npm run generate-data`
-- Réinitialiser la base de données : `npm run reset-db`
+## Usage
 
-## Contribuer
+### Starting the Application
 
-Les contributions sont les bienvenues ! Pour contribuer au projet, voici les étapes :
+1. **Start PostgreSQL** (if not already running)
+   ```bash
+   brew services start postgresql@15
+   ```
 
-1. **Fork** le dépôt
-2. Créez une **branche** pour la fonctionnalité (`git checkout -b feature/AmazingFeature`)
-3. **Commitez** les modifications (`git commit -m 'Ajout d'une fonctionnalité incroyable'`)
-4. **Poussez** vers la branche (`git push origin feature/AmazingFeature`)
+2. **Start the backend server**
+   ```bash
+   cd server
+   npm run dev
+   ```
+   Server will run on http://localhost:3000
+
+3. **Start the frontend** (in a new terminal)
+   ```bash
+   cd client
+   npm start
+   ```
+   Frontend will run on http://localhost:3001
+
+4. **Open your browser**
+   Navigate to **http://localhost:3001** to view the application
+
+### Test Accounts
+
+- **Admin**: `admin@stellaecommerce.com` / `adminpassword`
+- **Test User**: `test@test.com` / `test123`
+
+### Development Commands
+
+- **Run server tests**: `cd server && npm test`
+- **Run client tests**: `cd client && npm test`
+- **Lint code**: `npm run lint` (in server or client folder)
+
+## Useful Scripts
+
+- Create tables: `npm run create-tables`
+- Generate test data: `npm run generate-data`
+- Reset the database: `npm run reset-db`
+
+## Contributing
+
+Contributions are welcome! To contribute to the project, here are the steps:
+
+1. **Fork** the repository
+2. Create a **branch** for the feature (`git checkout -b feature/AmazingFeature`)
+3. **Commit** the changes (`git commit -m 'Add an amazing feature'`)
+4. **Push** to the branch (`git push origin feature/AmazingFeature`)
 5. **Pull Request**
 
 ### Issues
-Si il y a des problèmes ou des idées d'amélioration, go issues sur le dépôt. J'apprecie tous les retours et suggestions.
+If there are any issues or improvement ideas, go to issues on the repository. I appreciate all feedback and suggestions.
 
 ## Roadmap
 
-## Licence
+## License
 
-[Informations sur la licence à venir]
+[License information coming soon]

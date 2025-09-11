@@ -5,24 +5,30 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { AppError } = require("../middlewares/errorHandler");
 
+/**
+ * Register a new user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.register = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    // Vérifier si l'utilisateur existe déjà
+    // Check if the user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return next(new AppError("Email already in use", 400));
     }
 
-    // Hacher le mot de passe avant de le sauvegarder
+    // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       firstName,
       lastName,
       email,
-      password: hashedPassword, // Enregistre le mot de passe haché
+      password: hashedPassword, // Save the hashed password
     });
 
     const token = jwt.sign({ userId: newUser.id, role: newUser.role }, process.env.JWT_SECRET, {
@@ -39,6 +45,12 @@ exports.register = async (req, res, next) => {
   }
 };
 
+/**
+ * Log in a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -47,7 +59,7 @@ exports.login = async (req, res, next) => {
       return next(new AppError("Invalid email or password", 401));
     }
 
-    // Comparer le mot de passe fourni avec celui haché dans la base de données
+    // Compare the provided password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return next(new AppError("Invalid email or password", 401));
@@ -68,6 +80,12 @@ exports.login = async (req, res, next) => {
   }
 };
 
+/**
+ * Get user profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.getUserProfile = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user.userId, {
@@ -82,7 +100,12 @@ exports.getUserProfile = async (req, res, next) => {
   }
 };
 
-// Nouvelle fonction pour mettre à jour le profil de l'utilisateur
+/**
+ * Update user profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.updateProfile = async (req, res, next) => {
   try {
     const { firstName, lastName, email } = req.body;
@@ -92,7 +115,7 @@ exports.updateProfile = async (req, res, next) => {
       return next(new AppError("User not found", 404));
     }
 
-    // Mettre à jour les champs
+    // Update fields
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
@@ -114,11 +137,22 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-// fonction pour la déconnexion
+/**
+ * Log out a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.logout = (_req, res, _next) => {
   res.status(200).json({ message: "Logout successful" });
 };
 
+/**
+ * Delete user account
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
 exports.deleteAccount = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user.userId);
@@ -126,7 +160,7 @@ exports.deleteAccount = async (req, res, next) => {
       return next(new AppError("User not found", 404));
     }
 
-    await user.destroy(); // Suppression de l'utilisateur
+    await user.destroy(); // Delete the user
 
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {

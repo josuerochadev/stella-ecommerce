@@ -7,8 +7,9 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import ShoppingCart from "./components/ShoppingCart";
 import Wishlist from "./components/Wishlist";
+import CookieBanner from "./components/CookieBanner";
 
-// Lazy loading des pages
+// Lazy loading of pages
 const Home = React.lazy(() => import("./pages/Home"));
 const Catalog = React.lazy(() => import("./pages/Catalog"));
 const ProductDetail = React.lazy(() => import("./pages/ProductDetail"));
@@ -17,9 +18,12 @@ const Profile = React.lazy(() => import("./components/Profile"));
 const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
+const Legal = React.lazy(() => import("./pages/Legal")); // Import en lazy loading
+const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+
 
 const App: React.FC = () => {
-  const isAuthenticated = !!localStorage.getItem("token"); // Vérifie si l'utilisateur est connecté
+  const isAuthenticated = !!localStorage.getItem("token"); // Check if the user is authenticated
 
   return (
     <Router>
@@ -27,25 +31,26 @@ const App: React.FC = () => {
         <div className="flex flex-col min-h-screen">
           <Header />
           <main className="flex-grow">
-            <Suspense fallback={<div className="text-center text-text">Chargement...</div>}>
+          <CookieBanner />
+            <Suspense fallback={<div className="text-center text-text">Loading...</div>}>
               <Routes>
-                <Route path="/" element={<Home />} /> {/* Page d'accueil */}
-                <Route path="/auth" element={<AuthContainer />} /> {/* Connexion/Inscription */}
+                <Route path="/" element={<Home />} /> {/* Home page */}
+                <Route path="/auth" element={<AuthContainer />} /> {/* Login/Signup */}
                 <Route
                   path="/profile"
                   element={isAuthenticated ? <Profile /> : <Navigate to="/auth" />}
                 />{" "}
-                {/* Profil */}
-                <Route path="/catalog" element={<Catalog />} /> {/* Catalogue */}
-                <Route path="/star/:starid" element={<ProductDetail />} />{" "}
-                {/* Détail d'une etoile */}
-                <Route path="/about" element={<About />} /> {/* À propos */}
+                {/* Profile */}
+                <Route path="/catalog" element={<Catalog />} /> {/* Catalog */}
+                <Route path="/star/:starid" element={<ProductDetail />} /> {/* Star detail */}
+                <Route path="/about" element={<About />} /> {/* About */}
                 <Route path="/contact" element={<Contact />} /> {/* Contact */}
                 <Route path="/faq" element={<FAQ />} /> {/* FAQ */}
-                <Route path="/cart" element={<ShoppingCart />} /> {/* Panier */}
-                <Route path="/wishlist" element={<Wishlist />} />{" "}
-                <Route path="*" element={<Navigate to="/" />} />{" "}
-                {/* Redirection par défaut vers la page d'accueil */}
+                <Route path="/cart" element={<ShoppingCart />} /> {/* Shopping Cart */}
+                <Route path="/wishlist" element={<Wishlist />} /> {/* Wishlist */}
+                <Route path="/legal" element={<Legal />} /> {/* Legal Notice */}
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* Privacy Policy */}
+                <Route path="*" element={<Navigate to="/" />} /> {/* Default redirect to home page */}
               </Routes>
             </Suspense>
           </main>

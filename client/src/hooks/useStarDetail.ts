@@ -21,8 +21,8 @@ export const useStarDetail = (id: number | undefined) => {
         setLoading(true);
 
         const starResponse = await fetchStarById(id);
-        if (starResponse?.data) {
-          setStar(starResponse.data);
+        if (starResponse) {
+          setStar(starResponse);
         } else {
           throw new Error("Erreur lors de la récupération des détails de l'étoile.");
         }

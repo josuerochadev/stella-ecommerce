@@ -13,32 +13,38 @@ const Contact: React.FC = () => {
           </p>
           <form className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Nom</label>
+              <label htmlFor="name" className="block text-sm font-medium mb-2">
+                Nom
+              </label>
               <input
+                id="name"
                 type="text"
                 placeholder="Votre nom"
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
               <input
+                id="email"
                 type="email"
                 placeholder="Votre email"
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Sujet</label>
+              <label htmlFor="subject" className="block text-sm font-medium mb-2">Sujet</label>
               <input
+                id="subject"
                 type="text"
                 placeholder="Sujet de votre message"
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Message</label>
+              <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
               <textarea
+                id="message"
                 placeholder="Votre message..."
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
                 rows={5}

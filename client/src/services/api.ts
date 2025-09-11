@@ -92,7 +92,8 @@ export const registerUser = async (userData: {
 };
 
 export const loginUser = async (loginData: { email: string; password: string }): Promise<{
-  data: User; token: string 
+  data: User;
+  token: string;
 }> => {
   const response = await api.post<{ data: User; token: string }>("/users/login", loginData);
   return response.data;
@@ -178,7 +179,9 @@ export const updateOrderStatus = async (
   orderId: number,
   status: OrderStatus,
 ): Promise<ApiResponse<Order>> => {
-  const response = await api.put<ApiResponse<Order>>(`/orders/${orderId}/update-status`, { status });
+  const response = await api.put<ApiResponse<Order>>(`/orders/${orderId}/update-status`, {
+    status,
+  });
   return response.data;
 };
 

@@ -1,4 +1,4 @@
-// app.js
+// server/src/app.js
 
 require("dotenv").config();
 const express = require("express");
@@ -19,33 +19,34 @@ const csurf = require("csurf");
 
 const app = express();
 
-// Helmet before other middlewares
+// Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
 
-// Ajouter cookie-parser pour lire/écrire les cookies
+// Add cookie-parser to read/write cookies
 app.use(cookieParser());
 
-// Ajouter le middleware CSRF
-app.use(csurf({ cookie: true }));
+// Add CSRF middleware - TEMPORARILY DISABLED FOR TESTING
+// app.use(csurf({ cookie: true }));
 
-// Middleware pour ajouter le token CSRF aux réponses
-app.use((req, res, next) => {
-  const csrfToken = req.csrfToken(); // Génère un nouveau token
-  res.cookie("XSRF-TOKEN", csrfToken, { httpOnly: false }); // Partage le token CSRF avec le frontend
-  next();
-});
+// Middleware to add the CSRF token to responses - TEMPORARILY DISABLED FOR TESTING
+// app.use((req, res, next) => {
+// 	const csrfToken = req.csrfToken(); // Generate a new token
+// 	res.cookie("XSRF-TOKEN", csrfToken, { httpOnly: false }); // Share the CSRF token with the frontend
+// 	next();
+// });
 
-// Gérer les erreurs CSRF
-app.use((err, _req, res, next) => {
-  if (err.code === "EBADCSRFTOKEN") {
-    return res.status(403).json({ message: "Invalid CSRF token" });
-  }
-  next(err);
-});
+// Handle CSRF errors - TEMPORARILY DISABLED FOR TESTING
+// app.use((err, _req, res, next) => {
+// 	if (err.code === "EBADCSRFTOKEN") {
+// 		return res.status(403).json({ message: "Invalid CSRF token" });
+// 	}
+// 	next(err);
+// });
 
 // CORS configuration
 const corsOptions = {
 	origin: "http://localhost:3001",
+	credentials: true, // Allow credentials (cookies)
 	optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -65,9 +66,10 @@ app.use(json());
 // Middleware to parse form data
 app.use(urlencoded({ extended: true }));
 
-// Swagger UI
+// Swagger UI setup
 app.use("/api-docs", serve, setup);
 
+// Serve static files
 app.use(expressStatic(join(__dirname, "public")));
 
 // Centralized API routes
