@@ -6,6 +6,7 @@ const userController = require("../controllers/userController");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const { registerSchema, loginSchema } = require("../validations/userValidation");
+const { authLimiter, createAccountLimiter } = require("../middlewares/rateLimiter");
 
 router.use(authenticateUser);
 
@@ -31,7 +32,7 @@ router.use(authenticateUser);
  *       400:
  *         description: Invalid input
  */
-router.post("/register", validate(registerSchema), userController.register);
+router.post("/register", createAccountLimiter, validate(registerSchema), userController.register);
 
 /**
  * @swagger
@@ -60,7 +61,30 @@ router.post("/register", validate(registerSchema), userController.register);
  *       400:
  *         description: Invalid credentials
  */
-router.post("/login", validate(loginSchema), userController.login);
+router.post("/login", authLimiter, validate(loginSchema), userController.login);
+
+/**
+ * @swagger
+ * /users/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 accessToken:
+ *                   type: string
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post("/refresh", userController.refreshToken);
 
 /**
  * @swagger

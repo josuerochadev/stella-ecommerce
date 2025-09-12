@@ -1,7 +1,7 @@
 // server/src/middlewares/authMiddleware.js
 
-const jwt = require("jsonwebtoken");
 const { AppError } = require("./errorHandler");
+const tokenService = require("../services/tokenService");
 
 /**
  * Middleware to authenticate a user based on the JWT token in the Authorization header.
@@ -28,7 +28,11 @@ exports.authenticateUser = (req, _res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = tokenService.verifyAccessToken(token);
+    if (!decoded) {
+      req.user = null;
+      return next();
+    }
     req.user = decoded;
     next();
   } catch (error) {

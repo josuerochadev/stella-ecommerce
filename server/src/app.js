@@ -16,32 +16,50 @@ const { serve, setup } = require("./utils/swagger");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const csurf = require("csurf");
+const { generalLimiter } = require("./middlewares/rateLimiter");
+const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
 
 const app = express();
 
 // Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
 
+// Apply rate limiting to all requests
+app.use(generalLimiter);
+
 // Add cookie-parser to read/write cookies
 app.use(cookieParser());
 
-// Add CSRF middleware - TEMPORARILY DISABLED FOR TESTING
-// app.use(csurf({ cookie: true }));
+// Add CSRF middleware
+app.use(csurf({ 
+	cookie: {
+		httpOnly: true,
+		secure: NODE_ENV === 'production',
+		sameSite: 'strict'
+	} 
+}));
 
-// Middleware to add the CSRF token to responses - TEMPORARILY DISABLED FOR TESTING
-// app.use((req, res, next) => {
-// 	const csrfToken = req.csrfToken(); // Generate a new token
-// 	res.cookie("XSRF-TOKEN", csrfToken, { httpOnly: false }); // Share the CSRF token with the frontend
-// 	next();
-// });
+// Middleware to add the CSRF token to responses
+app.use((req, res, next) => {
+	const csrfToken = req.csrfToken();
+	res.cookie("XSRF-TOKEN", csrfToken, { 
+		httpOnly: false, 
+		secure: NODE_ENV === 'production',
+		sameSite: 'strict'
+	});
+	next();
+});
 
-// Handle CSRF errors - TEMPORARILY DISABLED FOR TESTING
-// app.use((err, _req, res, next) => {
-// 	if (err.code === "EBADCSRFTOKEN") {
-// 		return res.status(403).json({ message: "Invalid CSRF token" });
-// 	}
-// 	next(err);
-// });
+// Handle CSRF errors
+app.use((err, _req, res, next) => {
+	if (err.code === "EBADCSRFTOKEN") {
+		return res.status(403).json({ 
+			success: false, 
+			message: "Invalid CSRF token. Please refresh the page and try again." 
+		});
+	}
+	next(err);
+});
 
 // CORS configuration
 const corsOptions = {
@@ -96,6 +114,10 @@ const startServer = async () => {
 		await sequelize.sync({ force: false });
 		info("Database synced");
 		info(`Connected to database: ${sequelize.config.database}`);
+
+		// Schedule token cleanup job
+		scheduleTokenCleanup();
+		info("Token cleanup job scheduled");
 
 		app.listen(PORT, () => {
 			info(`Server is running in ${NODE_ENV} mode on port ${PORT}`);
