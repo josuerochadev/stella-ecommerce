@@ -31,25 +31,38 @@ exports.createOrder = async (req, res, next) => {
       throw new AppError("Order creation failed", 500);
     }
 
-    let totalAmount = 0;
-    for (const item of items) {
-      const star = await Star.findByPk(item.starId);
-      if (!star) {
-        throw new AppError(`Star with id ${item.starId} not found`, 404);
-      }
+    // Optimisation : récupérer toutes les étoiles en une seule requête
+    const starIds = items.map(item => item.starId);
+    const stars = await Star.findAll({
+      where: { starid: starIds },
+      attributes: ['starid', 'price']
+    });
 
-      // Création des éléments dans OrderStar avec transaction
-      await OrderStar.create(
-        {
-          orderId: order.id, // Utilise 'orderId' cohérent avec la BDD
-          starId: star.id, // Utilise 'starId' cohérent avec la BDD
-          quantity: item.quantity,
-        },
-        { transaction },
-      );
+    // Créer un map pour accès O(1)
+    const starMap = new Map(stars.map(star => [star.starid, star]));
 
-      totalAmount += star.price * item.quantity;
+    // Vérifier que toutes les étoiles existent
+    const missingStars = starIds.filter(id => !starMap.has(id));
+    if (missingStars.length > 0) {
+      throw new AppError(`Stars not found: ${missingStars.join(', ')}`, 404);
     }
+
+    let totalAmount = 0;
+    const orderStarsToCreate = [];
+
+    // Préparer les données pour insertion en lot
+    for (const item of items) {
+      const star = starMap.get(item.starId);
+      orderStarsToCreate.push({
+        orderId: order.id,
+        starId: star.starid,
+        quantity: item.quantity,
+      });
+      totalAmount += parseFloat(star.price) * item.quantity;
+    }
+
+    // Insertion en lot des OrderStar
+    await OrderStar.bulkCreate(orderStarsToCreate, { transaction });
 
     // Mise à jour du montant total de la commande
     order.totalAmount = totalAmount;

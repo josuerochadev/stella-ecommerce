@@ -15,8 +15,9 @@ const { info, error: _error } = require("./utils/logger");
 const { serve, setup } = require("./utils/swagger");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const csurf = require("csurf");
+const session = require("express-session");
 const { generalLimiter } = require("./middlewares/rateLimiter");
+const { csrfGenerate } = require("./middlewares/modernCsrf");
 const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
 
 const app = express();
@@ -30,36 +31,21 @@ app.use(generalLimiter);
 // Add cookie-parser to read/write cookies
 app.use(cookieParser());
 
-// Add CSRF middleware
-app.use(csurf({ 
+// Configure session for CSRF protection
+app.use(session({
+	secret: process.env.SESSION_SECRET || process.env.JWT_SECRET + '_session',
+	resave: false,
+	saveUninitialized: false,
 	cookie: {
-		httpOnly: true,
 		secure: NODE_ENV === 'production',
+		httpOnly: true,
+		maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		sameSite: 'strict'
-	} 
+	}
 }));
 
-// Middleware to add the CSRF token to responses
-app.use((req, res, next) => {
-	const csrfToken = req.csrfToken();
-	res.cookie("XSRF-TOKEN", csrfToken, { 
-		httpOnly: false, 
-		secure: NODE_ENV === 'production',
-		sameSite: 'strict'
-	});
-	next();
-});
-
-// Handle CSRF errors
-app.use((err, _req, res, next) => {
-	if (err.code === "EBADCSRFTOKEN") {
-		return res.status(403).json({ 
-			success: false, 
-			message: "Invalid CSRF token. Please refresh the page and try again." 
-		});
-	}
-	next(err);
-});
+// Modern CSRF protection (génération des tokens)
+app.use(csrfGenerate);
 
 // CORS configuration
 const corsOptions = {

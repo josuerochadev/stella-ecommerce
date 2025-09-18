@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cartController");
-const csrfProtection = require("csurf")({ cookie: true });
+const { csrfValidate } = require("../middlewares/modernCsrf");
 const { requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const {
@@ -59,7 +59,7 @@ router.get("/", cartController.getCart);
  *       401:
  *         description: Unauthorized
  */
-router.post("/add", csrfProtection, validate(addToCartSchema), cartController.addToCart);
+router.post("/add", csrfValidate, validate(addToCartSchema), cartController.addToCart);
 
 /**
  * @swagger
@@ -91,7 +91,7 @@ router.post("/add", csrfProtection, validate(addToCartSchema), cartController.ad
  */
 router.put(
   "/update",
-  csrfProtection,
+  csrfValidate,
   validate(updateCartItemSchema),
   cartController.updateCartItem,
 );
@@ -124,7 +124,7 @@ router.put(
  */
 router.delete(
   "/remove/:cartItemId",
-  csrfProtection,
+  csrfValidate,
   validate(removeFromCartSchema, "params"),
   cartController.removeFromCart,
 );

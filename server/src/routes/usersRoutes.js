@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-// csrfProtection = require("csurf")({ cookie: true }); // TEMPORARILY DISABLED FOR TESTING
+const { csrfValidate } = require("../middlewares/modernCsrf");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const { registerSchema, loginSchema } = require("../validations/userValidation");

@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const reviewController = require("../controllers/reviewController");
-const csrfProtection = require("csurf")({ cookie: true });
+const { csrfValidate } = require("../middlewares/modernCsrf");
 const { requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const { addReviewSchema, updateReviewSchema } = require("../validations/reviewValidation");
@@ -61,7 +61,7 @@ router.get("/", reviewController.getReviewsForStar);
  *       401:
  *         description: Unauthorized
  */
-router.post("/add", csrfProtection, validate(addReviewSchema), reviewController.addReview);
+router.post("/add", csrfValidate, validate(addReviewSchema), reviewController.addReview);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.post("/add", csrfProtection, validate(addReviewSchema), reviewController.
  *       404:
  *         description: Review not found
  */
-router.put("/:id", csrfProtection, validate(updateReviewSchema), reviewController.updateReview);
+router.put("/:id", csrfValidate, validate(updateReviewSchema), reviewController.updateReview);
 
 /**
  * @swagger
@@ -125,6 +125,6 @@ router.put("/:id", csrfProtection, validate(updateReviewSchema), reviewControlle
  *       404:
  *         description: Review not found
  */
-router.delete("/:id", csrfProtection, reviewController.deleteReview);
+router.delete("/:id", csrfValidate, reviewController.deleteReview);
 
 module.exports = router;
