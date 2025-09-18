@@ -1,7 +1,7 @@
 // server/src/middlewares/authMiddleware.js
 
-const jwt = require("jsonwebtoken");
 const { AppError } = require("./errorHandler");
+const tokenService = require("../services/tokenService");
 
 /**
  * Middleware to authenticate a user based on the JWT token in the Authorization header.
@@ -28,7 +28,11 @@ exports.authenticateUser = (req, _res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = tokenService.verifyAccessToken(token);
+    if (!decoded) {
+      req.user = null;
+      return next();
+    }
     req.user = decoded;
     next();
   } catch (error) {
@@ -49,4 +53,25 @@ exports.requireAuth = (req, _res, next) => {
     return next(new AppError("Authentication required", 401));
   }
   next();
+};
+
+/**
+ * Middleware to ensure that the user has a specific role.
+ * Must be used after requireAuth.
+ *
+ * @param {string} role - The required role (e.g., 'admin', 'client').
+ * @returns {Function} The middleware function.
+ */
+exports.requireRole = (role) => {
+  return (req, _res, next) => {
+    if (!req.user) {
+      return next(new AppError("Authentication required", 401));
+    }
+
+    if (req.user.role !== role) {
+      return next(new AppError(`Access denied. ${role} role required`, 403));
+    }
+
+    next();
+  };
 };

@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const wishlistController = require("../controllers/wishlistController");
-const csrfProtection = require("csurf")({ cookie: true });
+const { csrfValidate } = require("../middlewares/modernCsrf");
 const { requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const {
@@ -60,7 +60,7 @@ router.get("/", wishlistController.getWishlist);
  */
 router.post(
   "/add",
-  csrfProtection,
+  csrfValidate,
   validate(addToWishlistSchema),
   wishlistController.addToWishlist,
 );
@@ -93,7 +93,7 @@ router.post(
  */
 router.delete(
   "/remove/:starId",
-  csrfProtection,
+  csrfValidate,
   validate(removeFromWishlistSchema, "params"),
   wishlistController.removeFromWishlist,
 );

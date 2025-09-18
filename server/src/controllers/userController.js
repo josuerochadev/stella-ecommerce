@@ -4,6 +4,7 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { AppError } = require("../middlewares/errorHandler");
+const tokenService = require("../services/tokenService");
 
 /**
  * Register a new user
@@ -31,14 +32,26 @@ exports.register = async (req, res, next) => {
       password: hashedPassword, // Save the hashed password
     });
 
-    const token = jwt.sign({ userId: newUser.id, role: newUser.role }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    const { accessToken, refreshToken } = tokenService.generateTokens({ 
+      userId: newUser.id, 
+      role: newUser.role 
+    });
+
+    await tokenService.saveRefreshToken(newUser.id, refreshToken);
+
+    // Set refresh token as httpOnly cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
     res.status(201).json({
+      success: true,
       message: "User registered successfully",
       userId: newUser.id,
-      token,
+      accessToken,
     });
   } catch (error) {
     next(new AppError(`Error registering user: ${error.message}`, 400));
@@ -65,13 +78,25 @@ exports.login = async (req, res, next) => {
       return next(new AppError("Invalid email or password", 401));
     }
 
-    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    const { accessToken, refreshToken } = tokenService.generateTokens({ 
+      userId: user.id, 
+      role: user.role 
+    });
+
+    await tokenService.saveRefreshToken(user.id, refreshToken);
+
+    // Set refresh token as httpOnly cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
     res.json({
+      success: true,
       message: "Login successful",
-      token,
+      accessToken,
       userId: user.id,
       role: user.role,
     });
@@ -143,8 +168,78 @@ exports.updateProfile = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.logout = (_req, res, _next) => {
-  res.status(200).json({ message: "Logout successful" });
+exports.logout = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    
+    if (refreshToken) {
+      await tokenService.revokeRefreshToken(refreshToken);
+    }
+    
+    // Also revoke all tokens for this user if authenticated
+    if (req.user) {
+      await tokenService.revokeAllUserTokens(req.user.userId);
+    }
+
+    // Clear refresh token cookie
+    res.clearCookie('refreshToken');
+    
+    res.status(200).json({ 
+      success: true, 
+      message: "Logout successful" 
+    });
+  } catch (error) {
+    next(new AppError(`Error during logout: ${error.message}`, 500));
+  }
+};
+
+/**
+ * Refresh access token using refresh token
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    
+    if (!refreshToken) {
+      return next(new AppError("Refresh token not provided", 401));
+    }
+
+    const validationResult = await tokenService.validateRefreshToken(refreshToken);
+    
+    if (!validationResult) {
+      return next(new AppError("Invalid or expired refresh token", 401));
+    }
+
+    const { decoded } = validationResult;
+    
+    // Generate new tokens
+    const { accessToken, refreshToken: newRefreshToken } = tokenService.generateTokens({
+      userId: decoded.userId,
+      role: decoded.role
+    });
+
+    // Save new refresh token and revoke the old one
+    await tokenService.revokeRefreshToken(refreshToken);
+    await tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
+
+    // Set new refresh token cookie
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    res.json({
+      success: true,
+      accessToken,
+    });
+  } catch (error) {
+    next(new AppError(`Error refreshing token: ${error.message}`, 500));
+  }
 };
 
 /**
@@ -160,9 +255,18 @@ exports.deleteAccount = async (req, res, next) => {
       return next(new AppError("User not found", 404));
     }
 
+    // Revoke all refresh tokens before deleting user
+    await tokenService.revokeAllUserTokens(req.user.userId);
+
     await user.destroy(); // Delete the user
 
-    res.status(200).json({ message: "Account deleted successfully" });
+    // Clear refresh token cookie
+    res.clearCookie('refreshToken');
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Account deleted successfully" 
+    });
   } catch (error) {
     next(new AppError(`Error deleting user: ${error.message}`, 500));
   }

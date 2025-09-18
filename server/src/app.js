@@ -15,37 +15,47 @@ const { info, error: _error } = require("./utils/logger");
 const { serve, setup } = require("./utils/swagger");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
-const csurf = require("csurf");
+const session = require("express-session");
+const { generalLimiter } = require("./middlewares/rateLimiter");
+const { csrfGenerate } = require("./middlewares/modernCsrf");
+const { generateRequestId } = require("./middlewares/requestId");
+const { sanitizeInput } = require("./middlewares/sanitization");
+const { setApiSecurityHeaders } = require("./middlewares/contentSecurity");
+const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
 
 const app = express();
+
+// Generate unique request IDs for tracking
+app.use(generateRequestId);
 
 // Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
 
+// Apply rate limiting to all requests
+app.use(generalLimiter);
+
 // Add cookie-parser to read/write cookies
 app.use(cookieParser());
 
-// Add CSRF middleware - TEMPORARILY DISABLED FOR TESTING
-// app.use(csurf({ cookie: true }));
+// Configure session for CSRF protection
+app.use(session({
+	secret: process.env.SESSION_SECRET || process.env.JWT_SECRET + '_session',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		secure: NODE_ENV === 'production',
+		httpOnly: true,
+		maxAge: 24 * 60 * 60 * 1000, // 24 hours
+		sameSite: 'strict'
+	}
+}));
 
-// Middleware to add the CSRF token to responses - TEMPORARILY DISABLED FOR TESTING
-// app.use((req, res, next) => {
-// 	const csrfToken = req.csrfToken(); // Generate a new token
-// 	res.cookie("XSRF-TOKEN", csrfToken, { httpOnly: false }); // Share the CSRF token with the frontend
-// 	next();
-// });
-
-// Handle CSRF errors - TEMPORARILY DISABLED FOR TESTING
-// app.use((err, _req, res, next) => {
-// 	if (err.code === "EBADCSRFTOKEN") {
-// 		return res.status(403).json({ message: "Invalid CSRF token" });
-// 	}
-// 	next(err);
-// });
+// Modern CSRF protection (génération des tokens)
+app.use(csrfGenerate);
 
 // CORS configuration
 const corsOptions = {
-	origin: "http://localhost:3001",
+	origin: ["http://localhost:3001", "http://localhost:3002"],
 	credentials: true, // Allow credentials (cookies)
 	optionsSuccessStatus: 200,
 };
@@ -66,14 +76,25 @@ app.use(json());
 // Middleware to parse form data
 app.use(urlencoded({ extended: true }));
 
+// Input sanitization middleware (apply after parsing but before routes)
+app.use(sanitizeInput('strict'));
+
 // Swagger UI setup
 app.use("/api-docs", serve, setup);
 
 // Serve static files
 app.use(expressStatic(join(__dirname, "public")));
 
+// API Security headers for all API routes
+app.use("/api", setApiSecurityHeaders);
+
 // Centralized API routes
 app.use("/api", routes);
+
+// Route spécifique pour la démo admin
+app.get("/admin-demo", (_, res) => {
+	res.sendFile(join(__dirname, "public", "admin-demo.html"));
+});
 
 // Route to handle all non-API requests
 app.get("*", (_, res) => {
@@ -96,6 +117,10 @@ const startServer = async () => {
 		await sequelize.sync({ force: false });
 		info("Database synced");
 		info(`Connected to database: ${sequelize.config.database}`);
+
+		// Schedule token cleanup job
+		scheduleTokenCleanup();
+		info("Token cleanup job scheduled");
 
 		app.listen(PORT, () => {
 			info(`Server is running in ${NODE_ENV} mode on port ${PORT}`);

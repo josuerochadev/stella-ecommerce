@@ -92,10 +92,17 @@ export const registerUser = async (userData: {
 };
 
 export const loginUser = async (loginData: { email: string; password: string }): Promise<{
-  data: User;
-  token: string;
+  accessToken: string;
+  userId: number;
+  role: string;
 }> => {
-  const response = await api.post<{ data: User; token: string }>("/users/login", loginData);
+  const response = await api.post<{
+    success: boolean;
+    message: string;
+    accessToken: string;
+    userId: number;
+    role: string;
+  }>("/users/login", loginData);
   return response.data;
 };
 

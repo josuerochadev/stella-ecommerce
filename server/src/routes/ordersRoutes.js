@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
-const csrfProtection = require("csurf")({ cookie: true });
+const { csrfValidate } = require("../middlewares/modernCsrf");
 const { requireAuth } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const { createOrderSchema, updateOrderStatusSchema } = require("../validations/orderValidation");
@@ -35,7 +35,7 @@ router.use(requireAuth);
  *       401:
  *         description: Unauthorized
  */
-router.post("/", csrfProtection, validate(createOrderSchema), orderController.createOrder);
+router.post("/", csrfValidate, validate(createOrderSchema), orderController.createOrder);
 
 /**
  * @swagger
@@ -125,7 +125,7 @@ router.get("/:id", orderController.getOrderDetails);
  */
 router.put(
   "/:id/update-status",
-  csrfProtection,
+  csrfValidate,
   validate(updateOrderStatusSchema),
   orderController.updateOrderStatus,
 );

@@ -18,12 +18,17 @@ module.exports = (sequelize, _DataTypes) => {
   };
 
   Cart.prototype.getTotalPrice = async function () {
-    let total = 0;
-    const cartItems = await this.getCartItems();
-    for (const item of cartItems) {
-      total += item.quantity * item.Star.price;
-    }
-    return total;
+    // Optimisation : inclure les données Star pour éviter les requêtes N+1
+    const cartItems = await this.getCartItems({
+      include: [{
+        model: sequelize.models.Star,
+        attributes: ['price']
+      }]
+    });
+
+    return cartItems.reduce((total, item) => {
+      return total + (item.quantity * parseFloat(item.Star.price));
+    }, 0);
   };
 
   return Cart;
