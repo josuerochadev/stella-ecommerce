@@ -35,7 +35,7 @@ exports.getDashboard = async (req, res, next) => {
       }),
 
       // Revenus totaux
-      Order.sum('totalAmount', {
+      Order.sum('total_amount', {
         where: {
           status: ['paid', 'shipped'],
           createdAt: { [Op.gte]: fromDate }
@@ -55,7 +55,7 @@ exports.getDashboard = async (req, res, next) => {
             attributes: ['firstName', 'lastName', 'email']
           }
         ],
-        attributes: ['id', 'status', 'totalAmount', 'paymentMethod', 'createdAt']
+        attributes: ['id', 'status', 'total_amount', 'payment_method', 'createdAt']
       }),
 
       // Étoiles les plus populaires
@@ -97,7 +97,7 @@ exports.getDashboard = async (req, res, next) => {
       attributes: [
         'status',
         [sequelize.fn('COUNT', '*'), 'count'],
-        [sequelize.fn('SUM', sequelize.col('totalAmount')), 'total']
+        [sequelize.fn('SUM', sequelize.col('total_amount')), 'total']
       ],
       where: { createdAt: { [Op.gte]: fromDate } },
       group: ['status']
@@ -118,9 +118,9 @@ exports.getDashboard = async (req, res, next) => {
           id: order.id,
           customer: `${order.User.firstName} ${order.User.lastName}`,
           email: order.User.email,
-          amount: parseFloat(order.totalAmount),
+          amount: parseFloat(order.total_amount),
           status: order.status,
-          paymentMethod: order.paymentMethod,
+          paymentMethod: order.payment_method,
           date: order.createdAt
         })),
         topStars: topStars.map(star => ({
