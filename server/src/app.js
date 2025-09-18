@@ -63,7 +63,7 @@ app.use((err, _req, res, next) => {
 
 // CORS configuration
 const corsOptions = {
-	origin: "http://localhost:3001",
+	origin: ["http://localhost:3001", "http://localhost:3002"],
 	credentials: true, // Allow credentials (cookies)
 	optionsSuccessStatus: 200,
 };
