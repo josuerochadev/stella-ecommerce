@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
     },
     status: {
-      type: DataTypes.ENUM("pending", "paid", "shipped", "cancelled"),
+      type: DataTypes.ENUM("pending", "paid", "shipped", "cancelled", "payment_failed", "refunded", "partially_refunded"),
       allowNull: false,
       defaultValue: "pending",
     },
@@ -19,6 +19,31 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: 'user_id'
+    },
+    paymentMethod: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    transactionId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: true,
+    },
+    paymentError: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    refundId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    refundReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    shippingAddress: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     }
   }, {
     tableName: "orders",

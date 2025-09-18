@@ -54,3 +54,24 @@ exports.requireAuth = (req, _res, next) => {
   }
   next();
 };
+
+/**
+ * Middleware to ensure that the user has a specific role.
+ * Must be used after requireAuth.
+ *
+ * @param {string} role - The required role (e.g., 'admin', 'client').
+ * @returns {Function} The middleware function.
+ */
+exports.requireRole = (role) => {
+  return (req, _res, next) => {
+    if (!req.user) {
+      return next(new AppError("Authentication required", 401));
+    }
+
+    if (req.user.role !== role) {
+      return next(new AppError(`Access denied. ${role} role required`, 403));
+    }
+
+    next();
+  };
+};

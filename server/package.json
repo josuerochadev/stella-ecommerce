@@ -18,7 +18,8 @@
     "create-tables": "node ../scripts/createTables.js",
     "generate-data": "node ../scripts/sampleData.js",
     "reset-db": "node ../scripts/resetDatabase.js",
-    "add-indexes": "node scripts/addDatabaseIndexes.js"
+    "add-indexes": "node scripts/addDatabaseIndexes.js",
+    "create-admin": "node scripts/createAdmin.js"
   },
   "keywords": [],
   "author": "",

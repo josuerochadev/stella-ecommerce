@@ -79,6 +79,11 @@ app.use(expressStatic(join(__dirname, "public")));
 // Centralized API routes
 app.use("/api", routes);
 
+// Route spécifique pour la démo admin
+app.get("/admin-demo", (_, res) => {
+	res.sendFile(join(__dirname, "public", "admin-demo.html"));
+});
+
 // Route to handle all non-API requests
 app.get("*", (_, res) => {
 	res.sendFile(join(__dirname, "public", "index.html"));
