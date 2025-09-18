@@ -295,8 +295,10 @@ async function generateSampleData() {
     // Crée les étoiles avec un starid unique
     await Star.bulkCreate(stars);
 
-    // Crée les utilisateurs
-    await User.bulkCreate(users);
+    // Crée les utilisateurs individuellement pour déclencher le hashing des mots de passe
+    for (const userData of users) {
+      await User.create(userData);
+    }
 
     // Crée les commandes
     const createdOrders = await Order.bulkCreate(orders);

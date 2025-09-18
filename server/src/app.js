@@ -18,9 +18,15 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const { generalLimiter } = require("./middlewares/rateLimiter");
 const { csrfGenerate } = require("./middlewares/modernCsrf");
+const { generateRequestId } = require("./middlewares/requestId");
+const { sanitizeInput } = require("./middlewares/sanitization");
+const { setApiSecurityHeaders } = require("./middlewares/contentSecurity");
 const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
 
 const app = express();
+
+// Generate unique request IDs for tracking
+app.use(generateRequestId);
 
 // Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
@@ -70,11 +76,17 @@ app.use(json());
 // Middleware to parse form data
 app.use(urlencoded({ extended: true }));
 
+// Input sanitization middleware (apply after parsing but before routes)
+app.use(sanitizeInput('strict'));
+
 // Swagger UI setup
 app.use("/api-docs", serve, setup);
 
 // Serve static files
 app.use(expressStatic(join(__dirname, "public")));
+
+// API Security headers for all API routes
+app.use("/api", setApiSecurityHeaders);
 
 // Centralized API routes
 app.use("/api", routes);
