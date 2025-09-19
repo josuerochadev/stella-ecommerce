@@ -3,7 +3,7 @@
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
 import { useAuth } from "../context/AuthContext";
-import { FaShoppingCart } from "react-icons/fa";
+import { ShoppingCartIcon } from "../utils/icons";
 import type React from "react";
 
 interface AddToCartButtonProps {
@@ -50,7 +50,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
         aria-live="polite"
         aria-label={inCart ? "Produit déjà ajouté au panier" : "Ajouter au panier"}
       >
-        <FaShoppingCart className="text-xl" />
+        <ShoppingCartIcon className="text-xl" />
       </button>
       {error && <p className="text-red-600 mt-4">{error}</p>}
     </>

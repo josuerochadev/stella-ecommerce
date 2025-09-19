@@ -1,5 +1,5 @@
-import { useState, useEffect, memo } from "react";
-import { FaHome, FaSearch, FaUser, FaShoppingCart, FaHeart, FaStore } from "react-icons/fa";
+import { useState, useEffect, memo, useCallback } from "react";
+import { HomeIcon, SearchIcon, UserIcon, ShoppingCartIcon, HeartIcon, StoreIcon } from "../utils/icons";
 import { searchStars, getCart, getWishlist } from "../services/api";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import type { Star } from "../types";
@@ -23,13 +23,27 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const _location = useLocation();
 
+  // Debounced search for suggestions
+  const debouncedSuggestions = useCallback(
+    debounce(async (query: string) => {
+      if (query.trim()) {
+        try {
+          const results = await searchStars(query);
+          setSuggestions(results.slice(0, 5)); // Limit to 5 suggestions
+        } catch (error) {
+          console.error("Error fetching suggestions:", error);
+          setSuggestions([]);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 200),
+    []
+  );
+
   useEffect(() => {
-    if (searchValue) {
-      searchStars(searchValue).then((results) => setSuggestions(results));
-    } else {
-      setSuggestions([]);
-    }
-  }, [searchValue]);
+    debouncedSuggestions(searchValue);
+  }, [searchValue, debouncedSuggestions]);
 
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
@@ -51,6 +65,22 @@ const Header: React.FC = () => {
     setSearchValue(e.target.value);
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/catalog?q=${encodeURIComponent(searchValue.trim())}`);
+      setIsSearchVisible(false);
+      setSearchValue("");
+      setSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      handleSearchSubmit(e);
+    }
+  };
+
   const handleSelectSuggestion = (starid: number) => {
     setSearchValue("");
     setSuggestions([]);
@@ -61,7 +91,7 @@ const Header: React.FC = () => {
     <header className="bg-background-inverse text-text fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-20 shadow-lg h-12 transition-all duration-300 ease-in-out">
       <div className="flex items-center space-x-3">
         <Link to="/" className="text-lg text-text hover:text-white">
-          <FaHome className="text-xl text-text" />
+          <HomeIcon className="text-xl text-text" />
         </Link>
       </div>
 
@@ -72,17 +102,27 @@ const Header: React.FC = () => {
         {/* Barre de recherche */}
         {isSearchVisible && (
           <div className="relative transition-opacity duration-300 ease-in-out">
-            <input
-              type="text"
-              className="w-48 p-2 pl-4 pr-3 rounded-full bg-secondary text-text focus:outline-none h-8"
-              placeholder="Rechercher"
-              value={searchValue}
-              onChange={handleSearchChange}
-              onFocus={handleSearchFocus}
-              onBlur={handleSearchBlur}
-              aria-label="Rechercher une étoile"
-              aria-expanded={isSearchVisible}
-            />
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <input
+                type="text"
+                className="w-48 p-2 pl-4 pr-8 rounded-full bg-secondary text-text focus:outline-none h-8"
+                placeholder="Rechercher des étoiles..."
+                value={searchValue}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
+                onKeyDown={handleKeyDown}
+                aria-label="Rechercher une étoile"
+                aria-expanded={isSearchVisible}
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-text hover:text-white focus:outline-none"
+                aria-label="Rechercher"
+              >
+                <SearchIcon size={16} />
+              </button>
+            </form>
 
             {/* Suggestions de recherche */}
             {isSearchFocused && suggestions.length > 0 && (
@@ -96,33 +136,61 @@ const Header: React.FC = () => {
                       <button
                         type="button"
                         onMouseDown={() => handleSelectSuggestion(star.starid)}
-                        className="w-full text-left cursor-pointer focus:outline-none"
+                        className="w-full text-left cursor-pointer focus:outline-none flex justify-between items-center"
                       >
-                        {star.name}
+                        <span>{star.name}</span>
+                        <span className="text-sm opacity-70">{star.constellation}</span>
                       </button>
                     </li>
                   ))}
+                  {searchValue.trim() && (
+                    <li className="px-4 py-2 border-t border-primary">
+                      <button
+                        type="button"
+                        onMouseDown={() => {
+                          navigate(`/catalog?q=${encodeURIComponent(searchValue.trim())}`);
+                          setIsSearchVisible(false);
+                          setSearchValue("");
+                          setSuggestions([]);
+                        }}
+                        className="w-full text-left cursor-pointer focus:outline-none text-sm text-special hover:text-white"
+                      >
+                        Recherche dans le catalogue pour "{searchValue}"
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             )}
           </div>
         )}
 
-        {/* Bouton pour afficher/masquer la recherche */}
-        {!isSearchVisible && (
+        {/* Bouton pour afficher/masquer la recherche ou lien vers recherche avancée */}
+        {!isSearchVisible ? (
           <button
             type="button"
             onClick={toggleSearch}
             aria-expanded={isSearchVisible}
             className="text-text hover:text-white focus:outline-none"
+            title="Recherche rapide"
           >
-            <FaSearch className="text-xl" />
+            <SearchIcon className="text-xl" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={toggleSearch}
+            className="text-text hover:text-white focus:outline-none ml-2"
+            title="Fermer la recherche"
+          >
+            ✕
           </button>
         )}
 
+
         {/* Icône du catalogue */}
         <Link to="/catalog" className="text-lg text-text hover:text-white" aria-label="Catalogue">
-          <FaStore className="text-xl" />
+          <StoreIcon className="text-xl" />
         </Link>
 
         {/* Icônes selon l'état d'authentification */}
@@ -133,7 +201,7 @@ const Header: React.FC = () => {
               className="relative text-lg text-text hover:text-white"
               aria-label="Panier"
             >
-              <FaShoppingCart />
+              <ShoppingCartIcon />
               {cartItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                   {cartItemCount}
@@ -145,7 +213,7 @@ const Header: React.FC = () => {
               className="relative text-lg text-text hover:text-white"
               aria-label="Wishlist"
             >
-              <FaHeart />
+              <HeartIcon />
               {wishlistItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                   {wishlistItemCount}
@@ -153,7 +221,7 @@ const Header: React.FC = () => {
               )}
             </Link>
             <Link to="/profile" className="text-lg text-text hover:text-white" aria-label="Profil">
-              <FaUser />
+              <UserIcon />
             </Link>
           </>
         ) : (
@@ -163,14 +231,14 @@ const Header: React.FC = () => {
               className="relative text-lg text-text hover:text-white"
               aria-label="Panier"
             >
-              <FaShoppingCart />
+              <ShoppingCartIcon />
             </Link>
             <Link
               to="/wishlist"
               className="relative text-lg text-text hover:text-white"
               aria-label="Wishlist"
             >
-              <FaHeart />
+              <HeartIcon />
               {wishlistItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                   {wishlistItemCount}
@@ -182,7 +250,7 @@ const Header: React.FC = () => {
               className="text-lg text-text hover:text-white"
               aria-label="Authentification"
             >
-              <FaUser />
+              <UserIcon />
             </Link>
           </>
         )}
@@ -190,5 +258,14 @@ const Header: React.FC = () => {
     </header>
   );
 };
+
+// Utility function for debouncing
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+  let timeout: NodeJS.Timeout | null = null;
+  return ((...args: any[]) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  }) as T;
+}
 
 export default memo(Header);
