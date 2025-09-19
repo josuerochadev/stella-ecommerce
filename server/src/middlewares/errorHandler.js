@@ -42,10 +42,31 @@ const handleJWTError = () => new AppError("Invalid token. Please log in again!",
 const handleJWTExpiredError = () =>
   new AppError("Your token has expired! Please log in again.", 401);
 
+const handleSequelizeDatabaseError = (error) => {
+  const message = error.message || 'Database operation failed';
+  return new AppError(message, 500);
+};
+
+const handleValidationError = (error) => {
+  const errors = {};
+  if (error.details) {
+    error.details.forEach(detail => {
+      const key = detail.path.join('.');
+      errors[key] = detail.message;
+    });
+  }
+  return new AppError('Validation failed', 400, errors);
+};
+
+const handleRateLimitError = () =>
+  new AppError('Too many requests. Please try again later.', 429);
+
 const sendErrorDev = (err, res) => {
   const filteredError = {
+    success: false,
     status: err.status,
     message: err.message,
+    errors: err.errors || {},
     stack: err.stack,
     error: {
       name: err.name,
@@ -53,6 +74,8 @@ const sendErrorDev = (err, res) => {
       isOperational: err.isOperational,
       path: err.path,
     },
+    timestamp: new Date().toISOString(),
+    requestId: res.locals.requestId || 'unknown'
   };
 
   res.status(err.statusCode).json(filteredError);
@@ -61,18 +84,27 @@ const sendErrorDev = (err, res) => {
 const sendErrorProd = (err, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
+      success: false,
       status: err.status,
       message: err.message,
+      errors: err.errors || {},
+      timestamp: new Date().toISOString(),
+      requestId: res.locals.requestId || 'unknown'
     });
   } else {
     logger.error("ERROR 💥", {
       message: err.message,
       stack: err.stack,
+      requestId: res.locals.requestId,
+      timestamp: new Date().toISOString(),
       ...err,
     });
     res.status(500).json({
+      success: false,
       status: "error",
       message: "Something went very wrong!",
+      timestamp: new Date().toISOString(),
+      requestId: res.locals.requestId || 'unknown'
     });
   }
 };
@@ -97,6 +129,12 @@ const errorHandler = (err, _req, res, _next) => {
       error = handleJWTError();
     } else if (error.name === "TokenExpiredError") {
       error = handleJWTExpiredError();
+    } else if (error.name === "SequelizeDatabaseError") {
+      error = handleSequelizeDatabaseError(error);
+    } else if (error.name === "ValidationError") {
+      error = handleValidationError(error);
+    } else if (error.message && error.message.includes('Too Many Requests')) {
+      error = handleRateLimitError();
     }
 
     sendErrorProd(error, res);
@@ -110,4 +148,7 @@ module.exports = {
   handleDuplicateFieldsDB,
   handleJWTError,
   handleJWTExpiredError,
+  handleSequelizeDatabaseError,
+  handleValidationError,
+  handleRateLimitError,
 };

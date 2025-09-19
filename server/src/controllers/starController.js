@@ -32,19 +32,35 @@ exports.getStarById = async (req, res, next) => {
 
 exports.searchStars = async (req, res, next) => {
   try {
-    const { q } = req.query;
+    const { q, limit = 10 } = req.query;
 
     if (!q) {
       return res.status(400).json({ error: "Query parameter 'q' is required" });
     }
 
+    // Extended search across multiple fields with relevance scoring
     const stars = await Star.findAll({
       where: {
-        name: {
-          [Op.iLike]: `%${q}%`, // Utilise iLIKE pour des recherches insensibles à la casse avec une seule lettre
-        },
+        [Op.or]: [
+          {
+            name: {
+              [Op.iLike]: `%${q}%`, // Search in name
+            },
+          },
+          {
+            constellation: {
+              [Op.iLike]: `%${q}%`, // Search in constellation
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: `%${q}%`, // Search in description
+            },
+          },
+        ],
       },
-      limit: 10, // Ajustez la limite de résultats si nécessaire
+      limit: parseInt(limit),
+      order: [['name', 'ASC']]
     });
 
     res.json(stars);
@@ -56,17 +72,75 @@ exports.searchStars = async (req, res, next) => {
 
 exports.filterStars = async (req, res, next) => {
   try {
-    const { constellation, minPrice, maxPrice, minMagnitude, maxMagnitude } = req.query;
+    const {
+      constellation,
+      minPrice,
+      maxPrice,
+      minMagnitude,
+      maxMagnitude,
+      minDistance,
+      maxDistance,
+      minLuminosity,
+      maxLuminosity,
+      sortBy = 'name',
+      sortOrder = 'ASC',
+      limit = 50
+    } = req.query;
     const whereClause = {};
 
-    if (constellation) whereClause.constellation = constellation;
-    if (minPrice) whereClause.price = { [Op.gte]: minPrice };
-    if (maxPrice) whereClause.price = { ...whereClause.price, [Op.lte]: maxPrice };
-    if (minMagnitude) whereClause.magnitude = { [Op.gte]: minMagnitude };
-    if (maxMagnitude) whereClause.magnitude = { ...whereClause.magnitude, [Op.lte]: maxMagnitude };
+    // Support multiple constellations (comma-separated or array)
+    if (constellation) {
+      const constellations = Array.isArray(constellation)
+        ? constellation
+        : constellation.split(',').map(c => c.trim());
 
-    const stars = await Star.findAll({ where: whereClause });
-    res.json(stars);
+      if (constellations.length === 1) {
+        whereClause.constellation = constellations[0];
+      } else {
+        whereClause.constellation = { [Op.in]: constellations };
+      }
+    }
+
+    // Price range filters
+    if (minPrice || maxPrice) {
+      whereClause.price = {};
+      if (minPrice) whereClause.price[Op.gte] = parseFloat(minPrice);
+      if (maxPrice) whereClause.price[Op.lte] = parseFloat(maxPrice);
+    }
+
+    // Magnitude range filters
+    if (minMagnitude || maxMagnitude) {
+      whereClause.magnitude = {};
+      if (minMagnitude) whereClause.magnitude[Op.gte] = parseFloat(minMagnitude);
+      if (maxMagnitude) whereClause.magnitude[Op.lte] = parseFloat(maxMagnitude);
+    }
+
+    // Distance range filters
+    if (minDistance || maxDistance) {
+      whereClause.distanceFromEarth = {};
+      if (minDistance) whereClause.distanceFromEarth[Op.gte] = parseFloat(minDistance);
+      if (maxDistance) whereClause.distanceFromEarth[Op.lte] = parseFloat(maxDistance);
+    }
+
+    // Luminosity range filters
+    if (minLuminosity || maxLuminosity) {
+      whereClause.luminosity = {};
+      if (minLuminosity) whereClause.luminosity[Op.gte] = parseFloat(minLuminosity);
+      if (maxLuminosity) whereClause.luminosity[Op.lte] = parseFloat(maxLuminosity);
+    }
+
+    // Define valid sort fields
+    const validSortFields = ['name', 'price', 'magnitude', 'distanceFromEarth', 'luminosity', 'createdAt'];
+    const sortField = validSortFields.includes(sortBy) ? sortBy : 'name';
+    const sortDirection = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    const stars = await Star.findAll({
+      where: whereClause,
+      order: [[sortField, sortDirection]],
+      limit: parseInt(limit)
+    });
+
+    res.json({ data: stars, count: stars.length });
   } catch (error) {
     console.error("Error in filterStars function:", error);
     next(new AppError(`Error filtering stars: ${error.message}`, 500));

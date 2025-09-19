@@ -59,6 +59,10 @@ coverage/
 !.yarn/sdks
 !.yarn/versions
 
+# Fichiers de cookies et sessions (contiennent des tokens sensibles)
+cookies.txt
+*.cookies
+
 # Fichiers spécifiques à votre projet
 combined.log
 error.log

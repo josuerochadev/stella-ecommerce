@@ -54,29 +54,68 @@ api.interceptors.request.use(
 // Function to fetch all stars
 export const fetchStars = async (): Promise<ApiResponse<Star[]>> => {
   const response = await api.get<ApiResponse<Star[]>>("/stars");
-  return response.data;
+  // Convert price from string to number for each star
+  const transformedData = {
+    ...response.data,
+    data: response.data.data.map((star: any) => ({
+      ...star,
+      price: parseFloat(star.price)
+    }))
+  };
+  return transformedData;
 };
 
 // Function to fetch a star by ID
 export const fetchStarById = async (starid: number): Promise<Star> => {
   const response = await api.get(`/stars/${starid}`);
-  return response.data;
+  // Convert price from string to number
+  return {
+    ...response.data,
+    price: parseFloat(response.data.price)
+  };
 };
 
 // Function to filter stars
 export const filterStars = async (params: {
-  constellation?: string;
+  constellation?: string | string[];
+  minPrice?: number;
+  maxPrice?: number;
   minMagnitude?: number;
   maxMagnitude?: number;
+  minDistance?: number;
+  maxDistance?: number;
+  minLuminosity?: number;
+  maxLuminosity?: number;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+  limit?: number;
 }): Promise<ApiResponse<Star[]>> => {
-  const response = await api.get<ApiResponse<Star[]>>("/stars/filter", { params });
-  return response.data;
+  // Convert array of constellations to comma-separated string if needed
+  const processedParams = { ...params };
+  if (Array.isArray(processedParams.constellation)) {
+    processedParams.constellation = processedParams.constellation.join(',');
+  }
+
+  const response = await api.get<ApiResponse<Star[]>>("/stars/filter", { params: processedParams });
+  // Transform price data like in fetchStars
+  const transformedData = {
+    ...response.data,
+    data: response.data.data.map((star: any) => ({
+      ...star,
+      price: parseFloat(star.price)
+    }))
+  };
+  return transformedData;
 };
 
 // Function to search stars
 export const searchStars = async (query: string): Promise<Star[]> => {
   const response = await api.get<Star[]>("/stars/search", { params: { q: query } });
-  return response.data;
+  // Transform price data like in fetchStars
+  return response.data.map((star: any) => ({
+    ...star,
+    price: parseFloat(star.price)
+  }));
 };
 
 // Authentication
@@ -92,10 +131,17 @@ export const registerUser = async (userData: {
 };
 
 export const loginUser = async (loginData: { email: string; password: string }): Promise<{
-  data: User;
-  token: string;
+  accessToken: string;
+  userId: number;
+  role: string;
 }> => {
-  const response = await api.post<{ data: User; token: string }>("/users/login", loginData);
+  const response = await api.post<{
+    success: boolean;
+    message: string;
+    accessToken: string;
+    userId: number;
+    role: string;
+  }>("/users/login", loginData);
   return response.data;
 };
 

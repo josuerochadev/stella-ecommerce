@@ -20,7 +20,6 @@ export interface UserProfileData {
 
 // Star related types
 export interface Star {
-  data: any;
   starid: number;
   name: string;
   description: string;

@@ -8,6 +8,8 @@ import { useAuth } from "../context/AuthContext";
 import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
 import FadeInSection from "./FadeInSection";
+import { SkeletonProfile, SkeletonList } from "./Skeleton";
+import { useLoadingState } from "../hooks/useLoadingState";
 
 const Profile: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -20,19 +22,26 @@ const Profile: React.FC = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  const { isLoading: isLoadingProfile, setLoading, setSuccess, setError } = useLoadingState({
+    minLoadingTime: 600
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        setLoading();
         const user: User = await getUserProfile();
         setFirstName(user.firstName);
         setLastName(user.lastName);
         setEmail(user.email);
         setLoadingProfile(false);
+        setSuccess();
       } catch (error) {
         console.error("Erreur lors de la récupération du profil utilisateur", error);
         setLoadingProfile(false);
+        setError();
       }
     };
 
@@ -40,7 +49,7 @@ const Profile: React.FC = () => {
       fetchUserProfile();
       fetchWishlist();
     }
-  }, [isAuthenticated, fetchWishlist]);
+  }, [isAuthenticated, fetchWishlist, setLoading, setSuccess, setError]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,8 +83,14 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (loadingProfile) {
-    return <p>Chargement des informations...</p>;
+  if (loadingProfile || isLoadingProfile) {
+    return (
+      <div className="container mx-auto pt-20 px-4 max-w-md">
+        <FadeInSection>
+          <SkeletonProfile />
+        </FadeInSection>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {

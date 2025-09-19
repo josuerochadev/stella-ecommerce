@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye, FaArrowLeft, FaTrash } from "react-icons/fa";
+import { EyeIcon, ArrowLeftIcon, TrashIcon } from "../utils/icons";
 import AddToCartButton from "../components/AddToCartButton";
 import AddToWishlistButton from "../components/AddToWishlistButton";
 import FadeInSection from "./FadeInSection";
@@ -37,7 +37,7 @@ const StarCard: React.FC<StarCardProps> = ({
   return (
     <FadeInSection>
       <div
-        className={`bg-secondary text-text rounded-lg shadow-lg flex ${
+        className={`bg-secondary text-text rounded-lg shadow-lg flex card-hover-effect ${
           isDetailedView
             ? "md:flex-row"
             : context === "cart" || context === "wishlist"
@@ -97,12 +97,12 @@ const StarCard: React.FC<StarCardProps> = ({
           <div className="flex mt-4">
             {isDetailedView ? (
               <button type="button" onClick={handleBackClick} className="btn mt-2">
-                <FaArrowLeft className="text-xl" />
+                <ArrowLeftIcon className="text-xl" />
                 <span className="sr-only">Retour</span>
               </button>
             ) : (
               <Link to={`/star/${star.starid}`} className="btn mt-2">
-                <FaEye className="text-xl" />
+                <EyeIcon className="text-xl" />
                 <span className="sr-only">Découvrir</span>
               </Link>
             )}
@@ -117,7 +117,7 @@ const StarCard: React.FC<StarCardProps> = ({
             {context === "cart" && (
               <>
                 <button type="button" onClick={handleRemoveClick} className="btn mt-2">
-                  <FaTrash className="text-xl" />
+                  <TrashIcon className="text-xl" />
                   <span className="sr-only">Retirer du panier</span>
                 </button>
               </>
@@ -127,7 +127,7 @@ const StarCard: React.FC<StarCardProps> = ({
               <>
                 <AddToCartButton starId={star.starid} />
                 <button type="button" onClick={handleRemoveClick} className="btn mt-2">
-                  <FaTrash className="text-xl" />
+                  <TrashIcon className="text-xl" />
                   <span className="sr-only">Retirer de la liste d'envies</span>
                 </button>
               </>

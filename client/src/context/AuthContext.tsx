@@ -34,8 +34,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
-    useCartStore.getState().fetchCart();
-    useWishlistStore.getState().fetchWishlist();
+
+    // Différer les appels aux stores pour éviter les re-renders immédiats
+    setTimeout(() => {
+      try {
+        useCartStore.getState().fetchCart();
+        useWishlistStore.getState().fetchWishlist();
+      } catch (error) {
+        console.warn("Error fetching cart/wishlist after login:", error);
+      }
+    }, 100);
   };
 
   const logout = () => {

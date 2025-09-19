@@ -3,7 +3,7 @@
 import { useNavigate } from "react-router-dom";
 import { useWishlistStore } from "../stores/useWishlistStore";
 import { useAuth } from "../context/AuthContext";
-import { FaHeart } from "react-icons/fa";
+import { HeartIcon } from "../utils/icons";
 import { useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
@@ -60,7 +60,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
             : "Ajouter à la liste de souhaits"
         }
       >
-        <FaHeart className="text-xl" />
+        <HeartIcon className="text-xl" />
       </button>
       {error && <p className="text-red-600 mt-4">{error}</p>}
     </>
