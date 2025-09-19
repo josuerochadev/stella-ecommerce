@@ -24,7 +24,7 @@ const createAdminUser = async () => {
       firstName: 'Admin',
       lastName: 'Stella',
       email: 'admin@stella.com',
-      password: process.env.ADMIN_DEFAULT_PASSWORD || 'Admin123!@#', // Mot de passe depuis l'env ou défaut
+      password: process.env.ADMIN_DEFAULT_PASSWORD || 'change_me_to_secure_password', // Mot de passe depuis l'env ou défaut
       role: 'admin'
     };
 
