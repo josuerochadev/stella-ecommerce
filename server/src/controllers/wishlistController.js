@@ -1,6 +1,7 @@
 // src/controllers/wishlistController.js
 const { Wishlist, Star } = require("../models");
 const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 exports.addToWishlist = async (req, res, next) => {
   try {
@@ -128,7 +129,7 @@ exports.removeFromWishlist = async (req, res, next) => {
       wishlist: updatedWishlistItems,
     });
   } catch (error) {
-    console.error("Erreur lors de la suppression de la wishlist:", error);
+    logger.error("Erreur lors de la suppression de la wishlist:", error);
     next(
       new AppError(
         `Erreur lors de la suppression de l'étoile de la liste de souhaits: ${error.message}`,

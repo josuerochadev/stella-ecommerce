@@ -81,11 +81,11 @@ export const useAsyncOperation = <T>(
       setError();
       throw error;
     }
-  }, dependencies);
+  }, [operation, setLoading, setSuccess, setError, ...dependencies]);
 
   useEffect(() => {
     execute();
-  }, dependencies);
+  }, [execute]);
 
   return {
     ...rest,

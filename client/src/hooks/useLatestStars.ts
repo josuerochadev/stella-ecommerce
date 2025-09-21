@@ -24,7 +24,6 @@ export const useLatestStars = (limit = 6) => {
         }
         setError(null);
       } catch (err) {
-        console.error("Erreur lors de la récupération des étoiles:", err);
         setError("Impossible de charger les nouveautés pour le moment.");
       } finally {
         setLoading(false);

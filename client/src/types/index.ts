@@ -33,6 +33,21 @@ export interface Star {
   updatedAt: string;
 }
 
+// Interface pour les données brutes du serveur (avant transformation)
+export interface StarFromServer {
+  starid: number;
+  name: string;
+  description: string;
+  constellation: string;
+  distanceFromEarth: number;
+  luminosity: number;
+  mass: number;
+  magnitude: number;
+  price: string; // Le serveur envoie le prix comme string
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Order related types
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 

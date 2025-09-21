@@ -39,8 +39,8 @@ const Register: React.FC = () => {
         login(token);
         navigate(from);
       }
-    } catch (error) {
-      console.error("Erreur d'inscription :", error);
+    } catch (_error) {
+      // L'erreur sera gérée par l'API et affichée à l'utilisateur
     }
   };
 

@@ -42,7 +42,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
     try {
       await addItemToWishlist(starId);
     } catch (err) {
-      console.error("Erreur dans handleAddToWishlist:", err);
+      // L'erreur est gérée par le store useWishlistStore
     }
   }, [isAuthenticated, navigate, addItemToWishlist, starId]);
 

@@ -49,6 +49,7 @@ export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(({
 
   return (
     <button
+      type="button"
       ref={(node) => {
         if (ref) {
           if (typeof ref === 'function') {

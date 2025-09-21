@@ -38,8 +38,7 @@ export const useStarDetail = (id: number | undefined) => {
         }
 
         setError(null);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des détails de l'étoile:", err);
+      } catch (_err) {
         setError("Impossible de charger les détails de l'étoile pour le moment.");
       } finally {
         setLoading(false);

@@ -17,8 +17,7 @@ export const useCartStatus = (starid: number) => {
         const cart = await getCart();
         const isInCart = cart?.cartItems?.some((item: CartItem) => item.starId === starid);
         setInCart(!!isInCart);
-      } catch (err) {
-        console.error("Erreur lors de la récupération du panier:", err);
+      } catch (_err) {
         setError("Erreur de récupération du panier");
       }
     };

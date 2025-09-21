@@ -4,6 +4,7 @@
 const { paymentService } = require('../services/paymentService');
 const { Order, Star, User } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
+const logger = require('../utils/logger');
 
 /**
  * Initier un processus de paiement
@@ -270,7 +271,7 @@ exports.simulateWebhook = async (req, res, next) => {
     });
 
     // En production, ce serait envoyé à une URL de webhook
-    console.log('🔗 Webhook simulated:', webhookPayload);
+    logger.info('🔗 Webhook simulated:', webhookPayload);
 
     res.json({
       success: true,
