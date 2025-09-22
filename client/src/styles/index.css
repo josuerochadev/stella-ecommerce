@@ -9,9 +9,26 @@
 
 /* Base styles */
 @layer base {
+  /* CSS Variables pour l'accessibilité */
+  :root {
+    --accessibility-background: var(--color-background-default);
+    --accessibility-text: var(--color-text);
+    --accessibility-primary: var(--color-primary);
+    --accessibility-secondary: var(--color-secondary);
+    --accessibility-accent: var(--color-special);
+    --accessibility-font-base: 16px;
+    --accessibility-font-small: 14px;
+    --accessibility-font-large: 18px;
+    --animation-duration: 0.3s;
+    --transition-duration: 0.2s;
+  }
+
   /* Styles du body */
   body {
     @apply bg-background-default text-text font-sans;
+    font-size: var(--accessibility-font-base);
+    background-color: var(--accessibility-background);
+    color: var(--accessibility-text);
   }
 
   /* Styles pour les titres */
@@ -26,11 +43,80 @@
 
 /* Styles pour les composants */
 @layer components {
-  /* Bouton général */
+  /* Classes d'accessibilité */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sr-only:focus,
+  .sr-only:active {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Styles pour les préférences d'accessibilité */
+  .high-contrast-images img {
+    filter: contrast(1.5) brightness(1.1);
+  }
+
+  .screen-reader-optimized {
+    /* Améliorer la lisibilité pour les lecteurs d'écran */
+  }
+
+  .screen-reader-optimized * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Respect des préférences système */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    :root {
+      --accessibility-background: #000000;
+      --accessibility-text: #ffffff;
+      --accessibility-primary: #ffffff;
+      --accessibility-accent: #ffff00;
+    }
+  }
+
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+  }
+
+  /* Skip links */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 z-50;
+    @apply bg-accent text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-white;
+  }
+
+  /* Bouton général avec accessibilité */
   .btn {
     @apply bg-special text-primary font-action tracking-wider py-2 px-4;
     @apply transition-transform duration-500 ease-in-out;
     @apply hover:bg-primary hover:text-text hover:transform hover:scale-105 hover:shadow-lg;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none;
   }
 
   /* Filtre des boutons */
