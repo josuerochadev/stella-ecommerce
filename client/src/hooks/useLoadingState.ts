@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { APP_CONSTANTS } from '../constants/app';
 
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -8,7 +9,7 @@ interface UseLoadingStateOptions {
 }
 
 export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
-  const { initialState = 'idle', minLoadingTime = 500 } = options;
+  const { initialState = 'idle', minLoadingTime = APP_CONSTANTS.LOADING_MIN_TIME } = options;
   const [state, setState] = useState<LoadingState>(initialState);
   const [startTime, setStartTime] = useState<number>(0);
 
@@ -62,7 +63,7 @@ export const useAsyncOperation = <T>(
   dependencies: React.DependencyList = []
 ) => {
   const { state, setLoading, setSuccess, setError, ...rest } = useLoadingState({
-    minLoadingTime: 800, // Un peu plus long pour voir les skeletons
+    minLoadingTime: APP_CONSTANTS.SKELETON_LOADING_TIME, // Un peu plus long pour voir les skeletons
   });
   const [data, setData] = useState<T | null>(null);
   const [error, setErrorData] = useState<Error | null>(null);
@@ -81,11 +82,11 @@ export const useAsyncOperation = <T>(
       setError();
       throw error;
     }
-  }, dependencies);
+  }, [operation, setLoading, setSuccess, setError, ...dependencies]);
 
   useEffect(() => {
     execute();
-  }, dependencies);
+  }, [execute]);
 
   return {
     ...rest,

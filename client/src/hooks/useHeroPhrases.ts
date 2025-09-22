@@ -1,6 +1,7 @@
 // client/src/hooks/useHeroPhrases.ts
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { APP_CONSTANTS } from '../constants/app';
 
 const heroPhrases = [
   "Illuminer votre vie.",
@@ -9,25 +10,24 @@ const heroPhrases = [
   "Adoptez une étoile voisine : votre coin de ciel personnalisé !",
 ];
 
-export const useHeroPhrases = (interval = 10000) => {
-  const [currentPhrase, setCurrentPhrase] = useState(heroPhrases[0]);
-  const [fade, setFade] = useState(true); // Contrôle le fade in/fade out
+export const useHeroPhrases = (interval = APP_CONSTANTS.HERO_PHRASES_INTERVAL) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  const currentPhrase = useMemo(() => heroPhrases[currentIndex], [currentIndex]);
+
+  const updatePhrase = useCallback(() => {
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex(prevIndex => (prevIndex + 1) % heroPhrases.length);
+      setFade(true);
+    }, APP_CONSTANTS.DEBOUNCE_DELAY);
+  }, []);
 
   useEffect(() => {
-    let currentIndex = 0;
-    const updatePhrase = () => {
-      setFade(false);
-      setTimeout(() => {
-        currentIndex = (currentIndex + 1) % heroPhrases.length;
-        setCurrentPhrase(heroPhrases[currentIndex]);
-        setFade(true);
-      }, 200);
-    };
-
     const timer = setInterval(updatePhrase, interval);
-
     return () => clearInterval(timer);
-  }, [interval]);
+  }, [interval, updatePhrase]);
 
   return { currentPhrase, fade };
 };

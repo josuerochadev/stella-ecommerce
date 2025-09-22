@@ -30,8 +30,7 @@ export const useWishlistStore = create<WishlistState>((set) => ({
         },
       }));
       set({ wishlistItems: transformedWishlist || [], loading: false });
-    } catch (error) {
-      console.error("Erreur lors de la récupération de la wishlist:", error);
+    } catch (_error) {
       set({ error: "Erreur lors de la récupération de la wishlist.", loading: false });
     }
   },
@@ -51,8 +50,7 @@ export const useWishlistStore = create<WishlistState>((set) => ({
         wishlistItems: [...state.wishlistItems, transformedWishlistItem],
         loading: false,
       }));
-    } catch (error) {
-      console.error("Erreur lors de l'ajout à la wishlist:", error);
+    } catch (_error) {
       set({ error: "Erreur lors de l'ajout à la wishlist.", loading: false });
     }
   },
@@ -65,8 +63,7 @@ export const useWishlistStore = create<WishlistState>((set) => ({
         wishlistItems: state.wishlistItems.filter((item) => item.starId !== starId),
         loading: false,
       }));
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la wishlist:", error);
+    } catch (_error) {
       set({ error: "Erreur lors de la suppression de la wishlist.", loading: false });
     }
   },

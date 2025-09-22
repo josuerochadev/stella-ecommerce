@@ -23,8 +23,7 @@ export const useCartStore = create<CartState>((set) => ({
     try {
       const cart = await getCart();
       set({ cartItems: cart.cartItems, loading: false });
-    } catch (error) {
-      console.error("Erreur lors de la récupération du panier:", error);
+    } catch (_error) {
       set({ error: "Erreur lors de la récupération du panier.", loading: false });
     }
   },
@@ -33,9 +32,9 @@ export const useCartStore = create<CartState>((set) => ({
     try {
       await addToCart(starId, quantity);
       const cart = await getCart();
-      set({ cartItems: cart.cartItems });
-    } catch (error) {
-      console.error("Erreur lors de l'ajout au panier:", error);
+      set({ cartItems: cart.cartItems, error: null });
+    } catch (_error) {
+      set({ error: "Erreur lors de l'ajout au panier." });
     }
   },
 
@@ -43,9 +42,9 @@ export const useCartStore = create<CartState>((set) => ({
     try {
       await removeFromCart(cartItemId);
       const cart = await getCart();
-      set({ cartItems: cart.cartItems });
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'article du panier:", error);
+      set({ cartItems: cart.cartItems, error: null });
+    } catch (_error) {
+      set({ error: "Erreur lors de la suppression de l'article du panier." });
     }
   },
 

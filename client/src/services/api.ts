@@ -4,6 +4,7 @@ import type {
   User,
   UserProfileData,
   Star,
+  StarFromServer,
   OrderData,
   Order,
   OrderStatus,
@@ -53,11 +54,11 @@ api.interceptors.request.use(
 
 // Function to fetch all stars
 export const fetchStars = async (): Promise<ApiResponse<Star[]>> => {
-  const response = await api.get<ApiResponse<Star[]>>("/stars");
+  const response = await api.get<ApiResponse<StarFromServer[]>>("/stars");
   // Convert price from string to number for each star
   const transformedData = {
     ...response.data,
-    data: response.data.data.map((star: any) => ({
+    data: response.data.data.map((star: StarFromServer) => ({
       ...star,
       price: parseFloat(star.price)
     }))
@@ -96,11 +97,11 @@ export const filterStars = async (params: {
     processedParams.constellation = processedParams.constellation.join(',');
   }
 
-  const response = await api.get<ApiResponse<Star[]>>("/stars/filter", { params: processedParams });
+  const response = await api.get<ApiResponse<StarFromServer[]>>("/stars/filter", { params: processedParams });
   // Transform price data like in fetchStars
   const transformedData = {
     ...response.data,
-    data: response.data.data.map((star: any) => ({
+    data: response.data.data.map((star: StarFromServer) => ({
       ...star,
       price: parseFloat(star.price)
     }))
@@ -110,9 +111,9 @@ export const filterStars = async (params: {
 
 // Function to search stars
 export const searchStars = async (query: string): Promise<Star[]> => {
-  const response = await api.get<Star[]>("/stars/search", { params: { q: query } });
+  const response = await api.get<StarFromServer[]>("/stars/search", { params: { q: query } });
   // Transform price data like in fetchStars
-  return response.data.map((star: any) => ({
+  return response.data.map((star: StarFromServer) => ({
     ...star,
     price: parseFloat(star.price)
   }));

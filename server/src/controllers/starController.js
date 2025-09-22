@@ -3,13 +3,14 @@
 const { Star } = require("../models");
 const { Op } = require("sequelize");
 const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 exports.getAllStars = async (_, res, next) => {
   try {
     const stars = await Star.findAll();
     res.json({ data: stars });
   } catch (error) {
-    console.error("Error in getAllStars:", error);
+    logger.error("Error in getAllStars:", error);
     next(new AppError(`Error retrieving stars: ${error.message}`, 500));
   }
 };
@@ -25,7 +26,7 @@ exports.getStarById = async (req, res, next) => {
       next(new AppError("Star not found", 404));
     }
   } catch (error) {
-    console.error("Error in getStarById:", error);
+    logger.error("Error in getStarById:", error);
     next(new AppError(`Error retrieving star: ${error.message}`, 500));
   }
 };
@@ -65,7 +66,7 @@ exports.searchStars = async (req, res, next) => {
 
     res.json(stars);
   } catch (error) {
-    console.error("Error in searchStars:", error);
+    logger.error("Error in searchStars:", error);
     next(new AppError(`Error searching for stars: ${error.message}`, 500));
   }
 };
@@ -142,7 +143,7 @@ exports.filterStars = async (req, res, next) => {
 
     res.json({ data: stars, count: stars.length });
   } catch (error) {
-    console.error("Error in filterStars function:", error);
+    logger.error("Error in filterStars function:", error);
     next(new AppError(`Error filtering stars: ${error.message}`, 500));
   }
 };

@@ -2,6 +2,7 @@
 
 const { Order, OrderStar, Star, User, sequelize } = require("../models");
 const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 exports.createOrder = async (req, res, next) => {
   const transaction = await sequelize.transaction();
@@ -75,7 +76,7 @@ exports.createOrder = async (req, res, next) => {
   } catch (error) {
     // Rollback en cas d'erreur
     await transaction.rollback();
-    console.error("Error in createOrder function:", error);
+    logger.error("Error in createOrder function:", error);
     next(new AppError(`Error creating order: ${error.message}`, 400));
   }
 };

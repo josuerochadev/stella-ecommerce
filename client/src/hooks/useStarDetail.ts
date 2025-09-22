@@ -1,6 +1,7 @@
 // client/src/hooks/useStarDetail.ts
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { fetchStarById, fetchStars } from "../services/api";
+import { useErrorHandler } from "./useErrorHandler";
 import type { Star } from "../types";
 
 export const useStarDetail = (id: number | undefined) => {
@@ -8,46 +9,64 @@ export const useStarDetail = (id: number | undefined) => {
   const [relatedStars, setRelatedStars] = useState<Star[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { handleError, formatError } = useErrorHandler();
 
-  useEffect(() => {
-    if (!id) {
-      setError("ID de l'étoile manquant");
+  const isValidId = useMemo(() => {
+    return id !== undefined && !Number.isNaN(id) && id > 0;
+  }, [id]);
+
+  const getStarDetail = useCallback(async () => {
+    if (!isValidId) {
+      setError("ID de l'étoile manquant ou invalide");
       setLoading(false);
       return;
     }
 
-    const getStarDetail = async () => {
-      try {
-        setLoading(true);
+    try {
+      setLoading(true);
+      setError(null);
 
-        const starResponse = await fetchStarById(id);
-        if (starResponse) {
-          setStar(starResponse);
-        } else {
-          throw new Error("Erreur lors de la récupération des détails de l'étoile.");
-        }
+      // Récupérer les détails de l'étoile et toutes les étoiles en parallèle
+      const [starResponse, allStarsResponse] = await Promise.all([
+        fetchStarById(id as number),
+        fetchStars()
+      ]);
 
-        const relatedStarsResponse = await fetchStars();
-        if (relatedStarsResponse?.data) {
-          const filteredStars = relatedStarsResponse.data.filter(
-            (relatedStar: Star) => String(relatedStar.starid) !== String(id), // Convertir pour comparer correctement
-          );
-          setRelatedStars(filteredStars);
-        } else {
-          throw new Error("Erreur lors de la récupération des étoiles similaires.");
-        }
-
-        setError(null);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des détails de l'étoile:", err);
-        setError("Impossible de charger les détails de l'étoile pour le moment.");
-      } finally {
-        setLoading(false);
+      if (!starResponse) {
+        throw new Error("Étoile non trouvée");
       }
-    };
 
+      setStar(starResponse);
+
+      if (allStarsResponse?.data) {
+        const filteredStars = allStarsResponse.data.filter(
+          (relatedStar: Star) => relatedStar.starid !== id
+        );
+        setRelatedStars(filteredStars);
+      }
+
+    } catch (err) {
+      const apiError = handleError(err as Error);
+      if (apiError) {
+        setError(formatError(apiError));
+      } else {
+        setError("Impossible de charger les détails de l'étoile");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [id, isValidId, handleError, formatError]);
+
+  useEffect(() => {
     getStarDetail();
-  }, [id]);
+  }, [getStarDetail]);
 
-  return { star, relatedStars, loading, error };
+  return {
+    star,
+    relatedStars,
+    loading,
+    error,
+    refetch: getStarDetail,
+    isValidId
+  };
 };

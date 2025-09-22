@@ -1,10 +1,10 @@
 // src/middlewares/rateLimiter.js
 const rateLimit = require('express-rate-limit');
 
-// General API rate limiter
+// General API rate limiter (more permissive in development)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 1000, // Increased limit for development
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.'

@@ -11,6 +11,7 @@ const { sequelize } = require("./models");
 const { errorHandler, AppError } = require("./middlewares/errorHandler");
 const routes = require("./routes");
 const { NODE_ENV, PORT: _PORT } = require("./config/config");
+const { APP_CONSTANTS, HTTP_STATUS, CORS_OPTIONS, SESSION_CONFIG } = require("./constants/app");
 const { info, error: _error } = require("./utils/logger");
 const { serve, setup } = require("./utils/swagger");
 const helmet = require("helmet");
@@ -28,6 +29,9 @@ const app = express();
 // Generate unique request IDs for tracking
 app.use(generateRequestId);
 
+// CORS configuration - MUST BE FIRST to handle preflight requests
+app.use(cors(CORS_OPTIONS));
+
 // Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
 
@@ -40,26 +44,15 @@ app.use(cookieParser());
 // Configure session for CSRF protection
 app.use(session({
 	secret: process.env.SESSION_SECRET || process.env.JWT_SECRET + '_session',
-	resave: false,
-	saveUninitialized: false,
+	...SESSION_CONFIG,
 	cookie: {
+		...SESSION_CONFIG.cookie,
 		secure: NODE_ENV === 'production',
-		httpOnly: true,
-		maxAge: 24 * 60 * 60 * 1000, // 24 hours
-		sameSite: 'strict'
 	}
 }));
 
 // Modern CSRF protection (génération des tokens)
 app.use(csrfGenerate);
-
-// CORS configuration
-const corsOptions = {
-	origin: ["http://localhost:3001", "http://localhost:3002"],
-	credentials: true, // Allow credentials (cookies)
-	optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
 
 // Logging middleware
 if (NODE_ENV !== "test") {
@@ -103,13 +96,13 @@ app.get("*", (_, res) => {
 
 // Handle 404 errors for the API
 app.use("/api", (req, _, next) => {
-	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+	next(new AppError(`Can't find ${req.originalUrl} on this server!`, HTTP_STATUS.NOT_FOUND));
 });
 
 // Global error handling
 app.use(errorHandler);
 
-const PORT = _PORT || 3000;
+const PORT = _PORT || APP_CONSTANTS.DEFAULT_PORT;
 
 // Function to start the server
 const startServer = async () => {

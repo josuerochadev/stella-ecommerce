@@ -2,6 +2,7 @@
 
 const { Review, Order, Star, User } = require("../models");
 const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 exports.getReviewsForStar = async (req, res, next) => {
   try {
@@ -43,7 +44,7 @@ exports.addReview = async (req, res, next) => {
     });
     res.status(201).json({ message: "Review added", review });
   } catch (error) {
-    console.error("Error in addReview function:", error);
+    logger.error("Error in addReview function:", error);
     next(new AppError(`Error adding review: ${error.message}`, 400));
   }
 };

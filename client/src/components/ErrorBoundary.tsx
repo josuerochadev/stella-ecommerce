@@ -1,5 +1,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { errorService } from "../services/errorService";
+import { ROUTES } from "../constants/app";
 
 interface Props {
   children: ReactNode;
@@ -7,6 +9,7 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  errorId?: string;
 }
 
 class ErrorBoundary extends Component<Props, State> {
@@ -19,6 +22,21 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const errorId = `ERR_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    // Log l'erreur avec le service d'erreur
+    errorService.logError({
+      message: error.message,
+      code: 'BOUNDARY_ERROR',
+      timestamp: new Date().toISOString(),
+      errors: {
+        stack: error.stack || '',
+        componentStack: errorInfo.componentStack || '',
+        errorBoundary: this.constructor.name,
+      }
+    });
+
+    this.setState({ errorId });
     console.error("Uncaught error:", error, errorInfo);
   }
 
@@ -37,12 +55,17 @@ class ErrorBoundary extends Component<Props, State> {
           <p className="text-lg mb-6">
             Désolé pour le désagrément. Vous pouvez essayer de recharger l'application.
           </p>
+          {this.state.errorId && (
+            <p className="text-sm text-gray-600 mb-4">
+              ID d'erreur : {this.state.errorId}
+            </p>
+          )}
           <div className="mt-4 space-x-4">
             <button type="button" onClick={this.handleReload} className="btn">
               Recharger l'application
             </button>
 
-            <Link to="/" className="btn">
+            <Link to={ROUTES.HOME} className="btn">
               Retour à l'accueil
             </Link>
           </div>

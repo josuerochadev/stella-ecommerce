@@ -36,7 +36,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
     try {
       await addItem(starId, 1);
     } catch (err) {
-      console.error(err);
+      // L'erreur est gérée par le store useCartStore
     }
   };
 

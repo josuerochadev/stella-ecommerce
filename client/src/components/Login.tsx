@@ -1,37 +1,32 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/api";
 import FadeInSection from "./FadeInSection";
 
 const Login: React.FC = () => {
-  const { isAuthenticated, login } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   const message = location.state?.message || "Connectez-vous pour accéder à votre compte.";
-
-  // AuthContainer gère déjà la redirection, pas besoin de Navigate ici
+  const from = location.state?.from || "/profile";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🔐 Tentative de connexion avec:", { email, password: "***" });
 
     try {
       const response = await loginUser({ email, password });
-      console.log("✅ Réponse API:", response);
       const token = response.accessToken;
 
       if (token) {
-        console.log("🎯 Token reçu, connexion en cours...");
         login(token);
-        // AuthContainer gérera automatiquement la redirection
-      } else {
-        console.error("❌ Pas de token dans la réponse");
+        navigate(from, { replace: true });
       }
-    } catch (error) {
-      console.error("❌ Erreur de connexion :", error);
+    } catch (_error) {
+      // L'erreur sera gérée par l'API et affichée à l'utilisateur
     }
   };
 

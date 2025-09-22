@@ -1,6 +1,7 @@
 // src/middlewares/errorHandler.js
 
 const { createLogger, format, transports } = require("winston");
+const { HTTP_STATUS } = require("../constants/app");
 
 const logger = createLogger({
   level: "error",
@@ -28,23 +29,23 @@ class AppError extends Error {
 
 const handleSequelizeValidationError = (error) => {
   const messages = error.errors.map((err) => err.message);
-  return new AppError(messages.join(". "), 400);
+  return new AppError(messages.join(". "), HTTP_STATUS.BAD_REQUEST);
 };
 
 const handleDuplicateFieldsDB = (error) => {
   const value = error.errors[0].value;
   const message = `Duplicate field value: ${value}. Please use another value!`;
-  return new AppError(message, 400);
+  return new AppError(message, HTTP_STATUS.BAD_REQUEST);
 };
 
-const handleJWTError = () => new AppError("Invalid token. Please log in again!", 401);
+const handleJWTError = () => new AppError("Invalid token. Please log in again!", HTTP_STATUS.UNAUTHORIZED);
 
 const handleJWTExpiredError = () =>
-  new AppError("Your token has expired! Please log in again.", 401);
+  new AppError("Your token has expired! Please log in again.", HTTP_STATUS.UNAUTHORIZED);
 
 const handleSequelizeDatabaseError = (error) => {
   const message = error.message || 'Database operation failed';
-  return new AppError(message, 500);
+  return new AppError(message, HTTP_STATUS.INTERNAL_SERVER_ERROR);
 };
 
 const handleValidationError = (error) => {
@@ -55,7 +56,7 @@ const handleValidationError = (error) => {
       errors[key] = detail.message;
     });
   }
-  return new AppError('Validation failed', 400, errors);
+  return new AppError('Validation failed', HTTP_STATUS.BAD_REQUEST, errors);
 };
 
 const handleRateLimitError = () =>
@@ -99,7 +100,7 @@ const sendErrorProd = (err, res) => {
       timestamp: new Date().toISOString(),
       ...err,
     });
-    res.status(500).json({
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       status: "error",
       message: "Something went very wrong!",

@@ -15,14 +15,15 @@ import {
   FaArrowDown,
 } from 'react-icons/fa';
 
-// Interfaces pour les props des icônes
+// Interface pour les props des icônes
 interface IconProps {
   className?: string;
   size?: number | string;
-  [key: string]: any;
+  [key: string]: unknown; // Plus sûr que 'any'
 }
 
 // Wrapper simplifié pour corriger les problèmes de types TypeScript
+// @ts-ignore - Ignore TypeScript strict checking for React Icons
 const createIconWrapper = (OriginalIcon: any) => {
   const WrappedIcon: React.FC<IconProps> = (props) => {
     return React.createElement(OriginalIcon, props);
