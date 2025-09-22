@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/api";
 import FadeInSection from "./FadeInSection";
@@ -9,10 +9,10 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   const message = location.state?.message || "Connectez-vous pour accéder à votre compte.";
-
-  // AuthContainer gère déjà la redirection, pas besoin de Navigate ici
+  const from = location.state?.from || "/profile";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const Login: React.FC = () => {
 
       if (token) {
         login(token);
-        // AuthContainer gérera automatiquement la redirection
+        navigate(from, { replace: true });
       }
     } catch (_error) {
       // L'erreur sera gérée par l'API et affichée à l'utilisateur

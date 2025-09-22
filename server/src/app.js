@@ -28,6 +28,23 @@ const app = express();
 // Generate unique request IDs for tracking
 app.use(generateRequestId);
 
+// CORS configuration - MUST BE FIRST to handle preflight requests
+const corsOptions = {
+	origin: ["http://localhost:3001", "http://localhost:3002"],
+	credentials: true, // Allow credentials (cookies)
+	optionsSuccessStatus: 200,
+	allowedHeaders: [
+		'Content-Type',
+		'Authorization',
+		'X-Requested-With',
+		'X-CSRF-Token',
+		'Accept',
+		'Origin'
+	],
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
+};
+app.use(cors(corsOptions));
+
 // Use Helmet to secure the app by setting various HTTP headers
 app.use(helmet());
 
@@ -52,14 +69,6 @@ app.use(session({
 
 // Modern CSRF protection (génération des tokens)
 app.use(csrfGenerate);
-
-// CORS configuration
-const corsOptions = {
-	origin: ["http://localhost:3001", "http://localhost:3002"],
-	credentials: true, // Allow credentials (cookies)
-	optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
 
 // Logging middleware
 if (NODE_ENV !== "test") {

@@ -172,11 +172,6 @@ stella-ecommerce/
 4. **Open your browser**
    Navigate to **http://localhost:3001** to view the application
 
-### Test Accounts
-
-- **Admin**: `admin@stellaecommerce.com` / `adminpassword`
-- **Test User**: `test@test.com` / `test123`
-
 ### Development Commands
 
 - **Run server tests**: `cd server && npm test`
@@ -201,6 +196,26 @@ Contributions are welcome! To contribute to the project, here are the steps:
 
 ### Issues
 If there are any issues or improvement ideas, go to issues on the repository. I appreciate all feedback and suggestions.
+
+### Users and passwords
+
+  Administrateur :
+
+  - Email : admin@stellaecommerce.com 
+  - Mot de passe : adminpassword 
+
+  Clients :
+
+  1. Email : john@example.com
+    - Mot de passe : password123
+  2. Email : jane@example.com
+    - Mot de passe : password456
+  3. Email : alice@example.com
+    - Mot de passe : alicepass
+  4. Email : bob@example.com
+    - Mot de passe : bobpass
+  5. Email : carol@example.com
+    - Mot de passe : carolpass
 
 ## Roadmap
 

@@ -7,6 +7,7 @@ import type { User } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
+import { useNotificationStore } from "../stores/useNotificationStore";
 import FadeInSection from "./FadeInSection";
 import { SkeletonProfile, SkeletonList } from "./Skeleton";
 import { useLoadingState } from "../hooks/useLoadingState";
@@ -15,6 +16,7 @@ const Profile: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const { cartItems } = useCartStore();
   const { wishlistItems, fetchWishlist } = useWishlistStore();
+  const { showSuccess, showConfirm } = useNotificationStore();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -55,7 +57,7 @@ const Profile: React.FC = () => {
     e.preventDefault();
     try {
       await updateUserProfile({ firstName, lastName, email });
-      alert("Profil mis à jour avec succès !");
+      showSuccess("Profil mis à jour avec succès !");
       setIsEditingProfile(false);
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil", error);
@@ -63,18 +65,28 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm("Vous allez être déconnecté. Vous serez redirigé vers la page d'accueil.")) {
+  const handleLogout = async () => {
+    const confirmed = await showConfirm(
+      "Déconnexion",
+      "Vous allez être déconnecté. Vous serez redirigé vers la page d'accueil.",
+      "warning"
+    );
+    if (confirmed) {
       logout();
       navigate("/");
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
+    const confirmed = await showConfirm(
+      "Supprimer le compte",
+      "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+      "danger"
+    );
+    if (confirmed) {
       try {
         await deleteUserAccount();
-        alert("Compte supprimé avec succès.");
+        showSuccess("Compte supprimé avec succès.");
         logout();
         navigate("/");
       } catch (error) {

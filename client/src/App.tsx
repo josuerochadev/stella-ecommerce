@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import ShoppingCart from "./components/ShoppingCart";
 import Wishlist from "./components/Wishlist";
 import CookieBanner from "./components/CookieBanner";
+import NotificationProvider from "./components/NotificationProvider";
 
 // Lazy loading of pages
 const Home = React.lazy(() => import("./pages/Home"));
@@ -32,6 +33,7 @@ const App: React.FC = () => {
           <Header />
           <main className="flex-grow">
           <CookieBanner />
+          <NotificationProvider />
             <Suspense fallback={<div className="text-center text-text">Loading...</div>}>
               <Routes>
                 <Route path="/" element={<Home />} /> {/* Home page */}

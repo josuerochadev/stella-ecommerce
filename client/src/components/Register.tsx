@@ -2,6 +2,7 @@ import { useState, memo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { registerUser } from "../services/api";
+import { useNotificationStore } from "../stores/useNotificationStore";
 import FadeInSection from "./FadeInSection";
 
 const Register: React.FC = () => {
@@ -13,6 +14,7 @@ const Register: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { showError } = useNotificationStore();
 
   const from = location.state?.from || "/profile";
 
@@ -21,7 +23,10 @@ const Register: React.FC = () => {
 
     const alphanumRegex = /^[a-zA-Z0-9]+$/;
     if (!alphanumRegex.test(username)) {
-      alert("Le nom d'utilisateur doit contenir uniquement des caractères alphanumériques.");
+      showError(
+        "Nom d'utilisateur invalide",
+        "Le nom d'utilisateur doit contenir uniquement des caractères alphanumériques."
+      );
       return;
     }
 
