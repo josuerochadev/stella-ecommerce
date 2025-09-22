@@ -1,6 +1,7 @@
 // client/src/hooks/useFunFacts.ts
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { APP_CONSTANTS } from '../constants/app';
 
 const funFacts = [
   "La plus proche étoile de la Terre, après le Soleil, est Proxima Centauri, située à 4,2 années-lumière.",
@@ -10,20 +11,19 @@ const funFacts = [
   "La couleur d'une étoile indique sa température : les étoiles bleues sont les plus chaudes, les rouges les plus froides.",
 ];
 
-export const useFunFacts = (interval = 10000) => {
-  const [currentFact, setCurrentFact] = useState(funFacts[0]);
+export const useFunFacts = (interval = APP_CONSTANTS.FUN_FACTS_INTERVAL) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const currentFact = useMemo(() => funFacts[currentIndex], [currentIndex]);
+
+  const updateFact = useCallback(() => {
+    setCurrentIndex(prevIndex => (prevIndex + 1) % funFacts.length);
+  }, []);
 
   useEffect(() => {
-    let currentIndex = 0;
-    const updateFact = () => {
-      currentIndex = (currentIndex + 1) % funFacts.length;
-      setCurrentFact(funFacts[currentIndex]);
-    };
-
     const timer = setInterval(updateFact, interval);
-
     return () => clearInterval(timer);
-  }, [interval]);
+  }, [interval, updateFact]);
 
   return currentFact;
 };

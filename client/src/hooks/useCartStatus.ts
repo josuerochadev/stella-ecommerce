@@ -1,45 +1,66 @@
 // hooks/useCartStatus.ts
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { getCart, addToCart } from "../services/api";
+import { useErrorHandler } from "./useErrorHandler";
 import type { CartItem } from "../types";
 
 export const useCartStatus = (starid: number) => {
   const [inCart, setInCart] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { handleError, formatError } = useErrorHandler();
+
+  const isAuthenticated = useMemo(() => {
+    return !!localStorage.getItem("token");
+  }, []);
+
+  const checkIfInCart = useCallback(async () => {
+    if (!isAuthenticated || !starid) return;
+
+    try {
+      const cart = await getCart();
+      const isInCart = cart?.cartItems?.some((item: CartItem) => item.starId === starid);
+      setInCart(!!isInCart);
+      setError(null);
+    } catch (err) {
+      const apiError = handleError(err as Error);
+      if (apiError) {
+        setError(formatError(apiError));
+      }
+    }
+  }, [starid, isAuthenticated, handleError, formatError]);
 
   useEffect(() => {
-    const checkIfInCart = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    checkIfInCart();
+  }, [checkIfInCart]);
 
-      try {
-        const cart = await getCart();
-        const isInCart = cart?.cartItems?.some((item: CartItem) => item.starId === starid);
-        setInCart(!!isInCart);
-      } catch (_err) {
-        setError("Erreur de récupération du panier");
-      }
-    };
+  const handleAddToCart = useCallback(async () => {
+    if (!starid || typeof starid !== "number") {
+      setError("ID d'étoile invalide");
+      return;
+    }
 
-    if (starid) checkIfInCart();
-  }, [starid]);
-
-  const handleAddToCart = async () => {
     setLoading(true);
+    setError(null);
+
     try {
-      if (typeof starid === "number") {
-        await addToCart(starid, 1);
-      } else {
-        setError("Invalid star ID");
-      }
+      await addToCart(starid, 1);
       setInCart(true);
     } catch (err) {
-      setError(`Erreur lors de l'ajout au panier: ${(err as Error).message}`);
+      const apiError = handleError(err as Error);
+      if (apiError) {
+        setError(formatError(apiError));
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [starid, handleError, formatError]);
 
-  return { inCart, loading, error, handleAddToCart };
+  return {
+    inCart,
+    loading,
+    error,
+    handleAddToCart,
+    refetch: checkIfInCart
+  };
 };

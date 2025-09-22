@@ -8,12 +8,13 @@ import { useLatestStars } from "../hooks/useLatestStars";
 import { useFunFacts } from "../hooks/useFunFacts";
 import FadeInSection from "../components/FadeInSection";
 import { useAuth } from "../context/AuthContext";
+import { APP_CONSTANTS } from '../constants/app';
 
 
 const Home: React.FC = () => {
-  const { stars, loading, error } = useLatestStars(6);
+  const { stars, loading, error } = useLatestStars(APP_CONSTANTS.STARS_PER_PAGE_HOME);
   const currentFact = useFunFacts();
-  const { currentPhrase, fade } = useHeroPhrases(7000);
+  const { currentPhrase, fade } = useHeroPhrases(APP_CONSTANTS.HERO_PHRASES_INTERVAL);
 
   const { isAuthenticated } = useAuth();
 
@@ -77,7 +78,7 @@ const Home: React.FC = () => {
             <div className="relative px-8">
               {" "}
               <div className="flex overflow-y-auto pb-6 space-x-6 scrollbar-thumb-rounded scrollbar-thin scrollbar-thumb-gray-400">
-                {stars.slice(0, 10).map((star) => (
+                {stars.slice(0, APP_CONSTANTS.MAX_STARS_DISPLAY).map((star) => (
                   <div key={star.starid} className="min-w-[200px] flex justify-evenly">
                     <StarCard star={star} />
                   </div>
