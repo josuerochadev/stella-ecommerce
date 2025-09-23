@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { UserIcon, ShoppingCartIcon, HeartIcon } from "../utils/icons";
+import { UserIcon, ShoppingCartIcon, HeartIcon, StoreIcon } from "../utils/icons";
 import { useAuth } from "../context/AuthContext";
 import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
@@ -39,29 +39,29 @@ const UserMenu: React.FC = () => {
     </Link>
   );
 
-  if (isAuthenticated) {
-    return (
-      <>
-        <CartIcon />
-        <WishlistIcon />
+  return (
+    <>
+      {/* Catalog link */}
+      <Link to="/catalog" className="text-lg text-text hover:text-white" aria-label="Catalogue">
+        <StoreIcon className="text-xl" />
+      </Link>
+
+      <CartIcon />
+      <WishlistIcon />
+
+      {isAuthenticated ? (
         <Link to="/profile" className="text-lg text-text hover:text-white" aria-label="Profil">
           <UserIcon />
         </Link>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <CartIcon />
-      <WishlistIcon />
-      <Link
-        to="/auth"
-        className="text-lg text-text hover:text-white"
-        aria-label="Authentification"
-      >
-        <UserIcon />
-      </Link>
+      ) : (
+        <Link
+          to="/auth"
+          className="text-lg text-text hover:text-white"
+          aria-label="Authentification"
+        >
+          <UserIcon />
+        </Link>
+      )}
     </>
   );
 };
