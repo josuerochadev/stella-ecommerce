@@ -44,7 +44,7 @@ export const useFocusTrap = (isOpen: boolean) => {
 };
 
 // Hook pour gérer le focus sur les éléments dynamiques (listes, résultats de recherche)
-export const useFocusOnChange = <T>(
+export const useFocusOnChange = <T,>(
   data: T[],
   shouldFocus: boolean = false
 ) => {

@@ -51,7 +51,7 @@ export const useApiCall = <T = any>(options: UseApiCallOptions = {}) => {
       }));
 
       if (showGlobalError) {
-        handleError(error);
+        handleError(error as any);
       }
 
       if (onError) {
