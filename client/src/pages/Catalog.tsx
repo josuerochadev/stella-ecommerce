@@ -92,7 +92,7 @@ const Catalogue: React.FC = () => {
         setSearchResults([]);
       }
     }, 300),
-    []
+    [setLoading, setSuccess, setError]
   );
 
   // Debounced suggestions
@@ -110,7 +110,7 @@ const Catalogue: React.FC = () => {
         setSuggestions([]);
       }
     }, 150),
-    []
+    [setSuggestions]
   );
 
   // Load all stars and constellations on mount
@@ -126,12 +126,8 @@ const Catalogue: React.FC = () => {
         ).sort();
         setUniqueConstellations(constellations);
 
-        // Perform initial search if query exists
-        if (initialQuery) {
-          debouncedSearch(filters);
-        } else {
-          setSearchResults(response.data);
-        }
+        // Set initial results
+        setSearchResults(response.data);
       } catch (error) {
         console.error("Erreur chargement initial:", error);
         setError();
@@ -141,10 +137,29 @@ const Catalogue: React.FC = () => {
     loadInitialData();
   }, []);
 
-  // Search when filters change
+  // Handle initial query parameter
   useEffect(() => {
-    debouncedSearch(filters);
-  }, [filters, debouncedSearch]);
+    if (initialQuery && stars.length > 0) {
+      debouncedSearch(filters);
+    }
+  }, [initialQuery, stars.length]);
+
+  // Utiliser un état pour tracker si la recherche initiale a été faite
+  const [hasInitialSearched, setHasInitialSearched] = useState(false);
+
+  useEffect(() => {
+    if (stars.length > 0 && !hasInitialSearched) {
+      debouncedSearch(filters);
+      setHasInitialSearched(true);
+    }
+  }, [stars.length, hasInitialSearched]);
+
+  // Effet séparé pour les changements de filtres après la recherche initiale
+  useEffect(() => {
+    if (hasInitialSearched && stars.length > 0) {
+      debouncedSearch(filters);
+    }
+  }, [filters.query, filters.constellation, filters.priceMin, filters.priceMax, filters.magnitudeMin, filters.magnitudeMax, filters.sortBy, filters.sortOrder]);
 
   // Update suggestions when query changes
   useEffect(() => {
