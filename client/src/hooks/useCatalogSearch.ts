@@ -1,7 +1,7 @@
 // client/src/hooks/useCatalogSearch.ts
 // Responsabilité unique : Logique de recherche et API du catalogue
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { fetchStars, searchStars, filterStars } from '../services/api';
 import { debounce } from '../utils/debounce';
 import type { Star } from '../types';
@@ -83,11 +83,10 @@ export const useCatalogSearch = () => {
         setSearchResults(results);
       }
 
-      // Délai minimal pour éviter le flash de loading
-      setTimeout(() => setIsLoading(false), 200);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erreur lors de la recherche:", error);
-      setTimeout(() => setIsLoading(false), 200);
+      setIsLoading(false);
       setSearchResults([]);
     }
   }, []);
@@ -130,11 +129,10 @@ export const useCatalogSearch = () => {
 
   /**
    * Chargement des données initiales
-   * Responsabilité : Initialisation des étoiles et constellations
+   * Responsabilité : Initialisation des étoiles et constellations seulement
    */
   const loadInitialData = useCallback(async () => {
     try {
-      setIsLoading(true);
       const response = await fetchStars();
       setStars(response.data);
 
@@ -144,13 +142,9 @@ export const useCatalogSearch = () => {
       ).sort();
       setUniqueConstellations(constellations);
 
-      // Résultats initiaux
-      setSearchResults(response.data);
-      setTimeout(() => setIsLoading(false), 200);
+      // PAS de setSearchResults ici - sera fait par performSearch
     } catch (error) {
       console.error("Erreur chargement initial:", error);
-      setTimeout(() => setIsLoading(false), 200);
-      setSearchResults([]);
     }
   }, []);
 
@@ -159,8 +153,15 @@ export const useCatalogSearch = () => {
    * Responsabilité : Interface publique pour déclencher une recherche
    */
   const performSearch = useCallback((filters: SearchFilters) => {
-    debouncedSearch(filters);
-  }, [debouncedSearch]);
+    // Si pas de données initiales, les charger d'abord
+    if (stars.length === 0) {
+      loadInitialData().then(() => {
+        debouncedSearch(filters);
+      });
+    } else {
+      debouncedSearch(filters);
+    }
+  }, [debouncedSearch, stars.length, loadInitialData]);
 
   /**
    * Effectuer des suggestions
@@ -177,10 +178,7 @@ export const useCatalogSearch = () => {
     setHasInitialSearched(true);
   }, []);
 
-  // Chargement initial au montage
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
+  // Le chargement initial est maintenant géré par performSearch
 
   return {
     // État

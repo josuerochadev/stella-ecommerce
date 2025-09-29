@@ -52,12 +52,17 @@ const Catalogue: React.FC = () => {
     updateSearchURL(filters.query);
   }, [filters.query, updateSearchURL]);
 
-  // Recherche initiale et mise à jour sur changement de filtres
+  // Recherche initiale au montage seulement
   useEffect(() => {
     if (!hasInitialSearched) {
       performSearch(filters);
       markInitialSearchComplete();
-    } else {
+    }
+  }, [hasInitialSearched, performSearch, markInitialSearchComplete]);
+
+  // Recherche uniquement sur changement de filtres (après initialisation)
+  useEffect(() => {
+    if (hasInitialSearched) {
       performSearch(filters);
     }
   }, [
@@ -70,8 +75,7 @@ const Catalogue: React.FC = () => {
     filters.sortBy,
     filters.sortOrder,
     hasInitialSearched,
-    performSearch,
-    markInitialSearchComplete
+    performSearch
   ]);
 
   // Suggestions lors du changement de requête
