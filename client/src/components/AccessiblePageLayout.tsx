@@ -105,7 +105,7 @@ export const AccessibleSection: React.FC<AccessibleSectionProps> = ({
   className = '',
   id,
 }) => {
-  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+  const HeadingTag = `h${level}` as any;
   const sectionId = id || title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
   return (

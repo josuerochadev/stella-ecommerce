@@ -1,97 +1,21 @@
-// src/routes/usersRoutes.js
+// server/src/routes/usersRoutes.js
+// Responsabilité unique : Routes de gestion des profils utilisateur
+
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/userController");
-const { csrfValidate } = require("../middlewares/modernCsrf");
+const profileController = require("../controllers/profileController");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
-const validate = require("../middlewares/validate");
-const { registerSchema, loginSchema } = require("../validations/userValidation");
-const { authLimiter, createAccountLimiter } = require("../middlewares/rateLimiter");
 
 router.use(authenticateUser);
 
-/**
- * @swagger
- * /users/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RegisterUserInput'
- *     responses:
- *       201:
- *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Invalid input
- */
-router.post("/register", createAccountLimiter, validate(registerSchema), userController.register);
-
-/**
- * @swagger
- * /users/login:
- *   post:
- *     summary: User login
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LoginUserInput'
- *     responses:
- *       200:
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Invalid credentials
- */
-router.post("/login", authLimiter, validate(loginSchema), userController.login);
-
-/**
- * @swagger
- * /users/refresh:
- *   post:
- *     summary: Refresh access token
- *     tags: [Users]
- *     responses:
- *       200:
- *         description: Token refreshed successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 accessToken:
- *                   type: string
- *       401:
- *         description: Invalid or expired refresh token
- */
-router.post("/refresh", userController.refreshToken);
+// Routes d'authentification déplacées vers /auth
 
 /**
  * @swagger
  * /users/profile:
  *   get:
  *     summary: Get user profile
- *     tags: [Users]
+ *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -104,14 +28,14 @@ router.post("/refresh", userController.refreshToken);
  *       401:
  *         description: Unauthorized
  */
-router.get("/profile", requireAuth, userController.getUserProfile);
+router.get("/profile", requireAuth, profileController.getUserProfile);
 
 /**
  * @swagger
  * /users/profile:
  *   put:
  *     summary: Update user profile
- *     tags: [Users]
+ *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -130,40 +54,73 @@ router.get("/profile", requireAuth, userController.getUserProfile);
  *       401:
  *         description: Unauthorized
  */
-router.put("/profile", requireAuth, userController.updateProfile);
+router.put("/profile", requireAuth, profileController.updateProfile);
+
+// Route de logout déplacée vers /auth
 
 /**
  * @swagger
- * /users/logout:
- *   post:
- *     summary: User logout
- *     tags: [Users]
+ * /users/profile/stats:
+ *   get:
+ *     summary: Get user profile statistics
+ *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Logout successful
+ *         description: Profile statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 stats:
+ *                   type: object
+ *                   properties:
+ *                     totalOrders:
+ *                       type: integer
+ *                     completedOrders:
+ *                       type: integer
+ *                     totalReviews:
+ *                       type: integer
+ *                     averageRating:
+ *                       type: string
+ *                     cartItems:
+ *                       type: integer
+ *                     wishlistItems:
+ *                       type: integer
  *       401:
  *         description: Unauthorized
  */
-router.post("/logout", requireAuth, userController.logout);
+router.get("/profile/stats", requireAuth, profileController.getProfileStats);
 
 /**
  * @swagger
  * /users/me:
  *   delete:
  *     summary: Delete user account
- *     tags: [Users]
+ *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Account deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
  *       404:
  *         description: User not found
  *       500:
  *         description: Server error
  */
-router.delete("/me", requireAuth, userController.deleteAccount);
+router.delete("/me", requireAuth, profileController.deleteAccount);
 
 module.exports = router;

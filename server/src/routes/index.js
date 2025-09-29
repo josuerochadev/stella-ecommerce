@@ -4,6 +4,7 @@ const router = Router();
 const { authenticateUser } = require("../middlewares/authMiddleware");
 
 const starsRoutes = require("./starsRoutes");
+const authRoutes = require("./authRoutes");
 const usersRoutes = require("./usersRoutes");
 const ordersRoutes = require("./ordersRoutes");
 const cartRoutes = require("./cartRoutes");
@@ -14,11 +15,12 @@ const adminRoutes = require("./adminRoutes");
 
 // Public routes
 router.use("/stars", starsRoutes);
+router.use("/auth", authRoutes);
 
 // Authentication middleware applied to all routes requiring authentication
 router.use(authenticateUser);
 
-// User routes requiring authentication
+// Profile routes requiring authentication
 router.use("/users", usersRoutes);
 
 // Routes requiring authentication

@@ -1,9 +1,15 @@
 // server/src/routes/paymentRoutes.js
-// Routes pour la gestion des paiements
+// Responsabilité unique : Routes de gestion des paiements décomposées
 
 const express = require('express');
 const router = express.Router();
-const paymentController = require('../controllers/paymentController');
+
+// Import des contrôleurs spécialisés suivant le principe SRP
+const paymentProcessController = require('../controllers/paymentProcessController');
+const refundController = require('../controllers/refundController');
+const paymentStatsController = require('../controllers/paymentStatsController');
+const paymentWebhookController = require('../controllers/paymentWebhookController');
+
 const { csrfValidate } = require('../middlewares/modernCsrf');
 const { authenticateUser, requireAuth, requireRole } = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validate');
@@ -61,7 +67,7 @@ const webhookSchema = Joi.object({
  *                 currencies:
  *                   type: array
  */
-router.get('/methods', requireAuth, paymentController.getPaymentMethods);
+router.get('/methods', requireAuth, paymentProcessController.getPaymentMethods);
 
 /**
  * @swagger
@@ -106,7 +112,7 @@ router.post('/initiate',
   requireAuth,
   csrfValidate,
   validate(initiatePaymentSchema),
-  paymentController.initiatePayment
+  paymentProcessController.initiatePayment
 );
 
 /**
@@ -129,7 +135,7 @@ router.post('/initiate',
  *       404:
  *         description: Transaction not found
  */
-router.get('/status/:transactionId', requireAuth, paymentController.getPaymentStatus);
+router.get('/status/:transactionId', requireAuth, paymentProcessController.getPaymentStatus);
 
 /**
  * @swagger
@@ -164,12 +170,49 @@ router.get('/status/:transactionId', requireAuth, paymentController.getPaymentSt
  *       404:
  *         description: Transaction not found
  */
+// Routes de remboursement
 router.post('/refund/:transactionId',
   requireAuth,
   csrfValidate,
   validate(refundSchema),
-  paymentController.processRefund
+  refundController.processRefund
 );
+
+/**
+ * @swagger
+ * /payments/refunds:
+ *   get:
+ *     summary: Get user refund history
+ *     tags: [Refunds]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User refund history
+ */
+router.get('/refunds', requireAuth, refundController.getUserRefunds);
+
+/**
+ * @swagger
+ * /payments/refunds/{refundId}:
+ *   get:
+ *     summary: Get refund status
+ *     tags: [Refunds]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: refundId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Refund status
+ *       404:
+ *         description: Refund not found
+ */
+router.get('/refunds/:refundId', requireAuth, refundController.getRefundStatus);
 
 /**
  * @swagger
@@ -191,10 +234,69 @@ router.post('/refund/:transactionId',
  *       403:
  *         description: Admin access required
  */
+// Routes de statistiques (Admin uniquement)
 router.get('/stats',
   requireAuth,
   requireRole('admin'),
-  paymentController.getPaymentStats
+  paymentStatsController.getPaymentStats
+);
+
+/**
+ * @swagger
+ * /payments/stats/conversion:
+ *   get:
+ *     summary: Get payment conversion metrics (Admin only)
+ *     tags: [Payment Stats]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: number
+ *           default: 30
+ *     responses:
+ *       200:
+ *         description: Conversion metrics
+ *       403:
+ *         description: Admin access required
+ */
+router.get('/stats/conversion',
+  requireAuth,
+  requireRole('admin'),
+  paymentStatsController.getConversionMetrics
+);
+
+/**
+ * @swagger
+ * /payments/stats/revenue:
+ *   get:
+ *     summary: Get revenue report (Admin only)
+ *     tags: [Payment Stats]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: number
+ *           default: 30
+ *       - in: query
+ *         name: groupBy
+ *         schema:
+ *           type: string
+ *           enum: [hour, day, week, month]
+ *           default: day
+ *     responses:
+ *       200:
+ *         description: Revenue report
+ *       403:
+ *         description: Admin access required
+ */
+router.get('/stats/revenue',
+  requireAuth,
+  requireRole('admin'),
+  paymentStatsController.getRevenueReport
 );
 
 /**
@@ -223,12 +325,91 @@ router.get('/stats',
  *       403:
  *         description: Admin access required
  */
+// Routes de webhook
 router.post('/webhook/simulate',
   requireAuth,
   requireRole('admin'),
   csrfValidate,
   validate(webhookSchema),
-  paymentController.simulateWebhook
+  paymentWebhookController.simulateWebhook
+);
+
+/**
+ * @swagger
+ * /payments/webhook:
+ *   post:
+ *     summary: Handle payment webhooks from external providers
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventType:
+ *                 type: string
+ *               data:
+ *                 type: object
+ *               signature:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Webhook processed successfully
+ *       401:
+ *         description: Invalid signature
+ */
+router.post('/webhook', paymentWebhookController.handleWebhook);
+
+/**
+ * @swagger
+ * /payments/webhook/events/{transactionId}:
+ *   get:
+ *     summary: Get webhook events for a transaction
+ *     tags: [Webhooks]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: transactionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Webhook events history
+ *       404:
+ *         description: Transaction not found
+ */
+router.get('/webhook/events/:transactionId',
+  requireAuth,
+  paymentWebhookController.getWebhookEvents
+);
+
+/**
+ * @swagger
+ * /payments/webhook/retry/{webhookId}:
+ *   post:
+ *     summary: Retry a failed webhook (Admin only)
+ *     tags: [Webhooks]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: webhookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Webhook retry initiated
+ *       403:
+ *         description: Admin access required
+ */
+router.post('/webhook/retry/:webhookId',
+  requireAuth,
+  requireRole('admin'),
+  paymentWebhookController.retryWebhook
 );
 
 module.exports = router;

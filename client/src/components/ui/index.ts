@@ -4,7 +4,7 @@ export { default as Button } from '../Button';
 export { default as FormInput } from '../FormInput';
 export { default as FormContainer } from '../FormContainer';
 export { default as CollectionButton } from '../CollectionButton';
-export { default as AccessibleModal, Modal } from '../AccessibleModal';
+export { default as AccessibleModal } from '../AccessibleModal';
 export { default as StatusMessage } from '../StatusMessage';
 export { default as SkipLinks } from '../SkipLinks';
 

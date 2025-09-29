@@ -3,146 +3,19 @@
 
 const { User, Order, Star, Review, sequelize } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
-const { paymentService } = require('../services/paymentService');
+const { DashboardService } = require('../services/dashboardService');
 const { Op } = require('sequelize');
 
 /**
  * Dashboard général avec statistiques
+ * Responsabilité unique : délégation au service et gestion des erreurs
  */
 exports.getDashboard = async (req, res, next) => {
   try {
     const { period = 30 } = req.query;
-    const days = parseInt(period);
-    const fromDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-    // Statistiques parallèles pour performance
-    const [
-      totalUsers,
-      totalOrders,
-      totalRevenue,
-      totalStars,
-      recentOrders,
-      topStars,
-      userGrowth,
-      paymentStats
-    ] = await Promise.all([
-      // Nombre total d'utilisateurs
-      User.count(),
-
-      // Nombre total de commandes dans la période
-      Order.count({
-        where: { createdAt: { [Op.gte]: fromDate } }
-      }),
-
-      // Revenus totaux
-      Order.sum('total_amount', {
-        where: {
-          status: ['paid', 'shipped'],
-          createdAt: { [Op.gte]: fromDate }
-        }
-      }),
-
-      // Nombre total d'étoiles
-      Star.count(),
-
-      // Commandes récentes avec détails
-      Order.findAll({
-        limit: 10,
-        order: [['createdAt', 'DESC']],
-        include: [
-          {
-            model: User,
-            attributes: ['firstName', 'lastName', 'email']
-          }
-        ],
-        attributes: ['id', 'status', 'total_amount', 'payment_method', 'createdAt']
-      }),
-
-      // Étoiles les plus populaires
-      sequelize.query(`
-        SELECT s.name, s.constellation, s.price, COUNT(os.star_id) as sales_count
-        FROM stars s
-        LEFT JOIN order_stars os ON s.starid = os.star_id
-        LEFT JOIN orders o ON os.order_id = o.id AND o.status IN ('paid', 'shipped')
-        WHERE o.created_at >= :fromDate
-        GROUP BY s.starid, s.name, s.constellation, s.price
-        ORDER BY sales_count DESC
-        LIMIT 5
-      `, {
-        replacements: { fromDate },
-        type: sequelize.QueryTypes.SELECT
-      }),
-
-      // Croissance des utilisateurs (par jour sur les 7 derniers jours)
-      sequelize.query(`
-        SELECT DATE(created_at) as date, COUNT(*) as new_users
-        FROM users
-        WHERE created_at >= :sevenDaysAgo
-        GROUP BY DATE(created_at)
-        ORDER BY date DESC
-      `, {
-        replacements: { sevenDaysAgo: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-        type: sequelize.QueryTypes.SELECT
-      }),
-
-      // Statistiques de paiement simulées
-      paymentService.generatePaymentStats(days)
-    ]);
-
-    // Calculer les métriques clés
-    const averageOrderValue = totalOrders > 0 ? (totalRevenue || 0) / totalOrders : 0;
-
-    // Répartition des commandes par statut
-    const ordersByStatus = await Order.findAll({
-      attributes: [
-        'status',
-        [sequelize.fn('COUNT', '*'), 'count'],
-        [sequelize.fn('SUM', sequelize.col('total_amount')), 'total']
-      ],
-      where: { createdAt: { [Op.gte]: fromDate } },
-      group: ['status']
-    });
-
-    const dashboard = {
-      period: `${days} days`,
-      overview: {
-        totalUsers,
-        totalOrders,
-        totalRevenue: parseFloat(totalRevenue) || 0,
-        totalStars,
-        averageOrderValue: Math.round(averageOrderValue * 100) / 100,
-        conversionRate: totalUsers > 0 ? Math.round((totalOrders / totalUsers) * 100 * 100) / 100 : 0
-      },
-      recentActivity: {
-        orders: recentOrders.map(order => ({
-          id: order.id,
-          customer: `${order.User.firstName} ${order.User.lastName}`,
-          email: order.User.email,
-          amount: parseFloat(order.total_amount),
-          status: order.status,
-          paymentMethod: order.payment_method,
-          date: order.createdAt
-        })),
-        topStars: topStars.map(star => ({
-          name: star.name,
-          constellation: star.constellation,
-          price: parseFloat(star.price),
-          salesCount: parseInt(star.sales_count)
-        }))
-      },
-      analytics: {
-        userGrowth: userGrowth.map(day => ({
-          date: day.date,
-          newUsers: parseInt(day.new_users)
-        })),
-        ordersByStatus: ordersByStatus.map(status => ({
-          status: status.status,
-          count: parseInt(status.dataValues.count),
-          total: parseFloat(status.dataValues.total) || 0
-        })),
-        paymentStats: paymentStats
-      }
-    };
+    // Délégation complète au service - respect du principe KISS
+    const dashboard = await DashboardService.generateDashboard(period);
 
     res.json({
       success: true,
