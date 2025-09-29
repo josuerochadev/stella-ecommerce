@@ -1,7 +1,6 @@
 // client/src/hooks/useStarDetail.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { fetchStarById, fetchStars } from "../services/api";
-import { useErrorHandler } from "./useErrorHandler";
 import type { Star } from "../types";
 
 export const useStarDetail = (id: number | undefined) => {
@@ -9,7 +8,6 @@ export const useStarDetail = (id: number | undefined) => {
   const [relatedStars, setRelatedStars] = useState<Star[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { handleError, formatError } = useErrorHandler();
 
   const isValidId = useMemo(() => {
     return id !== undefined && !Number.isNaN(id) && id > 0;
@@ -46,16 +44,12 @@ export const useStarDetail = (id: number | undefined) => {
       }
 
     } catch (err) {
-      const apiError = handleError(err as Error);
-      if (apiError) {
-        setError(formatError(apiError));
-      } else {
-        setError("Impossible de charger les détails de l'étoile");
-      }
+      console.error("Erreur lors du chargement des détails de l'étoile:", err);
+      setError("Impossible de charger les détails de l'étoile");
     } finally {
       setLoading(false);
     }
-  }, [id, isValidId, handleError, formatError]);
+  }, [id, isValidId]);
 
   useEffect(() => {
     getStarDetail();

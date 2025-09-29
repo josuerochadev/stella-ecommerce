@@ -21,7 +21,7 @@ exports.getStarById = async (req, res, next) => {
       where: { starid: req.params.starid },
     });
     if (star) {
-      res.json(star);
+      res.json({ data: star });
     } else {
       next(new AppError("Star not found", 404));
     }
