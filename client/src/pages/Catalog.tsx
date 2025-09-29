@@ -60,7 +60,19 @@ const Catalogue: React.FC = () => {
     } else {
       performSearch(filters);
     }
-  }, [filters, hasInitialSearched, performSearch, markInitialSearchComplete]);
+  }, [
+    filters.query,
+    filters.constellation,
+    filters.priceMin,
+    filters.priceMax,
+    filters.magnitudeMin,
+    filters.magnitudeMax,
+    filters.sortBy,
+    filters.sortOrder,
+    hasInitialSearched,
+    performSearch,
+    markInitialSearchComplete
+  ]);
 
   // Suggestions lors du changement de requête
   useEffect(() => {
