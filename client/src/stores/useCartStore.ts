@@ -1,6 +1,7 @@
 // client/src/stores/useCartStore.ts
 import { create } from "zustand";
 import { getCart, addToCart, removeFromCart } from "../services/api";
+import { transformCartItems } from "../utils/dataTransformers";
 import type { CartItem } from "../types";
 
 interface CartState {
@@ -22,7 +23,9 @@ export const useCartStore = create<CartState>((set) => ({
     set({ loading: true, error: null });
     try {
       const cart = await getCart();
-      set({ cartItems: cart.cartItems, loading: false });
+      // Normalisation des données via transformateur
+      const transformedCartItems = transformCartItems(cart.cartItems || []);
+      set({ cartItems: transformedCartItems, loading: false });
     } catch (_error) {
       set({ error: "Erreur lors de la récupération du panier.", loading: false });
     }
@@ -32,7 +35,9 @@ export const useCartStore = create<CartState>((set) => ({
     try {
       await addToCart(starId, quantity);
       const cart = await getCart();
-      set({ cartItems: cart.cartItems, error: null });
+      // Normalisation cohérente des données
+      const transformedCartItems = transformCartItems(cart.cartItems || []);
+      set({ cartItems: transformedCartItems, error: null });
     } catch (_error) {
       set({ error: "Erreur lors de l'ajout au panier." });
     }
@@ -42,7 +47,9 @@ export const useCartStore = create<CartState>((set) => ({
     try {
       await removeFromCart(cartItemId);
       const cart = await getCart();
-      set({ cartItems: cart.cartItems, error: null });
+      // Normalisation cohérente des données
+      const transformedCartItems = transformCartItems(cart.cartItems || []);
+      set({ cartItems: transformedCartItems, error: null });
     } catch (_error) {
       set({ error: "Erreur lors de la suppression de l'article du panier." });
     }
