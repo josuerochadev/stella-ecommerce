@@ -1,9 +1,8 @@
 // client/src/hooks/useCatalogSearch.ts
 // Responsabilité unique : Logique de recherche et API du catalogue
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { fetchStars, searchStars, filterStars } from '../services/api';
-import { useLoadingState } from './useLoadingState';
 import { debounce } from '../utils/debounce';
 import type { Star } from '../types';
 import type { SearchFilters } from './useCatalogFilters';
@@ -50,73 +49,83 @@ export const useCatalogSearch = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [uniqueConstellations, setUniqueConstellations] = useState<string[]>([]);
   const [hasInitialSearched, setHasInitialSearched] = useState(false);
-
-  const { isLoading, setLoading, setSuccess, setError } = useLoadingState({
-    minLoadingTime: 300
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
-   * Recherche avec debouncing
+   * Fonction de recherche (sans debouncing)
    * Responsabilité : Orchestration recherche/filtrage avec gestion d'erreur
    */
-  const debouncedSearch = useCallback(
-    debounce(async (searchFilters: SearchFilters) => {
-      try {
-        setLoading();
+  const executeSearch = useCallback(async (searchFilters: SearchFilters) => {
+    try {
+      setIsLoading(true);
 
-        if (!searchFilters.query.trim()) {
-          // Pas de requête : utilise l'API de filtrage avancé
-          const response = await filterStars({
-            constellation: searchFilters.constellation.length > 0 ? searchFilters.constellation : undefined,
-            minPrice: searchFilters.priceMin ?? undefined,
-            maxPrice: searchFilters.priceMax ?? undefined,
-            minMagnitude: searchFilters.magnitudeMin ?? undefined,
-            maxMagnitude: searchFilters.magnitudeMax ?? undefined,
-            sortBy: searchFilters.sortBy === "relevance" ? "name" :
-                   searchFilters.sortBy === "distance" ? "distanceFromEarth" :
-                   searchFilters.sortBy === "popularity" ? "magnitude" :
-                   searchFilters.sortBy === "newest" ? "createdAt" :
-                   searchFilters.sortBy,
-            sortOrder: searchFilters.sortOrder.toUpperCase() as 'ASC' | 'DESC',
-            limit: 100
-          });
-          setSearchResults(response.data);
-        } else {
-          // Recherche avec requête, puis filtrage côté client
-          const searchResponse = await searchStars(searchFilters.query);
-          const results = applyFilters(searchResponse, searchFilters);
-          setSearchResults(results);
-        }
-
-        setSuccess();
-      } catch (error) {
-        console.error("Erreur lors de la recherche:", error);
-        setError();
-        setSearchResults([]);
+      if (!searchFilters.query.trim()) {
+        // Pas de requête : utilise l'API de filtrage avancé
+        const response = await filterStars({
+          constellation: searchFilters.constellation.length > 0 ? searchFilters.constellation : undefined,
+          minPrice: searchFilters.priceMin ?? undefined,
+          maxPrice: searchFilters.priceMax ?? undefined,
+          minMagnitude: searchFilters.magnitudeMin ?? undefined,
+          maxMagnitude: searchFilters.magnitudeMax ?? undefined,
+          sortBy: searchFilters.sortBy === "relevance" ? "name" :
+                 searchFilters.sortBy === "distance" ? "distanceFromEarth" :
+                 searchFilters.sortBy === "popularity" ? "magnitude" :
+                 searchFilters.sortBy === "newest" ? "createdAt" :
+                 searchFilters.sortBy,
+          sortOrder: searchFilters.sortOrder.toUpperCase() as 'ASC' | 'DESC',
+          limit: 100
+        });
+        setSearchResults(response.data);
+      } else {
+        // Recherche avec requête, puis filtrage côté client
+        const searchResponse = await searchStars(searchFilters.query);
+        const results = applyFilters(searchResponse, searchFilters);
+        setSearchResults(results);
       }
-    }, 300),
-    [setLoading, setSuccess, setError]
+
+      // Délai minimal pour éviter le flash de loading
+      setTimeout(() => setIsLoading(false), 200);
+    } catch (error) {
+      console.error("Erreur lors de la recherche:", error);
+      setTimeout(() => setIsLoading(false), 200);
+      setSearchResults([]);
+    }
+  }, []);
+
+  /**
+   * Version debounced de la recherche (mémorisée)
+   * Responsabilité : Debouncing stable
+   */
+  const debouncedSearch = useMemo(
+    () => debounce(executeSearch, 300),
+    [executeSearch]
   );
 
   /**
-   * Suggestions avec debouncing
-   * Responsabilité : Gestion des suggestions de recherche
+   * Fonction de suggestions (sans debouncing)
+   * Responsabilité : Recherche de suggestions
    */
-  const debouncedSuggestions = useCallback(
-    debounce(async (query: string) => {
-      if (query.trim()) {
-        try {
-          const results = await searchStars(query);
-          setSuggestions(results.slice(0, 5));
-        } catch (error) {
-          console.error("Erreur suggestions:", error);
-          setSuggestions([]);
-        }
-      } else {
+  const executeSuggestions = useCallback(async (query: string) => {
+    if (query.trim()) {
+      try {
+        const results = await searchStars(query);
+        setSuggestions(results.slice(0, 5));
+      } catch (error) {
+        console.error("Erreur suggestions:", error);
         setSuggestions([]);
       }
-    }, 150),
-    []
+    } else {
+      setSuggestions([]);
+    }
+  }, []);
+
+  /**
+   * Version debounced des suggestions (mémorisée)
+   * Responsabilité : Debouncing stable pour suggestions
+   */
+  const debouncedSuggestions = useMemo(
+    () => debounce(executeSuggestions, 150),
+    [executeSuggestions]
   );
 
   /**
@@ -125,6 +134,7 @@ export const useCatalogSearch = () => {
    */
   const loadInitialData = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await fetchStars();
       setStars(response.data);
 
@@ -136,11 +146,13 @@ export const useCatalogSearch = () => {
 
       // Résultats initiaux
       setSearchResults(response.data);
+      setTimeout(() => setIsLoading(false), 200);
     } catch (error) {
       console.error("Erreur chargement initial:", error);
-      setError();
+      setTimeout(() => setIsLoading(false), 200);
+      setSearchResults([]);
     }
-  }, [setError]);
+  }, []);
 
   /**
    * Effectuer une recherche
