@@ -50,7 +50,7 @@ export class AuthService {
    * Responsabilité : Création de compte utilisateur
    */
   static async register(userData: RegisterUserData): Promise<RegisterResponse> {
-    const response = await httpClient.post<RegisterResponse>("/users/register", userData);
+    const response = await httpClient.post<RegisterResponse>("/auth/register", userData);
     return response.data;
   }
 
@@ -65,7 +65,7 @@ export class AuthService {
       accessToken: string;
       userId: number;
       role: string;
-    }>("/users/login", loginData);
+    }>("/auth/login", loginData);
     return response.data;
   }
 
@@ -74,7 +74,7 @@ export class AuthService {
    * Responsabilité : Invalidation de session
    */
   static async logout(): Promise<ApiResponse<null>> {
-    const response = await httpClient.post<ApiResponse<null>>("/users/logout");
+    const response = await httpClient.post<ApiResponse<null>>("/auth/logout");
     return response.data;
   }
 

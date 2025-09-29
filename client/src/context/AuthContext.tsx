@@ -7,6 +7,7 @@ import { useWishlistStore } from "../stores/useWishlistStore";
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const resetCart = useCartStore((state) => state.resetCart);
   const resetWishlist = useWishlistStore((state) => state.resetWishlist);
 
@@ -26,14 +28,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      useCartStore.getState().fetchCart();
-      useWishlistStore.getState().fetchWishlist();
+      // Différer le chargement pour s'assurer que tout est prêt
+      setTimeout(() => {
+        useCartStore.getState().fetchCart();
+        useWishlistStore.getState().fetchWishlist();
+        setIsLoading(false);
+      }, 100);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
+    setIsLoading(true);
 
     // Différer les appels aux stores pour éviter les re-renders immédiats
     setTimeout(() => {
@@ -42,6 +51,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         useWishlistStore.getState().fetchWishlist();
       } catch (error) {
         console.warn("Error fetching cart/wishlist after login:", error);
+      } finally {
+        setIsLoading(false);
       }
     }, 100);
   };
@@ -49,12 +60,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setIsLoading(false);
     resetCart();
     resetWishlist();
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

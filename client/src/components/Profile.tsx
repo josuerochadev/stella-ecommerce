@@ -10,44 +10,38 @@ import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
 import FadeInSection from "./FadeInSection";
 import { SkeletonProfile } from "./Skeleton";
-import { useLoadingState } from "../hooks/useLoadingState";
 import UserProfileSection from "./UserProfileSection";
 import ProfileCartSection from "./ProfileCartSection";
 import ProfileWishlistSection from "./ProfileWishlistSection";
 
 const Profile: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { cartItems } = useCartStore();
   const { wishlistItems, fetchWishlist } = useWishlistStore();
   const [user, setUser] = useState<User | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  const { isLoading: isLoadingProfile, setLoading, setSuccess, setError } = useLoadingState({
-    minLoadingTime: 600
-  });
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      if (!isAuthenticated || authLoading) {
+        return;
+      }
+
       try {
-        setLoading();
+        setLoadingProfile(true);
         const userData: User = await getUserProfile();
         setUser(userData);
         setLoadingProfile(false);
-        setSuccess();
       } catch (error) {
         console.error("Erreur lors de la récupération du profil utilisateur", error);
         setLoadingProfile(false);
-        setError();
       }
     };
 
-    if (isAuthenticated) {
-      fetchUserProfile();
-      fetchWishlist();
-    }
-  }, [isAuthenticated, fetchWishlist, setLoading, setSuccess, setError]);
+    fetchUserProfile();
+  }, [isAuthenticated, authLoading]);
 
   const handleProfileUpdate = (updatedUser: Partial<User>) => {
     if (user) {
@@ -55,7 +49,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (loadingProfile || isLoadingProfile) {
+  if (authLoading || loadingProfile) {
     return (
       <div className="container mx-auto pt-20 px-4 max-w-md">
         <FadeInSection>
