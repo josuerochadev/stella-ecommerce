@@ -1,102 +1,83 @@
 // client/src/components/ShoppingCart.tsx
+// Responsabilité unique : Orchestrateur et affichage principal du panier
 
 import { useEffect, memo } from "react";
-import { useCartStore } from "../stores/useCartStore";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import StarCard from "./StarCard";
+import { useCartActions } from "../hooks/useCartActions";
+import { CartCalculations } from "../utils/cartCalculations";
+import CartEmptyState from "./CartEmptyState";
+import CartItemsList from "./CartItemsList";
+import CartSummary from "./CartSummary";
 
+/**
+ * Composant principal du panier d'achat
+ * Responsabilité unique : Orchestration de l'affichage du panier
+ */
 const ShoppingCart: React.FC = () => {
-  const { cartItems, loading, error, fetchCart, removeItem } = useCartStore();
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const {
+    cartItems,
+    loading,
+    error,
+    isAuthenticated,
+    handleRemoveFromCart,
+    initializeCart,
+    navigateToAuth,
+    navigateToCheckout,
+  } = useCartActions();
 
+  // Initialiser le panier au chargement
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchCart();
-    }
-  }, [fetchCart, isAuthenticated]);
+    initializeCart();
+  }, [initializeCart]);
 
-  const handleRemoveFromCart = async (cartItemId: number) => {
-    try {
-      await removeItem(cartItemId);
-    } catch (error) {
-      console.error("Erreur lors de la suppression du panier:", error);
-    }
-  };
-
+  // États de chargement et d'erreur
   if (loading) {
-    return <p>Chargement du panier...</p>;
+    return (
+      <div className="container mx-auto pt-20 px-4 py-8 text-center">
+        <p>Chargement du panier...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-red-600">{error}</p>;
-  }
-
-  // Si l'utilisateur n'est pas authentifié
-  if (!isAuthenticated) {
     return (
       <div className="container mx-auto pt-20 px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Votre panier est vide</h1>
-        <p className="text-lg mb-6 font-serif">
-          Vous n'êtes pas connecté. Connectez-vous ou inscrivez-vous pour commencer à ajouter des étoiles à votre panier !
-        </p>
-        <div className="flex justify-center space-x-4">
-          <button
-            type="button"
-            onClick={() => navigate('/auth', { state: { from: '/cart', mode: 'login' } })}
-            className="btn"
-          >
-            Se connecter
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/auth', { state: { from: '/cart', mode: 'register' } })}
-            className="btn"
-          >
-            S'inscrire
-          </button>
-        </div>
+        <p className="text-red-600">{error}</p>
       </div>
     );
   }
 
-  // Si l'utilisateur est authentifié mais que le panier est vide
-  if (cartItems.length === 0) {
+  // États vides du panier
+  if (!isAuthenticated || CartCalculations.isEmpty(cartItems)) {
     return (
-      <div className="container mx-auto pt-20 px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Votre panier est vide</h1>
-        <p className="text-lg mb-6 font-serif">
-          Votre panier est actuellement vide. Parcourez notre catalogue pour ajouter des étoiles à votre panier !
-        </p>
-        <Link to="/catalog" className="btn">
-          Parcourir le catalogue
-        </Link>
-      </div>
+      <CartEmptyState
+        isAuthenticated={isAuthenticated}
+        onLoginClick={() => navigateToAuth('login')}
+        onRegisterClick={() => navigateToAuth('register')}
+      />
     );
   }
 
-  // Si l'utilisateur est authentifié et que le panier contient des articles
+  // Panier avec articles
   return (
     <div className="container mx-auto pt-20 px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">Votre Panier</h1>
-      <div>
-        {cartItems.map((item) => (
-          item.Star && (
-            <StarCard
-              key={item.id}
-              star={item.Star}
-              quantity={item.quantity}
-              context="cart"
-              onRemove={() => handleRemoveFromCart(item.id)}
-            />
-          )
-        ))}
-        <p className="text-xl font-bold mt-6">
-          Total :{" "}
-          {cartItems.reduce((total, item) => total + item.quantity * item.Star.price, 0).toFixed(2)}{" "}
-          €
-        </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Liste des articles */}
+        <div className="lg:col-span-2">
+          <CartItemsList
+            cartItems={cartItems}
+            onRemoveItem={handleRemoveFromCart}
+          />
+        </div>
+
+        {/* Résumé du panier */}
+        <div className="lg:col-span-1">
+          <CartSummary
+            cartItems={cartItems}
+            onCheckout={navigateToCheckout}
+          />
+        </div>
       </div>
     </div>
   );

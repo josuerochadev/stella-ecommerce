@@ -1,6 +1,7 @@
 // client/src/stores/useWishlistStore.ts
 import { create } from "zustand";
 import { getWishlist, addToWishlist, removeFromWishlist } from "../services/api";
+import { transformWishlistItems } from "../utils/dataTransformers";
 import type { WishlistItem } from "../types";
 
 interface WishlistState {
@@ -22,14 +23,9 @@ export const useWishlistStore = create<WishlistState>((set) => ({
     set({ loading: true, error: null });
     try {
       const { wishlist } = await getWishlist();
-      const transformedWishlist = wishlist.map((item) => ({
-        ...item,
-        Star: {
-          ...item.Star,
-          price: typeof item.Star.price === "string" ? Number.parseFloat(item.Star.price) : item.Star.price,
-        },
-      }));
-      set({ wishlistItems: transformedWishlist || [], loading: false });
+      // Délégation au transformateur spécialisé
+      const transformedWishlist = transformWishlistItems(wishlist || []);
+      set({ wishlistItems: transformedWishlist, loading: false });
     } catch (_error) {
       set({ error: "Erreur lors de la récupération de la wishlist.", loading: false });
     }

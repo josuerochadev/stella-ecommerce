@@ -9,7 +9,8 @@ export const useLatestStars = (limit = 6) => {
   const [stars, setStars] = useState<Star[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { handleError, formatError } = useErrorHandler();
+  const { handleError } = useErrorHandler();
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const getStars = useCallback(async () => {
     try {
@@ -25,20 +26,21 @@ export const useLatestStars = (limit = 6) => {
         throw new Error("Unexpected response format");
       }
     } catch (err) {
-      const apiError = handleError(err as Error);
-      if (apiError) {
-        setError(formatError(apiError));
-      } else {
-        setError("Une erreur inattendue est survenue");
-      }
+      const errorMessage = err instanceof Error ? err.message : "Une erreur inattendue est survenue";
+      setError(errorMessage);
+      handleError(err as Error);
     } finally {
       setLoading(false);
+      setHasLoaded(true);
     }
-  }, [limit, handleError, formatError]);
+  }, [limit, handleError]);
 
+  // Charger seulement une fois au montage du composant
   useEffect(() => {
-    getStars();
-  }, [getStars]);
+    if (!hasLoaded) {
+      getStars();
+    }
+  }, [hasLoaded, getStars]); // Ajouter getStars pour respecter les dépendances exhaustives
 
   return { stars, loading, error, refetch: getStars };
 };

@@ -110,6 +110,12 @@ const sendErrorProd = (err, res) => {
   }
 };
 
+// Import du Strategy Manager
+const { ErrorStrategyManager } = require('./errorStrategies');
+
+// Instance singleton du gestionnaire de stratégies
+const errorStrategyManager = new ErrorStrategyManager();
+
 const errorHandler = (err, _req, res, _next) => {
   console.error("Error caught in errorHandler:", err);
 
@@ -122,21 +128,8 @@ const errorHandler = (err, _req, res, _next) => {
     let error = { ...err };
     error.message = err.message;
 
-    if (error.name === "SequelizeValidationError") {
-      error = handleSequelizeValidationError(error);
-    } else if (error.name === "SequelizeUniqueConstraintError") {
-      error = handleDuplicateFieldsDB(error);
-    } else if (error.name === "JsonWebTokenError") {
-      error = handleJWTError();
-    } else if (error.name === "TokenExpiredError") {
-      error = handleJWTExpiredError();
-    } else if (error.name === "SequelizeDatabaseError") {
-      error = handleSequelizeDatabaseError(error);
-    } else if (error.name === "ValidationError") {
-      error = handleValidationError(error);
-    } else if (error.message && error.message.includes('Too Many Requests')) {
-      error = handleRateLimitError();
-    }
+    // Délégation au Strategy Manager - élimination de la logique conditionnelle
+    error = errorStrategyManager.handleError(error);
 
     sendErrorProd(error, res);
   }
@@ -145,6 +138,8 @@ const errorHandler = (err, _req, res, _next) => {
 module.exports = {
   AppError,
   errorHandler,
+  errorStrategyManager, // Exposer le manager pour extensibilité
+  // Fonctions legacy maintenues pour compatibilité
   handleSequelizeValidationError,
   handleDuplicateFieldsDB,
   handleJWTError,

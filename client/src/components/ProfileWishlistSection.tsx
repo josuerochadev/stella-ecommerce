@@ -1,0 +1,34 @@
+// client/src/components/ProfileWishlistSection.tsx
+// Responsabilité unique : Affichage de la wishlist dans le profil
+
+import { memo } from "react";
+import type { WishlistItem } from "../types";
+
+interface ProfileWishlistSectionProps {
+  wishlistItems: WishlistItem[];
+}
+
+const ProfileWishlistSection: React.FC<ProfileWishlistSectionProps> = ({ wishlistItems }) => {
+  return (
+    <div className="mt-8">
+      <h2 className="text-2xl font-bold">Votre liste d'envies</h2>
+      {wishlistItems && wishlistItems.length > 0 ? (
+        wishlistItems.map((item) =>
+          item.Star ? (
+            <div key={item.id} className="mb-4">
+              <h3 className="text-xl">{item.Star.name}</h3>
+            </div>
+          ) : (
+            <div key={item.id}>
+              <p>L'étoile associée à cet article est introuvable.</p>
+            </div>
+          ),
+        )
+      ) : (
+        <p>Votre liste d'envies est vide.</p>
+      )}
+    </div>
+  );
+};
+
+export default memo(ProfileWishlistSection);

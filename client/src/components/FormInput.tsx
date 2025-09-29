@@ -1,0 +1,82 @@
+import { forwardRef } from 'react';
+
+interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  description?: string;
+  isRequired?: boolean;
+  showRequiredIndicator?: boolean;
+  variant?: 'default' | 'search';
+}
+
+const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
+  label,
+  error,
+  description,
+  isRequired = false,
+  showRequiredIndicator = true,
+  variant = 'default',
+  className = '',
+  id,
+  ...props
+}, ref) => {
+  const inputId = id || `input-${Math.random().toString(36).substring(2, 15)}`;
+  const errorId = error ? `${inputId}-error` : undefined;
+  const descriptionId = description ? `${inputId}-description` : undefined;
+
+  const baseClasses = {
+    default: 'w-full p-3 rounded-md bg-primary text-text focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-colors duration-200',
+    search: 'w-full p-2 rounded-md bg-secondary text-text focus:outline-none focus:ring-2 focus:ring-accent border border-primary/20'
+  };
+
+  const inputClasses = `
+    ${baseClasses[variant]}
+    ${error ? 'border-red-500 focus:ring-red-500' : ''}
+    ${className}
+  `.trim();
+
+  return (
+    <div className="space-y-2">
+      {label && (
+        <label htmlFor={inputId} className="block text-sm font-serif text-text">
+          {label}
+          {isRequired && showRequiredIndicator && (
+            <span aria-label="champ requis" className="text-red-500 ml-1">*</span>
+          )}
+        </label>
+      )}
+
+      <input
+        ref={ref}
+        id={inputId}
+        className={inputClasses}
+        required={isRequired}
+        aria-required={isRequired}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
+        {...props}
+      />
+
+      {description && (
+        <div id={descriptionId} className="text-sm text-text/70">
+          {description}
+        </div>
+      )}
+
+      {error && (
+        <div
+          id={errorId}
+          className="text-sm text-red-500"
+          role="alert"
+          aria-live="polite"
+        >
+          {error}
+        </div>
+      )}
+    </div>
+  );
+});
+
+FormInput.displayName = 'FormInput';
+
+export default FormInput;

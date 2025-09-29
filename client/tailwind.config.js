@@ -15,6 +15,7 @@ module.exports = {
         secondary: "#1E1326",
         text: "#AEC9FF",
         special: "#FFB347",
+        accent: "#FFB347", // Alias pour 'special' pour compatibilité avec l'accessibilité
       },
       backgroundImage: {
         "background-default": "linear-gradient(90deg, #3D2A54 0%, #1E1326 100%)",

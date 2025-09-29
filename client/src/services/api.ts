@@ -1,6 +1,18 @@
-import axios from "axios";
-import type { AxiosInstance } from "axios";
-import type {
+// client/src/services/api.ts
+// Responsabilité unique : Orchestrateur et point d'entrée unifié pour tous les services API
+
+// Import des services spécialisés suivant le principe SRP
+export * from "./httpClient";
+export * from "./authService";
+export * from "./userService";
+export * from "./cartService";
+export * from "./wishlistService";
+export * from "./orderService";
+export * from "./starService";
+export * from "./reviewService";
+
+// Réexport des types pour compatibilité
+export type {
   User,
   UserProfileData,
   Star,
@@ -15,249 +27,24 @@ import type {
   ApiResponse,
 } from "../types";
 
-// Utility function to read a cookie by its name
-function getCookie(name: string): string | undefined {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return undefined;
-}
-
-// Axios instance configuration
-const api: AxiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:3000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // Allows sending cookies
-});
-
-// Interceptor to add authentication and CSRF tokens to each request
-api.interceptors.request.use(
-  (config) => {
-    // Add CSRF token from cookie
-    const csrfToken = getCookie("XSRF-TOKEN");
-    if (csrfToken) {
-      config.headers["X-CSRF-Token"] = csrfToken;
-    }
-
-    // Add authentication token if present
-    const authToken = localStorage.getItem("token");
-    if (authToken) {
-      config.headers.Authorization = `Bearer ${authToken}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
-// Function to fetch all stars
-export const fetchStars = async (): Promise<ApiResponse<Star[]>> => {
-  const response = await api.get<ApiResponse<StarFromServer[]>>("/stars");
-  // Convert price from string to number for each star
-  const transformedData = {
-    ...response.data,
-    data: response.data.data.map((star: StarFromServer) => ({
-      ...star,
-      price: parseFloat(star.price)
-    }))
-  };
-  return transformedData;
-};
-
-// Function to fetch a star by ID
-export const fetchStarById = async (starid: number): Promise<Star> => {
-  const response = await api.get(`/stars/${starid}`);
-  // Convert price from string to number
-  return {
-    ...response.data,
-    price: parseFloat(response.data.price)
-  };
-};
-
-// Function to filter stars
-export const filterStars = async (params: {
-  constellation?: string | string[];
-  minPrice?: number;
-  maxPrice?: number;
-  minMagnitude?: number;
-  maxMagnitude?: number;
-  minDistance?: number;
-  maxDistance?: number;
-  minLuminosity?: number;
-  maxLuminosity?: number;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
-  limit?: number;
-}): Promise<ApiResponse<Star[]>> => {
-  // Convert array of constellations to comma-separated string if needed
-  const processedParams = { ...params };
-  if (Array.isArray(processedParams.constellation)) {
-    processedParams.constellation = processedParams.constellation.join(',');
-  }
-
-  const response = await api.get<ApiResponse<StarFromServer[]>>("/stars/filter", { params: processedParams });
-  // Transform price data like in fetchStars
-  const transformedData = {
-    ...response.data,
-    data: response.data.data.map((star: StarFromServer) => ({
-      ...star,
-      price: parseFloat(star.price)
-    }))
-  };
-  return transformedData;
-};
-
-// Function to search stars
-export const searchStars = async (query: string): Promise<Star[]> => {
-  const response = await api.get<StarFromServer[]>("/stars/search", { params: { q: query } });
-  // Transform price data like in fetchStars
-  return response.data.map((star: StarFromServer) => ({
-    ...star,
-    price: parseFloat(star.price)
-  }));
-};
-
-// Authentication
-export const registerUser = async (userData: {
-  username: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}): Promise<{ token: string; userId: number }> => {
-  const response = await api.post<{ token: string; userId: number }>("/users/register", userData);
-  return response.data;
-};
-
-export const loginUser = async (loginData: { email: string; password: string }): Promise<{
-  accessToken: string;
-  userId: number;
-  role: string;
-}> => {
-  const response = await api.post<{
-    success: boolean;
-    message: string;
-    accessToken: string;
-    userId: number;
-    role: string;
-  }>("/users/login", loginData);
-  return response.data;
-};
-
-export const getUserProfile = async (): Promise<User> => {
-  const response = await api.get<User>("/users/profile");
-  return response.data;
-};
-
-export const updateUserProfile = async (userData: UserProfileData): Promise<ApiResponse<User>> => {
-  const response = await api.put<ApiResponse<User>>("/users/profile", userData);
-  return response.data;
-};
-
-export const logoutUser = async (): Promise<ApiResponse<null>> => {
-  const response = await api.post<ApiResponse<null>>("/users/logout");
-  return response.data;
-};
-
-export const deleteUserAccount = async (): Promise<ApiResponse<null>> => {
-  const response = await api.delete<ApiResponse<null>>("/users/me");
-  return response.data;
-};
-
-// Cart management
-export const getCart = async (): Promise<Cart> => {
-  const response = await api.get<Cart>("/cart");
-  return response.data;
-};
-
-export const addToCart = async (starId: number, quantity: number): Promise<ApiResponse<Cart>> => {
-  const response = await api.post<ApiResponse<Cart>>("/cart/add", { starId, quantity });
-  return response.data;
-};
-
-export const updateCartItem = async (
-  cartItemId: number,
-  quantity: number,
-): Promise<ApiResponse<Cart>> => {
-  const response = await api.put<ApiResponse<Cart>>("/cart/update", { cartItemId, quantity });
-  return response.data;
-};
-
-export const removeFromCart = async (cartItemId: number): Promise<ApiResponse<Cart>> => {
-  const response = await api.delete<ApiResponse<Cart>>(`/cart/remove/${cartItemId}`);
-  return response.data;
-};
-
-// Wishlist
-export const getWishlist = async (): Promise<GetWishlistResponse> => {
-  const response = await api.get<GetWishlistResponse>("/wishlist");
-  return response.data;
-};
-
-export const addToWishlist = async (starId: number): Promise<AddToWishlistResponse> => {
-  const response = await api.post<AddToWishlistResponse>("/wishlist/add", { starId });
-  return response.data;
-};
-
-export const removeFromWishlist = async (starId: number): Promise<{ message: string }> => {
-  const response = await api.delete<{ message: string }>(`/wishlist/remove/${starId}`);
-  return response.data;
-};
-
-// Orders
-export const createOrder = async (orderData: OrderData): Promise<ApiResponse<Order>> => {
-  const response = await api.post<ApiResponse<Order>>("/orders", orderData);
-  return response.data;
-};
-
-export const getUserOrders = async (): Promise<ApiResponse<Order[]>> => {
-  const response = await api.get<ApiResponse<Order[]>>("/orders");
-  return response.data;
-};
-
-export const getOrderDetails = async (orderId: string): Promise<ApiResponse<Order>> => {
-  const response = await api.get<ApiResponse<Order>>(`/orders/${orderId}`);
-  return response.data;
-};
-
-export const updateOrderStatus = async (
-  orderId: number,
-  status: OrderStatus,
-): Promise<ApiResponse<Order>> => {
-  const response = await api.put<ApiResponse<Order>>(`/orders/${orderId}/update-status`, {
-    status,
-  });
-  return response.data;
-};
-
-// Reviews
-export const getReviewsForStar = async (starId: number): Promise<ApiResponse<Review[]>> => {
-  const response = await api.get<ApiResponse<Review[]>>("/reviews", { params: { starId } });
-  return response.data;
-};
-
-export const addReview = async (reviewData: {
-  starId: number;
-  rating: number;
-  comment: string;
-}): Promise<ApiResponse<Review>> => {
-  const response = await api.post<ApiResponse<Review>>("/reviews/add", reviewData);
-  return response.data;
-};
-
-export const updateReview = async (
-  reviewId: number,
-  reviewData: { rating?: number; comment?: string },
-): Promise<ApiResponse<Review>> => {
-  const response = await api.put<ApiResponse<Review>>(`/reviews/${reviewId}`, reviewData);
-  return response.data;
-};
-
-export const deleteReview = async (reviewId: number): Promise<ApiResponse<null>> => {
-  const response = await api.delete<ApiResponse<null>>(`/reviews/${reviewId}`);
-  return response.data;
-};
-
-export default api;
+/**
+ * Service API unifié - Point d'entrée principal
+ *
+ * Ce fichier sert d'orchestrateur pour tous les services API spécialisés.
+ * Chaque service a une responsabilité unique selon le principe SRP :
+ *
+ * - httpClient.ts     : Configuration HTTP et interceptors
+ * - authService.ts    : Authentification des utilisateurs
+ * - userService.ts    : Gestion des profils utilisateurs
+ * - cartService.ts    : CRUD du panier d'achat
+ * - wishlistService.ts : CRUD de la liste d'envies
+ * - orderService.ts   : Gestion des commandes
+ * - starService.ts    : Catalogue et recherche d'étoiles
+ * - reviewService.ts  : Gestion des avis clients
+ *
+ * Usage:
+ * import { AuthService, CartService, StarService } from './services/api';
+ *
+ * Ou imports nommés pour compatibilité:
+ * import { loginUser, addToCart, fetchStars } from './services/api';
+ */

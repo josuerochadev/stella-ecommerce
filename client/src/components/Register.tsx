@@ -2,8 +2,7 @@ import { useState, memo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { registerUser } from "../services/api";
-import { useNotificationStore } from "../stores/useNotificationStore";
-import { validateEmail, validateUsername, validatePassword, sanitizeText } from "../utils/security";
+import { useRegistrationValidation } from "../hooks/useRegistrationValidation";
 import FadeInSection from "./FadeInSection";
 
 const Register: React.FC = () => {
@@ -15,65 +14,28 @@ const Register: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { showError } = useNotificationStore();
+  const { validateRegistrationData } = useRegistrationValidation();
 
   const from = location.state?.from || "/profile";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation sécurisée des champs
-    const sanitizedUsername = sanitizeText(username).trim();
-    const sanitizedFirstName = sanitizeText(firstName).trim();
-    const sanitizedLastName = sanitizeText(lastName).trim();
-    const sanitizedEmail = sanitizeText(email).trim();
-    const rawPassword = password.trim(); // Ne pas sanitiser le mot de passe
+    // Validation déléguée au hook spécialisé
+    const validationResult = validateRegistrationData({
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+    });
 
-    // Validation du nom d'utilisateur
-    if (!validateUsername(sanitizedUsername)) {
-      showError(
-        "Nom d'utilisateur invalide",
-        "Le nom d'utilisateur doit contenir 3-30 caractères alphanumériques, tirets ou underscores."
-      );
-      return;
-    }
-
-    // Validation de l'email
-    if (!validateEmail(sanitizedEmail)) {
-      showError(
-        "Email invalide",
-        "Veuillez entrer une adresse email valide."
-      );
-      return;
-    }
-
-    // Validation du mot de passe
-    const passwordValidation = validatePassword(rawPassword);
-    if (!passwordValidation.isValid) {
-      showError(
-        "Mot de passe invalide",
-        passwordValidation.errors.join(" ")
-      );
-      return;
-    }
-
-    // Validation des noms
-    if (!sanitizedFirstName || !sanitizedLastName) {
-      showError(
-        "Informations manquantes",
-        "Le prénom et le nom sont requis."
-      );
-      return;
+    if (!validationResult.isValid || !validationResult.sanitizedData) {
+      return; // Les erreurs sont déjà gérées par le hook
     }
 
     try {
-      const response = await registerUser({
-        username: sanitizedUsername,
-        firstName: sanitizedFirstName,
-        lastName: sanitizedLastName,
-        email: sanitizedEmail,
-        password: rawPassword,
-      });
+      const response = await registerUser(validationResult.sanitizedData);
       const token = response.token;
 
       if (token) {

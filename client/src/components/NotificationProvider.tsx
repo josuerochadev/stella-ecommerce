@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNotificationStore } from '../stores/useNotificationStore';
 import Toast from './Toast';
-import Modal from './Modal';
+import AccessibleModal from './AccessibleModal';
 
 const NotificationProvider: React.FC = () => {
   const { toasts, modals, removeToast, closeModal } = useNotificationStore();
@@ -23,7 +23,7 @@ const NotificationProvider: React.FC = () => {
       </div>
 
       {modals.map((modal) => (
-        <Modal
+        <AccessibleModal
           key={modal.id}
           isOpen={modal.isOpen}
           title={modal.title}
