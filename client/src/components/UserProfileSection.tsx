@@ -5,6 +5,7 @@ import { useState, memo } from "react";
 import { updateUserProfile, deleteUserAccount } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { logger } from "../utils/logger";
 import { useNotificationStore } from "../stores/useNotificationStore";
 import type { User } from "../types";
 
@@ -36,7 +37,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       setIsEditingProfile(false);
       setErrorMessage("");
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du profil", error);
+      logger.error("Erreur lors de la mise à jour du profil", error, "UserProfileSection");
       setErrorMessage("Erreur lors de la mise à jour du profil.");
     }
   };
@@ -66,7 +67,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         logout();
         navigate("/");
       } catch (error) {
-        console.error("Erreur lors de la suppression du compte", error);
+        logger.error("Erreur lors de la suppression du compte", error, "UserProfileSection");
       }
     }
   };

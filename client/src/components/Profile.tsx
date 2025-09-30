@@ -4,6 +4,7 @@
 import { useState, useEffect, memo } from "react";
 import { getUserProfile } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { logger } from "../utils/logger";
 import type { User } from "../types";
 import { useAuth } from "../context/AuthContext";
 import { useCartStore } from "../stores/useCartStore";
@@ -35,7 +36,7 @@ const Profile: React.FC = () => {
         setUser(userData);
         setLoadingProfile(false);
       } catch (error) {
-        console.error("Erreur lors de la récupération du profil utilisateur", error);
+        logger.error("Erreur lors de la récupération du profil utilisateur", error, "Profile");
         setLoadingProfile(false);
       }
     };

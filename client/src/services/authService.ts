@@ -7,7 +7,7 @@ import type { ApiResponse } from "../types";
 /**
  * Interface pour les données d'inscription
  */
-interface RegisterUserData {
+export interface RegisterUserData {
   email: string;
   password: string;
   firstName: string;
@@ -17,7 +17,7 @@ interface RegisterUserData {
 /**
  * Interface pour les données de connexion
  */
-interface LoginUserData {
+export interface LoginUserData {
   email: string;
   password: string;
 }
@@ -25,15 +25,16 @@ interface LoginUserData {
 /**
  * Interface pour la réponse d'inscription
  */
-interface RegisterResponse {
+export interface RegisterResponse {
   token: string;
   userId: number;
+  accessToken?: string;
 }
 
 /**
  * Interface pour la réponse de connexion
  */
-interface LoginResponse {
+export interface LoginResponse {
   accessToken: string;
   userId: number;
   role: string;

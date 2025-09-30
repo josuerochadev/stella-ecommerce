@@ -6,6 +6,7 @@ import CatalogStarCard from "./CatalogStarCard";
 import CartStarCard from "./CartStarCard";
 import WishlistStarCard from "./WishlistStarCard";
 import DetailStarCard from "./DetailStarCard";
+import { logger } from "../utils/logger";
 import type { Star } from "../types";
 
 interface StarCardProps {
@@ -33,14 +34,14 @@ const StarCard: React.FC<StarCardProps> = ({
   switch (context) {
     case "cart":
       if (!onRemove || quantity === undefined) {
-        console.warn("CartStarCard requires onRemove and quantity props");
+        logger.warn("CartStarCard requires onRemove and quantity props", { starId: star.starid }, "StarCard");
         return null;
       }
       return <CartStarCard star={star} quantity={quantity} onRemove={onRemove} />;
 
     case "wishlist":
       if (!onRemove) {
-        console.warn("WishlistStarCard requires onRemove prop");
+        logger.warn("WishlistStarCard requires onRemove prop", { starId: star.starid }, "StarCard");
         return null;
       }
       return <WishlistStarCard star={star} onRemove={onRemove} />;

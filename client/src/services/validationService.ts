@@ -152,14 +152,14 @@ export class FormValidationService {
     password: string;
   }): ObjectValidationResult<typeof data> {
     const errors: Record<string, string> = {};
-    const sanitizedData: any = {};
+    const sanitizedData = {} as typeof data;
 
     // Validation du prénom
     const firstNameResult = FieldValidationService.validateNameField(data.firstName, "prénom");
     if (!firstNameResult.isValid) {
       errors.firstName = firstNameResult.errors[0];
     } else {
-      sanitizedData.firstName = firstNameResult.sanitizedValue;
+      sanitizedData.firstName = firstNameResult.sanitizedValue!;
     }
 
     // Validation du nom
@@ -167,7 +167,7 @@ export class FormValidationService {
     if (!lastNameResult.isValid) {
       errors.lastName = lastNameResult.errors[0];
     } else {
-      sanitizedData.lastName = lastNameResult.sanitizedValue;
+      sanitizedData.lastName = lastNameResult.sanitizedValue!;
     }
 
     // Validation de l'email
@@ -175,7 +175,7 @@ export class FormValidationService {
     if (!emailResult.isValid) {
       errors.email = emailResult.errors[0];
     } else {
-      sanitizedData.email = emailResult.sanitizedValue;
+      sanitizedData.email = emailResult.sanitizedValue!;
     }
 
     // Validation du mot de passe
@@ -183,7 +183,7 @@ export class FormValidationService {
     if (!passwordResult.isValid) {
       errors.password = passwordResult.errors.join(" ");
     } else {
-      sanitizedData.password = passwordResult.sanitizedValue;
+      sanitizedData.password = passwordResult.sanitizedValue!;
     }
 
     const isValid = Object.keys(errors).length === 0;
@@ -204,14 +204,14 @@ export class FormValidationService {
     email: string;
   }): ObjectValidationResult<typeof data> {
     const errors: Record<string, string> = {};
-    const sanitizedData: any = {};
+    const sanitizedData = {} as typeof data;
 
     // Validation du prénom
     const firstNameResult = FieldValidationService.validateNameField(data.firstName, "prénom");
     if (!firstNameResult.isValid) {
       errors.firstName = firstNameResult.errors[0];
     } else {
-      sanitizedData.firstName = firstNameResult.sanitizedValue;
+      sanitizedData.firstName = firstNameResult.sanitizedValue!;
     }
 
     // Validation du nom
@@ -219,7 +219,7 @@ export class FormValidationService {
     if (!lastNameResult.isValid) {
       errors.lastName = lastNameResult.errors[0];
     } else {
-      sanitizedData.lastName = lastNameResult.sanitizedValue;
+      sanitizedData.lastName = lastNameResult.sanitizedValue!;
     }
 
     // Validation de l'email
@@ -227,7 +227,7 @@ export class FormValidationService {
     if (!emailResult.isValid) {
       errors.email = emailResult.errors[0];
     } else {
-      sanitizedData.email = emailResult.sanitizedValue;
+      sanitizedData.email = emailResult.sanitizedValue!;
     }
 
     const isValid = Object.keys(errors).length === 0;

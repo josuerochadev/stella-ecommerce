@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { createContext, useState, useEffect, useContext } from "react";
 import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
+import { logger } from "../utils/logger";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -50,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         useCartStore.getState().fetchCart();
         useWishlistStore.getState().fetchWishlist();
       } catch (error) {
-        console.warn("Error fetching cart/wishlist after login:", error);
+        logger.warn("Error fetching cart/wishlist after login:", error, "AuthContext");
       } finally {
         setIsLoading(false);
       }

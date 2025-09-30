@@ -7,6 +7,7 @@ import FormInput from "./FormInput";
 import FormContainer from "./FormContainer";
 import { useValidatedApiCall } from "../hooks/useApiCall";
 import { validateEmail, sanitizeText } from "../utils/security";
+import type { LoginResponse } from "../services/authService";
 
 const Login: React.FC = () => {
   const { login } = useAuth();
@@ -21,8 +22,8 @@ const Login: React.FC = () => {
   const message = location.state?.message || "Connectez-vous pour accéder à votre compte.";
   const from = location.state?.from || "/profile";
 
-  const { isLoading, error, execute } = useValidatedApiCall(
-    (data: { email: string; password: string }) => {
+  const { isLoading, error, execute } = useValidatedApiCall<LoginResponse, { email: string; password: string }>(
+    (data) => {
       const sanitizedEmail = sanitizeText(data.email).trim();
       const sanitizedPassword = data.password.trim();
 

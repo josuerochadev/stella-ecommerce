@@ -3,6 +3,7 @@
 // Responsabilité unique : communication avec l'API pour les opérations de wishlist
 
 import { getWishlist, addToWishlist, removeFromWishlist } from '../services/api';
+import { logger } from '../utils/logger';
 import type { WishlistRepository } from '../interfaces/WishlistRepository';
 import type { WishlistItem } from '../types';
 
@@ -227,7 +228,7 @@ export class ApiWishlistRepository implements WishlistRepository {
 
       // En production, cette URL devrait être générée par le serveur
       // et l'ID de partage devrait être sauvegardé en base
-      console.warn('Share wishlist: Mock implementation - needs server endpoint');
+      logger.warn('Share wishlist: Mock implementation - needs server endpoint', undefined, 'ApiWishlistRepository');
 
       return {
         shareUrl

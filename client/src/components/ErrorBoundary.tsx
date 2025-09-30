@@ -1,6 +1,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { errorService } from "../services/errorService";
+import { logger } from "../utils/logger";
 import { ROUTES } from "../constants/app";
 
 interface Props {
@@ -37,7 +38,7 @@ class ErrorBoundary extends Component<Props, State> {
     });
 
     this.setState({ errorId });
-    console.error("Uncaught error:", error, errorInfo);
+    logger.error("Uncaught error:", error, "ErrorBoundary");
   }
 
   public handleReload = () => {

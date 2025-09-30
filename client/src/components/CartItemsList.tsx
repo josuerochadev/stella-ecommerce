@@ -2,6 +2,7 @@
 // Responsabilité unique : Affichage de la liste des articles du panier
 
 import React from "react";
+import { logger } from "../utils/logger";
 import StarCard from "./StarCard";
 import type { CartItem } from "../types";
 
@@ -19,7 +20,7 @@ const CartItemsList: React.FC<CartItemsListProps> = ({ cartItems, onRemoveItem }
     const result = await onRemoveItem(cartItemId);
     if (!result.success && result.error) {
       // En production, afficher une notification toast
-      console.error(result.error);
+      logger.error(result.error, undefined, "CartItemsList");
     }
   };
 

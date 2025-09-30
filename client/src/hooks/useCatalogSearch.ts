@@ -4,6 +4,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { fetchStars, searchStars, filterStars } from '../services/api';
 import { debounce } from '../utils/debounce';
+import { logger } from '../utils/logger';
 import type { Star } from '../types';
 import type { SearchFilters } from './useCatalogFilters';
 
@@ -85,7 +86,7 @@ export const useCatalogSearch = () => {
 
       setIsLoading(false);
     } catch (error) {
-      console.error("Erreur lors de la recherche:", error);
+      logger.error("Erreur lors de la recherche:", error, "useCatalogSearch");
       setIsLoading(false);
       setSearchResults([]);
     }
@@ -110,7 +111,7 @@ export const useCatalogSearch = () => {
         const results = await searchStars(query);
         setSuggestions(results.slice(0, 5));
       } catch (error) {
-        console.error("Erreur suggestions:", error);
+        logger.error("Erreur suggestions:", error, "useCatalogSearch");
         setSuggestions([]);
       }
     } else {
@@ -144,7 +145,7 @@ export const useCatalogSearch = () => {
 
       // PAS de setSearchResults ici - sera fait par performSearch
     } catch (error) {
-      console.error("Erreur chargement initial:", error);
+      logger.error("Erreur chargement initial:", error, "useCatalogSearch");
     }
   }, []);
 

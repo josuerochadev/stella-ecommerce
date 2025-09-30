@@ -10,6 +10,7 @@ import CatalogSearchBar from "../components/CatalogSearchBar";
 import CatalogAdvancedFilters from "../components/CatalogAdvancedFilters";
 import CatalogResultsGrid from "../components/CatalogResultsGrid";
 import FadeInSection from "../components/FadeInSection";
+import type { Star } from "../types";
 
 /**
  * Page principale du catalogue
@@ -92,7 +93,7 @@ const Catalogue: React.FC = () => {
     updateFilter("query", query);
   };
 
-  const handleSuggestionClick = (star: any) => {
+  const handleSuggestionClick = (star: Star) => {
     navigateToStar(star);
     setShowSuggestions(false);
   };

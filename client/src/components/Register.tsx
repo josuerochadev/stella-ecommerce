@@ -7,6 +7,7 @@ import { validateEmail, sanitizeText } from "../utils/security";
 import FadeInSection from "./FadeInSection";
 import FormInput from "./FormInput";
 import FormContainer from "./FormContainer";
+import type { RegisterResponse } from "../services/authService";
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -24,8 +25,8 @@ const Register: React.FC = () => {
 
   const from = location.state?.from || "/profile";
 
-  const { isLoading, error, execute } = useValidatedApiCall(
-    (data: { firstName: string; lastName: string; email: string; password: string }) => {
+  const { isLoading, error, execute } = useValidatedApiCall<RegisterResponse, { firstName: string; lastName: string; email: string; password: string }>(
+    (data) => {
       const sanitizedFirstName = sanitizeText(data.firstName).trim();
       const sanitizedLastName = sanitizeText(data.lastName).trim();
       const sanitizedEmail = sanitizeText(data.email).trim();
