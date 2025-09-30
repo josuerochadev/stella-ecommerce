@@ -1,9 +1,13 @@
 // server/src/controllers/adminController.js
 // Contrôleur pour le panel d'administration
+// Responsabilité unique : orchestration des services et gestion des erreurs HTTP
 
 const { User, Order, Star, Review, sequelize } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
 const { DashboardService } = require('../services/dashboardService');
+const { UserSearchService } = require('../services/userSearchService');
+const { UserStatsService } = require('../services/userStatsService');
+const { UserResponseFormatter } = require('../formatters/userResponseFormatter');
 const { Op } = require('sequelize');
 
 /**
@@ -29,76 +33,33 @@ exports.getDashboard = async (req, res, next) => {
 
 /**
  * Gestion des utilisateurs
+ * Responsabilité unique : orchestration des services de recherche, stats et formatage
  */
 exports.getUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, search, role, sortBy = 'createdAt', order = 'DESC' } = req.query;
-    const offset = (page - 1) * limit;
+    const { page, limit, search, role, sortBy, order } = req.query;
 
-    // Construire les conditions de recherche
-    const whereCondition = {};
-    if (search) {
-      whereCondition[Op.or] = [
-        { firstName: { [Op.iLike]: `%${search}%` } },
-        { lastName: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } }
-      ];
-    }
-    if (role) {
-      whereCondition.role = role;
-    }
-
-    // Obtenir les utilisateurs avec pagination
-    const { count, rows: users } = await User.findAndCountAll({
-      where: whereCondition,
-      attributes: ['id', 'firstName', 'lastName', 'email', 'role', 'createdAt'],
-      order: [[sortBy, order.toUpperCase()]],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+    // Délégation à UserSearchService pour construire les options de requête
+    const queryOptions = UserSearchService.buildQueryOptions({
+      search, role, page, limit, sortBy, order
     });
 
-    // Obtenir les statistiques de commandes pour ces utilisateurs
+    // Obtenir les utilisateurs avec pagination via le modèle
+    const { count, rows: users } = await User.findAndCountAll(queryOptions);
+
+    // Délégation à UserStatsService pour les statistiques
     const userIds = users.map(user => user.id);
-    const orderStats = await sequelize.query(`
-      SELECT
-        user_id,
-        COUNT(*) as order_count,
-        COALESCE(SUM(total_amount), 0) as total_spent
-      FROM orders
-      WHERE user_id IN (:userIds)
-      GROUP BY user_id
-    `, {
-      replacements: { userIds },
-      type: sequelize.QueryTypes.SELECT
-    });
+    const statsMap = await UserStatsService.getUserOrderStats(userIds);
 
-    // Créer un map des stats pour accès rapide
-    const statsMap = new Map(orderStats.map(stat => [stat.user_id, stat]));
+    // Délégation à UserResponseFormatter pour le formatage de la réponse
+    const response = UserResponseFormatter.formatUsersResponse(
+      users,
+      statsMap,
+      { page: queryOptions.offset / queryOptions.limit + 1, limit: queryOptions.limit },
+      count
+    );
 
-    res.json({
-      success: true,
-      users: users.map(user => {
-        const stats = statsMap.get(user.id) || { order_count: 0, total_spent: 0 };
-        return {
-          id: user.id,
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          role: user.role,
-          joinDate: user.createdAt,
-          stats: {
-            orderCount: parseInt(stats.order_count),
-            totalSpent: parseFloat(stats.total_spent)
-          }
-        };
-      }),
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(count / limit),
-        totalUsers: count,
-        hasNext: page * limit < count,
-        hasPrev: page > 1
-      }
-    });
+    res.json(response);
 
   } catch (error) {
     next(new AppError(`Failed to get users: ${error.message}`, 500));
@@ -107,12 +68,14 @@ exports.getUsers = async (req, res, next) => {
 
 /**
  * Mettre à jour le rôle d'un utilisateur
+ * Responsabilité unique : validation et délégation du formatage de réponse
  */
 exports.updateUserRole = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const { role } = req.body;
 
+    // Validation des données d'entrée
     if (!['client', 'admin'].includes(role)) {
       return next(new AppError('Invalid role. Must be client or admin', 400));
     }
@@ -122,24 +85,22 @@ exports.updateUserRole = async (req, res, next) => {
       return next(new AppError('User not found', 404));
     }
 
-    // Empêcher de changer son propre rôle
+    // Règles métier : empêcher de changer son propre rôle
     if (user.id === req.user.userId) {
       return next(new AppError('Cannot change your own role', 400));
     }
 
+    // Mise à jour via le modèle
     user.role = role;
     await user.save();
 
-    res.json({
-      success: true,
-      message: `User role updated to ${role}`,
-      user: {
-        id: user.id,
-        name: `${user.firstName} ${user.lastName}`,
-        email: user.email,
-        role: user.role
-      }
-    });
+    // Délégation du formatage de réponse
+    const response = UserResponseFormatter.formatUserRoleUpdateResponse(
+      user,
+      `User role updated to ${role}`
+    );
+
+    res.json(response);
 
   } catch (error) {
     next(new AppError(`Failed to update user role: ${error.message}`, 500));

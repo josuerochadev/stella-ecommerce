@@ -23,7 +23,7 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
           className="w-full h-48 object-cover"
         />
         <div className="p-4 flex-grow flex flex-col justify-between">
-          <h2 className="text-xl font-display mb-2">{star.name}</h2>
+          <h2 className="text-xl font-display mb-2 text-text">{star.name}</h2>
           <p className="text-sm mb-4">{star.description}</p>
 
           <div className="flex items-center justify-between">

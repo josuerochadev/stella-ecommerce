@@ -110,7 +110,13 @@ export const useSearchLogic = () => {
   const handleBlur = useCallback((e: React.FocusEvent) => {
     // Délai pour permettre le clic sur les suggestions
     setTimeout(() => {
-      if (!e.currentTarget.contains(document.activeElement)) {
+      // Vérifier que l'élément existe encore dans le DOM
+      if (e.currentTarget && e.currentTarget.contains && document.activeElement) {
+        if (!e.currentTarget.contains(document.activeElement)) {
+          setShowSuggestions(false);
+        }
+      } else {
+        // Si l'élément n'existe plus, masquer les suggestions
         setShowSuggestions(false);
       }
     }, 150);

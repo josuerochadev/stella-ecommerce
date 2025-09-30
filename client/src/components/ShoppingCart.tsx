@@ -60,7 +60,7 @@ const ShoppingCart: React.FC = () => {
   // Panier avec articles
   return (
     <div className="container mx-auto pt-20 px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Votre Panier</h1>
+      <h1 className="text-3xl font-bold mb-4 text-text">Votre Panier</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Liste des articles */}

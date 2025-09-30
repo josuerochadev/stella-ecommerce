@@ -42,19 +42,19 @@ const ModalContent: React.FC<ModalContentProps> = ({
         <div className="flex-1">
           <h3
             id="modal-title"
-            className="text-lg font-medium text-gray-900 mb-2"
+            className="text-lg font-medium text-text mb-2"
           >
             {title}
           </h3>
 
           {message && (
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-text/70 mb-4">
               {message}
             </p>
           )}
 
           {children && (
-            <div className="text-sm text-gray-900">
+            <div className="text-sm text-text">
               {children}
             </div>
           )}
@@ -65,7 +65,7 @@ const ModalContent: React.FC<ModalContentProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="ml-4 bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ml-4 bg-secondary rounded-md text-text/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-special"
             aria-label="Fermer la modal"
           >
             <span className="sr-only">Fermer</span>

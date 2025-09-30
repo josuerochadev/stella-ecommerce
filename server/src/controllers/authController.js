@@ -1,46 +1,58 @@
 // server/src/controllers/authController.js
 // Responsabilité unique : Authentification des utilisateurs
+// Utilise l'injection de dépendances pour respecter le principe DIP
 
-const { User } = require("../models");
-const bcrypt = require("bcrypt");
 const { AppError } = require("../middlewares/errorHandler");
-const tokenService = require("../services/tokenService");
+const { getService } = require("../container/containerConfig");
 
 /**
- * Contrôleur d'authentification
- * Responsabilité unique : Gestion des sessions et tokens utilisateur
+ * Contrôleur d'authentification avec injection de dépendances
+ * Responsabilité unique : Orchestration des services d'authentification
  */
 class AuthController {
+  constructor(hashingService, userRepository, tokenService) {
+    this.hashingService = hashingService;
+    this.userRepository = userRepository;
+    this.tokenService = tokenService;
+  }
   /**
    * Inscription d'un nouvel utilisateur
-   * Responsabilité : Création de compte et session initiale
+   * Responsabilité : Orchestration de la création de compte via les services
    */
-  static async register(req, res, next) {
+  async register(req, res, next) {
     try {
       const { firstName, lastName, email, password } = req.body;
 
-      // Vérification de l'existence de l'utilisateur
-      const existingUser = await User.findOne({ where: { email } });
+      // Validation de la force du mot de passe
+      const passwordValidation = await this.hashingService.validatePasswordStrength(password);
+      if (!passwordValidation.isValid) {
+        return next(new AppError(`Weak password: ${passwordValidation.errors.join(', ')}`, 400));
+      }
+
+      // Vérification de l'existence de l'utilisateur via le repository
+      const existingUser = await this.userRepository.findByEmail(email);
       if (existingUser) {
         return next(new AppError("Email already in use", 400));
       }
 
-      // Hachage du mot de passe
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // Hachage du mot de passe via le service
+      const hashedPassword = await this.hashingService.hash(password);
 
-      const newUser = await User.create({
+      // Création de l'utilisateur via le repository
+      const newUser = await this.userRepository.create({
         firstName,
         lastName,
         email,
         password: hashedPassword,
       });
 
-      const { accessToken, refreshToken } = tokenService.generateTokens({
+      // Génération des tokens via le service
+      const { accessToken, refreshToken } = this.tokenService.generateTokens({
         userId: newUser.id,
         role: newUser.role
       });
 
-      await tokenService.saveRefreshToken(newUser.id, refreshToken);
+      await this.tokenService.saveRefreshToken(newUser.id, refreshToken);
 
       // Configuration du cookie de refresh token
       res.cookie('refreshToken', refreshToken, {
@@ -63,29 +75,39 @@ class AuthController {
 
   /**
    * Connexion d'un utilisateur
-   * Responsabilité : Authentification et génération de session
+   * Responsabilité : Orchestration de l'authentification via les services
    */
-  static async login(req, res, next) {
+  async login(req, res, next) {
     try {
       const { email, password } = req.body;
-      const user = await User.findOne({ where: { email } });
 
+      // Recherche de l'utilisateur via le repository
+      const user = await this.userRepository.findByEmail(email);
       if (!user) {
         return next(new AppError("Invalid email or password", 401));
       }
 
-      // Vérification du mot de passe
-      const isMatch = await bcrypt.compare(password, user.password);
+      // Vérification du mot de passe via le service de hachage
+      const isMatch = await this.hashingService.compare(password, user.password);
       if (!isMatch) {
         return next(new AppError("Invalid email or password", 401));
       }
 
-      const { accessToken, refreshToken } = tokenService.generateTokens({
+      // Vérification si le mot de passe nécessite un re-hachage
+      if (this.hashingService.needsRehash && this.hashingService.needsRehash(user.password)) {
+        // Re-hacher et mettre à jour en arrière-plan (sans bloquer la connexion)
+        this.updatePasswordHashInBackground(user.id, password).catch(error => {
+          console.error('Failed to update password hash:', error);
+        });
+      }
+
+      // Génération des tokens via le service
+      const { accessToken, refreshToken } = this.tokenService.generateTokens({
         userId: user.id,
         role: user.role
       });
 
-      await tokenService.saveRefreshToken(user.id, refreshToken);
+      await this.tokenService.saveRefreshToken(user.id, refreshToken);
 
       // Configuration du cookie de refresh token
       res.cookie('refreshToken', refreshToken, {
@@ -109,19 +131,19 @@ class AuthController {
 
   /**
    * Déconnexion d'un utilisateur
-   * Responsabilité : Invalidation des tokens et session
+   * Responsabilité : Orchestration de l'invalidation des tokens
    */
-  static async logout(req, res, next) {
+  async logout(req, res, next) {
     try {
       const refreshToken = req.cookies.refreshToken;
 
       if (refreshToken) {
-        await tokenService.revokeRefreshToken(refreshToken);
+        await this.tokenService.revokeRefreshToken(refreshToken);
       }
 
       // Révocation de tous les tokens si utilisateur authentifié
       if (req.user) {
-        await tokenService.revokeAllUserTokens(req.user.userId);
+        await this.tokenService.revokeAllUserTokens(req.user.userId);
       }
 
       // Suppression du cookie de refresh token
@@ -138,9 +160,9 @@ class AuthController {
 
   /**
    * Renouvellement du token d'accès
-   * Responsabilité : Rotation des tokens de session
+   * Responsabilité : Orchestration de la rotation des tokens
    */
-  static async refreshToken(req, res, next) {
+  async refreshToken(req, res, next) {
     try {
       const refreshToken = req.cookies.refreshToken;
 
@@ -148,8 +170,8 @@ class AuthController {
         return next(new AppError("Refresh token not provided", 401));
       }
 
-      const validationResult = await tokenService.validateRefreshToken(refreshToken);
-
+      // Validation via le service de tokens
+      const validationResult = await this.tokenService.validateRefreshToken(refreshToken);
       if (!validationResult) {
         return next(new AppError("Invalid or expired refresh token", 401));
       }
@@ -157,14 +179,14 @@ class AuthController {
       const { decoded } = validationResult;
 
       // Génération de nouveaux tokens
-      const { accessToken, refreshToken: newRefreshToken } = tokenService.generateTokens({
+      const { accessToken, refreshToken: newRefreshToken } = this.tokenService.generateTokens({
         userId: decoded.userId,
         role: decoded.role
       });
 
       // Remplacement de l'ancien refresh token
-      await tokenService.revokeRefreshToken(refreshToken);
-      await tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
+      await this.tokenService.revokeRefreshToken(refreshToken);
+      await this.tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
 
       // Configuration du nouveau cookie de refresh token
       res.cookie('refreshToken', newRefreshToken, {
@@ -182,13 +204,42 @@ class AuthController {
       next(new AppError(`Error refreshing token: ${error.message}`, 500));
     }
   }
+
+  /**
+   * Met à jour le hachage du mot de passe en arrière-plan
+   * @param {number} userId - ID de l'utilisateur
+   * @param {string} plainPassword - Mot de passe en clair
+   * @private
+   */
+  async updatePasswordHashInBackground(userId, plainPassword) {
+    try {
+      const newHash = await this.hashingService.hash(plainPassword);
+      await this.userRepository.update(userId, { password: newHash });
+    } catch (error) {
+      // Erreur silencieuse pour ne pas affecter l'expérience utilisateur
+      console.error(`Failed to update password hash for user ${userId}:`, error);
+    }
+  }
 }
 
-// Exports des méthodes statiques pour compatibilité
+// Factory function pour créer une instance du contrôleur avec injection de dépendances
+function createAuthController() {
+  const hashingService = getService('hashingService');
+  const userRepository = getService('userRepository');
+  const tokenService = getService('tokenService');
+
+  return new AuthController(hashingService, userRepository, tokenService);
+}
+
+// Instance globale pour compatibilité
+const authControllerInstance = createAuthController();
+
+// Exports des méthodes pour compatibilité avec les routes existantes
 module.exports = {
   AuthController,
-  register: AuthController.register,
-  login: AuthController.login,
-  logout: AuthController.logout,
-  refreshToken: AuthController.refreshToken,
+  createAuthController,
+  register: authControllerInstance.register.bind(authControllerInstance),
+  login: authControllerInstance.login.bind(authControllerInstance),
+  logout: authControllerInstance.logout.bind(authControllerInstance),
+  refreshToken: authControllerInstance.refreshToken.bind(authControllerInstance),
 };

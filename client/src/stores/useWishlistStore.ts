@@ -1,8 +1,12 @@
 // client/src/stores/useWishlistStore.ts
+// Store de la wishlist avec injection de dépendances
+// Responsabilité unique : gestion de l'état de la wishlist via repository
+
 import { create } from "zustand";
-import { getWishlist, addToWishlist, removeFromWishlist } from "../services/api";
 import { transformWishlistItems } from "../utils/dataTransformers";
+import { getService } from "../di/container";
 import type { WishlistItem } from "../types";
+import type { WishlistRepository } from "../interfaces/WishlistRepository";
 
 interface WishlistState {
   wishlistItems: WishlistItem[];
@@ -12,57 +16,128 @@ interface WishlistState {
   addItemToWishlist: (starId: number) => Promise<void>;
   removeItemFromWishlist: (starId: number) => Promise<void>;
   resetWishlist: () => void;
+  clearWishlist: () => Promise<void>;
+  getWishlistCount: () => Promise<number>;
+  isInWishlist: (starId: number) => Promise<boolean>;
+  searchWishlist: (query: string) => Promise<WishlistItem[]>;
 }
 
-export const useWishlistStore = create<WishlistState>((set) => ({
-  wishlistItems: [],
-  loading: false,
-  error: null,
+/**
+ * Factory function pour créer le store de la wishlist avec injection de dépendances
+ * @param wishlistRepository - Repository pour les opérations de wishlist
+ */
+export const createWishlistStore = (wishlistRepository: WishlistRepository) =>
+  create<WishlistState>((set, get) => ({
+    wishlistItems: [],
+    loading: false,
+    error: null,
 
-  fetchWishlist: async () => {
-    set({ loading: true, error: null });
-    try {
-      const { wishlist } = await getWishlist();
-      // Délégation au transformateur spécialisé
-      const transformedWishlist = transformWishlistItems(wishlist || []);
-      set({ wishlistItems: transformedWishlist, loading: false });
-    } catch (_error) {
-      set({ error: "Erreur lors de la récupération de la wishlist.", loading: false });
+    fetchWishlist: async () => {
+      set({ loading: true, error: null });
+      try {
+        const { wishlist } = await wishlistRepository.getWishlist();
+        // Délégation au transformateur spécialisé
+        const transformedWishlist = transformWishlistItems(wishlist || []);
+        set({ wishlistItems: transformedWishlist, loading: false });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la récupération de la wishlist.";
+        set({ error: errorMessage, loading: false });
+      }
+    },
+
+    addItemToWishlist: async (starId: number) => {
+      set({ loading: true, error: null });
+      try {
+        const { wishlistItem } = await wishlistRepository.addToWishlist(starId);
+        const transformedWishlistItem = {
+          ...wishlistItem,
+          Star: {
+            ...wishlistItem.Star,
+            price: typeof wishlistItem.Star.price === "string"
+              ? Number.parseFloat(wishlistItem.Star.price)
+              : wishlistItem.Star.price,
+          },
+        };
+        set((state) => ({
+          wishlistItems: [...state.wishlistItems, transformedWishlistItem],
+          loading: false,
+          error: null
+        }));
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Erreur lors de l'ajout à la wishlist.";
+        set({ error: errorMessage, loading: false });
+      }
+    },
+
+    removeItemFromWishlist: async (starId: number) => {
+      set({ loading: true, error: null });
+      try {
+        await wishlistRepository.removeFromWishlist(starId);
+        set((state) => ({
+          wishlistItems: state.wishlistItems.filter((item) => item.starId !== starId),
+          loading: false,
+          error: null
+        }));
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la suppression de la wishlist.";
+        set({ error: errorMessage, loading: false });
+      }
+    },
+
+    resetWishlist: () => set({ wishlistItems: [], loading: false, error: null }),
+
+    // Nouvelles méthodes utilisant les capacités du repository
+    clearWishlist: async () => {
+      set({ loading: true, error: null });
+      try {
+        await wishlistRepository.clearWishlist();
+        set({ wishlistItems: [], loading: false, error: null });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Erreur lors du vidage de la wishlist.";
+        set({ error: errorMessage, loading: false });
+      }
+    },
+
+    getWishlistCount: async () => {
+      try {
+        return await wishlistRepository.getWishlistCount();
+      } catch (error) {
+        // En cas d'erreur, compter localement
+        const { wishlistItems } = get();
+        return wishlistItems.length;
+      }
+    },
+
+    isInWishlist: async (starId: number) => {
+      try {
+        return await wishlistRepository.isInWishlist(starId);
+      } catch (error) {
+        // En cas d'erreur, vérifier localement
+        const { wishlistItems } = get();
+        return wishlistItems.some(item => item.starId === starId);
+      }
+    },
+
+    searchWishlist: async (query: string) => {
+      try {
+        return await wishlistRepository.searchWishlist(query);
+      } catch (error) {
+        // En cas d'erreur, rechercher localement
+        const { wishlistItems } = get();
+        const lowercaseQuery = query.toLowerCase().trim();
+
+        return wishlistItems.filter(item => {
+          const starName = item.Star?.name?.toLowerCase() || '';
+          const starDescription = item.Star?.description?.toLowerCase() || '';
+          const constellation = item.Star?.constellation?.toLowerCase() || '';
+
+          return starName.includes(lowercaseQuery) ||
+                 starDescription.includes(lowercaseQuery) ||
+                 constellation.includes(lowercaseQuery);
+        });
+      }
     }
-  },
+  }));
 
-  addItemToWishlist: async (starId: number) => {
-    set({ loading: true, error: null });
-    try {
-      const { wishlistItem } = await addToWishlist(starId);
-      const transformedWishlistItem = {
-        ...wishlistItem,
-        Star: {
-          ...wishlistItem.Star,
-          price: typeof wishlistItem.Star.price === "string" ? Number.parseFloat(wishlistItem.Star.price) : wishlistItem.Star.price,
-        },
-      };
-      set((state) => ({
-        wishlistItems: [...state.wishlistItems, transformedWishlistItem],
-        loading: false,
-      }));
-    } catch (_error) {
-      set({ error: "Erreur lors de l'ajout à la wishlist.", loading: false });
-    }
-  },
-
-  removeItemFromWishlist: async (starId: number) => {
-    set({ loading: true, error: null });
-    try {
-      await removeFromWishlist(starId);
-      set((state) => ({
-        wishlistItems: state.wishlistItems.filter((item) => item.starId !== starId),
-        loading: false,
-      }));
-    } catch (_error) {
-      set({ error: "Erreur lors de la suppression de la wishlist.", loading: false });
-    }
-  },
-
-  resetWishlist: () => set({ wishlistItems: [], loading: false, error: null }),
-}));
+// Instance par défaut avec injection de dépendances
+export const useWishlistStore = createWishlistStore(getService('wishlistRepository'));

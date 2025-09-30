@@ -56,7 +56,7 @@ class ErrorBoundary extends Component<Props, State> {
             Désolé pour le désagrément. Vous pouvez essayer de recharger l'application.
           </p>
           {this.state.errorId && (
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-text mb-4">
               ID d'erreur : {this.state.errorId}
             </p>
           )}

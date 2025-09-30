@@ -47,10 +47,10 @@ export class StarService {
    * Récupérer une étoile par son ID
    */
   static async getStarById(starId: number): Promise<Star> {
-    const response = await httpClient.get<StarFromServer>(`/stars/${starId}`);
+    const response = await httpClient.get<{ data: StarFromServer }>(`/stars/${starId}`);
     return {
-      ...response.data,
-      price: parseFloat(response.data.price)
+      ...response.data.data,
+      price: parseFloat(response.data.data.price)
     };
   }
 
