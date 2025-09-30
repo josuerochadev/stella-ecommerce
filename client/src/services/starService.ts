@@ -74,8 +74,8 @@ export class StarService {
    * Rechercher des étoiles par nom
    */
   static async searchStars(query: string): Promise<Star[]> {
-    const response = await httpClient.get<StarFromServer[]>("/stars/search", { params: { q: query } });
-    return response.data.map((star: StarFromServer) =>
+    const response = await httpClient.get<{ success: boolean; data: StarFromServer[]; count: number }>("/stars/search", { params: { q: query } });
+    return response.data.data.map((star: StarFromServer) =>
       transformStarPrice(star as unknown as Star)
     );
   }
@@ -84,8 +84,8 @@ export class StarService {
    * Récupérer les étoiles les plus récentes
    */
   static async getLatestStars(limit: number = 10): Promise<Star[]> {
-    const response = await httpClient.get<StarFromServer[]>("/stars/latest", { params: { limit } });
-    return response.data.map((star: StarFromServer) =>
+    const response = await httpClient.get<{ success: boolean; data: StarFromServer[] }>("/stars/latest", { params: { limit } });
+    return response.data.data.map((star: StarFromServer) =>
       transformStarPrice(star as unknown as Star)
     );
   }
@@ -94,8 +94,8 @@ export class StarService {
    * Récupérer les constellations disponibles
    */
   static async getConstellations(): Promise<string[]> {
-    const response = await httpClient.get<string[]>("/stars/constellations");
-    return response.data;
+    const response = await httpClient.get<{ success: boolean; data: string[] }>("/stars/constellations");
+    return response.data.data;
   }
 }
 
