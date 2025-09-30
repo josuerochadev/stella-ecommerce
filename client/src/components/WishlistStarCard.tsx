@@ -4,7 +4,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { EyeIcon, TrashIcon } from "@/utils/icons";
-import AddToCartButton from "@/components/AddToCartButton";
+import AddToCartButton from "./AddToCartButton";
 import FadeInSection from "./FadeInSection";
 import { getStarImagePath } from "@/utils/pathHelpers";
 import type { Star } from "@/types";
