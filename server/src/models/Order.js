@@ -1,4 +1,6 @@
 // src/models/Order.js
+const { ORDER_STATUS_VALUES } = require('../constants/orderStatus');
+
 module.exports = (sequelize, DataTypes) => {
   const Order = sequelize.define("Order", {
     id: {
@@ -7,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
     },
     status: {
-      type: DataTypes.ENUM("pending", "paid", "shipped", "cancelled", "payment_failed", "refunded", "partially_refunded"),
+      type: DataTypes.ENUM(...ORDER_STATUS_VALUES),
       allowNull: false,
       defaultValue: "pending",
     },

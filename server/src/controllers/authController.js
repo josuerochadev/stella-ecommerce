@@ -4,6 +4,7 @@
 
 const { AppError } = require("../middlewares/errorHandler");
 const { getService } = require("../container/containerConfig");
+const { REFRESH_TOKEN_COOKIE_OPTIONS } = require("../config/cookieConfig");
 
 /**
  * Contrôleur d'authentification avec injection de dépendances
@@ -55,12 +56,7 @@ class AuthController {
       await this.tokenService.saveRefreshToken(newUser.id, refreshToken);
 
       // Configuration du cookie de refresh token
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-      });
+      res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.status(201).json({
         success: true,
@@ -110,12 +106,7 @@ class AuthController {
       await this.tokenService.saveRefreshToken(user.id, refreshToken);
 
       // Configuration du cookie de refresh token
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-      });
+      res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,
@@ -189,12 +180,7 @@ class AuthController {
       await this.tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
 
       // Configuration du nouveau cookie de refresh token
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
-      });
+      res.cookie('refreshToken', newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,

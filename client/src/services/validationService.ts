@@ -146,7 +146,6 @@ export class FormValidationService {
    * Valider un formulaire d'inscription complet
    */
   static validateRegistrationForm(data: {
-    username: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -154,14 +153,6 @@ export class FormValidationService {
   }): ObjectValidationResult<typeof data> {
     const errors: Record<string, string> = {};
     const sanitizedData: any = {};
-
-    // Validation du nom d'utilisateur
-    const usernameResult = FieldValidationService.validateUsernameField(data.username);
-    if (!usernameResult.isValid) {
-      errors.username = usernameResult.errors[0];
-    } else {
-      sanitizedData.username = usernameResult.sanitizedValue;
-    }
 
     // Validation du prénom
     const firstNameResult = FieldValidationService.validateNameField(data.firstName, "prénom");

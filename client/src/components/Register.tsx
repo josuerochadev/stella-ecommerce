@@ -1,124 +1,176 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { registerUser } from "../services/api";
-import { useRegistrationValidation } from "../hooks/useRegistrationValidation";
+import { useValidatedApiCall } from "../hooks/useApiCall";
+import { validateEmail, sanitizeText } from "../utils/security";
 import FadeInSection from "./FadeInSection";
+import FormInput from "./FormInput";
+import FormContainer from "./FormContainer";
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { validateRegistrationData } = useRegistrationValidation();
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
 
   const from = location.state?.from || "/profile";
 
+  const { isLoading, error, execute } = useValidatedApiCall(
+    (data: { firstName: string; lastName: string; email: string; password: string }) => {
+      const sanitizedFirstName = sanitizeText(data.firstName).trim();
+      const sanitizedLastName = sanitizeText(data.lastName).trim();
+      const sanitizedEmail = sanitizeText(data.email).trim();
+      const sanitizedPassword = data.password.trim();
+
+      if (!sanitizedFirstName) {
+        setFirstNameError('Le prénom est requis');
+        return 'Le prénom est requis';
+      }
+
+      if (!sanitizedLastName) {
+        setLastNameError('Le nom est requis');
+        return 'Le nom est requis';
+      }
+
+      if (!sanitizedEmail) {
+        setEmailError('L\'email est requis');
+        return 'L\'email est requis';
+      }
+
+      if (!validateEmail(sanitizedEmail)) {
+        setEmailError('Format d\'email invalide');
+        return 'Format d\'email invalide';
+      }
+
+      if (!sanitizedPassword || sanitizedPassword.length < 8) {
+        setPasswordError('Le mot de passe doit contenir au moins 8 caractères');
+        return 'Le mot de passe doit contenir au moins 8 caractères';
+      }
+
+      return true;
+    },
+    {
+      onSuccess: (response) => {
+        if (response.accessToken) {
+          login(response.accessToken);
+          navigate(from, { replace: true });
+        }
+      },
+      onError: () => {
+        firstNameInputRef.current?.focus();
+      }
+    }
+  );
+
+  // Focus sur le premier champ au chargement
+  useEffect(() => {
+    if (firstNameInputRef.current) {
+      firstNameInputRef.current.focus();
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFirstNameError("");
+    setLastNameError("");
+    setEmailError("");
+    setPasswordError("");
 
-    // Validation déléguée au hook spécialisé
-    const validationResult = validateRegistrationData({
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    const sanitizedFirstName = sanitizeText(firstName).trim();
+    const sanitizedLastName = sanitizeText(lastName).trim();
+    const sanitizedEmail = sanitizeText(email).trim();
+    const sanitizedPassword = password.trim();
 
-    if (!validationResult.isValid || !validationResult.sanitizedData) {
-      return; // Les erreurs sont déjà gérées par le hook
-    }
-
-    try {
-      const response = await registerUser(validationResult.sanitizedData);
-      const token = response.token;
-
-      if (token) {
-        login(token);
-        navigate(from);
-      }
-    } catch (_error) {
-      // L'erreur sera gérée par l'API et affichée à l'utilisateur
-    }
+    await execute(
+      { firstName: sanitizedFirstName, lastName: sanitizedLastName, email: sanitizedEmail, password: sanitizedPassword },
+      (data) => registerUser({ firstName: data.firstName, lastName: data.lastName, email: data.email, password: data.password })
+    );
   };
 
   return (
     <FadeInSection>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 bg-secondary text-text p-6 rounded-md shadow-lg"
-      >
-        <div>
-          <label className="block text-sm font-serif mb-2">Nom d'utilisateur :</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-            className="w-full p-3 rounded-md bg-primary text-text"
-            placeholder="Nom d'utilisateur"
-            aria-label="Nom d'utilisateur"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-serif mb-2">Prénom :</label>
-          <input
+      <div className="container mx-auto px-4">
+        <FormContainer
+          title="Créer un compte"
+          description="Inscrivez-vous pour commencer votre voyage dans les étoiles"
+          error={error || undefined}
+          isLoading={isLoading}
+          onSubmit={handleSubmit}
+        >
+          <FormInput
+            ref={firstNameInputRef}
+            label="Prénom"
             type="text"
             value={firstName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
-            className="w-full p-3 rounded-md bg-primary text-text"
+            onChange={(e) => setFirstName(e.target.value)}
             placeholder="Prénom"
-            aria-label="Prénom"
-            required
+            autoComplete="given-name"
+            isRequired
+            error={firstNameError}
           />
-        </div>
-        <div>
-          <label className="block text-sm font-serif mb-2">Nom :</label>
-          <input
+
+          <FormInput
+            label="Nom"
             type="text"
             value={lastName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
-            className="w-full p-3 rounded-md bg-primary text-text"
+            onChange={(e) => setLastName(e.target.value)}
             placeholder="Nom"
-            aria-label="Nom"
-            required
+            autoComplete="family-name"
+            isRequired
+            error={lastNameError}
           />
-        </div>
-        <div>
-          <label className="block text-sm font-serif mb-2">Email :</label>
-          <input
+
+          <FormInput
+            label="Email"
             type="email"
             value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            className="w-full p-3 rounded-md bg-primary text-text"
-            placeholder="Email"
-            aria-label="Email"
-            required
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="votre@email.com"
+            autoComplete="email"
+            isRequired
+            error={emailError}
+            description="Votre adresse email pour vous connecter"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-serif mb-2">Mot de passe :</label>
-          <input
+
+          <FormInput
+            label="Mot de passe"
             type="password"
             value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-md bg-primary text-text"
-            placeholder="Mot de passe"
-            aria-label="Mot de passe"
-            required
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Minimum 8 caractères"
+            autoComplete="new-password"
+            isRequired
+            error={passwordError}
+            description="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
           />
-        </div>
-        <div className="text-center">
-          <button type="submit" className="btn">
-            S'inscrire
-          </button>
-        </div>
-      </form>
+
+          <div className="text-center">
+            <button
+              type="submit"
+              className="btn"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="inline-block animate-spin mr-2" aria-hidden="true">⟳</span>
+                  Inscription en cours...
+                </>
+              ) : (
+                "S'inscrire"
+              )}
+            </button>
+          </div>
+        </FormContainer>
+      </div>
     </FadeInSection>
   );
 };

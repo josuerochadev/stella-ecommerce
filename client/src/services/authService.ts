@@ -8,7 +8,6 @@ import type { ApiResponse } from "../types";
  * Interface pour les données d'inscription
  */
 interface RegisterUserData {
-  username: string;
   email: string;
   password: string;
   firstName: string;
