@@ -1,5 +1,6 @@
 // src/validations/orderValidation.js
 const Joi = require("joi");
+const { UPDATABLE_ORDER_STATUS } = require("../constants/orderStatus");
 
 const createOrderSchema = Joi.object({
   shippingAddress: Joi.string().required(),
@@ -15,7 +16,7 @@ const createOrderSchema = Joi.object({
 });
 
 const updateOrderStatusSchema = Joi.object({
-  status: Joi.string().valid("processing", "shipped", "delivered").required(),
+  status: Joi.string().valid(...UPDATABLE_ORDER_STATUS).required(),
 });
 
 module.exports = { createOrderSchema, updateOrderStatusSchema };

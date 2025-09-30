@@ -56,7 +56,12 @@ const createHttpClient = (): AxiosInstance => {
       if (error.response?.status === 401) {
         // Token expiré ou invalide
         localStorage.removeItem("token");
-        window.location.href = "/auth";
+
+        // Émettre un événement personnalisé pour la navigation
+        // L'App écoutera cet événement et naviguera avec React Router
+        window.dispatchEvent(new CustomEvent('auth:unauthorized', {
+          detail: { redirectTo: '/auth' }
+        }));
       }
 
       return Promise.reject(error);

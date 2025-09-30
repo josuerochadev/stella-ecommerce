@@ -23,7 +23,7 @@ interface IconProps {
 }
 
 // Wrapper simplifié pour corriger les problèmes de types TypeScript
-// @ts-ignore - Ignore TypeScript strict checking for React Icons
+// Note: React Icons types are complex, using any for compatibility
 const createIconWrapper = (OriginalIcon: any) => {
   const WrappedIcon: React.FC<IconProps> = (props) => {
     return React.createElement(OriginalIcon, props);

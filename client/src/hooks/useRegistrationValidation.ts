@@ -6,7 +6,6 @@ import { FormValidationService } from "../services/validationService";
 import { useNotificationStore } from "../stores/useNotificationStore";
 
 interface RegistrationData {
-  username: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -14,7 +13,6 @@ interface RegistrationData {
 }
 
 interface SanitizedRegistrationData {
-  username: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -41,7 +39,6 @@ export const useRegistrationValidation = () => {
 
         // Mapping des noms de champs pour l'affichage
         const fieldLabels: Record<string, string> = {
-          username: "Nom d'utilisateur",
           firstName: "Prénom",
           lastName: "Nom",
           email: "Email",

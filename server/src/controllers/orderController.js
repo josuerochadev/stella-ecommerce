@@ -18,7 +18,7 @@ exports.createOrder = async (req, res, next) => {
     // Création de la commande avec transaction
     const order = await Order.create(
       {
-        UserId: req.user.userId,
+        userId: req.user.userId,
         date: new Date(),
         status: "pending",
         totalAmount: 0, // Calculé plus tard
@@ -84,7 +84,7 @@ exports.createOrder = async (req, res, next) => {
 exports.getUserOrders = async (req, res, next) => {
   try {
     const orders = await Order.findAll({
-      where: { UserId: req.user.userId },
+      where: { userId: req.user.userId },
       include: [
         {
           model: OrderStar,
@@ -101,7 +101,7 @@ exports.getUserOrders = async (req, res, next) => {
 exports.getOrderDetails = async (req, res, next) => {
   try {
     const order = await Order.findOne({
-      where: { id: req.params.id, UserId: req.user.userId },
+      where: { id: req.params.id, userId: req.user.userId },
       include: [{ model: OrderStar, include: [Star] }],
     });
     if (!order) {

@@ -25,7 +25,7 @@ exports.addReview = async (req, res, next) => {
     const { starId, rating, comment } = req.body;
     // Vérifier si l'utilisateur a acheté l'étoile
     const order = await Order.findOne({
-      where: { UserId: req.user.userId },
+      where: { userId: req.user.userId },
       include: [
         {
           model: Star,

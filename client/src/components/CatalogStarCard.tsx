@@ -7,6 +7,7 @@ import { EyeIcon } from "../utils/icons";
 import AddToCartButton from "../components/AddToCartButton";
 import AddToWishlistButton from "../components/AddToWishlistButton";
 import FadeInSection from "./FadeInSection";
+import { cn } from "../utils/classNames";
 import type { Star } from "../types";
 
 interface CatalogStarCardProps {
@@ -14,9 +15,15 @@ interface CatalogStarCardProps {
 }
 
 const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
+  const cardClass = cn(
+    'bg-secondary text-text rounded-lg shadow-lg',
+    'flex flex-col h-full mb-4 overflow-hidden',
+    'card-hover-effect'
+  );
+
   return (
     <FadeInSection>
-      <div className="bg-secondary text-text rounded-lg shadow-lg flex flex-col h-full mb-4 overflow-hidden card-hover-effect">
+      <div className={cardClass}>
         <img
           src={`/assets/images/stars/${star.name.toLowerCase().replace(/\s+/g, "")}.jpg`}
           alt={star.name}

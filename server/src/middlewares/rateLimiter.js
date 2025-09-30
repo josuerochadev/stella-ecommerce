@@ -4,7 +4,7 @@ const rateLimit = require('express-rate-limit');
 // General API rate limiter (more permissive in development)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50000, // Very high limit for debugging loop issues
+  max: process.env.NODE_ENV === 'development' ? 50000 : 100, // Higher limit in dev for debugging
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.'

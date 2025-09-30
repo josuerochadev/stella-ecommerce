@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { useCartStore } from "../stores/useCartStore";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { logger } from "../utils/logger";
 
 /**
  * Hook personnalisé pour les actions du panier
@@ -24,7 +25,7 @@ export const useCartActions = () => {
       await removeItem(cartItemId);
       return { success: true };
     } catch (error) {
-      console.error("Erreur lors de la suppression du panier:", error);
+      logger.error("Erreur lors de la suppression du panier:", error, "useCartActions");
       return {
         success: false,
         error: "Impossible de supprimer l'article du panier"

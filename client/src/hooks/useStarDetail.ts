@@ -1,6 +1,7 @@
 // client/src/hooks/useStarDetail.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { fetchStarById, fetchStars } from "../services/api";
+import { logger } from "../utils/logger";
 import type { Star } from "../types";
 
 export const useStarDetail = (id: number | undefined) => {
@@ -44,7 +45,7 @@ export const useStarDetail = (id: number | undefined) => {
       }
 
     } catch (err) {
-      console.error("Erreur lors du chargement des détails de l'étoile:", err);
+      logger.error("Erreur lors du chargement des détails de l'étoile", err, "useStarDetail");
       setError("Impossible de charger les détails de l'étoile");
     } finally {
       setLoading(false);

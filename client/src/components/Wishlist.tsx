@@ -4,6 +4,7 @@ import { useEffect, memo, useCallback } from "react";
 import { useWishlistStore } from "../stores/useWishlistStore";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { logger } from "../utils/logger";
 import StarCard from "./StarCard";
 import FadeInSection from "./FadeInSection";
 
@@ -24,7 +25,7 @@ const Wishlist: React.FC = () => {
       try {
         await removeItemFromWishlist(starId);
       } catch (error) {
-        console.error("Erreur lors de la suppression de la wishlist:", error);
+        logger.error("Erreur lors de la suppression de la wishlist:", error, "Wishlist");
       }
     },
     [removeItemFromWishlist],

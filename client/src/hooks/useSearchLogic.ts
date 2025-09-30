@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchStars } from '../services/api';
 import { sanitizeSearchQuery, detectInjectionAttempt } from '../utils/security';
 import { debounce } from '../utils/debounce';
+import { logger } from '../utils/logger';
 import type { Star } from '../types';
 
 /**
@@ -37,7 +38,7 @@ export const useSearchLogic = () => {
         setSuggestions(results.slice(0, 8)); // Limite à 8 suggestions
         setShowSuggestions(results.length > 0);
       } catch (error) {
-        console.error('Erreur lors de la recherche:', error);
+        logger.error('Erreur lors de la recherche:', error, 'useSearchLogic');
         setSuggestions([]);
         setShowSuggestions(false);
       } finally {
@@ -54,7 +55,7 @@ export const useSearchLogic = () => {
   const handleSearchChange = useCallback((value: string) => {
     // Vérifier les tentatives d'injection
     if (detectInjectionAttempt(value)) {
-      console.warn('Tentative d\'injection détectée dans la recherche');
+      logger.warn('Tentative d\'injection détectée dans la recherche', value, 'useSearchLogic');
       return false; // Entrée refusée
     }
 

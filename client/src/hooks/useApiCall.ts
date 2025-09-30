@@ -7,13 +7,13 @@ interface ApiCallState<T> {
   error: string | null;
 }
 
-interface UseApiCallOptions {
+interface UseApiCallOptions<T = unknown> {
   showGlobalError?: boolean;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: T) => void;
   onError?: (error: string) => void;
 }
 
-export const useApiCall = <T = any>(options: UseApiCallOptions = {}) => {
+export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
   const { showGlobalError = true, onSuccess, onError } = options;
   const { handleError } = useErrorHandler();
 
@@ -105,15 +105,15 @@ export const useCollectionOperation = (
 };
 
 // Hook pour les opérations avec validation
-export const useValidatedApiCall = <T = any>(
-  validator: (data: any) => boolean | string,
-  options: UseApiCallOptions = {}
+export const useValidatedApiCall = <T = unknown, D = unknown>(
+  validator: (data: D) => boolean | string,
+  options: UseApiCallOptions<T> = {}
 ) => {
   const apiCall = useApiCall<T>(options);
 
   const executeWithValidation = useCallback(async (
-    data: any,
-    apiFunction: (validatedData: any) => Promise<T>
+    data: D,
+    apiFunction: (validatedData: D) => Promise<T>
   ): Promise<T | null> => {
     const validationResult = validator(data);
 
