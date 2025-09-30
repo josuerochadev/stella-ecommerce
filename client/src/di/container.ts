@@ -2,10 +2,12 @@
 // Container d'injection de dépendances simple pour le frontend
 // Responsabilité unique : gestion et résolution des dépendances frontend
 
-import { ApiCartRepository } from '../repositories/ApiCartRepository';
-import { ApiWishlistRepository } from '../repositories/ApiWishlistRepository';
-import type { CartRepository } from '../interfaces/CartRepository';
-import type { WishlistRepository } from '../interfaces/WishlistRepository';
+import { ApiCartRepository } from "@/repositories/ApiCartRepository";
+import { ApiWishlistRepository } from "@/repositories/ApiWishlistRepository";
+import { ApiUserRepository } from "@/repositories/ApiUserRepository";
+import type { CartRepository } from "@/interfaces/CartRepository";
+import type { WishlistRepository } from "@/interfaces/WishlistRepository";
+import type { UserRepository } from "@/interfaces/UserRepository";
 
 /**
  * Type pour les services disponibles dans le container
@@ -13,6 +15,7 @@ import type { WishlistRepository } from '../interfaces/WishlistRepository';
 export interface ServiceContainer {
   cartRepository: CartRepository;
   wishlistRepository: WishlistRepository;
+  userRepository: UserRepository;
 }
 
 /**
@@ -112,6 +115,7 @@ export function configureContainer(): void {
   // Enregistrer les repositories
   container.registerFactory('cartRepository', () => new ApiCartRepository());
   container.registerFactory('wishlistRepository', () => new ApiWishlistRepository());
+  container.registerFactory('userRepository', () => new ApiUserRepository());
 }
 
 /**
@@ -186,6 +190,9 @@ export function configureTestContainer(mocks: Partial<ServiceContainer>): void {
   }
   if (!mocks.wishlistRepository) {
     container.registerFactory('wishlistRepository', () => new ApiWishlistRepository());
+  }
+  if (!mocks.userRepository) {
+    container.registerFactory('userRepository', () => new ApiUserRepository());
   }
 }
 

@@ -2,13 +2,13 @@
 // Responsabilité unique : Orchestration des sections du profil
 
 import { useState, useEffect, memo } from "react";
-import { getUserProfile } from "../services/api";
-import { useNavigate } from "react-router-dom";
-import { logger } from "../utils/logger";
-import type { User } from "../types";
-import { useAuth } from "../context/AuthContext";
-import { useCartStore } from "../stores/useCartStore";
-import { useWishlistStore } from "../stores/useWishlistStore";
+import { getUserProfile } from "@/services/api";
+import { logger } from "@/utils/logger";
+import type { User } from "@/types";
+import { useAuth } from "@/context/AuthContext";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
 import FadeInSection from "./FadeInSection";
 import { SkeletonProfile } from "./Skeleton";
 import UserProfileSection from "./UserProfileSection";
@@ -17,12 +17,11 @@ import ProfileWishlistSection from "./ProfileWishlistSection";
 
 const Profile: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { redirectToLogin, redirectToRegister } = useAuthRedirect();
   const { cartItems } = useCartStore();
   const { wishlistItems, fetchWishlist } = useWishlistStore();
   const [user, setUser] = useState<User | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -67,14 +66,14 @@ const Profile: React.FC = () => {
         <div className="flex justify-center space-x-4">
           <button
             type="button"
-            onClick={() => navigate("/auth", { state: { from: "/profile", mode: "login" } })}
+            onClick={() => redirectToLogin({ from: "/profile" })}
             className="btn"
           >
             Se connecter
           </button>
           <button
             type="button"
-            onClick={() => navigate("/auth", { state: { from: "/profile", mode: "register" } })}
+            onClick={() => redirectToRegister({ from: "/profile" })}
             className="btn"
           >
             S'inscrire

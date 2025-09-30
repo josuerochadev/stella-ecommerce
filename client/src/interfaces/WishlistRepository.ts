@@ -2,7 +2,7 @@
 // Interface pour les opérations de persistance de la wishlist
 // Responsabilité unique : abstraction des opérations de la wishlist
 
-import type { WishlistItem } from '../types';
+import type { WishlistItem } from "@/types";
 
 /**
  * Interface pour le repository de la liste de souhaits

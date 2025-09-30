@@ -3,9 +3,9 @@
 
 import React, { memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCartIcon, HeartIcon } from '../utils/icons';
-import { useCartStore } from '../stores/useCartStore';
-import { useWishlistStore } from '../stores/useWishlistStore';
+import { ShoppingCartIcon, HeartIcon } from "@/utils/icons";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
 
 const FloatingActions: React.FC = () => {
   const location = useLocation();

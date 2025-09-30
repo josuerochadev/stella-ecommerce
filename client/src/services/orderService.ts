@@ -2,7 +2,7 @@
 // Responsabilité unique : Gestion des commandes
 
 import { httpClient } from "./httpClient";
-import type { Order, OrderData, OrderStatus, ApiResponse } from "../types";
+import type { Order, OrderData, OrderStatus, ApiResponse } from "@/types";
 
 /**
  * Service de gestion des commandes

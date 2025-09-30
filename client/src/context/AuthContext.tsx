@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 import { createContext, useState, useEffect, useContext } from "react";
-import { useCartStore } from "../stores/useCartStore";
-import { useWishlistStore } from "../stores/useWishlistStore";
-import { logger } from "../utils/logger";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { logger } from "@/utils/logger";
 
 interface AuthContextType {
   isAuthenticated: boolean;

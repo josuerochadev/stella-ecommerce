@@ -1,7 +1,7 @@
 // client/src/hooks/useFunFacts.ts
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { APP_CONSTANTS } from '../constants/app';
+import { APP_CONSTANTS } from "@/constants/app";
 
 const funFacts = [
   "La plus proche étoile de la Terre, après le Soleil, est Proxima Centauri, située à 4,2 années-lumière.",

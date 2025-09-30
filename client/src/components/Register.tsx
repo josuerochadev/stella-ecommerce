@@ -1,13 +1,13 @@
 import { useState, memo, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { registerUser } from "../services/api";
-import { useValidatedApiCall } from "../hooks/useApiCall";
-import { validateEmail, sanitizeText } from "../utils/security";
+import { useAuth } from "@/context/AuthContext";
+import { registerUser } from "@/services/api";
+import { useValidatedApiCall } from "@/hooks/useApiCall";
+import { validateEmail, sanitizeText } from "@/utils/security";
 import FadeInSection from "./FadeInSection";
 import FormInput from "./FormInput";
 import FormContainer from "./FormContainer";
-import type { RegisterResponse } from "../services/authService";
+import type { RegisterResponse } from "@/services/authService";
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");

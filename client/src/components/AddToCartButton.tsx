@@ -1,9 +1,9 @@
 // client/src/components/AddToCartButton.tsx
 
-import { useNavigate } from "react-router-dom";
-import { useCartStore } from "../stores/useCartStore";
-import { useAuth } from "../context/AuthContext";
-import { ShoppingCartIcon } from "../utils/icons";
+import { useCartStore } from "@/stores/useCartStore";
+import { useAuth } from "@/context/AuthContext";
+import { ShoppingCartIcon } from "@/utils/icons";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import type React from "react";
 
 interface AddToCartButtonProps {
@@ -12,7 +12,7 @@ interface AddToCartButtonProps {
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { redirectToLogin } = useAuthRedirect();
 
   const cartItems = useCartStore((state) => state.cartItems);
   const addItem = useCartStore((state) => state.addItem);
@@ -24,11 +24,9 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      navigate("/auth", {
-        state: {
-          from: "/cart",
-          message: "Veuillez vous connecter pour ajouter des articles au panier.",
-        },
+      redirectToLogin({
+        from: "/cart",
+        message: "Veuillez vous connecter pour ajouter des articles au panier.",
       });
       return;
     }

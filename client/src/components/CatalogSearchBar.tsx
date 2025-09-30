@@ -1,8 +1,8 @@
 // client/src/components/CatalogSearchBar.tsx
 // Responsabilité unique : Barre de recherche du catalogue avec suggestions
 
-import { SearchIcon } from '../utils/icons';
-import type { Star } from '../types';
+import { SearchIcon } from "@/utils/icons";
+import type { Star } from "@/types";
 
 interface CatalogSearchBarProps {
   query: string;

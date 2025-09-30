@@ -1,22 +1,22 @@
 // client/src/pages/Home.tsx
 
 import { memo } from "react";
-import { useNavigate } from "react-router-dom";
-import HeroSection from "../components/HeroSection";
-import { useHeroPhrases } from "../hooks/useHeroPhrases";
-import StarCard from "../components/StarCard";
-import { useLatestStars } from "../hooks/useLatestStars";
-import { useFunFacts } from "../hooks/useFunFacts";
-import FadeInSection from "../components/FadeInSection";
-import { useAuth } from "../context/AuthContext";
-import { APP_CONSTANTS } from '../constants/app';
+import HeroSection from "@/components/HeroSection";
+import { useHeroPhrases } from "@/hooks/useHeroPhrases";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import StarCard from "@/components/StarCard";
+import { useLatestStars } from "@/hooks/useLatestStars";
+import { useFunFacts } from "@/hooks/useFunFacts";
+import FadeInSection from "@/components/FadeInSection";
+import { useAuth } from "@/context/AuthContext";
+import { APP_CONSTANTS } from "@/constants/app";
 
 
 const Home: React.FC = () => {
   const { stars, loading, error } = useLatestStars(APP_CONSTANTS.STARS_PER_PAGE_HOME);
   const currentFact = useFunFacts();
   const { currentPhrase, fade } = useHeroPhrases(APP_CONSTANTS.HERO_PHRASES_INTERVAL);
-  const navigate = useNavigate();
+  const { redirectToAuth } = useAuthRedirect();
 
   const { isAuthenticated } = useAuth();
 
@@ -114,7 +114,7 @@ const Home: React.FC = () => {
             <button
               type="button"
               className="btn"
-              onClick={() => navigate("/auth")}
+              onClick={() => redirectToAuth()}
             >
               Se connecter
             </button>

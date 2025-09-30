@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { usePageTitleOnScroll } from "../hooks/usePageTitleOnScroll";
+import { usePageTitleOnScroll } from "@/hooks/usePageTitleOnScroll";
 import SearchBar from "./SearchBar";
 import Navigation from "./Navigation";
 import UserMenu from "./UserMenu";

@@ -1,9 +1,9 @@
 // client/src/components/AddToWishlistButton.tsx
 
-import { useNavigate } from "react-router-dom";
-import { useWishlistStore } from "../stores/useWishlistStore";
-import { useAuth } from "../context/AuthContext";
-import { HeartIcon } from "../utils/icons";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { useAuth } from "@/context/AuthContext";
+import { HeartIcon } from "@/utils/icons";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
@@ -12,7 +12,7 @@ interface AddToWishlistButtonProps {
 
 const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { redirectToLogin } = useAuthRedirect();
 
   const wishlistItems = useWishlistStore((state) => state.wishlistItems);
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
@@ -30,11 +30,9 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
 
   const handleAddToWishlist = useCallback(async () => {
     if (!isAuthenticated) {
-      navigate("/auth", {
-        state: {
-          from: "/wishlist",
-          message: "Veuillez vous connecter pour ajouter des articles à la liste de souhaits.",
-        },
+      redirectToLogin({
+        from: "/wishlist",
+        message: "Veuillez vous connecter pour ajouter des articles à la liste de souhaits.",
       });
       return;
     }
@@ -44,7 +42,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
     } catch (err) {
       // L'erreur est gérée par le store useWishlistStore
     }
-  }, [isAuthenticated, navigate, addItemToWishlist, starId]);
+  }, [isAuthenticated, redirectToLogin, addItemToWishlist, starId]);
 
   return (
     <>

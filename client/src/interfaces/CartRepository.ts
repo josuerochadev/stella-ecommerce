@@ -2,7 +2,7 @@
 // Interface pour les opérations de persistance du panier
 // Responsabilité unique : abstraction des opérations du panier
 
-import type { CartItem } from '../types';
+import type { CartItem } from "@/types";
 
 /**
  * Interface pour le repository du panier d'achat

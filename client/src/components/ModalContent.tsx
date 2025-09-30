@@ -2,9 +2,9 @@
 // Responsabilité unique : Rendu du contenu principal de la modal
 
 import React from 'react';
-import { ModalStylesService, ModalType } from '../utils/modalStyles';
+import { ModalStylesService, ModalType } from "@/utils/modalStyles";
 import ModalIcon from './ModalIcon';
-import { ARIA_LABELS } from '../utils/accessibility';
+import { ARIA_LABELS } from "@/utils/accessibility";
 
 interface ModalContentProps {
   type: ModalType;

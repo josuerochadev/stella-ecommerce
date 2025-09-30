@@ -2,9 +2,9 @@
 // Responsabilité unique : Affichage de la liste des articles du panier
 
 import React from "react";
-import { logger } from "../utils/logger";
+import { logger } from "@/utils/logger";
 import StarCard from "./StarCard";
-import type { CartItem } from "../types";
+import type { CartItem } from "@/types";
 
 interface CartItemsListProps {
   cartItems: CartItem[];

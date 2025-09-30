@@ -1,6 +1,6 @@
 // client/src/pages/About.tsx
 import type React from "react";
-import FadeInSection from "../components/FadeInSection";
+import FadeInSection from "@/components/FadeInSection";
 
 const About: React.FC = () => {
   return (

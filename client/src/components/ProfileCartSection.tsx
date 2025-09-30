@@ -2,7 +2,7 @@
 // Responsabilité unique : Affichage du panier dans le profil
 
 import { memo } from "react";
-import type { CartItem } from "../types";
+import type { CartItem } from "@/types";
 
 interface ProfileCartSectionProps {
   cartItems: CartItem[];

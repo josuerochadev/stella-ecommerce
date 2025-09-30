@@ -3,10 +3,11 @@
 // Responsabilité unique : gestion de l'état de la wishlist via repository
 
 import { create } from "zustand";
-import { transformWishlistItems } from "../utils/dataTransformers";
-import { getService } from "../di/container";
-import type { WishlistItem } from "../types";
-import type { WishlistRepository } from "../interfaces/WishlistRepository";
+import { transformWishlistItems, transformWishlistItem } from "@/utils/dataTransformers";
+import { getService } from "@/di/container";
+import type { WishlistItem } from "@/types";
+import type { WishlistRepository } from "@/interfaces/WishlistRepository";
+import { getErrorMessage } from "@/utils/errorHelpers";
 
 interface WishlistState {
   wishlistItems: WishlistItem[];
@@ -40,7 +41,7 @@ export const createWishlistStore = (wishlistRepository: WishlistRepository) =>
         const transformedWishlist = transformWishlistItems(wishlist || []);
         set({ wishlistItems: transformedWishlist, loading: false });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la récupération de la wishlist.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de la récupération de la wishlist.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -49,22 +50,14 @@ export const createWishlistStore = (wishlistRepository: WishlistRepository) =>
       set({ loading: true, error: null });
       try {
         const { wishlistItem } = await wishlistRepository.addToWishlist(starId);
-        const transformedWishlistItem = {
-          ...wishlistItem,
-          Star: {
-            ...wishlistItem.Star,
-            price: typeof wishlistItem.Star.price === "string"
-              ? Number.parseFloat(wishlistItem.Star.price)
-              : wishlistItem.Star.price,
-          },
-        };
+        const transformedWishlistItem = transformWishlistItem(wishlistItem);
         set((state) => ({
           wishlistItems: [...state.wishlistItems, transformedWishlistItem],
           loading: false,
           error: null
         }));
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de l'ajout à la wishlist.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de l'ajout à la wishlist.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -79,7 +72,7 @@ export const createWishlistStore = (wishlistRepository: WishlistRepository) =>
           error: null
         }));
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la suppression de la wishlist.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de la suppression de la wishlist.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -93,7 +86,7 @@ export const createWishlistStore = (wishlistRepository: WishlistRepository) =>
         await wishlistRepository.clearWishlist();
         set({ wishlistItems: [], loading: false, error: null });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors du vidage de la wishlist.";
+        const errorMessage = getErrorMessage(error, "Erreur lors du vidage de la wishlist.");
         set({ error: errorMessage, loading: false });
       }
     },

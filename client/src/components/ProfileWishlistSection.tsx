@@ -2,7 +2,7 @@
 // Responsabilité unique : Affichage de la wishlist dans le profil
 
 import { memo } from "react";
-import type { WishlistItem } from "../types";
+import type { WishlistItem } from "@/types";
 
 interface ProfileWishlistSectionProps {
   wishlistItems: WishlistItem[];

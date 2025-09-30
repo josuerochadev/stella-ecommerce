@@ -2,8 +2,8 @@
 // Responsabilité unique : Orchestrateur de la boîte de recherche accessible
 
 import { useRef } from 'react';
-import { useKeyboardNavigation } from '../hooks/useFocusManagement';
-import { useSearchLogic } from '../hooks/useSearchLogic';
+import { useKeyboardNavigation } from "@/hooks/useFocusManagement";
+import { useSearchLogic } from "@/hooks/useSearchLogic";
 import SearchToggleButton from './SearchToggleButton';
 import SearchInputField from './SearchInputField';
 import SearchSuggestionsList from './SearchSuggestionsList';

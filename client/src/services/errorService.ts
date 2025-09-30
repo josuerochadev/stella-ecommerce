@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../constants/app';
+import { HTTP_STATUS } from "@/constants/app";
 
 export interface ErrorDetails {
   message: string;

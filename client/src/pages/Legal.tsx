@@ -1,5 +1,5 @@
 import type React from "react";
-import FadeInSection from "../components/FadeInSection";
+import FadeInSection from "@/components/FadeInSection";
 
 const Legal: React.FC = () => {
   return (

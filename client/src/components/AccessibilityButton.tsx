@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AccessibilityPanel from './AccessibilityPanel';
-import { ARIA_LABELS } from '../utils/accessibility';
+import { ARIA_LABELS } from "@/utils/accessibility";
 
 const AccessibilityButton: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);

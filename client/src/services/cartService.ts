@@ -2,8 +2,8 @@
 // Responsabilité unique : Gestion du panier d'achat
 
 import { httpClient } from "./httpClient";
-import { transformCartItems } from "../utils/dataTransformers";
-import type { Cart, ApiResponse } from "../types";
+import { transformCartItems } from "@/utils/dataTransformers";
+import type { Cart, ApiResponse } from "@/types";
 
 /**
  * Interface pour l'ajout d'article au panier

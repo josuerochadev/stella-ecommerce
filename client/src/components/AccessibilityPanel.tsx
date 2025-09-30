@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useAccessibilitySettings, ACCESSIBILITY_THEMES } from '../utils/accessibilityThemes';
+import { useAccessibilitySettings, ACCESSIBILITY_THEMES } from "@/utils/accessibilityThemes";
 import AccessibleModal from './AccessibleModal';
-import { ARIA_LABELS } from '../utils/accessibility';
+import { ARIA_LABELS } from "@/utils/accessibility";
 
 interface AccessibilityPanelProps {
   isOpen: boolean;

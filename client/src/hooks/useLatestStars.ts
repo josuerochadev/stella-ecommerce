@@ -1,9 +1,9 @@
 // client/src/hooks/useLatestStars.ts
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchStars } from "../services/api";
+import { fetchStars } from "@/services/api";
 import { useErrorHandler } from "./useErrorHandler";
-import type { Star } from "../types/index";
+import type { Star } from "@/types/index";
 
 export const useLatestStars = (limit = 6) => {
   const [stars, setStars] = useState<Star[]>([]);

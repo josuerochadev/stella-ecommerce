@@ -2,7 +2,7 @@
 // Responsabilité unique : Gestion des profils utilisateurs
 
 import { httpClient } from "./httpClient";
-import type { User, UserProfileData, ApiResponse } from "../types";
+import type { User, UserProfileData, ApiResponse } from "@/types";
 
 /**
  * Service de gestion des profils utilisateurs

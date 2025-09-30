@@ -2,15 +2,15 @@
 // Responsabilité unique : Orchestrateur principal de la page catalogue
 
 import { useEffect, memo } from "react";
-import { useCatalogFilters } from "../hooks/useCatalogFilters";
-import { useCatalogSearch } from "../hooks/useCatalogSearch";
-import { useCatalogSorting } from "../hooks/useCatalogSorting";
-import { useCatalogNavigation } from "../hooks/useCatalogNavigation";
-import CatalogSearchBar from "../components/CatalogSearchBar";
-import CatalogAdvancedFilters from "../components/CatalogAdvancedFilters";
-import CatalogResultsGrid from "../components/CatalogResultsGrid";
-import FadeInSection from "../components/FadeInSection";
-import type { Star } from "../types";
+import { useCatalogFilters } from "@/hooks/useCatalogFilters";
+import { useCatalogSearch } from "@/hooks/useCatalogSearch";
+import { useCatalogSorting } from "@/hooks/useCatalogSorting";
+import { useCatalogNavigation } from "@/hooks/useCatalogNavigation";
+import CatalogSearchBar from "@/components/CatalogSearchBar";
+import CatalogAdvancedFilters from "@/components/CatalogAdvancedFilters";
+import CatalogResultsGrid from "@/components/CatalogResultsGrid";
+import FadeInSection from "@/components/FadeInSection";
+import type { Star } from "@/types";
 
 /**
  * Page principale du catalogue

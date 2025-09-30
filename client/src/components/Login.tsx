@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { loginUser } from "../services/api";
+import { useAuth } from "@/context/AuthContext";
+import { loginUser } from "@/services/api";
 import FadeInSection from "./FadeInSection";
 import FormInput from "./FormInput";
 import FormContainer from "./FormContainer";
-import { useValidatedApiCall } from "../hooks/useApiCall";
-import { validateEmail, sanitizeText } from "../utils/security";
-import type { LoginResponse } from "../services/authService";
+import { useValidatedApiCall } from "@/hooks/useApiCall";
+import { validateEmail, sanitizeText } from "@/utils/security";
+import type { LoginResponse } from "@/services/authService";
 
 const Login: React.FC = () => {
   const { login } = useAuth();

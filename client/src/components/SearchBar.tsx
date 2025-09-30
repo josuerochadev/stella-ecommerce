@@ -2,8 +2,8 @@
 // Responsabilité unique : Barre de recherche standard (consolidée avec la version accessible)
 
 import { useRef } from "react";
-import { SearchIcon } from "../utils/icons";
-import { useSearchLogic } from "../hooks/useSearchLogic";
+import { SearchIcon } from "@/utils/icons";
+import { useSearchLogic } from "@/hooks/useSearchLogic";
 
 interface SearchBarProps {
   isVisible: boolean;

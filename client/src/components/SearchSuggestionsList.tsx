@@ -2,8 +2,8 @@
 // Responsabilité unique : Affichage des suggestions de recherche
 
 import React, { forwardRef } from 'react';
-import { ARIA_DESCRIPTIONS } from '../utils/accessibility';
-import type { Star } from '../types';
+import { ARIA_DESCRIPTIONS } from "@/utils/accessibility";
+import type { Star } from "@/types";
 
 interface SearchSuggestionsListProps {
   suggestions: Star[];

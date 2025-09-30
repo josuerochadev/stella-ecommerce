@@ -2,12 +2,12 @@
 // Responsabilité unique : Gestion du profil utilisateur
 
 import { useState, memo } from "react";
-import { updateUserProfile, deleteUserAccount } from "../services/api";
-import { useAuth } from "../context/AuthContext";
+import { updateUserProfile, deleteUserAccount } from "@/services/api";
+import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { logger } from "../utils/logger";
-import { useNotificationStore } from "../stores/useNotificationStore";
-import type { User } from "../types";
+import { logger } from "@/utils/logger";
+import { useNotificationStore } from "@/stores/useNotificationStore";
+import type { User } from "@/types";
 
 interface UserProfileSectionProps {
   user: User;

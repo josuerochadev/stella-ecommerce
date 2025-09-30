@@ -2,8 +2,8 @@
 // Responsabilité unique : Validation des données d'inscription avec gestion des erreurs
 
 import { useCallback } from "react";
-import { FormValidationService } from "../services/validationService";
-import { useNotificationStore } from "../stores/useNotificationStore";
+import { FormValidationService } from "@/services/validationService";
+import { useNotificationStore } from "@/stores/useNotificationStore";
 
 interface RegistrationData {
   firstName: string;

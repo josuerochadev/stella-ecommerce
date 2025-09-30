@@ -2,10 +2,12 @@
 // Implémentation du repository wishlist utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations de wishlist
 
-import { getWishlist, addToWishlist, removeFromWishlist } from '../services/api';
-import { logger } from '../utils/logger';
-import type { WishlistRepository } from '../interfaces/WishlistRepository';
-import type { WishlistItem } from '../types';
+import { getWishlist, addToWishlist, removeFromWishlist } from "@/services/api";
+import { logger } from "@/utils/logger";
+import type { WishlistRepository } from "@/interfaces/WishlistRepository";
+import type { WishlistItem } from "@/types";
+import { transformWishlistItem } from "@/utils/dataTransformers";
+import { createFormattedError } from "@/utils/errorHelpers";
 
 /**
  * Repository pour la wishlist utilisant l'API REST
@@ -24,7 +26,7 @@ export class ApiWishlistRepository implements WishlistRepository {
         wishlist: response.wishlist || []
       };
     } catch (error) {
-      throw new Error(`Failed to fetch wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to fetch wishlist');
     }
   }
 
@@ -49,7 +51,7 @@ export class ApiWishlistRepository implements WishlistRepository {
         wishlistItem: normalizedItem
       };
     } catch (error) {
-      throw new Error(`Failed to add item to wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to add item to wishlist');
     }
   }
 
@@ -67,7 +69,7 @@ export class ApiWishlistRepository implements WishlistRepository {
 
       await removeFromWishlist(starId);
     } catch (error) {
-      throw new Error(`Failed to remove item from wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to remove item from wishlist');
     }
   }
 
@@ -86,7 +88,7 @@ export class ApiWishlistRepository implements WishlistRepository {
       const wishlist = await this.getWishlist();
       return wishlist.wishlist.some(item => item.starId === starId);
     } catch (error) {
-      throw new Error(`Failed to check if item is in wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to check if item is in wishlist');
     }
   }
 
@@ -107,7 +109,7 @@ export class ApiWishlistRepository implements WishlistRepository {
 
       await Promise.all(deletePromises);
     } catch (error) {
-      throw new Error(`Failed to clear wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to clear wishlist');
     }
   }
 
@@ -121,7 +123,7 @@ export class ApiWishlistRepository implements WishlistRepository {
       const wishlist = await this.getWishlist();
       return wishlist.wishlist.length;
     } catch (error) {
-      throw new Error(`Failed to get wishlist count: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to get wishlist count');
     }
   }
 
@@ -153,7 +155,7 @@ export class ApiWishlistRepository implements WishlistRepository {
       // une implémentation coordonnée
       throw new Error('Move to cart functionality requires coordinated implementation with CartRepository');
     } catch (error) {
-      throw new Error(`Failed to move item to cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to move item to cart');
     }
   }
 
@@ -206,7 +208,7 @@ export class ApiWishlistRepository implements WishlistRepository {
                constellation.includes(lowercaseQuery);
       });
     } catch (error) {
-      throw new Error(`Failed to search wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to search wishlist');
     }
   }
 
@@ -234,26 +236,19 @@ export class ApiWishlistRepository implements WishlistRepository {
         shareUrl
       };
     } catch (error) {
-      throw new Error(`Failed to share wishlist: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to share wishlist');
     }
   }
 
   /**
    * Normalise un article de wishlist (conversion des prix)
+   * Utilise le transformateur centralisé pour éviter la duplication
    * @param {WishlistItem} item - Article à normaliser
    * @returns {WishlistItem} Article normalisé
    * @private
    */
   private normalizeWishlistItem(item: WishlistItem): WishlistItem {
-    return {
-      ...item,
-      Star: {
-        ...item.Star,
-        price: typeof item.Star.price === 'string'
-          ? parseFloat(item.Star.price)
-          : item.Star.price
-      }
-    };
+    return transformWishlistItem(item);
   }
 
   /**

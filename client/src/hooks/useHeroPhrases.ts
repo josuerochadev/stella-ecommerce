@@ -1,7 +1,7 @@
 // client/src/hooks/useHeroPhrases.ts
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { APP_CONSTANTS } from '../constants/app';
+import { APP_CONSTANTS } from "@/constants/app";
 
 const heroPhrases = [
   "Illuminer votre vie.",

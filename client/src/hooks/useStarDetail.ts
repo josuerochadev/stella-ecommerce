@@ -1,8 +1,8 @@
 // client/src/hooks/useStarDetail.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { fetchStarById, fetchStars } from "../services/api";
-import { logger } from "../utils/logger";
-import type { Star } from "../types";
+import { fetchStarById, fetchStars } from "@/services/api";
+import { logger } from "@/utils/logger";
+import type { Star } from "@/types";
 
 export const useStarDetail = (id: number | undefined) => {
   const [star, setStar] = useState<Star | null>(null);

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { useTouchInteractions } from '../hooks/useTouchInteractions';
+import { useTouchInteractions } from "@/hooks/useTouchInteractions";
 
 interface TouchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';

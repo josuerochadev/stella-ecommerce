@@ -3,11 +3,11 @@
 
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { searchStars } from '../services/api';
-import { sanitizeSearchQuery, detectInjectionAttempt } from '../utils/security';
-import { debounce } from '../utils/debounce';
-import { logger } from '../utils/logger';
-import type { Star } from '../types';
+import { searchStars } from "@/services/api";
+import { sanitizeSearchQuery, detectInjectionAttempt } from "@/utils/security";
+import { debounce } from "@/utils/debounce";
+import { logger } from "@/utils/logger";
+import type { Star } from "@/types";
 
 /**
  * Hook personnalisé pour la logique de recherche

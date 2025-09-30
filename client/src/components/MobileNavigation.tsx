@@ -3,8 +3,8 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HomeIcon, SearchIcon, UserIcon, StoreIcon, BarsIcon, TimesIcon } from '../utils/icons';
-import { useAuth } from '../context/AuthContext';
+import { HomeIcon, SearchIcon, UserIcon, StoreIcon, BarsIcon, TimesIcon } from "@/utils/icons";
+import { useAuth } from "@/context/AuthContext";
 import { TouchButton } from './TouchButton';
 import FloatingActions from './FloatingActions';
 import MobileMenuOverlay from './MobileMenuOverlay';

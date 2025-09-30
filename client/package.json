@@ -35,13 +35,14 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.35",
+    "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.2.5"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
-    "build": "react-scripts build",
+    "start": "PORT=3001 react-app-rewired start",
+    "build": "react-app-rewired build",
     "eject": "react-scripts eject",
     "lint": "biome lint .",
     "format": "biome format . --write",

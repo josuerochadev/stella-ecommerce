@@ -1,8 +1,8 @@
 // hooks/useCartStatus.ts
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { getCart, addToCart } from "../services/api";
+import { getCart, addToCart } from "@/services/api";
 import { useErrorHandler } from "./useErrorHandler";
-import type { CartItem } from "../types";
+import type { CartItem } from "@/types";
 
 export const useCartStatus = (starid: number) => {
   const [inCart, setInCart] = useState(false);

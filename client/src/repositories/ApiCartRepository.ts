@@ -2,9 +2,11 @@
 // Implémentation du repository panier utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations de panier
 
-import { getCart, addToCart, removeFromCart } from '../services/api';
-import type { CartRepository } from '../interfaces/CartRepository';
-import type { CartItem } from '../types';
+import { getCart, addToCart, removeFromCart } from "@/services/api";
+import type { CartRepository } from "@/interfaces/CartRepository";
+import type { CartItem } from "@/types";
+import { transformCartItem, safeNumberTransform } from "@/utils/dataTransformers";
+import { createFormattedError } from "@/utils/errorHelpers";
 
 /**
  * Repository pour le panier utilisant l'API REST
@@ -23,7 +25,7 @@ export class ApiCartRepository implements CartRepository {
         cartItems: response.cartItems || []
       };
     } catch (error) {
-      throw new Error(`Failed to fetch cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to fetch cart');
     }
   }
 
@@ -46,7 +48,7 @@ export class ApiCartRepository implements CartRepository {
 
       await addToCart(starId, quantity);
     } catch (error) {
-      throw new Error(`Failed to add item to cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to add item to cart');
     }
   }
 
@@ -64,7 +66,7 @@ export class ApiCartRepository implements CartRepository {
 
       await removeFromCart(cartItemId);
     } catch (error) {
-      throw new Error(`Failed to remove item from cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to remove item from cart');
     }
   }
 
@@ -92,7 +94,7 @@ export class ApiCartRepository implements CartRepository {
       // En attendant un endpoint API dédié pour la mise à jour
       throw new Error('Update quantity not yet implemented - API endpoint needed');
     } catch (error) {
-      throw new Error(`Failed to update cart item quantity: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to update cart item quantity');
     }
   }
 
@@ -113,7 +115,7 @@ export class ApiCartRepository implements CartRepository {
 
       await Promise.all(deletePromises);
     } catch (error) {
-      throw new Error(`Failed to clear cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to clear cart');
     }
   }
 
@@ -127,9 +129,7 @@ export class ApiCartRepository implements CartRepository {
       const cart = await this.getCart();
 
       const total = cart.cartItems.reduce((sum, item) => {
-        const price = typeof item.Star.price === 'string'
-          ? parseFloat(item.Star.price)
-          : item.Star.price;
+        const price = safeNumberTransform(item.Star.price, 0);
         return sum + (price * item.quantity);
       }, 0);
 
@@ -140,7 +140,7 @@ export class ApiCartRepository implements CartRepository {
         itemCount
       };
     } catch (error) {
-      throw new Error(`Failed to calculate cart summary: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to calculate cart summary');
     }
   }
 
@@ -159,7 +159,7 @@ export class ApiCartRepository implements CartRepository {
       const cart = await this.getCart();
       return cart.cartItems.some(item => item.starId === starId);
     } catch (error) {
-      throw new Error(`Failed to check if item is in cart: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw createFormattedError(error, 'Failed to check if item is in cart');
     }
   }
 
@@ -213,14 +213,8 @@ export class ApiCartRepository implements CartRepository {
    * @private
    */
   private normalizeCartItems(items: CartItem[]): CartItem[] {
-    return items.map(item => ({
-      ...item,
-      Star: {
-        ...item.Star,
-        price: typeof item.Star.price === 'string'
-          ? parseFloat(item.Star.price)
-          : item.Star.price
-      }
-    })).filter(item => this.validateCartItem(item));
+    return items
+      .map(item => transformCartItem(item))
+      .filter(item => this.validateCartItem(item));
   }
 }
