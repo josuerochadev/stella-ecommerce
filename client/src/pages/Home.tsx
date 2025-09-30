@@ -1,6 +1,7 @@
 // client/src/pages/Home.tsx
 
 import { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "../components/HeroSection";
 import { useHeroPhrases } from "../hooks/useHeroPhrases";
 import StarCard from "../components/StarCard";
@@ -15,6 +16,7 @@ const Home: React.FC = () => {
   const { stars, loading, error } = useLatestStars(APP_CONSTANTS.STARS_PER_PAGE_HOME);
   const currentFact = useFunFacts();
   const { currentPhrase, fade } = useHeroPhrases(APP_CONSTANTS.HERO_PHRASES_INTERVAL);
+  const navigate = useNavigate();
 
   const { isAuthenticated } = useAuth();
 
@@ -112,9 +114,7 @@ const Home: React.FC = () => {
             <button
               type="button"
               className="btn"
-              onClick={() => {
-                window.location.href = "/auth";
-              }}
+              onClick={() => navigate("/auth")}
             >
               Se connecter
             </button>

@@ -1,7 +1,7 @@
 // client/src/App.tsx
 
-import React, { Suspense } from "react";
-import { Route, BrowserRouter as Router, Routes, Navigate } from "react-router-dom";
+import React, { Suspense, useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes, Navigate, useNavigate } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -22,12 +22,29 @@ const FAQ = React.lazy(() => import("./pages/FAQ"));
 const Legal = React.lazy(() => import("./pages/Legal")); // Import en lazy loading
 const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
 
+// Component to handle auth unauthorized events
+const AuthEventListener: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleUnauthorized = (event: Event) => {
+      const customEvent = event as CustomEvent<{ redirectTo: string }>;
+      navigate(customEvent.detail.redirectTo);
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, [navigate]);
+
+  return null;
+};
 
 const App: React.FC = () => {
   const isAuthenticated = !!localStorage.getItem("token"); // Check if the user is authenticated
 
   return (
     <Router>
+      <AuthEventListener />
       <ErrorBoundary>
         <div className="flex flex-col min-h-screen">
           <Header />
