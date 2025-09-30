@@ -85,8 +85,6 @@ const Login: React.FC = () => {
         </p>
 
         <FormContainer
-          title="Connexion"
-          description="Connectez-vous pour accéder à votre compte"
           error={error || undefined}
           isLoading={isLoading}
           onSubmit={handleSubmit}

@@ -17,7 +17,7 @@ const StatusMessage: React.FC<StatusMessageProps> = ({ type, message, id }) => {
       case 'error': return 'text-red-800 bg-red-100 border-red-300';
       case 'warning': return 'text-yellow-800 bg-yellow-100 border-yellow-300';
       case 'info': return 'text-blue-800 bg-blue-100 border-blue-300';
-      default: return 'text-gray-800 bg-gray-100 border-gray-300';
+      default: return 'text-text bg-primary/20 border-primary';
     }
   };
 

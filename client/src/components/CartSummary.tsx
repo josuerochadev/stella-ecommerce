@@ -20,13 +20,13 @@ const CartSummary: React.FC<CartSummaryProps> = ({ cartItems, onCheckout }) => {
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-gray-600">
+        <div className="flex justify-between text-sm text-text">
           <span>Articles ({stats.totalItems})</span>
           <span>{CartCalculations.formatPrice(stats.totalAmount)}</span>
         </div>
 
         {stats.totalItems > 1 && (
-          <div className="flex justify-between text-sm text-gray-500">
+          <div className="flex justify-between text-sm text-text/70">
             <span>Prix moyen par article</span>
             <span>{CartCalculations.formatPrice(stats.averageItemPrice)}</span>
           </div>

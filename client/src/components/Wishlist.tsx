@@ -70,7 +70,7 @@ const Wishlist: React.FC = () => {
   if (!wishlistItems || wishlistItems.length === 0) {
     return (
       <div className="container mx-auto pt-20 px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Votre liste d'envies est vide</h1>
+        <h1 className="text-3xl font-bold mb-4 text-text">Votre liste d'envies est vide</h1>
         <p className="text-lg mb-6 font-serif">
           Vous n'avez pas encore ajouté d'étoiles à votre liste d'envies. Explorez notre catalogue
           pour en ajouter !
@@ -84,7 +84,7 @@ const Wishlist: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Votre liste d'envies</h1>
+      <h1 className="text-3xl font-bold mb-4 text-text">Votre liste d'envies</h1>
       <FadeInSection>
         <div className="space-y-6">
           {wishlistItems.map((item) =>

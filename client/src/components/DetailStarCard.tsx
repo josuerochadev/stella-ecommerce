@@ -27,7 +27,7 @@ const DetailStarCard: React.FC<DetailStarCardProps> = ({ star }) => {
           className="md:w-1/2 w-full object-cover"
         />
         <div className="p-4 flex-grow flex flex-col justify-between md:pl-8">
-          <h2 className="text-xl font-display mb-2">{star.name}</h2>
+          <h2 className="text-xl font-display mb-2 text-text">{star.name}</h2>
 
           <p className="text-lg font-serif mb-6">{star.description}</p>
 

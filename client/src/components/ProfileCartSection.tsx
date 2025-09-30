@@ -11,12 +11,12 @@ interface ProfileCartSectionProps {
 const ProfileCartSection: React.FC<ProfileCartSectionProps> = ({ cartItems }) => {
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold">Votre Panier</h2>
+      <h2 className="text-2xl font-bold text-text">Votre Panier</h2>
       {cartItems.length > 0 ? (
         cartItems.map((item) =>
           item.Star ? (
             <div key={item.id} className="mb-4">
-              <h3 className="text-xl">{item.Star.name}</h3>
+              <h3 className="text-xl text-text">{item.Star.name}</h3>
               <p>
                 {item.quantity} x {item.Star.price} €
               </p>

@@ -28,7 +28,7 @@ const ProductDetail: React.FC = () => {
         <StarCard star={star} showAddToCartButton={true} isDetailedView={true} />{" "}
         {/* Section des étoiles similaires */}
         <section className="mt-12">
-          <h2 className="text-3xl font-display mb-6">Vous pouvez aimer aussi :</h2>
+          <h2 className="text-3xl font-display mb-6 text-text">Vous pouvez aimer aussi :</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {relatedStars.map((relatedStar: Star) => (
               <StarCard
