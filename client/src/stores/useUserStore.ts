@@ -47,13 +47,19 @@ export const createUserStore = (userRepository: UserRepository) =>
     },
 
     updateProfile: async (userData: UserProfileData) => {
+      const currentUser = get().user;
+      if (!currentUser) {
+        set({ error: "Aucun utilisateur connecté", loading: false });
+        return;
+      }
+
       set({ loading: true, error: null });
       try {
         const response: ApiResponse<User> = await userRepository.updateProfile(userData);
         set({ user: response.data, loading: false, error: null });
       } catch (error) {
         const errorMessage = getErrorMessage(error, "Erreur lors de la mise à jour du profil.");
-        set({ error: errorMessage, loading: false });
+        set({ error: errorMessage, loading: false, user: currentUser });
       }
     },
 

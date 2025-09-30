@@ -2,24 +2,20 @@
 // Responsabilité unique : Gestion du profil utilisateur
 
 import { useState, memo } from "react";
-import { updateUserProfile, deleteUserAccount } from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { logger } from "@/utils/logger";
+import { useUserStore } from "@/stores/useUserStore";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import type { User } from "@/types";
 
 interface UserProfileSectionProps {
   user: User;
-  onProfileUpdate: (updatedUser: Partial<User>) => void;
 }
 
-const UserProfileSection: React.FC<UserProfileSectionProps> = ({
-  user,
-  onProfileUpdate,
-}) => {
+const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { updateProfile, deleteAccount, loading } = useUserStore();
   const { showSuccess, showConfirm } = useNotificationStore();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [firstName, setFirstName] = useState(user.firstName);
@@ -31,13 +27,11 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     e.preventDefault();
     try {
       const updatedData = { firstName, lastName, email };
-      await updateUserProfile(updatedData);
-      onProfileUpdate(updatedData);
+      await updateProfile(updatedData);
       showSuccess("Profil mis à jour avec succès !");
       setIsEditingProfile(false);
       setErrorMessage("");
     } catch (error) {
-      logger.error("Erreur lors de la mise à jour du profil", error, "UserProfileSection");
       setErrorMessage("Erreur lors de la mise à jour du profil.");
     }
   };
@@ -62,12 +56,12 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
     );
     if (confirmed) {
       try {
-        await deleteUserAccount();
+        await deleteAccount();
         showSuccess("Compte supprimé avec succès.");
         logout();
         navigate("/");
       } catch (error) {
-        logger.error("Erreur lors de la suppression du compte", error, "UserProfileSection");
+        // Error already handled by store
       }
     }
   };
@@ -114,8 +108,8 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
               required
             />
           </div>
-          <button type="submit" className="btn">
-            Enregistrer les modifications
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? "Enregistrement..." : "Enregistrer les modifications"}
           </button>
           <button type="button" className="btn mt-4" onClick={() => setIsEditingProfile(false)}>
             Annuler

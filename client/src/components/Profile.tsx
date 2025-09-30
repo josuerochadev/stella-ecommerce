@@ -18,7 +18,7 @@ const Profile: React.FC = () => {
   const { redirectToLogin, redirectToRegister } = useAuthRedirect();
   const { cartItems } = useCartStore();
   const { wishlistItems, fetchWishlist } = useWishlistStore();
-  const { user, loading: loadingProfile, error, fetchProfile, updateProfile } = useUserStore();
+  const { user, loading: loadingProfile, error, fetchProfile } = useUserStore();
 
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
@@ -26,13 +26,8 @@ const Profile: React.FC = () => {
     }
   }, [isAuthenticated, authLoading, fetchProfile]);
 
-  const handleProfileUpdate = (updatedUser: Partial<import("@/types").User>) => {
-    if (user) {
-      updateProfile({ ...user, ...updatedUser });
-    }
-  };
 
-  if (authLoading || loadingProfile) {
+  if (authLoading || (loadingProfile && !user)) {
     return (
       <div className="container mx-auto pt-20 px-4 max-w-md">
         <FadeInSection>
@@ -95,13 +90,12 @@ const Profile: React.FC = () => {
   return (
     <div role="contentinfo" className="container mx-auto pt-20 px-4 max-w-md">
       <h1 className="text-4xl font-display mb-8 text-center">
-        Bonjour, {user?.firstName}
+        Bonjour, {user.firstName}
       </h1>
 
       <FadeInSection>
         <UserProfileSection
           user={user}
-          onProfileUpdate={handleProfileUpdate}
         />
 
         <ProfileCartSection cartItems={cartItems} />
