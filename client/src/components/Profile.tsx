@@ -1,14 +1,12 @@
 // client/src/components/Profile.tsx
 // Responsabilité unique : Orchestration des sections du profil
 
-import { useState, useEffect, memo } from "react";
-import { getUserProfile } from "@/services/api";
-import { logger } from "@/utils/logger";
-import type { User } from "@/types";
+import { useEffect, memo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useCartStore } from "@/stores/useCartStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
+import { useUserStore } from "@/stores/useUserStore";
 import FadeInSection from "./FadeInSection";
 import { SkeletonProfile } from "./Skeleton";
 import UserProfileSection from "./UserProfileSection";
@@ -20,32 +18,17 @@ const Profile: React.FC = () => {
   const { redirectToLogin, redirectToRegister } = useAuthRedirect();
   const { cartItems } = useCartStore();
   const { wishlistItems, fetchWishlist } = useWishlistStore();
-  const [user, setUser] = useState<User | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
+  const { user, loading: loadingProfile, error, fetchProfile, updateProfile } = useUserStore();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!isAuthenticated || authLoading) {
-        return;
-      }
+    if (isAuthenticated && !authLoading) {
+      fetchProfile();
+    }
+  }, [isAuthenticated, authLoading, fetchProfile]);
 
-      try {
-        setLoadingProfile(true);
-        const userData: User = await getUserProfile();
-        setUser(userData);
-        setLoadingProfile(false);
-      } catch (error) {
-        logger.error("Erreur lors de la récupération du profil utilisateur", error, "Profile");
-        setLoadingProfile(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [isAuthenticated, authLoading]);
-
-  const handleProfileUpdate = (updatedUser: Partial<User>) => {
+  const handleProfileUpdate = (updatedUser: Partial<import("@/types").User>) => {
     if (user) {
-      setUser({ ...user, ...updatedUser });
+      updateProfile({ ...user, ...updatedUser });
     }
   };
 
@@ -83,6 +66,32 @@ const Profile: React.FC = () => {
     );
   }
 
+  // Afficher une erreur si le chargement échoue
+  if (error) {
+    return (
+      <div className="container mx-auto pt-20 px-4 py-8 text-center">
+        <h1 className="text-3xl font-bold mb-4 text-red-600">Erreur</h1>
+        <p className="text-lg mb-6">{error}</p>
+        <button
+          type="button"
+          onClick={() => fetchProfile()}
+          className="btn"
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
+  // Afficher un message si aucun utilisateur n'est chargé
+  if (!user) {
+    return (
+      <div className="container mx-auto pt-20 px-4 py-8 text-center">
+        <h1 className="text-3xl font-bold mb-4">Chargement du profil...</h1>
+      </div>
+    );
+  }
+
   return (
     <div role="contentinfo" className="container mx-auto pt-20 px-4 max-w-md">
       <h1 className="text-4xl font-display mb-8 text-center">
@@ -90,12 +99,10 @@ const Profile: React.FC = () => {
       </h1>
 
       <FadeInSection>
-        {user && (
-          <UserProfileSection
-            user={user}
-            onProfileUpdate={handleProfileUpdate}
-          />
-        )}
+        <UserProfileSection
+          user={user}
+          onProfileUpdate={handleProfileUpdate}
+        />
 
         <ProfileCartSection cartItems={cartItems} />
 
