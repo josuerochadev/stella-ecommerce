@@ -1,141 +1,230 @@
-// src/controllers/orderController.js
+// server/src/controllers/orderController.js
+// Contrôleur pour la gestion des commandes
+// Responsabilité unique : orchestration du OrderService et gestion des erreurs HTTP
 
-const { Order, OrderStar, Star, User, sequelize } = require("../models");
-const { AppError } = require("../middlewares/errorHandler");
-const logger = require("../utils/logger");
+const { AppError } = require('../middlewares/errorHandler');
+const logger = require('../utils/logger');
+const { getService } = require('../container/containerConfig');
 
-exports.createOrder = async (req, res, next) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const { items, shippingAddress, paymentMethod } = req.body;
+/**
+ * Contrôleur des commandes utilisant l'injection de dépendances
+ * Délègue toute la logique métier au OrderService
+ */
+class OrderController {
+  constructor(orderService) {
+    this.orderService = orderService;
+  }
 
-    // Vérifie que l'utilisateur existe bien dans la base de données
-    const user = await User.findByPk(req.user.userId);
-    if (!user) {
-      throw new AppError(`User with id ${req.user.userId} not found`, 404);
-    }
+  /**
+   * Crée une nouvelle commande
+   */
+  createOrder = async (req, res, next) => {
+    try {
+      const userId = req.user.userId;
+      const { items, shippingAddress, paymentMethod } = req.body;
 
-    // Création de la commande avec transaction
-    const order = await Order.create(
-      {
-        userId: req.user.userId,
-        date: new Date(),
-        status: "pending",
-        totalAmount: 0, // Calculé plus tard
+      // Validation des données d'entrée
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return next(new AppError('Items array is required and must not be empty', 400));
+      }
+
+      if (!shippingAddress) {
+        return next(new AppError('Shipping address is required', 400));
+      }
+
+      if (!paymentMethod) {
+        return next(new AppError('Payment method is required', 400));
+      }
+
+      const order = await this.orderService.createOrder(
+        userId,
+        items,
         shippingAddress,
-        paymentMethod,
-      },
-      { transaction },
-    );
+        paymentMethod
+      );
 
-    if (!order || !order.id) {
-      throw new AppError("Order creation failed", 500);
-    }
-
-    // Optimisation : récupérer toutes les étoiles en une seule requête
-    const starIds = items.map(item => item.starId);
-    const stars = await Star.findAll({
-      where: { starid: starIds },
-      attributes: ['starid', 'price']
-    });
-
-    // Créer un map pour accès O(1)
-    const starMap = new Map(stars.map(star => [star.starid, star]));
-
-    // Vérifier que toutes les étoiles existent
-    const missingStars = starIds.filter(id => !starMap.has(id));
-    if (missingStars.length > 0) {
-      throw new AppError(`Stars not found: ${missingStars.join(', ')}`, 404);
-    }
-
-    let totalAmount = 0;
-    const orderStarsToCreate = [];
-
-    // Préparer les données pour insertion en lot
-    for (const item of items) {
-      const star = starMap.get(item.starId);
-      orderStarsToCreate.push({
-        orderId: order.id,
-        starId: star.starid,
-        quantity: item.quantity,
+      res.status(201).json({
+        success: true,
+        message: 'Order created successfully',
+        orderId: order.orderId,
+        total: order.total,
+        status: order.status
       });
-      totalAmount += parseFloat(star.price) * item.quantity;
+    } catch (error) {
+      logger.error('Error in createOrder function:', error);
+
+      if (error.message.includes('User with id') && error.message.includes('not found')) {
+        return next(new AppError(error.message, 404));
+      }
+
+      if (error.message.includes('Stars not found')) {
+        return next(new AppError(error.message, 404));
+      }
+
+      next(new AppError(`Error creating order: ${error.message}`, 400));
     }
+  };
 
-    // Insertion en lot des OrderStar
-    await OrderStar.bulkCreate(orderStarsToCreate, { transaction });
+  /**
+   * Récupère toutes les commandes de l'utilisateur
+   */
+  getUserOrders = async (req, res, next) => {
+    try {
+      const userId = req.user.userId;
+      const orders = await this.orderService.getUserOrders(userId);
 
-    // Mise à jour du montant total de la commande
-    order.totalAmount = totalAmount;
-    await order.save({ transaction });
-
-    // Commit de la transaction
-    await transaction.commit();
-
-    res.status(201).json({ message: "Order created successfully", orderId: order.id });
-  } catch (error) {
-    // Rollback en cas d'erreur
-    await transaction.rollback();
-    logger.error("Error in createOrder function:", error);
-    next(new AppError(`Error creating order: ${error.message}`, 400));
-  }
-};
-
-exports.getUserOrders = async (req, res, next) => {
-  try {
-    const orders = await Order.findAll({
-      where: { userId: req.user.userId },
-      include: [
-        {
-          model: OrderStar,
-          include: [Star],
-        },
-      ],
-    });
-    res.json(orders);
-  } catch (error) {
-    next(new AppError(`Error fetching user orders: ${error.message}`, 500));
-  }
-};
-
-exports.getOrderDetails = async (req, res, next) => {
-  try {
-    const order = await Order.findOne({
-      where: { id: req.params.id, userId: req.user.userId },
-      include: [{ model: OrderStar, include: [Star] }],
-    });
-    if (!order) {
-      return next(new AppError("Order not found", 404));
+      res.json({
+        success: true,
+        data: orders,
+        count: orders.length
+      });
+    } catch (error) {
+      logger.error('Error fetching user orders:', error);
+      next(new AppError(`Error fetching user orders: ${error.message}`, 500));
     }
-    res.json(order);
-  } catch (error) {
-    next(new AppError(`Error fetching order details: ${error.message}`, 500));
-  }
-};
+  };
 
-exports.updateOrderStatus = async (req, res, next) => {
-  try {
-    const { status } = req.body;
-    const orderId = req.params.id;
+  /**
+   * Récupère les détails d'une commande
+   */
+  getOrderDetails = async (req, res, next) => {
+    try {
+      const userId = req.user.userId;
+      const orderId = parseInt(req.params.id);
 
-    // Vérifier si l'utilisateur est un admin
-    const user = await User.findByPk(req.user.userId);
-    if (user.role !== "admin") {
-      return next(new AppError("Only admins can update order status", 403));
+      if (!orderId || isNaN(orderId)) {
+        return next(new AppError('Invalid order ID', 400));
+      }
+
+      const order = await this.orderService.getOrderDetails(orderId, userId);
+
+      if (!order) {
+        return next(new AppError('Order not found', 404));
+      }
+
+      res.json({
+        success: true,
+        data: order
+      });
+    } catch (error) {
+      logger.error('Error fetching order details:', error);
+
+      if (error.message === 'Order not found') {
+        return next(new AppError(error.message, 404));
+      }
+
+      next(new AppError(`Error fetching order details: ${error.message}`, 500));
     }
+  };
 
-    const order = await Order.findByPk(orderId);
-    if (!order) {
-      return next(new AppError("Order not found", 404));
+  /**
+   * Met à jour le statut d'une commande (admin seulement)
+   */
+  updateOrderStatus = async (req, res, next) => {
+    try {
+      const adminUserId = req.user.userId;
+      const orderId = parseInt(req.params.id);
+      const { status } = req.body;
+
+      // Validation
+      if (!orderId || isNaN(orderId)) {
+        return next(new AppError('Invalid order ID', 400));
+      }
+
+      if (!status) {
+        return next(new AppError('Status is required', 400));
+      }
+
+      const updatedOrder = await this.orderService.updateOrderStatus(
+        orderId,
+        status,
+        adminUserId
+      );
+
+      res.json({
+        success: true,
+        message: 'Order status updated',
+        order: updatedOrder
+      });
+    } catch (error) {
+      logger.error('Error updating order status:', error);
+
+      if (error.message === 'Only admins can update order status') {
+        return next(new AppError(error.message, 403));
+      }
+
+      if (error.message === 'Order not found') {
+        return next(new AppError(error.message, 404));
+      }
+
+      next(new AppError(`Error updating order status: ${error.message}`, 400));
     }
+  };
 
-    order.status = status;
-    await order.save();
+  /**
+   * Récupère les statistiques de commandes de l'utilisateur
+   */
+  getUserOrderStats = async (req, res, next) => {
+    try {
+      const userId = req.user.userId;
+      const stats = await this.orderService.getUserOrderStats(userId);
 
-    res.json({ message: "Order status updated", order });
-  } catch (error) {
-    next(new AppError(`Error updating order status: ${error.message}`, 400));
-  }
+      res.json({
+        success: true,
+        stats
+      });
+    } catch (error) {
+      logger.error('Error getting user order stats:', error);
+      next(new AppError(`Error getting user order stats: ${error.message}`, 500));
+    }
+  };
+
+  /**
+   * Annule une commande
+   */
+  cancelOrder = async (req, res, next) => {
+    try {
+      const userId = req.user.userId;
+      const orderId = parseInt(req.params.id);
+
+      if (!orderId || isNaN(orderId)) {
+        return next(new AppError('Invalid order ID', 400));
+      }
+
+      const cancelledOrder = await this.orderService.cancelOrder(orderId, userId);
+
+      res.json({
+        success: true,
+        message: 'Order cancelled successfully',
+        order: cancelledOrder
+      });
+    } catch (error) {
+      logger.error('Error cancelling order:', error);
+
+      if (error.message === 'Order not found') {
+        return next(new AppError(error.message, 404));
+      }
+
+      if (error.message === 'Only pending orders can be cancelled') {
+        return next(new AppError(error.message, 400));
+      }
+
+      next(new AppError(`Error cancelling order: ${error.message}`, 400));
+    }
+  };
+}
+
+// Instance du contrôleur avec injection de dépendances
+const orderService = getService('orderService');
+const orderControllerInstance = new OrderController(orderService);
+
+// Export des méthodes pour compatibilité avec les routes existantes
+module.exports = {
+  createOrder: orderControllerInstance.createOrder,
+  getUserOrders: orderControllerInstance.getUserOrders,
+  getOrderDetails: orderControllerInstance.getOrderDetails,
+  updateOrderStatus: orderControllerInstance.updateOrderStatus,
+  getUserOrderStats: orderControllerInstance.getUserOrderStats,
+  cancelOrder: orderControllerInstance.cancelOrder,
+  OrderController
 };
-
-module.exports = exports;
