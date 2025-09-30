@@ -27,6 +27,10 @@
   body {
     @apply bg-background-default text-text font-sans;
     font-size: var(--accessibility-font-base);
+  }
+
+  /* Application conditionnelle des couleurs d'accessibilité seulement si explicitement activées */
+  body.accessibility-theme-active {
     background-color: var(--accessibility-background);
     color: var(--accessibility-text);
   }
@@ -37,7 +41,7 @@
   }
 
   h2 {
-    @apply font-serif text-2xl mb-4;
+    @apply font-serif text-2xl mb-4 text-text;
   }
 }
 
@@ -91,13 +95,18 @@
     }
   }
 
-  @media (prefers-contrast: high) {
-    :root {
-      --accessibility-background: #000000;
-      --accessibility-text: #ffffff;
-      --accessibility-primary: #ffffff;
-      --accessibility-accent: #ffff00;
-    }
+  /* Contraste élevé seulement si explicitement demandé par l'utilisateur */
+  body.high-contrast-mode {
+    --accessibility-background: #000000 !important;
+    --accessibility-text: #ffffff !important;
+    --accessibility-primary: #ffffff !important;
+    --accessibility-accent: #ffff00 !important;
+    background-color: var(--accessibility-background) !important;
+    color: var(--accessibility-text) !important;
+  }
+
+  body.high-contrast-mode * {
+    color: inherit !important;
   }
 
   .focus-visible {

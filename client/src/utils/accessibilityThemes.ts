@@ -100,16 +100,17 @@ export const useAccessibilitySettings = () => {
       }
     }
 
-    // Détecter les préférences système
+    // Détecter les préférences système (sans forcer automatiquement le thème)
     const systemPreferences: Partial<AccessibilitySettings> = {};
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       systemPreferences.reducedMotion = true;
     }
 
-    if (window.matchMedia('(prefers-contrast: high)').matches) {
-      systemPreferences.theme = 'highContrast';
-    }
+    // Ne pas forcer automatiquement le contraste élevé - laisser l'utilisateur choisir
+    // if (window.matchMedia('(prefers-contrast: high)').matches) {
+    //   systemPreferences.theme = 'highContrast';
+    // }
 
     return { ...DEFAULT_SETTINGS, ...systemPreferences };
   });
@@ -118,10 +119,20 @@ export const useAccessibilitySettings = () => {
   useEffect(() => {
     const theme = ACCESSIBILITY_THEMES[settings.theme];
     const root = document.documentElement;
+    const body = document.body;
 
-    // Appliquer les couleurs
-    for (const [key, value] of Object.entries(theme.colors)) {
-      root.style.setProperty(`--accessibility-${key}`, value);
+    // Appliquer les couleurs seulement si ce n'est pas le thème par défaut
+    if (settings.theme !== 'default') {
+      for (const [key, value] of Object.entries(theme.colors)) {
+        root.style.setProperty(`--accessibility-${key}`, value);
+      }
+      body.classList.add('accessibility-theme-active');
+    } else {
+      // Retirer les propriétés CSS personnalisées pour revenir aux couleurs par défaut
+      body.classList.remove('accessibility-theme-active');
+      for (const key of Object.keys(theme.colors)) {
+        root.style.removeProperty(`--accessibility-${key}`);
+      }
     }
 
     // Appliquer les tailles de police
@@ -138,18 +149,25 @@ export const useAccessibilitySettings = () => {
       root.style.removeProperty('--transition-duration');
     }
 
+    // Gestion du mode contraste élevé
+    if (settings.theme === 'highContrast') {
+      body.classList.add('high-contrast-mode');
+    } else {
+      body.classList.remove('high-contrast-mode');
+    }
+
     // Classes CSS pour les images haute contraste
     if (settings.highContrastImages) {
-      document.body.classList.add('high-contrast-images');
+      body.classList.add('high-contrast-images');
     } else {
-      document.body.classList.remove('high-contrast-images');
+      body.classList.remove('high-contrast-images');
     }
 
     // Mode optimisé lecteur d'écran
     if (settings.screenReaderOptimized) {
-      document.body.classList.add('screen-reader-optimized');
+      body.classList.add('screen-reader-optimized');
     } else {
-      document.body.classList.remove('screen-reader-optimized');
+      body.classList.remove('screen-reader-optimized');
     }
 
     // Sauvegarder les préférences
