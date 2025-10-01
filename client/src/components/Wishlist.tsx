@@ -1,10 +1,11 @@
 // client/src/components/Wishlist.tsx
 
 import { useEffect, memo, useCallback } from "react";
-import { useWishlistStore } from "../stores/useWishlistStore";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import { logger } from "../utils/logger";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { useAuth } from "@/context/AuthContext";
+import { Link } from "react-router-dom";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { logger } from "@/utils/logger";
 import StarCard from "./StarCard";
 import FadeInSection from "./FadeInSection";
 
@@ -12,7 +13,7 @@ const Wishlist: React.FC = () => {
   const { wishlistItems, loading, error, fetchWishlist, removeItemFromWishlist } =
     useWishlistStore();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { redirectToLogin, redirectToRegister } = useAuthRedirect();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -43,14 +44,14 @@ const Wishlist: React.FC = () => {
         <div className="flex justify-center space-x-4">
           <button
             type="button"
-            onClick={() => navigate("/auth", { state: { from: "/wishlist", mode: "login" } })}
+            onClick={() => redirectToLogin({ from: "/wishlist" })}
             className="btn"
           >
             Se connecter
           </button>
           <button
             type="button"
-            onClick={() => navigate("/auth", { state: { from: "/wishlist", mode: "register" } })}
+            onClick={() => redirectToRegister({ from: "/wishlist" })}
             className="btn"
           >
             S'inscrire

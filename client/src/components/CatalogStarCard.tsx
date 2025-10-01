@@ -3,12 +3,13 @@
 
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { EyeIcon } from "../utils/icons";
-import AddToCartButton from "../components/AddToCartButton";
-import AddToWishlistButton from "../components/AddToWishlistButton";
+import { EyeIcon } from "@/utils/icons";
+import AddToCartButton from "./AddToCartButton";
+import AddToWishlistButton from "./AddToWishlistButton";
 import FadeInSection from "./FadeInSection";
-import { cn } from "../utils/classNames";
-import type { Star } from "../types";
+import { cn } from "@/utils/classNames";
+import { getStarImagePath } from "@/utils/pathHelpers";
+import type { Star } from "@/types";
 
 interface CatalogStarCardProps {
   star: Star;
@@ -25,7 +26,7 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
     <FadeInSection>
       <div className={cardClass}>
         <img
-          src={`/assets/images/stars/${star.name.toLowerCase().replace(/\s+/g, "")}.jpg`}
+          src={getStarImagePath(star)}
           alt={star.name}
           className="w-full h-48 object-cover"
         />

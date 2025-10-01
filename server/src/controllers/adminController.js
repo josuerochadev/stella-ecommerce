@@ -2,13 +2,14 @@
 // Contrôleur pour le panel d'administration
 // Responsabilité unique : orchestration des services et gestion des erreurs HTTP
 
-const { User, Order, Star, Review, sequelize } = require('../models');
+const { User } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
 const { DashboardService } = require('../services/dashboardService');
 const { UserSearchService } = require('../services/userSearchService');
 const { UserStatsService } = require('../services/userStatsService');
 const { UserResponseFormatter } = require('../formatters/userResponseFormatter');
-const { Op } = require('sequelize');
+const { SystemStatsService } = require('../services/SystemStatsService');
+const { getService } = require('../container/containerConfig');
 
 /**
  * Dashboard général avec statistiques
@@ -109,75 +110,27 @@ exports.updateUserRole = async (req, res, next) => {
 
 /**
  * Gestion des étoiles
+ * Utilise StarAdminService pour encapsuler la logique métier
  */
 exports.getStars = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, search, constellation, sortBy = 'createdAt', order = 'DESC' } = req.query;
-    const offset = (page - 1) * limit;
+    const starAdminService = getService('starAdminService');
 
-    // Conditions de recherche
-    const whereCondition = {};
-    if (search) {
-      whereCondition[Op.or] = [
-        { name: { [Op.iLike]: `%${search}%` } },
-        { description: { [Op.iLike]: `%${search}%` } }
-      ];
-    }
-    if (constellation) {
-      whereCondition.constellation = constellation;
-    }
+    const { page, limit, search, constellation, sortBy, order } = req.query;
 
-    const { count, rows: stars } = await Star.findAndCountAll({
-      where: whereCondition,
-      order: [[sortBy, order.toUpperCase()]],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+    const result = await starAdminService.getStarsWithStats({
+      page,
+      limit,
+      search,
+      constellation,
+      sortBy,
+      order
     });
-
-    // Obtenir les ventes pour chaque étoile
-    const starsWithSales = await Promise.all(
-      stars.map(async (star) => {
-        const salesData = await sequelize.query(`
-          SELECT COUNT(os.star_id) as sales_count, COALESCE(AVG(r.rating), 0) as avg_rating
-          FROM stars s
-          LEFT JOIN order_stars os ON s.starid = os.star_id
-          LEFT JOIN orders o ON os.order_id = o.id AND o.status IN ('paid', 'shipped')
-          LEFT JOIN reviews r ON s.starid = r.star_id
-          WHERE s.starid = :starId
-          GROUP BY s.starid
-        `, {
-          replacements: { starId: star.starid },
-          type: sequelize.QueryTypes.SELECT
-        });
-
-        const stats = salesData[0] || { sales_count: 0, avg_rating: 0 };
-
-        return {
-          id: star.starid,
-          name: star.name,
-          constellation: star.constellation,
-          price: parseFloat(star.price),
-          magnitude: star.magnitude,
-          distance: star.distanceFromEarth,
-          createdAt: star.createdAt,
-          stats: {
-            salesCount: parseInt(stats.sales_count),
-            averageRating: parseFloat(stats.avg_rating)
-          }
-        };
-      })
-    );
 
     res.json({
       success: true,
-      stars: starsWithSales,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(count / limit),
-        totalStars: count,
-        hasNext: page * limit < count,
-        hasPrev: page > 1
-      }
+      stars: result.stars,
+      pagination: result.pagination
     });
 
   } catch (error) {
@@ -187,87 +140,51 @@ exports.getStars = async (req, res, next) => {
 
 /**
  * Mettre à jour le prix d'une étoile
+ * Utilise StarAdminService
  */
 exports.updateStarPrice = async (req, res, next) => {
   try {
-    const { starId } = req.params;
+    const starAdminService = getService('starAdminService');
+
+    const starId = parseInt(req.params.starId, 10);
     const { price } = req.body;
 
-    if (price <= 0) {
+    // Validation
+    if (isNaN(starId)) {
+      return next(new AppError('Invalid star ID', 400));
+    }
+
+    if (!price || price <= 0) {
       return next(new AppError('Price must be positive', 400));
     }
 
-    const star = await Star.findByPk(starId);
-    if (!star) {
-      return next(new AppError('Star not found', 404));
-    }
-
-    const oldPrice = star.price;
-    star.price = price;
-    await star.save();
+    const result = await starAdminService.updateStarPrice(starId, price);
 
     res.json({
       success: true,
       message: 'Star price updated successfully',
-      star: {
-        id: star.starid,
-        name: star.name,
-        oldPrice: parseFloat(oldPrice),
-        newPrice: parseFloat(price)
-      }
+      star: result.star
     });
 
   } catch (error) {
+    if (error.message === 'Star not found') {
+      return next(new AppError(error.message, 404));
+    }
     next(new AppError(`Failed to update star price: ${error.message}`, 500));
   }
 };
 
 /**
  * Statistiques système
+ * Utilise SystemStatsService pour encapsuler les requêtes SQL
  */
 exports.getSystemStats = async (req, res, next) => {
   try {
-    // Informations sur la base de données
-    const dbStats = await sequelize.query(`
-      SELECT
-        schemaname,
-        tablename,
-        n_tup_ins as inserts,
-        n_tup_upd as updates,
-        n_tup_del as deletes
-      FROM pg_stat_user_tables
-      ORDER BY n_tup_ins DESC
-    `, { type: sequelize.QueryTypes.SELECT });
-
-    // Index de performance
-    const indexStats = await sequelize.query(`
-      SELECT
-        indexname,
-        idx_tup_read,
-        idx_tup_fetch
-      FROM pg_stat_user_indexes
-      WHERE idx_tup_read > 0
-      ORDER BY idx_tup_read DESC
-    `, { type: sequelize.QueryTypes.SELECT });
+    const systemStats = await SystemStatsService.getSystemStats();
 
     res.json({
       success: true,
-      system: {
-        database: {
-          tables: dbStats,
-          indexes: indexStats.slice(0, 10) // Top 10 index les plus utilisés
-        },
-        server: {
-          nodeVersion: process.version,
-          platform: process.platform,
-          uptime: Math.floor(process.uptime()),
-          memoryUsage: process.memoryUsage()
-        },
-        application: {
-          environment: process.env.NODE_ENV,
-          port: process.env.PORT || 3000
-        }
-      }
+      system: systemStats
     });
 
   } catch (error) {

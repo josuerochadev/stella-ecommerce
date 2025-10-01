@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { errorService, type ApiError, type ErrorDetails } from '../services/errorService';
-import { useAuth } from '../context/AuthContext';
-import { ROUTES } from '../constants/app';
+import { errorService, type ApiError, type ErrorDetails } from "@/services/errorService";
+import { useAuth } from "@/context/AuthContext";
+import { ROUTES } from "@/constants/app";
 
 export const useErrorHandler = () => {
   const navigate = useNavigate();

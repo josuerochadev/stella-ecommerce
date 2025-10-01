@@ -2,7 +2,7 @@
 // Responsabilité unique : Boutons d'action de la modal
 
 import React from 'react';
-import { ModalStylesService, ModalType } from '../utils/modalStyles';
+import { ModalStylesService, ModalType } from "@/utils/modalStyles";
 
 interface ModalActionsProps {
   type: ModalType;

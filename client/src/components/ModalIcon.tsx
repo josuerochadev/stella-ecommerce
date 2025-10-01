@@ -2,7 +2,7 @@
 // Responsabilité unique : Rendu des icônes de modal par type
 
 import React from 'react';
-import { ModalType } from '../utils/modalStyles';
+import { ModalType } from "@/utils/modalStyles";
 
 interface ModalIconProps {
   type: ModalType;

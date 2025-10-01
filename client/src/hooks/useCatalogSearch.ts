@@ -2,10 +2,10 @@
 // Responsabilité unique : Logique de recherche et API du catalogue
 
 import { useState, useCallback, useMemo } from 'react';
-import { fetchStars, searchStars, filterStars } from '../services/api';
-import { debounce } from '../utils/debounce';
-import { logger } from '../utils/logger';
-import type { Star } from '../types';
+import { fetchStars, searchStars, filterStars } from "@/services/api";
+import { debounce } from "@/utils/debounce";
+import { logger } from "@/utils/logger";
+import type { Star } from "@/types";
 import type { SearchFilters } from './useCatalogFilters';
 
 /**

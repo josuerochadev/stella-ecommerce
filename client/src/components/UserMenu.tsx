@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { UserIcon, ShoppingCartIcon, HeartIcon, StoreIcon } from "../utils/icons";
-import { useAuth } from "../context/AuthContext";
-import { useCartStore } from "../stores/useCartStore";
-import { useWishlistStore } from "../stores/useWishlistStore";
+import { UserIcon, ShoppingCartIcon, HeartIcon, StoreIcon } from "@/utils/icons";
+import { useAuth } from "@/context/AuthContext";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
 
 const UserMenu: React.FC = () => {
   const { isAuthenticated } = useAuth();

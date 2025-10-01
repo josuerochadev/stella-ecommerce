@@ -1,7 +1,8 @@
 // client/src/services/validationService.ts
 // Responsabilité unique : Services de validation centralisés et réutilisables
 
-import { validateEmail, validateUsername, validatePassword, sanitizeText } from "../utils/security";
+import { validateEmail, validateUsername, validatePassword, sanitizeText } from "@/utils/security";
+import { safeNumberTransform } from "@/utils/dataTransformers";
 
 /**
  * Interface pour les résultats de validation
@@ -285,7 +286,9 @@ export class BusinessValidationService {
    * Valider un prix
    */
   static validatePrice(price: unknown): ValidationResult {
-    const numPrice = typeof price === "string" ? Number.parseFloat(price) : price;
+    const numPrice = typeof price === "string" || typeof price === "number"
+      ? safeNumberTransform(price, -1)
+      : -1;
 
     if (typeof numPrice !== "number" || isNaN(numPrice) || numPrice < 0) {
       return {

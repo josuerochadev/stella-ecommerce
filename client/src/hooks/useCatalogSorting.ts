@@ -2,7 +2,7 @@
 // Responsabilité unique : Logique de tri des résultats de catalogue
 
 import { useMemo } from 'react';
-import type { Star } from '../types';
+import type { Star } from "@/types";
 import type { SearchFilters } from './useCatalogFilters';
 
 /**

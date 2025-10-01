@@ -2,7 +2,7 @@
 // Responsabilité unique : Champ de saisie de recherche
 
 import React, { forwardRef } from 'react';
-import { SearchIcon } from '../utils/icons';
+import { SearchIcon } from "@/utils/icons";
 
 interface SearchInputFieldProps {
   value: string;

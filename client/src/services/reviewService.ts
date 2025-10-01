@@ -2,7 +2,7 @@
 // Responsabilité unique : Gestion des avis clients
 
 import { httpClient } from "./httpClient";
-import type { Review, ApiResponse } from "../types";
+import type { Review, ApiResponse } from "@/types";
 
 /**
  * Interface pour les données d'ajout d'avis

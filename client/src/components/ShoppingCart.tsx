@@ -2,8 +2,8 @@
 // Responsabilité unique : Orchestrateur et affichage principal du panier
 
 import { useEffect, memo } from "react";
-import { useCartActions } from "../hooks/useCartActions";
-import { CartCalculations } from "../utils/cartCalculations";
+import { useCartActions } from "@/hooks/useCartActions";
+import { CartCalculations } from "@/utils/cartCalculations";
 import CartEmptyState from "./CartEmptyState";
 import CartItemsList from "./CartItemsList";
 import CartSummary from "./CartSummary";

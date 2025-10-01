@@ -1,7 +1,7 @@
 // client/src/utils/cartCalculations.ts
 // Responsabilité unique : Calculs et logique métier du panier
 
-import type { CartItem } from "../types";
+import type { CartItem } from "@/types";
 
 /**
  * Service de calculs du panier

@@ -2,8 +2,8 @@
 // Responsabilité unique : Bouton de bascule pour la recherche
 
 import React from 'react';
-import { SearchIcon } from '../utils/icons';
-import { ARIA_LABELS } from '../utils/accessibility';
+import { SearchIcon } from "@/utils/icons";
+import { ARIA_LABELS } from "@/utils/accessibility";
 
 interface SearchToggleButtonProps {
   isVisible: boolean;

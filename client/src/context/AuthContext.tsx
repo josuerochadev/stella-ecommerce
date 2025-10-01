@@ -2,9 +2,10 @@
 
 import type { ReactNode } from "react";
 import { createContext, useState, useEffect, useContext } from "react";
-import { useCartStore } from "../stores/useCartStore";
-import { useWishlistStore } from "../stores/useWishlistStore";
-import { logger } from "../utils/logger";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { logger } from "@/utils/logger";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,6 +25,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const resetCart = useCartStore((state) => state.resetCart);
   const resetWishlist = useWishlistStore((state) => state.resetWishlist);
+  const resetUser = useUserStore((state) => state.resetUser);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -33,6 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setTimeout(() => {
         useCartStore.getState().fetchCart();
         useWishlistStore.getState().fetchWishlist();
+        useUserStore.getState().fetchProfile();
         setIsLoading(false);
       }, 100);
     } else {
@@ -50,8 +53,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         useCartStore.getState().fetchCart();
         useWishlistStore.getState().fetchWishlist();
+        useUserStore.getState().fetchProfile();
       } catch (error) {
-        logger.warn("Error fetching cart/wishlist after login:", error, "AuthContext");
+        logger.warn("Error fetching user data after login:", error, "AuthContext");
       } finally {
         setIsLoading(false);
       }
@@ -64,6 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
     resetCart();
     resetWishlist();
+    resetUser();
   };
 
   return (

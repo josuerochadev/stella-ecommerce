@@ -1,4 +1,4 @@
-import { StatusMessageProps } from '../utils/accessibility';
+import { StatusMessageProps } from "@/utils/accessibility";
 
 const StatusMessage: React.FC<StatusMessageProps> = ({ type, message, id }) => {
   const getIcon = () => {

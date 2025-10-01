@@ -6,8 +6,8 @@ import CatalogStarCard from "./CatalogStarCard";
 import CartStarCard from "./CartStarCard";
 import WishlistStarCard from "./WishlistStarCard";
 import DetailStarCard from "./DetailStarCard";
-import { logger } from "../utils/logger";
-import type { Star } from "../types";
+import { logger } from "@/utils/logger";
+import type { Star } from "@/types";
 
 interface StarCardProps {
   star: Star;

@@ -2,8 +2,8 @@
 // Responsabilité unique : Affichage du résumé et total du panier
 
 import React from "react";
-import { CartCalculations } from "../utils/cartCalculations";
-import type { CartItem } from "../types";
+import { CartCalculations } from "@/utils/cartCalculations";
+import type { CartItem } from "@/types";
 
 interface CartSummaryProps {
   cartItems: CartItem[];

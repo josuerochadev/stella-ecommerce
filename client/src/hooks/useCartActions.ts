@@ -2,10 +2,11 @@
 // Responsabilité unique : Actions et logique métier du panier
 
 import { useCallback } from "react";
-import { useCartStore } from "../stores/useCartStore";
-import { useAuth } from "../context/AuthContext";
+import { useCartStore } from "@/stores/useCartStore";
+import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { logger } from "../utils/logger";
+import { useAuthRedirect } from "./useAuthRedirect";
+import { logger } from "@/utils/logger";
 
 /**
  * Hook personnalisé pour les actions du panier
@@ -15,6 +16,7 @@ export const useCartActions = () => {
   const { cartItems, loading, error, fetchCart, removeItem } = useCartStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { redirectToAuth } = useAuthRedirect();
 
   /**
    * Supprimer un article du panier avec gestion d'erreur
@@ -48,13 +50,8 @@ export const useCartActions = () => {
    * Responsabilité : Redirection pour l'authentification
    */
   const navigateToAuth = useCallback((mode: 'login' | 'register') => {
-    navigate('/auth', {
-      state: {
-        from: '/cart',
-        mode
-      }
-    });
-  }, [navigate]);
+    redirectToAuth({ mode, from: '/cart' });
+  }, [redirectToAuth]);
 
   /**
    * Naviguer vers le catalogue

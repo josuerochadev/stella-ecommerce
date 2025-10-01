@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { APP_CONSTANTS } from '../constants/app';
+import { APP_CONSTANTS } from "@/constants/app";
 
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 

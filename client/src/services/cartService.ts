@@ -2,8 +2,8 @@
 // Responsabilité unique : Gestion du panier d'achat
 
 import { httpClient } from "./httpClient";
-import { transformCartItems } from "../utils/dataTransformers";
-import type { Cart, ApiResponse } from "../types";
+import { transformCartItems } from "@/utils/dataTransformers";
+import type { Cart, ApiResponse } from "@/types";
 
 /**
  * Interface pour l'ajout d'article au panier
@@ -31,14 +31,15 @@ export class CartService {
    * Responsabilité : Lecture du contenu du panier
    */
   static async getCart(): Promise<Cart> {
-    const response = await httpClient.get<Cart>("/cart");
+    const response = await httpClient.get<{ success: boolean; cart: Cart }>("/cart");
 
     // Normalisation des données via transformateur
-    if (response.data.cartItems) {
-      response.data.cartItems = transformCartItems(response.data.cartItems);
+    const cart = response.data.cart;
+    if (cart.cartItems) {
+      cart.cartItems = transformCartItems(cart.cartItems);
     }
 
-    return response.data;
+    return cart;
   }
 
   /**

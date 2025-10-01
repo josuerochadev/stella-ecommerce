@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { HomeIcon } from "../utils/icons";
+import { HomeIcon } from "@/utils/icons";
 
 interface NavigationProps {
   pageTitle: string;

@@ -3,8 +3,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
-import AuthContainer from "../components/AuthContainer";
-import { AuthProvider } from "../context/AuthContext";
+import AuthContainer from "@/components/AuthContainer";
+import { AuthProvider } from "@/context/AuthContext";
 
 describe("AuthContainer Component", () => {
   test("renders Login component by default", () => {

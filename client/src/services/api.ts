@@ -25,7 +25,7 @@ export type {
   GetWishlistResponse,
   AddToWishlistResponse,
   ApiResponse,
-} from "../types";
+} from "@/types";
 
 /**
  * Service API unifié - Point d'entrée principal

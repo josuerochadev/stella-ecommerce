@@ -1,11 +1,11 @@
 import { useState, memo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, UserIcon, ShoppingCartIcon, HeartIcon } from "../utils/icons";
-import { useAuth } from "../context/AuthContext";
-import { useCartStore } from "../stores/useCartStore";
-import { useWishlistStore } from "../stores/useWishlistStore";
-import { usePageTitleOnScroll } from "../hooks/usePageTitleOnScroll";
-import { ARIA_LABELS, ARIA_DESCRIPTIONS } from "../utils/accessibility";
+import { HomeIcon, UserIcon, ShoppingCartIcon, HeartIcon } from "@/utils/icons";
+import { useAuth } from "@/context/AuthContext";
+import { useCartStore } from "@/stores/useCartStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { usePageTitleOnScroll } from "@/hooks/usePageTitleOnScroll";
+import { ARIA_LABELS, ARIA_DESCRIPTIONS } from "@/utils/accessibility";
 import SkipLinks from "./SkipLinks";
 import AccessibleSearchBox from "./AccessibleSearchBox";
 

@@ -3,7 +3,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { Star } from '../types';
+import type { Star } from "@/types";
 
 /**
  * Hook pour la gestion de la navigation dans le catalogue

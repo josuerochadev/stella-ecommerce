@@ -3,10 +3,11 @@
 // Responsabilité unique : gestion de l'état du panier via repository
 
 import { create } from "zustand";
-import { transformCartItems } from "../utils/dataTransformers";
-import { getService } from "../di/container";
-import type { CartItem } from "../types";
-import type { CartRepository } from "../interfaces/CartRepository";
+import { transformCartItems, safeNumberTransform } from "@/utils/dataTransformers";
+import { getService } from "@/di/container";
+import type { CartItem } from "@/types";
+import type { CartRepository } from "@/interfaces/CartRepository";
+import { getErrorMessage } from "@/utils/errorHelpers";
 
 interface CartState {
   cartItems: CartItem[];
@@ -39,7 +40,7 @@ export const createCartStore = (cartRepository: CartRepository) =>
         const transformedCartItems = transformCartItems(cart.cartItems || []);
         set({ cartItems: transformedCartItems, loading: false });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la récupération du panier.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de la récupération du panier.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -53,7 +54,7 @@ export const createCartStore = (cartRepository: CartRepository) =>
         const transformedCartItems = transformCartItems(cart.cartItems || []);
         set({ cartItems: transformedCartItems, loading: false, error: null });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de l'ajout au panier.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de l'ajout au panier.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -67,7 +68,7 @@ export const createCartStore = (cartRepository: CartRepository) =>
         const transformedCartItems = transformCartItems(cart.cartItems || []);
         set({ cartItems: transformedCartItems, loading: false, error: null });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors de la suppression de l'article du panier.";
+        const errorMessage = getErrorMessage(error, "Erreur lors de la suppression de l'article du panier.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -81,7 +82,7 @@ export const createCartStore = (cartRepository: CartRepository) =>
         await cartRepository.clearCart();
         set({ cartItems: [], loading: false, error: null });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Erreur lors du vidage du panier.";
+        const errorMessage = getErrorMessage(error, "Erreur lors du vidage du panier.");
         set({ error: errorMessage, loading: false });
       }
     },
@@ -93,9 +94,7 @@ export const createCartStore = (cartRepository: CartRepository) =>
         // En cas d'erreur, calculer localement
         const { cartItems } = get();
         const total = cartItems.reduce((sum, item) => {
-          const price = typeof item.Star.price === 'string'
-            ? parseFloat(item.Star.price)
-            : item.Star.price;
+          const price = safeNumberTransform(item.Star.price, 0);
           return sum + (price * item.quantity);
         }, 0);
         const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);

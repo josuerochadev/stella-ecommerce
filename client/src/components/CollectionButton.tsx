@@ -1,8 +1,8 @@
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import { useCollectionOperation } from '../hooks/useApiCall';
-import { HeartIcon, ShoppingCartIcon } from '../utils/icons';
-import { ARIA_LABELS } from '../utils/accessibility';
+import { useCollectionOperation } from "@/hooks/useApiCall";
+import { HeartIcon, ShoppingCartIcon } from "@/utils/icons";
+import { ARIA_LABELS } from "@/utils/accessibility";
 
 interface CollectionButtonProps {
   type: 'cart' | 'wishlist';

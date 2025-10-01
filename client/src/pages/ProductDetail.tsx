@@ -1,10 +1,10 @@
 // client/src/pages/ProductDetail.tsx
 import { memo } from "react";
 import { useParams } from "react-router-dom";
-import { useStarDetail } from "../hooks/useStarDetail";
-import StarCard from "../components/StarCard";
-import type { Star } from "../types";
-import FadeInSection from "../components/FadeInSection";
+import { useStarDetail } from "@/hooks/useStarDetail";
+import StarCard from "@/components/StarCard";
+import type { Star } from "@/types";
+import FadeInSection from "@/components/FadeInSection";
 
 const ProductDetail: React.FC = () => {
   const { starid } = useParams<{ starid: string }>(); // starid est de type 'string | undefined'

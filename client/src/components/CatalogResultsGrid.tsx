@@ -3,8 +3,8 @@
 
 import StarCard from './StarCard';
 import { SkeletonGrid } from './Skeleton';
-import { SearchIcon } from '../utils/icons';
-import type { Star } from '../types';
+import { SearchIcon } from "@/utils/icons";
+import type { Star } from "@/types";
 
 interface CatalogResultsGridProps {
   stars: Star[];

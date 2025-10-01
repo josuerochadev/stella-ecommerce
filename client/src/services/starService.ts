@@ -2,7 +2,8 @@
 // Responsabilité unique : Gestion du catalogue d'étoiles
 
 import { httpClient } from "./httpClient";
-import type { Star, StarFromServer, ApiResponse } from "../types";
+import type { Star, StarFromServer, ApiResponse } from "@/types";
+import { transformStarPrice } from "@/utils/dataTransformers";
 
 /**
  * Interface pour les paramètres de filtrage
@@ -35,10 +36,9 @@ export class StarService {
     // Transformation des prix string → number
     const transformedData = {
       ...response.data,
-      data: response.data.data.map((star: StarFromServer) => ({
-        ...star,
-        price: parseFloat(star.price)
-      }))
+      data: response.data.data.map((star: StarFromServer) =>
+        transformStarPrice(star as unknown as Star)
+      )
     };
     return transformedData;
   }
@@ -48,10 +48,7 @@ export class StarService {
    */
   static async getStarById(starId: number): Promise<Star> {
     const response = await httpClient.get<{ data: StarFromServer }>(`/stars/${starId}`);
-    return {
-      ...response.data.data,
-      price: parseFloat(response.data.data.price)
-    };
+    return transformStarPrice(response.data.data as unknown as Star);
   }
 
   /**
@@ -66,10 +63,9 @@ export class StarService {
     const response = await httpClient.get<ApiResponse<StarFromServer[]>>("/stars/filter", { params: processedParams });
     const transformedData = {
       ...response.data,
-      data: response.data.data.map((star: StarFromServer) => ({
-        ...star,
-        price: parseFloat(star.price)
-      }))
+      data: response.data.data.map((star: StarFromServer) =>
+        transformStarPrice(star as unknown as Star)
+      )
     };
     return transformedData;
   }
@@ -78,30 +74,28 @@ export class StarService {
    * Rechercher des étoiles par nom
    */
   static async searchStars(query: string): Promise<Star[]> {
-    const response = await httpClient.get<StarFromServer[]>("/stars/search", { params: { q: query } });
-    return response.data.map((star: StarFromServer) => ({
-      ...star,
-      price: parseFloat(star.price)
-    }));
+    const response = await httpClient.get<{ success: boolean; data: StarFromServer[]; count: number }>("/stars/search", { params: { q: query } });
+    return response.data.data.map((star: StarFromServer) =>
+      transformStarPrice(star as unknown as Star)
+    );
   }
 
   /**
    * Récupérer les étoiles les plus récentes
    */
   static async getLatestStars(limit: number = 10): Promise<Star[]> {
-    const response = await httpClient.get<StarFromServer[]>("/stars/latest", { params: { limit } });
-    return response.data.map((star: StarFromServer) => ({
-      ...star,
-      price: parseFloat(star.price)
-    }));
+    const response = await httpClient.get<{ success: boolean; data: StarFromServer[] }>("/stars/latest", { params: { limit } });
+    return response.data.data.map((star: StarFromServer) =>
+      transformStarPrice(star as unknown as Star)
+    );
   }
 
   /**
    * Récupérer les constellations disponibles
    */
   static async getConstellations(): Promise<string[]> {
-    const response = await httpClient.get<string[]>("/stars/constellations");
-    return response.data;
+    const response = await httpClient.get<{ success: boolean; data: string[] }>("/stars/constellations");
+    return response.data.data;
   }
 }
 

@@ -1,7 +1,7 @@
 // client/src/utils/dataTransformers.ts
 // Responsabilité unique : Transformations de données réutilisables
 
-import type { Star, CartItem, WishlistItem } from "../types";
+import type { Star, CartItem, WishlistItem } from "@/types";
 
 /**
  * Transformateur pour normaliser les prix des étoiles

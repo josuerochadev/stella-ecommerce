@@ -1,8 +1,8 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { errorService } from "../services/errorService";
-import { logger } from "../utils/logger";
-import { ROUTES } from "../constants/app";
+import { errorService } from "@/services/errorService";
+import { logger } from "@/utils/logger";
+import { ROUTES } from "@/constants/app";
 
 interface Props {
   children: ReactNode;

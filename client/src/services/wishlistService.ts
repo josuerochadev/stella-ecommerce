@@ -2,8 +2,8 @@
 // Responsabilité unique : Gestion de la liste d'envies
 
 import { httpClient } from "./httpClient";
-import { transformWishlistItems } from "../utils/dataTransformers";
-import type { GetWishlistResponse, AddToWishlistResponse } from "../types";
+import { transformWishlistItems } from "@/utils/dataTransformers";
+import type { GetWishlistResponse, AddToWishlistResponse } from "@/types";
 
 /**
  * Interface pour la réponse de suppression de wishlist

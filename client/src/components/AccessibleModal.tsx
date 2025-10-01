@@ -2,9 +2,9 @@
 // Responsabilité unique : Orchestrateur principal de modal accessible
 
 import { createPortal } from 'react-dom';
-import { useFocusTrap } from '../hooks/useFocusManagement';
-import { useModalBehavior } from '../hooks/useModalBehavior';
-import { ModalStylesService, ModalType, ModalSize } from '../utils/modalStyles';
+import { useFocusTrap } from "@/hooks/useFocusManagement";
+import { useModalBehavior } from "@/hooks/useModalBehavior";
+import { ModalStylesService, ModalType, ModalSize } from "@/utils/modalStyles";
 import ModalContent from './ModalContent';
 import ModalActions from './ModalActions';
 

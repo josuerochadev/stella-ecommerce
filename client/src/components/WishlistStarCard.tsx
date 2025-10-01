@@ -3,10 +3,11 @@
 
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { EyeIcon, TrashIcon } from "../utils/icons";
-import AddToCartButton from "../components/AddToCartButton";
+import { EyeIcon, TrashIcon } from "@/utils/icons";
+import AddToCartButton from "./AddToCartButton";
 import FadeInSection from "./FadeInSection";
-import type { Star } from "../types";
+import { getStarImagePath } from "@/utils/pathHelpers";
+import type { Star } from "@/types";
 
 interface WishlistStarCardProps {
   star: Star;
@@ -22,7 +23,7 @@ const WishlistStarCard: React.FC<WishlistStarCardProps> = ({ star, onRemove }) =
     <FadeInSection>
       <div className="bg-secondary text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden card-hover-effect">
         <img
-          src={`/assets/images/stars/${star.name.toLowerCase().replace(/\s+/g, "")}.jpg`}
+          src={getStarImagePath(star)}
           alt={star.name}
           className="w-1/4 flex-shrink-0 object-cover"
         />

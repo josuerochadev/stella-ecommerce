@@ -2,7 +2,7 @@
 // Responsabilité unique : Authentification des utilisateurs
 
 import { httpClient } from "./httpClient";
-import type { ApiResponse } from "../types";
+import type { ApiResponse } from "@/types";
 
 /**
  * Interface pour les données d'inscription

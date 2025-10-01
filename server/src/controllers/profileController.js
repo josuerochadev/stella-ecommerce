@@ -60,12 +60,14 @@ class ProfileController {
 
       res.json({
         message: "Profile updated successfully",
-        user: {
+        data: {
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         },
       });
     } catch (error) {

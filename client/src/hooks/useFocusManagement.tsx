@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { FocusTrap } from '../utils/accessibility';
+import { FocusTrap } from "@/utils/accessibility";
 
 // Hook pour gérer le focus lors de l'ouverture/fermeture de modals
 export const useFocusTrap = (isOpen: boolean) => {

@@ -1,8 +1,8 @@
 // client/src/components/CatalogAdvancedFilters.tsx
 // Responsabilité unique : Panneau des filtres avancés du catalogue
 
-import { ArrowUpIcon, ArrowDownIcon, TimesIcon } from '../utils/icons';
-import type { SearchFilters } from '../hooks/useCatalogFilters';
+import { ArrowUpIcon, ArrowDownIcon, TimesIcon } from "@/utils/icons";
+import type { SearchFilters } from "@/hooks/useCatalogFilters";
 
 interface CatalogAdvancedFiltersProps {
   isVisible: boolean;

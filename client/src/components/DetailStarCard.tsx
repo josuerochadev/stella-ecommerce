@@ -3,9 +3,10 @@
 
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon } from "../utils/icons";
+import { ArrowLeftIcon } from "@/utils/icons";
 import FadeInSection from "./FadeInSection";
-import type { Star } from "../types";
+import { getStarImagePath } from "@/utils/pathHelpers";
+import type { Star } from "@/types";
 
 interface DetailStarCardProps {
   star: Star;
@@ -22,7 +23,7 @@ const DetailStarCard: React.FC<DetailStarCardProps> = ({ star }) => {
     <FadeInSection>
       <div className="bg-secondary text-text rounded-lg shadow-lg flex md:flex-row flex-col h-full mb-4 overflow-hidden card-hover-effect">
         <img
-          src={`/assets/images/stars/${star.name.toLowerCase().replace(/\s+/g, "")}.jpg`}
+          src={getStarImagePath(star)}
           alt={star.name}
           className="md:w-1/2 w-full object-cover"
         />
