@@ -36,26 +36,6 @@ export const ARIA_DESCRIPTIONS = {
   PASSWORD_REQUIREMENTS: 'Minimum 8 caractères, incluant une majuscule, une minuscule et un chiffre',
 } as const;
 
-// Hook pour gérer les annonces aux lecteurs d'écran
-export const useScreenReaderAnnounce = () => {
-  const announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcer = document.createElement('div');
-    announcer.setAttribute('aria-live', priority);
-    announcer.setAttribute('aria-atomic', 'true');
-    announcer.className = 'sr-only';
-    announcer.textContent = message;
-
-    document.body.appendChild(announcer);
-
-    // Retirer l'élément après l'annonce
-    setTimeout(() => {
-      document.body.removeChild(announcer);
-    }, 1000);
-  };
-
-  return { announce };
-};
-
 // Utilitaire pour gérer le focus trap
 export class FocusTrap {
   private element: HTMLElement;
@@ -122,31 +102,6 @@ export class FocusTrap {
     }
   };
 }
-
-// Utilitaire pour vérifier les contrastes de couleur
-export const checkColorContrast = (foreground: string, background: string): {
-  ratio: number;
-  wcagAA: boolean;
-  wcagAAA: boolean;
-} => {
-  // Fonction simplifiée de calcul de contraste
-  // En production, utiliser une librairie comme 'color-contrast-checker'
-  const getLuminance = (_color: string): number => {
-    // Implémentation simplifiée - en réalité plus complexe
-    return 0.5; // Placeholder
-  };
-
-  const contrast1 = getLuminance(foreground);
-  const contrast2 = getLuminance(background);
-
-  const ratio = (Math.max(contrast1, contrast2) + 0.05) / (Math.min(contrast1, contrast2) + 0.05);
-
-  return {
-    ratio,
-    wcagAA: ratio >= 4.5,
-    wcagAAA: ratio >= 7,
-  };
-};
 
 // Type definitions for accessibility components
 export interface StatusMessageProps {

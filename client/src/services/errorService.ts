@@ -80,13 +80,6 @@ export class ErrorService {
   }
 
   public logError(error: ErrorDetails): void {
-    console.error('Error logged:', error);
-
-    // En développement, log plus détaillé
-    if (process.env.NODE_ENV === 'development') {
-      console.table(error);
-    }
-
     // Appeler les handlers enregistrés
     this.errorHandlers.forEach((handler) => {
       try {

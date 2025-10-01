@@ -3,6 +3,7 @@
 // Responsabilité unique : calcul et agrégation des données de commandes
 
 const { sequelize } = require('../models');
+const logger = require('../utils/logger');
 
 /**
  * Service de statistiques utilisateurs
@@ -48,7 +49,7 @@ class UserStatsService {
         ])
       );
     } catch (error) {
-      console.error('Error fetching user order stats:', error);
+      logger.error('Error fetching user order stats:', error);
       return new Map();
     }
   }
@@ -93,7 +94,7 @@ class UserStatsService {
         unique_stars_purchased: 0
       };
     } catch (error) {
-      console.error('Error fetching detailed user stats:', error);
+      logger.error('Error fetching detailed user stats:', error);
       return null;
     }
   }
@@ -141,7 +142,7 @@ class UserStatsService {
         averageUserValue: parseFloat(metrics.average_user_value) || 0
       };
     } catch (error) {
-      console.error('Error fetching user performance metrics:', error);
+      logger.error('Error fetching user performance metrics:', error);
       return {
         totalUsers: 0,
         activeUsers: 0,

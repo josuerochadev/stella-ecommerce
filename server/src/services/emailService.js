@@ -3,6 +3,7 @@
 
 const fs = require('fs').promises;
 const path = require('path');
+const logger = require('../utils/logger');
 
 class EmailSimulator {
   constructor() {
@@ -216,7 +217,7 @@ class EmailSimulator {
         this.sentEmails.push(email);
 
         if (this.config.logToConsole) {
-          console.log(`📧 Email envoyé: ${email.template} → ${email.to}`);
+          logger.info(`📧 Email envoyé: ${email.template} → ${email.to}`);
         }
 
       } catch (error) {
@@ -231,7 +232,7 @@ class EmailSimulator {
         } else {
           email.status = 'failed';
           this.sentEmails.push(email);
-          console.error(`❌ Échec email après ${email.maxAttempts} tentatives:`, error);
+          logger.error(`❌ Échec email après ${email.maxAttempts} tentatives:`, error);
         }
       }
 
@@ -349,7 +350,7 @@ class EmailSimulator {
       email.previewUrl = `/demo-emails/${filename}`;
 
     } catch (error) {
-      console.error('Erreur sauvegarde email:', error);
+      logger.error('Erreur sauvegarde email:', error);
     }
   }
 
