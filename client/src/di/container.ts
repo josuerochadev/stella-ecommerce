@@ -57,17 +57,20 @@ class FrontendDIContainer {
   resolve<T>(name: string): T {
     // Vérifier si c'est un singleton
     if (this.singletons.has(name)) {
-      return this.singletons.get(name);
+      return this.singletons.get(name) as T;
     }
 
     // Vérifier si c'est une factory
     if (this.services.has(name)) {
       const factory = this.services.get(name);
+      if (!factory) {
+        throw new Error(`Service factory '${name}' is undefined`);
+      }
       const instance = factory();
 
       // Mettre en cache comme singleton après la première création
       this.singletons.set(name, instance);
-      return instance;
+      return instance as T;
     }
 
     throw new Error(`Service '${name}' not found in container`);
