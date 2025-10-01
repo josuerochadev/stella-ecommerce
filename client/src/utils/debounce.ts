@@ -4,9 +4,8 @@
 /**
  * Utilitaire de debouncing
  * Responsabilité unique : Retarder l'exécution d'une fonction
- * Note: Uses `any` for maximum flexibility with function arguments
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: never[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

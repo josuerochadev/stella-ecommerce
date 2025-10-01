@@ -3,7 +3,7 @@
 // Responsabilité unique : communication avec l'API pour les opérations utilisateur
 
 import { UserService } from "@/services/userService";
-import type { UserRepository } from "@/interfaces/UserRepository";
+import type { UserRepository, ActivityItem } from "@/interfaces/UserRepository";
 import type { User, UserProfileData, ApiResponse } from "@/types";
 import { createFormattedError } from "@/utils/errorHelpers";
 
@@ -111,7 +111,7 @@ export class ApiUserRepository implements UserRepository {
     limit?: number;
     offset?: number;
     type?: string;
-  }): Promise<ApiResponse<any[]>> {
+  }): Promise<ApiResponse<ActivityItem[]>> {
     try {
       return await UserService.getActivityHistory(params);
     } catch (error) {
