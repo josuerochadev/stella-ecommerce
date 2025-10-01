@@ -58,7 +58,7 @@ class CartService {
       // Retourner un panier vide si aucun panier n'existe
       if (!cart) {
         return {
-          CartItems: []
+          cartItems: []
         };
       }
 
@@ -140,7 +140,7 @@ class CartService {
       }
 
       // Vérifier que l'item appartient au panier
-      const cartItem = cart.CartItems?.find(item => item.id === cartItemId);
+      const cartItem = cart.cartItems?.find(item => item.id === cartItemId);
       if (!cartItem) {
         throw new Error('Cart item not found');
       }
@@ -172,7 +172,7 @@ class CartService {
       }
 
       // Vérifier que l'item appartient au panier
-      const cartItem = cart.CartItems?.find(item => item.id === cartItemId);
+      const cartItem = cart.cartItems?.find(item => item.id === cartItemId);
       if (!cartItem) {
         throw new Error('Cart item not found');
       }
@@ -221,11 +221,11 @@ class CartService {
 
       const cart = await this.cartRepository.findByUserId(userId);
 
-      if (!cart || !cart.CartItems || cart.CartItems.length === 0) {
+      if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
         return 0;
       }
 
-      return cart.CartItems.reduce((total, item) => {
+      return cart.cartItems.reduce((total, item) => {
         const itemPrice = item.Star?.price || 0;
         return total + (itemPrice * item.quantity);
       }, 0);
@@ -267,13 +267,13 @@ class CartService {
       const cart = await this.cartRepository.findByUserId(userId);
       const errors = [];
 
-      if (!cart || !cart.CartItems || cart.CartItems.length === 0) {
+      if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
         errors.push('Cart is empty');
         return { valid: false, errors, cart: null };
       }
 
       // Vérifier que toutes les étoiles existent toujours
-      for (const item of cart.CartItems) {
+      for (const item of cart.cartItems) {
         if (!item.Star) {
           errors.push(`Star ${item.starId} not found`);
         }

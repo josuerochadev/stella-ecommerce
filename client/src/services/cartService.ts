@@ -31,14 +31,15 @@ export class CartService {
    * Responsabilité : Lecture du contenu du panier
    */
   static async getCart(): Promise<Cart> {
-    const response = await httpClient.get<Cart>("/cart");
+    const response = await httpClient.get<{ success: boolean; cart: Cart }>("/cart");
 
     // Normalisation des données via transformateur
-    if (response.data.cartItems) {
-      response.data.cartItems = transformCartItems(response.data.cartItems);
+    const cart = response.data.cart;
+    if (cart.cartItems) {
+      cart.cartItems = transformCartItems(cart.cartItems);
     }
 
-    return response.data;
+    return cart;
   }
 
   /**

@@ -33,7 +33,7 @@ class SequelizeCartRepository extends ICartRepository {
         include: [
           {
             model: CartItem,
-            as: 'CartItems',
+            as: 'cartItems',
             include: [
               {
                 model: Star,
@@ -66,7 +66,7 @@ class SequelizeCartRepository extends ICartRepository {
         include: [
           {
             model: CartItem,
-            as: 'CartItems',
+            as: 'cartItems',
             include: [
               {
                 model: Star,
