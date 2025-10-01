@@ -180,35 +180,11 @@ function hasService(serviceName) {
   return getContainer().has(serviceName);
 }
 
-/**
- * Affiche les informations de debug du container
- */
-function debugContainer() {
-  const container = getContainer();
-  const info = container.getDebugInfo();
-
-  console.log('=== DI Container Debug Info ===');
-  console.log(`Total services: ${info.totalServices}`);
-  console.log(`Instantiated singletons: ${info.instantiatedSingletons}`);
-  console.log('\nServices:');
-
-  for (const [name, details] of Object.entries(info.services)) {
-    console.log(`  ${name}:`);
-    console.log(`    Type: ${details.type}`);
-    console.log(`    Dependencies: [${details.dependencies.join(', ')}]`);
-    console.log(`    Singleton: ${details.singleton}`);
-    console.log(`    Instantiated: ${details.instantiated}`);
-  }
-
-  console.log('==============================');
-}
-
 module.exports = {
   createContainer,
   getContainer,
   resetContainer,
   createTestContainer,
   getService,
-  hasService,
-  debugContainer
+  hasService
 };

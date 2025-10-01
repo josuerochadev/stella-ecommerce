@@ -5,6 +5,7 @@
 const { AppError } = require("../middlewares/errorHandler");
 const { getService } = require("../container/containerConfig");
 const { REFRESH_TOKEN_COOKIE_OPTIONS } = require("../config/cookieConfig");
+const logger = require("../utils/logger");
 
 /**
  * Contrôleur d'authentification avec injection de dépendances
@@ -93,7 +94,7 @@ class AuthController {
       if (this.hashingService.needsRehash && this.hashingService.needsRehash(user.password)) {
         // Re-hacher et mettre à jour en arrière-plan (sans bloquer la connexion)
         this.updatePasswordHashInBackground(user.id, password).catch(error => {
-          console.error('Failed to update password hash:', error);
+          logger.error('Failed to update password hash:', error);
         });
       }
 
@@ -203,7 +204,7 @@ class AuthController {
       await this.userRepository.update(userId, { password: newHash });
     } catch (error) {
       // Erreur silencieuse pour ne pas affecter l'expérience utilisateur
-      console.error(`Failed to update password hash for user ${userId}:`, error);
+      logger.error(`Failed to update password hash for user ${userId}:`, error);
     }
   }
 }

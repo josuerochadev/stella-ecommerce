@@ -27,41 +27,6 @@ class AppError extends Error {
   }
 }
 
-const handleSequelizeValidationError = (error) => {
-  const messages = error.errors.map((err) => err.message);
-  return new AppError(messages.join(". "), HTTP_STATUS.BAD_REQUEST);
-};
-
-const handleDuplicateFieldsDB = (error) => {
-  const value = error.errors[0].value;
-  const message = `Duplicate field value: ${value}. Please use another value!`;
-  return new AppError(message, HTTP_STATUS.BAD_REQUEST);
-};
-
-const handleJWTError = () => new AppError("Invalid token. Please log in again!", HTTP_STATUS.UNAUTHORIZED);
-
-const handleJWTExpiredError = () =>
-  new AppError("Your token has expired! Please log in again.", HTTP_STATUS.UNAUTHORIZED);
-
-const handleSequelizeDatabaseError = (error) => {
-  const message = error.message || 'Database operation failed';
-  return new AppError(message, HTTP_STATUS.INTERNAL_SERVER_ERROR);
-};
-
-const handleValidationError = (error) => {
-  const errors = {};
-  if (error.details) {
-    error.details.forEach(detail => {
-      const key = detail.path.join('.');
-      errors[key] = detail.message;
-    });
-  }
-  return new AppError('Validation failed', HTTP_STATUS.BAD_REQUEST, errors);
-};
-
-const handleRateLimitError = () =>
-  new AppError('Too many requests. Please try again later.', 429);
-
 const sendErrorDev = (err, res) => {
   const filteredError = {
     success: false,
@@ -117,7 +82,11 @@ const { ErrorStrategyManager } = require('./errorStrategies');
 const errorStrategyManager = new ErrorStrategyManager();
 
 const errorHandler = (err, _req, res, _next) => {
-  console.error("Error caught in errorHandler:", err);
+  logger.error("Error caught in errorHandler:", {
+    message: err.message,
+    stack: err.stack,
+    statusCode: err.statusCode
+  });
 
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
@@ -138,13 +107,5 @@ const errorHandler = (err, _req, res, _next) => {
 module.exports = {
   AppError,
   errorHandler,
-  errorStrategyManager, // Exposer le manager pour extensibilité
-  // Fonctions legacy maintenues pour compatibilité
-  handleSequelizeValidationError,
-  handleDuplicateFieldsDB,
-  handleJWTError,
-  handleJWTExpiredError,
-  handleSequelizeDatabaseError,
-  handleValidationError,
-  handleRateLimitError,
+  errorStrategyManager
 };
