@@ -83,7 +83,7 @@ export class StarService {
   /**
    * Récupérer les étoiles les plus récentes
    */
-  static async getLatestStars(limit: number = 10): Promise<Star[]> {
+  static async getLatestStars(limit = 10): Promise<Star[]> {
     const response = await httpClient.get<{ success: boolean; data: StarFromServer[] }>("/stars/latest", { params: { limit } });
     return response.data.data.map((star: StarFromServer) =>
       transformStarPrice(star as unknown as Star)

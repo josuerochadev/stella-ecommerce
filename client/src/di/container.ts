@@ -19,12 +19,17 @@ export interface ServiceContainer {
 }
 
 /**
+ * Type pour les factory functions
+ */
+type ServiceFactory<T = unknown> = () => T;
+
+/**
  * Container d'injection de dépendances pour le frontend
  * Version simplifiée adaptée au contexte React/Zustand
  */
 class FrontendDIContainer {
-  private services: Map<string, any> = new Map();
-  private singletons: Map<string, any> = new Map();
+  private services: Map<string, ServiceFactory> = new Map();
+  private singletons: Map<string, unknown> = new Map();
 
   /**
    * Enregistre un service singleton
@@ -180,9 +185,9 @@ export function configureTestContainer(mocks: Partial<ServiceContainer>): void {
   container.clear();
 
   // Enregistrer les mocks
-  Object.entries(mocks).forEach(([serviceName, mock]) => {
+  for (const [serviceName, mock] of Object.entries(mocks)) {
     container.registerSingleton(serviceName, mock);
-  });
+  }
 
   // Enregistrer les services par défaut pour ceux non mockés
   if (!mocks.cartRepository) {
@@ -220,9 +225,9 @@ export function createStoreWithDI<T, D extends Partial<ServiceContainer>>(
 ): T {
   const resolvedDependencies = {} as D;
 
-  dependencies.forEach(depName => {
-    resolvedDependencies[depName as keyof D] = getService(depName) as any;
-  });
+  for (const depName of dependencies) {
+    resolvedDependencies[depName as keyof D] = getService(depName) as D[keyof D];
+  }
 
   return createStore(resolvedDependencies);
 }

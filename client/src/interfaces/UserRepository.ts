@@ -5,6 +5,17 @@
 import type { User, UserProfileData, ApiResponse } from "@/types";
 
 /**
+ * Représente une activité utilisateur dans l'historique
+ */
+export interface ActivityItem {
+  id: number;
+  type: string;
+  description: string;
+  createdAt: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
  * Interface définissant les opérations sur les données utilisateur
  * Permet l'injection de dépendances et facilite les tests
  */
@@ -55,14 +66,14 @@ export interface UserRepository {
   /**
    * Récupère l'historique des activités utilisateur
    * @param params Paramètres de pagination et filtrage
-   * @returns Promise<ApiResponse<any[]>> Liste des activités
+   * @returns Promise<ApiResponse<ActivityItem[]>> Liste des activités
    * @throws {Error} Si la récupération échoue
    */
   getActivityHistory(params?: {
     limit?: number;
     offset?: number;
     type?: string;
-  }): Promise<ApiResponse<any[]>>;
+  }): Promise<ApiResponse<ActivityItem[]>>;
 
   /**
    * Vérifie la disponibilité d'un nom d'utilisateur
