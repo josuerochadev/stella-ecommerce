@@ -4,7 +4,8 @@ module.exports = {
   testEnvironment: 'jsdom', // jsdom pour simuler un navigateur dans les tests frontend
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // Configuration supplémentaire pour React Testing Library
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Gère les imports CSS
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
     '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }], // Support TypeScript avec ts-jest
