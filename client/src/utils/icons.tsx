@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 import {
-  FaShoppingCart,
+  FaArrowDown,
+  FaArrowLeft,
+  FaArrowUp,
+  FaBars,
+  FaEye,
   FaHeart,
   FaHome,
   FaSearch,
+  FaShoppingCart,
   FaStore,
-  FaUser,
   FaTimes,
-  FaBars,
-  FaArrowLeft,
-  FaEye,
   FaTrash,
-  FaArrowUp,
-  FaArrowDown,
-} from 'react-icons/fa';
+  FaUser,
+} from "react-icons/fa";
 
 // Interface pour les props des icônes
 interface IconProps {
@@ -22,9 +22,7 @@ interface IconProps {
   [key: string]: unknown; // Plus sûr que 'any'
 }
 
-// Wrapper simplifié pour corriger les problèmes de types TypeScript
-// Note: React Icons types are complex, using any for compatibility
-const createIconWrapper = (OriginalIcon: any) => {
+const createIconWrapper = (OriginalIcon: React.ComponentType<IconProps>) => {
   const WrappedIcon: React.FC<IconProps> = (props) => {
     return React.createElement(OriginalIcon, props);
   };
