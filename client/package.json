@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:3000",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@types/node": "^16.18.106",
     "@types/react": "^19.0.8",

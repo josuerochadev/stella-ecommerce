@@ -90,11 +90,11 @@ Rendre le projet presentable et professionnel.
 
 Pour montrer des competences DevOps sur le portfolio.
 
-- [ ] 6.1 Docker + docker-compose (client + server + postgres)
-- [ ] 6.2 GitHub Actions (lint + tests sur PR)
-- [ ] 6.3 Migrations Sequelize (remplacer sync force)
-- [ ] 6.4 .nvmrc + engines dans package.json
-- [ ] 6.5 Husky + lint-staged (pre-commit)
+- [x] 6.1 Docker + docker-compose (client + server + postgres) — 2026-05-06
+- [x] 6.2 GitHub Actions CI (lint client/server + tests + typecheck sur PR/push) — 2026-05-06
+- [~] 6.3 Migrations Sequelize — SKIP (sync suffisant pour un projet demo)
+- [x] 6.4 .nvmrc (Node 22) + engines >=18 dans les deux package.json — 2026-05-06
+- [x] 6.5 Husky + lint-staged (pre-commit biome check sur staged files) — 2026-05-06
 
 ---
 
