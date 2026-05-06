@@ -13,7 +13,7 @@ import { logger } from "@/utils/logger";
  * Responsabilité unique : Orchestration des actions utilisateur sur le panier
  */
 export const useCartActions = () => {
-  const { cartItems, loading, error, fetchCart, removeItem } = useCartStore();
+  const { cartItems, loading, error, fetchCart, removeItem, updateItem } = useCartStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { redirectToAuth } = useAuthRedirect();
@@ -44,6 +44,17 @@ export const useCartActions = () => {
       fetchCart();
     }
   }, [fetchCart, isAuthenticated]);
+
+  /**
+   * Mettre a jour la quantite d'un article
+   */
+  const handleUpdateQuantity = useCallback(async (cartItemId: number, quantity: number) => {
+    try {
+      await updateItem(cartItemId, quantity);
+    } catch (error) {
+      logger.error("Erreur lors de la mise a jour de la quantite:", error, "useCartActions");
+    }
+  }, [updateItem]);
 
   /**
    * Naviguer vers la page d'authentification
@@ -80,6 +91,7 @@ export const useCartActions = () => {
 
     // Actions
     handleRemoveFromCart,
+    handleUpdateQuantity,
     initializeCart,
     navigateToAuth,
     navigateToCatalog,

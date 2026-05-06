@@ -2,7 +2,7 @@
 // Implémentation du repository panier utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations de panier
 
-import { getCart, addToCart, removeFromCart } from "@/services/api";
+import { getCart, addToCart, removeFromCart, updateCartItem } from "@/services/api";
 import type { CartRepository } from "@/interfaces/CartRepository";
 import type { CartItem } from "@/types";
 import { transformCartItem, safeNumberTransform } from "@/utils/dataTransformers";
@@ -87,12 +87,7 @@ export class ApiCartRepository implements CartRepository {
         throw new Error('Quantity must be a positive number');
       }
 
-      // Pour l'instant, supprimer et re-ajouter (à améliorer quand l'API aura un endpoint update)
-      await this.removeFromCart(cartItemId);
-
-      // Note: Cette approche nécessiterait de récupérer le starId depuis le cart item
-      // En attendant un endpoint API dédié pour la mise à jour
-      throw new Error('Update quantity not yet implemented - API endpoint needed');
+      await updateCartItem(cartItemId, quantity);
     } catch (error) {
       throw createFormattedError(error, 'Failed to update cart item quantity');
     }
