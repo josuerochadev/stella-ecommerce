@@ -2,6 +2,8 @@
 // Service métier pour la gestion du panier
 // Responsabilité unique : logique métier du panier
 
+const { sequelize } = require('../models');
+
 /**
  * Service pour la gestion du panier
  * Encapsule la logique métier et utilise le repository pour la persistance
@@ -92,23 +94,22 @@ class CartService {
         throw new Error('Star not found');
       }
 
-      // Récupérer ou créer le panier
-      const cart = await this.getOrCreateCart(userId);
+      // Transaction pour éviter la race condition check-then-act
+      return await sequelize.transaction(async (t) => {
+        const cart = await this.getOrCreateCart(userId, t);
 
-      // Vérifier si l'item existe déjà
-      const existingItem = await this.cartRepository.findCartItem(cart.id, starId);
+        const existingItem = await this.cartRepository.findCartItem(cart.id, starId, t);
 
-      if (existingItem) {
-        // Mettre à jour la quantité
-        const newQuantity = existingItem.quantity + quantity;
-        return await this.cartRepository.updateCartItemQuantity(existingItem.id, newQuantity);
-      }
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + quantity;
+          return await this.cartRepository.updateCartItemQuantity(existingItem.id, newQuantity, t);
+        }
 
-      // Créer un nouvel item
-      return await this.cartRepository.addCartItem({
-        cartId: cart.id,
-        starId,
-        quantity
+        return await this.cartRepository.addCartItem({
+          cartId: cart.id,
+          starId,
+          quantity
+        }, t);
       });
     } catch (error) {
       throw new Error(`Failed to add to cart: ${error.message}`);

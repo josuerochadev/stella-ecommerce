@@ -6,6 +6,16 @@ const { Order } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const MIN_DAYS = 1;
+const MAX_DAYS = 365;
+
+function parseDays(days) {
+  const parsed = parseInt(days, 10);
+  if (isNaN(parsed) || parsed < MIN_DAYS || parsed > MAX_DAYS) {
+    throw new AppError(`days must be between ${MIN_DAYS} and ${MAX_DAYS}`, 400);
+  }
+  return parsed;
+}
 
 /**
  * Contrôleur des statistiques de paiement
@@ -19,7 +29,7 @@ class PaymentStatsController {
   static async getPaymentStats(req, res, next) {
     try {
       const { days = 30 } = req.query;
-      const period = parseInt(days, 10);
+      const period = parseDays(days);
 
       // Statistiques de démonstration
       const demoStats = paymentService.generatePaymentStats(period);
@@ -51,7 +61,7 @@ class PaymentStatsController {
   static async getConversionMetrics(req, res, next) {
     try {
       const { days = 30 } = req.query;
-      const period = parseInt(days, 10);
+      const period = parseDays(days);
 
       const metrics = await PaymentStatsController._calculateConversionMetrics(period);
 
@@ -74,7 +84,7 @@ class PaymentStatsController {
   static async getRevenueReport(req, res, next) {
     try {
       const { days = 30, groupBy = 'day' } = req.query;
-      const period = parseInt(days, 10);
+      const period = parseDays(days);
 
       const revenueData = await PaymentStatsController._getRevenueData(period, groupBy);
 

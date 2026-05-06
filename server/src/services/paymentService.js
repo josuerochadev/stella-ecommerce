@@ -17,7 +17,7 @@ const PAYMENT_METHOD_DISTRIBUTION = {
  * Service principal de paiement
  * Responsabilité unique : orchestration des services spécialisés
  */
-class PaymentSimulator {
+class PaymentOrchestrator {
   constructor() {
     this.processor = new PaymentProcessor();
   }
@@ -117,6 +117,6 @@ class PaymentSimulator {
 }
 
 // Créer et exporter une instance singleton
-const paymentService = new PaymentSimulator();
+const paymentService = new PaymentOrchestrator();
 
 module.exports = { paymentService };

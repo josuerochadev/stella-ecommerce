@@ -154,19 +154,25 @@ class SequelizeCartRepository extends ICartRepository {
    * @param {number} starId - ID de l'étoile
    * @returns {Promise<Object|null>} Item trouvé ou null
    */
-  async findCartItem(cartId, starId) {
+  async findCartItem(cartId, starId, transaction = null) {
     try {
       if (!cartId || !starId) {
         throw new Error('Cart ID and Star ID are required');
       }
 
-      const cartItem = await this.CartItem.findOne({
+      const options = {
         where: {
           cartId,
           starId
         },
         include: [{ model: Star, as: 'Star' }]
-      });
+      };
+
+      if (transaction) {
+        options.transaction = transaction;
+      }
+
+      const cartItem = await this.CartItem.findOne(options);
 
       return cartItem ? cartItem.toJSON() : null;
     } catch (error) {

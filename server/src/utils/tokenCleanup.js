@@ -1,7 +1,7 @@
 // server/src/utils/tokenCleanup.js
 const cron = require('node-cron');
 const tokenService = require('../services/tokenService');
-const { info } = require('./logger');
+const { info, error: logError } = require('./logger');
 
 // Run token cleanup every day at 2 AM
 const scheduleTokenCleanup = () => {
@@ -11,7 +11,7 @@ const scheduleTokenCleanup = () => {
       await tokenService.cleanupExpiredTokens();
       info('Token cleanup completed successfully');
     } catch (error) {
-      info(`Token cleanup failed: ${error.message}`);
+      logError(`Token cleanup failed: ${error.message}`);
     }
   });
 };

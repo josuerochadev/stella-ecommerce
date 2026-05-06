@@ -90,25 +90,22 @@ class ModernCSRF {
       const sessionToken = req.session?.csrfToken;
 
       if (!clientToken) {
-        return res.status(403).json({
-          success: false,
-          message: 'CSRF token missing. Please include X-CSRF-Token header.'
-        });
+        const err = new Error('CSRF token missing. Please include X-CSRF-Token header.');
+        err.status = 403;
+        return next(err);
       }
 
       if (!sessionToken) {
-        return res.status(403).json({
-          success: false,
-          message: 'No CSRF session found. Please refresh the page.'
-        });
+        const err = new Error('No CSRF session found. Please refresh the page.');
+        err.status = 403;
+        return next(err);
       }
 
       // Validation double : JWT + correspondance session
       if (!this.validateToken(clientToken) || clientToken !== sessionToken) {
-        return res.status(403).json({
-          success: false,
-          message: 'Invalid CSRF token. Please refresh the page and try again.'
-        });
+        const err = new Error('Invalid CSRF token. Please refresh the page and try again.');
+        err.status = 403;
+        return next(err);
       }
 
       next();
