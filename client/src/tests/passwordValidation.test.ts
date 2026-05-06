@@ -1,49 +1,57 @@
-export {};
+import { validatePassword } from "@/utils/security";
 
-function validatePassword(password: string): string | true {
-  if (!password || password.length < 8) {
-    return "Le mot de passe doit contenir au moins 8 caracteres";
-  }
-  if (!/[A-Z]/.test(password)) {
-    return "Le mot de passe doit contenir au moins une majuscule";
-  }
-  if (!/[a-z]/.test(password)) {
-    return "Le mot de passe doit contenir au moins une minuscule";
-  }
-  if (!/[0-9]/.test(password)) {
-    return "Le mot de passe doit contenir au moins un chiffre";
-  }
-  if (!/[^A-Za-z0-9]/.test(password)) {
-    return "Le mot de passe doit contenir au moins un caractere special";
-  }
-  return true;
-}
-
-describe("Password validation", () => {
+describe("Password validation (security.ts)", () => {
   it("rejects passwords shorter than 8 characters", () => {
-    expect(validatePassword("Ab1!")).not.toBe(true);
-    expect(validatePassword("")).not.toBe(true);
+    const result = validatePassword("Ab1!");
+    expect(result.isValid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it("rejects empty passwords", () => {
+    const result = validatePassword("");
+    expect(result.isValid).toBe(false);
   });
 
   it("rejects passwords without uppercase", () => {
-    expect(validatePassword("abcdefg1!")).not.toBe(true);
+    const result = validatePassword("abcdefg1!");
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain("Le mot de passe doit contenir au moins une majuscule");
   });
 
   it("rejects passwords without lowercase", () => {
-    expect(validatePassword("ABCDEFG1!")).not.toBe(true);
+    const result = validatePassword("ABCDEFG1!");
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain("Le mot de passe doit contenir au moins une minuscule");
   });
 
   it("rejects passwords without digit", () => {
-    expect(validatePassword("Abcdefgh!")).not.toBe(true);
+    const result = validatePassword("Abcdefgh!");
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain("Le mot de passe doit contenir au moins un chiffre");
   });
 
   it("rejects passwords without special character", () => {
-    expect(validatePassword("Abcdefg1")).not.toBe(true);
+    const result = validatePassword("Abcdefg1");
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain("Le mot de passe doit contenir au moins un caractère spécial");
+  });
+
+  it("rejects passwords exceeding 128 characters", () => {
+    const longPassword = `Aa1!${"x".repeat(126)}`;
+    const result = validatePassword(longPassword);
+    expect(result.isValid).toBe(false);
+    expect(result.errors).toContain("Le mot de passe ne peut pas dépasser 128 caractères");
   });
 
   it("accepts valid passwords", () => {
-    expect(validatePassword("MyP@ss1234")).toBe(true);
-    expect(validatePassword("Str0ng!Pass")).toBe(true);
-    expect(validatePassword("12345Aa!")).toBe(true);
+    expect(validatePassword("MyP@ss1234").isValid).toBe(true);
+    expect(validatePassword("Str0ng!Pass").isValid).toBe(true);
+    expect(validatePassword("12345Aa!").isValid).toBe(true);
+  });
+
+  it("returns multiple errors for very weak passwords", () => {
+    const result = validatePassword("abc");
+    expect(result.isValid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(1);
   });
 });

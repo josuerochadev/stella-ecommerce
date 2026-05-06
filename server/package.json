@@ -10,7 +10,7 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "test": "NODE_ENV=test jest --setupFilesAfterEnv ./jest.setup.js --verbose",
-    "test:unit": "jest tests/unit",
+    "test:unit": "jest --config '{\"testEnvironment\": \"node\", \"testMatch\": [\"**/tests/unit/**/*.test.js\"]}' --verbose",
     "test:integration": "jest tests/integration",
     "lint": "biome lint .",
     "format": "biome format . --write",

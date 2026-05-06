@@ -1,12 +1,19 @@
 // jest.setup.js
+// Shared setup for integration tests that need a database connection.
+// Unit tests (tests/unit/) should NOT rely on this setup — use mocks instead.
 
 const { sequelize, User } = require("./src/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// Shared test context — avoids global variable pollution
+const testContext = {
+  token: null,
+  userId: null,
+  sequelize,
+};
+
 let isDBSynced = false;
-let token;
-let userId;
 
 global.beforeAll(async () => {
   if (!isDBSynced) {
@@ -20,11 +27,13 @@ global.beforeAll(async () => {
         email: "test@example.com",
         password: hashedPassword,
       });
-      userId = user.id;
 
-      token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      testContext.userId = user.id;
+      testContext.token = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" },
+      );
 
       isDBSynced = true;
     } catch (error) {
@@ -55,6 +64,4 @@ global.afterAll(async () => {
   }
 });
 
-global.token = token;
-global.userId = userId;
-global.sequelize = sequelize;
+module.exports = { testContext };
