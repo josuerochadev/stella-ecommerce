@@ -67,7 +67,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
   };
 
   return (
-    <div role="form" className="space-y-4 bg-secondary text-text p-6 rounded-md shadow-lg">
+    <div className="space-y-4 bg-secondary text-text p-6 rounded-md shadow-lg">
       {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
       {isEditingProfile ? (

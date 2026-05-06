@@ -89,7 +89,7 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div role="contentinfo" className="container mx-auto pt-20 px-4 max-w-md">
+    <div className="container mx-auto pt-20 px-4 max-w-md">
       <h1 className="text-4xl font-display mb-8 text-center">
         Bonjour, {user.firstName}
       </h1>

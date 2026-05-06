@@ -7,7 +7,8 @@
       "dist",
       "*.config.js",
       "config-overrides.js",
-      "fix-local-imports.js"
+      "fix-local-imports.js",
+      "coverage"
     ]
   },
   "organizeImports": {
@@ -16,13 +17,34 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "warn"
+      },
+      "style": {
+        "useConst": "error"
+      }
     }
   },
   "formatter": {
     "enabled": true,
+    "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
   }
 }

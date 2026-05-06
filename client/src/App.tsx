@@ -53,7 +53,7 @@ const App: React.FC = () => {
       <ErrorBoundary>
         <div className="flex flex-col min-h-screen">
           <Header />
-          <main className="flex-grow">
+          <main id="main-content" className="flex-grow">
           <CookieBanner />
           <NotificationProvider />
             <Suspense fallback={<div className="text-center text-text">Loading...</div>}>
