@@ -98,7 +98,7 @@ const Wishlist: React.FC = () => {
                 onRemove={() => handleRemoveFromWishlist(item.starId)}
               />
             ) : (
-              <div key={item?.id || Math.random()} className="mb-4">
+              <div key={`invalid-${item?.id ?? "unknown"}`} className="mb-4">
                 <p>L'étoile associée à cet article est introuvable.</p>
               </div>
             ),

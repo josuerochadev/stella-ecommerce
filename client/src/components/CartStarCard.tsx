@@ -11,14 +11,11 @@ import type { Star } from "@/types";
 interface CartStarCardProps {
   star: Star;
   quantity: number;
-  onRemove: (starId: number) => void;
+  onRemove: () => void;
+  onUpdateQuantity?: (quantity: number) => void;
 }
 
-const CartStarCard: React.FC<CartStarCardProps> = ({ star, quantity, onRemove }) => {
-  const handleRemoveClick = () => {
-    onRemove(star.starid);
-  };
-
+const CartStarCard: React.FC<CartStarCardProps> = ({ star, quantity, onRemove, onUpdateQuantity }) => {
   return (
     <FadeInSection>
       <div className="bg-secondary text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden card-hover-effect">
@@ -33,15 +30,38 @@ const CartStarCard: React.FC<CartStarCardProps> = ({ star, quantity, onRemove })
 
           <div className="flex items-center justify-between">
             <span className="text-lg font-semibold">{star.price} €</span>
-            <span className="text-sm">Quantité : {quantity}</span>
+            {onUpdateQuantity ? (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => onUpdateQuantity(quantity - 1)}
+                  disabled={quantity <= 1}
+                  className="w-8 h-8 rounded-md bg-primary text-text flex items-center justify-center disabled:opacity-30"
+                  aria-label="Reduire la quantite"
+                >
+                  -
+                </button>
+                <span className="text-sm w-8 text-center">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => onUpdateQuantity(quantity + 1)}
+                  className="w-8 h-8 rounded-md bg-primary text-text flex items-center justify-center"
+                  aria-label="Augmenter la quantite"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <span className="text-sm">Quantite : {quantity}</span>
+            )}
           </div>
 
           <div className="flex mt-4">
             <Link to={`/star/${star.starid}`} className="btn mt-2">
               <EyeIcon className="text-xl" />
-              <span className="sr-only">Découvrir</span>
+              <span className="sr-only">Decouvrir</span>
             </Link>
-            <button type="button" onClick={handleRemoveClick} className="btn mt-2">
+            <button type="button" onClick={onRemove} className="btn mt-2">
               <TrashIcon className="text-xl" />
               <span className="sr-only">Retirer du panier</span>
             </button>
