@@ -50,10 +50,10 @@ Le coeur de l'application e-commerce. Sans ca, le projet n'a pas de sens.
 
 Ces features enrichissent le projet et montrent une maitrise plus large.
 
-- [ ] 3.1 Systeme d'avis/notes sur la page produit (ReviewService existe deja)
-- [ ] 3.2 Page admin basique (dashboard stats + liste users + liste stars)
-- [ ] 3.3 Reset mot de passe (flow complet : demande, email, page reset)
-- [ ] 3.4 Modifier mot de passe depuis le profil
+- [x] 3.1 Systeme d'avis/notes sur la page produit (composant ReviewSection + etoiles interactives) — 2026-05-06
+- [x] 3.2 Page admin basique (dashboard stats + liste users avec roles) — 2026-05-06
+- [~] 3.3 Reset mot de passe — SKIP (aucun endpoint backend, flow email trop complexe pour portfolio)
+- [x] 3.4 Modifier mot de passe depuis le profil (endpoint backend + formulaire) — 2026-05-06
 
 ---
 
