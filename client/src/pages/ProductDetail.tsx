@@ -3,6 +3,7 @@ import { memo } from "react";
 import { useParams } from "react-router-dom";
 import { useStarDetail } from "@/hooks/useStarDetail";
 import StarCard from "@/components/StarCard";
+import ReviewSection from "@/components/ReviewSection";
 import type { Star } from "@/types";
 import FadeInSection from "@/components/FadeInSection";
 
@@ -26,7 +27,8 @@ const ProductDetail: React.FC = () => {
       <FadeInSection>
         {/* Version détaillée avec bouton */}
         <StarCard star={star} showAddToCartButton={true} isDetailedView={true} />{" "}
-        {/* Section des étoiles similaires */}
+        <ReviewSection starId={star.starid} />
+
         <section className="mt-12">
           <h2 className="text-3xl font-display mb-6 text-text">Vous pouvez aimer aussi :</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
