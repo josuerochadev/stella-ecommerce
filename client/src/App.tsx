@@ -25,6 +25,7 @@ const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
 const Checkout = React.lazy(() => import("./pages/Checkout"));
 const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
 const Orders = React.lazy(() => import("./pages/Orders"));
+const Admin = React.lazy(() => import("./pages/Admin"));
 
 // Component to handle auth unauthorized events
 const AuthEventListener: React.FC = () => {
@@ -73,6 +74,7 @@ const App: React.FC = () => {
                 <Route path="/checkout" element={isAuthenticated ? <Checkout /> : <Navigate to="/auth" />} />
                 <Route path="/order-confirmation" element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />} />
                 <Route path="/orders" element={isAuthenticated ? <Orders /> : <Navigate to="/auth" />} />
+                <Route path="/admin" element={isAuthenticated ? <Admin /> : <Navigate to="/auth" />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* Privacy Policy */}
