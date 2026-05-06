@@ -270,11 +270,11 @@ const users = [
 ];
 
 const orders = [
-  { UserId: 2, date: new Date("2024-07-15"), status: "pending", totalAmount: 9999.99 },
-  { UserId: 3, date: new Date("2024-07-14"), status: "paid", totalAmount: 15000 },
-  { UserId: 4, date: new Date("2024-07-13"), status: "shipped", totalAmount: 20000 },
-  { UserId: 5, date: new Date("2024-07-12"), status: "cancelled", totalAmount: 12000 },
-  { UserId: 2, date: new Date("2024-07-11"), status: "paid", totalAmount: 11000 },
+  { userId: 2, date: new Date("2024-07-15"), status: "pending", totalAmount: 9999.99 },
+  { userId: 3, date: new Date("2024-07-14"), status: "paid", totalAmount: 15000 },
+  { userId: 4, date: new Date("2024-07-13"), status: "shipped", totalAmount: 20000 },
+  { userId: 5, date: new Date("2024-07-12"), status: "cancelled", totalAmount: 12000 },
+  { userId: 2, date: new Date("2024-07-11"), status: "paid", totalAmount: 11000 },
 ];
 
 const _orderStars = [
@@ -296,7 +296,7 @@ async function generateSampleData() {
     await Star.bulkCreate(stars);
 
     // Crée les utilisateurs avec mots de passe hachés
-    const bcrypt = require('bcrypt');
+    const bcrypt = require('../server/node_modules/bcrypt');
     for (const userData of users) {
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       await User.create({ ...userData, password: hashedPassword });

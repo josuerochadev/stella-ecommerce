@@ -4,13 +4,13 @@ services:
     environment:
       POSTGRES_USER: stella_user
       POSTGRES_PASSWORD: stella
-      POSTGRES_DB: stella_dev
+      POSTGRES_DB: stella_ecommerce
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U stella_user -d stella_dev"]
+      test: ["CMD-SHELL", "pg_isready -U stella_user -d stella_ecommerce"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,7 +27,7 @@ services:
       DB_HOST: postgres
       DB_USERNAME: stella_user
       DB_PASSWORD: stella
-      DB_DATABASE: stella_dev
+      DB_DATABASE: stella_ecommerce
       DB_DIALECT: postgres
       JWT_SECRET: dev_jwt_secret_change_in_production
     depends_on:

@@ -1,7 +1,7 @@
 const APP_CONSTANTS = {
   // Server configuration
   DEFAULT_PORT: 3000,
-  FRONTEND_URLS: ['http://localhost:3001', 'http://localhost:3002'],
+  FRONTEND_URLS: ['http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'],
 
   // Session and security
   SESSION_MAX_AGE: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
@@ -81,7 +81,7 @@ const SESSION_CONFIG = {
   cookie: {
     httpOnly: true,
     maxAge: APP_CONSTANTS.SESSION_MAX_AGE,
-    sameSite: 'strict'
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
   }
 };
 

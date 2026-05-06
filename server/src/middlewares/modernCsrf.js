@@ -59,7 +59,7 @@ class ModernCSRF {
         res.cookie(this.cookieName, token, {
           httpOnly: false, // Accessible en JS pour headers
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
+          sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
           maxAge: this.maxAge * 1000
         });
 
