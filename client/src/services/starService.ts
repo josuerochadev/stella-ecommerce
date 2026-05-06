@@ -1,9 +1,9 @@
 // client/src/services/starService.ts
 // Responsabilité unique : Gestion du catalogue d'étoiles
 
-import { httpClient } from "./httpClient";
-import type { Star, StarFromServer, ApiResponse } from "@/types";
+import type { ApiResponse, Star, StarFromServer } from "@/types";
 import { transformStarPrice } from "@/utils/dataTransformers";
+import { httpClient } from "./httpClient";
 
 /**
  * Interface pour les paramètres de filtrage
@@ -19,7 +19,7 @@ interface StarFilterParams {
   minLuminosity?: number;
   maxLuminosity?: number;
   sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
   limit?: number;
 }
 
@@ -27,6 +27,7 @@ interface StarFilterParams {
  * Service de gestion du catalogue d'étoiles
  * Responsabilité unique : CRUD et recherche d'étoiles
  */
+// biome-ignore lint/complexity/noStaticOnlyClass: service class used as namespace
 export class StarService {
   /**
    * Récupérer toutes les étoiles
@@ -37,8 +38,8 @@ export class StarService {
     const transformedData = {
       ...response.data,
       data: response.data.data.map((star: StarFromServer) =>
-        transformStarPrice(star as unknown as Star)
-      )
+        transformStarPrice(star as unknown as Star),
+      ),
     };
     return transformedData;
   }
@@ -57,15 +58,17 @@ export class StarService {
   static async filterStars(params: StarFilterParams): Promise<ApiResponse<Star[]>> {
     const processedParams = { ...params };
     if (Array.isArray(processedParams.constellation)) {
-      processedParams.constellation = processedParams.constellation.join(',');
+      processedParams.constellation = processedParams.constellation.join(",");
     }
 
-    const response = await httpClient.get<ApiResponse<StarFromServer[]>>("/stars/filter", { params: processedParams });
+    const response = await httpClient.get<ApiResponse<StarFromServer[]>>("/stars/filter", {
+      params: processedParams,
+    });
     const transformedData = {
       ...response.data,
       data: response.data.data.map((star: StarFromServer) =>
-        transformStarPrice(star as unknown as Star)
-      )
+        transformStarPrice(star as unknown as Star),
+      ),
     };
     return transformedData;
   }
@@ -74,9 +77,13 @@ export class StarService {
    * Rechercher des étoiles par nom
    */
   static async searchStars(query: string): Promise<Star[]> {
-    const response = await httpClient.get<{ success: boolean; data: StarFromServer[]; count: number }>("/stars/search", { params: { q: query } });
+    const response = await httpClient.get<{
+      success: boolean;
+      data: StarFromServer[];
+      count: number;
+    }>("/stars/search", { params: { q: query } });
     return response.data.data.map((star: StarFromServer) =>
-      transformStarPrice(star as unknown as Star)
+      transformStarPrice(star as unknown as Star),
     );
   }
 
@@ -84,9 +91,12 @@ export class StarService {
    * Récupérer les étoiles les plus récentes
    */
   static async getLatestStars(limit = 10): Promise<Star[]> {
-    const response = await httpClient.get<{ success: boolean; data: StarFromServer[] }>("/stars/latest", { params: { limit } });
+    const response = await httpClient.get<{ success: boolean; data: StarFromServer[] }>(
+      "/stars/latest",
+      { params: { limit } },
+    );
     return response.data.data.map((star: StarFromServer) =>
-      transformStarPrice(star as unknown as Star)
+      transformStarPrice(star as unknown as Star),
     );
   }
 
@@ -94,14 +104,15 @@ export class StarService {
    * Récupérer les constellations disponibles
    */
   static async getConstellations(): Promise<string[]> {
-    const response = await httpClient.get<{ success: boolean; data: string[] }>("/stars/constellations");
+    const response = await httpClient.get<{ success: boolean; data: string[] }>(
+      "/stars/constellations",
+    );
     return response.data.data;
   }
 }
 
 // Exports nommés pour compatibilité
 export const fetchStars = StarService.fetchStars;
-export const fetchStarById = StarService.getStarById; // Alias pour compatibilité
 export const getStarById = StarService.getStarById;
 export const filterStars = StarService.filterStars;
 export const searchStars = StarService.searchStars;

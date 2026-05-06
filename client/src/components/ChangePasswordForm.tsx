@@ -1,5 +1,5 @@
-import { useState, memo } from "react";
 import { useUserStore } from "@/stores/useUserStore";
+import { memo, useState } from "react";
 import FormInput from "./FormInput";
 
 const ChangePasswordForm: React.FC = () => {
@@ -67,9 +67,7 @@ const ChangePasswordForm: React.FC = () => {
         />
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && (
-          <p className="text-green-500 text-sm">Mot de passe modifie avec succes.</p>
-        )}
+        {success && <p className="text-green-500 text-sm">Mot de passe modifié avec succès.</p>}
 
         <button type="submit" disabled={loading} className="btn">
           {loading ? "Modification..." : "Modifier le mot de passe"}

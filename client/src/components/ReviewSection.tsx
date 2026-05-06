@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { ReviewService } from "@/services/reviewService";
-import FadeInSection from "./FadeInSection";
 import type { Review } from "@/types";
+import { useCallback, useEffect, useState } from "react";
+import FadeInSection from "./FadeInSection";
 
 interface ReviewSectionProps {
   starId: number;
@@ -68,7 +68,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newRating === 0) {
-      setError("Veuillez selectionner une note.");
+      setError("Veuillez sélectionner une note.");
       return;
     }
 
@@ -86,31 +86,23 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
       setHasReviewed(true);
       await fetchReviews();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Erreur lors de l'envoi de l'avis."
-      );
+      setError(err instanceof Error ? err.message : "Erreur lors de l'envoi de l'avis.");
     } finally {
       setSubmitting(false);
     }
   };
 
   const averageRating =
-    reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : 0;
+    reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
 
   return (
     <section className="mt-12">
-      <h2 className="text-3xl font-display mb-6 text-text">
-        Avis ({reviews.length})
-      </h2>
+      <h2 className="text-3xl font-display mb-6 text-text">Avis ({reviews.length})</h2>
 
       {reviews.length > 0 && (
         <div className="flex items-center gap-3 mb-6">
           <StarRating rating={Math.round(averageRating)} />
-          <span className="text-lg font-serif text-text">
-            {averageRating.toFixed(1)} / 5
-          </span>
+          <span className="text-lg font-serif text-text">{averageRating.toFixed(1)} / 5</span>
         </div>
       )}
 
@@ -170,9 +162,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
                     {new Date(review.createdAt).toLocaleDateString("fr-FR")}
                   </span>
                 </div>
-                {review.comment && (
-                  <p className="font-serif text-sm">{review.comment}</p>
-                )}
+                {review.comment && <p className="font-serif text-sm">{review.comment}</p>}
               </div>
             </FadeInSection>
           ))}

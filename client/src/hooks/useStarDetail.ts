@@ -1,8 +1,8 @@
-// client/src/hooks/useStarDetail.ts
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { fetchStarById, fetchStars } from "@/services/api";
-import { logger } from "@/utils/logger";
+import { fetchStars, getStarById } from "@/services/api";
 import type { Star } from "@/types";
+import { logger } from "@/utils/logger";
+// client/src/hooks/useStarDetail.ts
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useStarDetail = (id: number | undefined) => {
   const [star, setStar] = useState<Star | null>(null);
@@ -27,8 +27,8 @@ export const useStarDetail = (id: number | undefined) => {
 
       // Récupérer les détails de l'étoile et toutes les étoiles en parallèle
       const [starResponse, allStarsResponse] = await Promise.all([
-        fetchStarById(id as number),
-        fetchStars()
+        getStarById(id as number),
+        fetchStars(),
       ]);
 
       if (!starResponse) {
@@ -39,11 +39,10 @@ export const useStarDetail = (id: number | undefined) => {
 
       if (allStarsResponse?.data) {
         const filteredStars = allStarsResponse.data.filter(
-          (relatedStar: Star) => relatedStar.starid !== id
+          (relatedStar: Star) => relatedStar.starid !== id,
         );
         setRelatedStars(filteredStars);
       }
-
     } catch (err) {
       logger.error("Erreur lors du chargement des détails de l'étoile", err, "useStarDetail");
       setError("Impossible de charger les détails de l'étoile");
@@ -62,6 +61,6 @@ export const useStarDetail = (id: number | undefined) => {
     loading,
     error,
     refetch: getStarDetail,
-    isValidId
+    isValidId,
   };
 };
