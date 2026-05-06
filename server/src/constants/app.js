@@ -1,7 +1,12 @@
 const APP_CONSTANTS = {
   // Server configuration
   DEFAULT_PORT: 3000,
-  FRONTEND_URLS: ['http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'],
+  FRONTEND_URLS: [
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
 
   // Session and security
   SESSION_MAX_AGE: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
