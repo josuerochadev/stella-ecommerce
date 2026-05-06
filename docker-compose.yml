@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: stella_user
+      POSTGRES_PASSWORD: stella
+      POSTGRES_DB: stella_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stella_user -d stella_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_USERNAME: stella_user
+      DB_PASSWORD: stella
+      DB_DATABASE: stella_dev
+      DB_DIALECT: postgres
+      JWT_SECRET: dev_jwt_secret_change_in_production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./server/src:/app/src
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      REACT_APP_API_URL: http://localhost:3000/api
+      PORT: 3001
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:
