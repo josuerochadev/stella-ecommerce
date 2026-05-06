@@ -12,7 +12,7 @@ module.exports = {
   },
   modulePaths: ['<rootDir>/src'], // Facilite les imports relatifs
   testMatch: ['**/tests/**/*.(test|spec).[jt]s?(x)'], // Correspond aux fichiers de test
-  collectCoverage: true, // Active la collecte de couverture
+  collectCoverage: false, // Use --coverage flag to enable
   coverageDirectory: '<rootDir>/coverage', // Dossier de rapport de couverture
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}', // Fichiers source pour la couverture

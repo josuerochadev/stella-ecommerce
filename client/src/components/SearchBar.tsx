@@ -1,9 +1,10 @@
 // client/src/components/SearchBar.tsx
 // Responsabilité unique : Barre de recherche standard (consolidée avec la version accessible)
 
-import { useRef } from "react";
-import { SearchIcon } from "@/utils/icons";
+import { APP_CONSTANTS } from "@/constants/app";
 import { useSearchLogic } from "@/hooks/useSearchLogic";
+import { SearchIcon } from "@/utils/icons";
+import { useRef } from "react";
 
 interface SearchBarProps {
   isVisible: boolean;
@@ -82,7 +83,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ isVisible, onToggle }) => {
         <div className="absolute right-0 top-full mt-2 w-80 bg-secondary border border-primary/20 rounded-lg shadow-lg p-4 z-50">
           <form onSubmit={handleSubmit} className="relative">
             <input
-              ref={searchRef}
+              ref={(input) => {
+                (searchRef as React.MutableRefObject<HTMLInputElement | null>).current = input;
+                input?.focus();
+              }}
               type="text"
               value={searchValue}
               onChange={handleInputChange}
@@ -90,7 +94,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ isVisible, onToggle }) => {
               onBlur={handleBlur}
               className="w-full p-3 pr-10 rounded-md bg-primary text-text focus:outline-none focus:ring-2 focus:ring-accent"
               placeholder="Rechercher une étoile..."
-              autoFocus
             />
 
             {/* Loading indicator */}
@@ -113,7 +116,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isVisible, onToggle }) => {
           {/* Suggestions */}
           {showSuggestions && suggestions.length > 0 && (
             <div className="mt-2 max-h-64 overflow-y-auto">
-              {suggestions.slice(0, 5).map((star, index) => (
+              {suggestions.slice(0, APP_CONSTANTS.MAX_SEARCH_SUGGESTIONS).map((star, index) => (
                 <button
                   key={star.starid}
                   type="button"

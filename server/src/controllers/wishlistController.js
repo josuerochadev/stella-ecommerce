@@ -6,13 +6,24 @@ const { AppError } = require('../middlewares/errorHandler');
 const logger = require('../utils/logger');
 const { getService } = require('../container/containerConfig');
 
-/**
- * Contrôleur de la liste d'envies utilisant l'injection de dépendances
- * Délègue toute la logique métier au WishlistRepository
- */
-/**
- * Transforme les prix string en nombres pour les items avec Star
- */
+const WISHLIST_MESSAGES = {
+  ALREADY_EXISTS: "L'étoile est déjà dans la liste de souhaits",
+  ADDED: "L'étoile a été ajoutée à la liste de souhaits",
+  RETRIEVED: 'Liste de souhaits récupérée avec succès',
+  NOT_FOUND: "L'étoile n'a pas été trouvée dans la liste de souhaits",
+  REMOVED: "L'étoile a été supprimée de la liste de souhaits",
+  CLEARED: 'Liste de souhaits vidée avec succès',
+  STAR_ID_REQUIRED: 'Star ID is required',
+  STAR_ID_INVALID: 'Star ID must be a valid number',
+  DELETE_FAILED: "Échec de la suppression de l'étoile",
+};
+
+function transformStarPrice(item) {
+  if (item.Star && typeof item.Star.price === 'string') {
+    item.Star.price = parseFloat(item.Star.price);
+  }
+  return item;
+}
 function transformStarPrice(item) {
   if (item.Star && typeof item.Star.price === 'string') {
     item.Star.price = parseFloat(item.Star.price);
@@ -35,12 +46,12 @@ class WishlistController {
 
       // Validation
       if (!starId) {
-        return next(new AppError('Star ID is required', 400));
+        return next(new AppError(WISHLIST_MESSAGES.STAR_ID_REQUIRED, 400));
       }
 
       const parsedStarId = parseInt(starId, 10);
       if (isNaN(parsedStarId)) {
-        return next(new AppError('Star ID must be a valid number', 400));
+        return next(new AppError(WISHLIST_MESSAGES.STAR_ID_INVALID, 400));
       }
 
       // Vérifier si l'étoile existe déjà dans la liste
@@ -48,7 +59,7 @@ class WishlistController {
       if (exists) {
         return res.status(200).json({
           success: true,
-          message: "L'étoile est déjà dans la liste de souhaits"
+          message: WISHLIST_MESSAGES.ALREADY_EXISTS
         });
       }
 
@@ -62,7 +73,7 @@ class WishlistController {
 
       res.status(201).json({
         success: true,
-        message: "L'étoile a été ajoutée à la liste de souhaits",
+        message: WISHLIST_MESSAGES.ADDED,
         wishlistItem
       });
     } catch (error) {
@@ -71,7 +82,7 @@ class WishlistController {
       if (error.message === 'Item already exists in wishlist') {
         return res.status(200).json({
           success: true,
-          message: "L'étoile est déjà dans la liste de souhaits"
+          message: WISHLIST_MESSAGES.ALREADY_EXISTS
         });
       }
 
@@ -92,7 +103,7 @@ class WishlistController {
 
       res.json({
         success: true,
-        message: 'Liste de souhaits récupérée avec succès',
+        message: WISHLIST_MESSAGES.RETRIEVED,
         wishlist: wishlistItems,
         count: wishlistItems.length
       });
@@ -113,20 +124,20 @@ class WishlistController {
       // Validation
       const parsedStarId = parseInt(starId, 10);
       if (isNaN(parsedStarId)) {
-        return next(new AppError('starId doit être un nombre valide', 400));
+        return next(new AppError(WISHLIST_MESSAGES.STAR_ID_INVALID, 400));
       }
 
       // Vérifier que l'item existe
       const exists = await this.wishlistRepository.exists(userId, parsedStarId);
       if (!exists) {
-        return next(new AppError("L'étoile n'a pas été trouvée dans la liste de souhaits", 404));
+        return next(new AppError(WISHLIST_MESSAGES.NOT_FOUND, 404));
       }
 
       // Supprimer l'item
       const removed = await this.wishlistRepository.removeItem(userId, parsedStarId);
 
       if (!removed) {
-        return next(new AppError('Échec de la suppression de l\'étoile', 500));
+        return next(new AppError(WISHLIST_MESSAGES.DELETE_FAILED, 500));
       }
 
       // Récupérer la liste mise à jour
@@ -136,7 +147,7 @@ class WishlistController {
 
       res.json({
         success: true,
-        message: "L'étoile a été supprimée de la liste de souhaits",
+        message: WISHLIST_MESSAGES.REMOVED,
         wishlist: updatedWishlistItems,
         count: updatedWishlistItems.length
       });
@@ -157,7 +168,7 @@ class WishlistController {
 
       res.json({
         success: true,
-        message: 'Liste de souhaits vidée avec succès'
+        message: WISHLIST_MESSAGES.CLEARED
       });
     } catch (error) {
       logger.error('Error clearing wishlist:', error);

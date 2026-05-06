@@ -114,8 +114,14 @@ class BcryptHashingService extends IHashingService {
 
     // Vérification contre les mots de passe communs
     const commonPasswords = [
-      'password', '123456', '123456789', 'qwerty', 'abc123',
-      'password123', 'admin', 'letmein', 'welcome', 'monkey'
+      'password', '123456', '123456789', '12345678', 'qwerty',
+      'abc123', 'password123', 'admin', 'letmein', 'welcome',
+      'monkey', 'dragon', 'master', 'login', 'princess',
+      'football', 'shadow', 'sunshine', 'trustno1', 'iloveyou',
+      '1234567', '1234567890', '000000', 'access', 'hello',
+      'charlie', 'donald', 'passw0rd', 'whatever', 'qazwsx',
+      'michael', 'baseball', 'starwars', 'superman', 'batman',
+      'azerty', 'motdepasse', 'bonjour', 'soleil', 'chocolat'
     ];
 
     if (commonPasswords.includes(password.toLowerCase())) {

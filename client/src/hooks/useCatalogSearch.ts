@@ -1,12 +1,13 @@
 // client/src/hooks/useCatalogSearch.ts
 // Responsabilité unique : Logique de recherche et API du catalogue
 
-import { useState, useCallback, useMemo } from 'react';
-import { fetchStars, searchStars, filterStars } from "@/services/api";
+import { APP_CONSTANTS } from "@/constants/app";
+import { fetchStars, filterStars, searchStars } from "@/services/api";
+import type { Star } from "@/types";
 import { debounce } from "@/utils/debounce";
 import { logger } from "@/utils/logger";
-import type { Star } from "@/types";
-import type { SearchFilters } from './useCatalogFilters';
+import { useCallback, useMemo, useState } from "react";
+import type { SearchFilters } from "./useCatalogFilters";
 
 /**
  * Applique les filtres côté client aux résultats de recherche
@@ -17,23 +18,27 @@ const applyFilters = (stars: Star[], filters: SearchFilters): Star[] => {
 
   // Filtre constellation
   if (filters.constellation.length > 0) {
-    filtered = filtered.filter(star => filters.constellation.includes(star.constellation));
+    filtered = filtered.filter((star) => filters.constellation.includes(star.constellation));
   }
 
   // Filtre prix
   if (filters.priceMin !== null) {
-    filtered = filtered.filter(star => star.price >= filters.priceMin!);
+    const min = filters.priceMin;
+    filtered = filtered.filter((star) => star.price >= min);
   }
   if (filters.priceMax !== null) {
-    filtered = filtered.filter(star => star.price <= filters.priceMax!);
+    const max = filters.priceMax;
+    filtered = filtered.filter((star) => star.price <= max);
   }
 
   // Filtre magnitude
   if (filters.magnitudeMin !== null) {
-    filtered = filtered.filter(star => star.magnitude >= filters.magnitudeMin!);
+    const min = filters.magnitudeMin;
+    filtered = filtered.filter((star) => star.magnitude >= min);
   }
   if (filters.magnitudeMax !== null) {
-    filtered = filtered.filter(star => star.magnitude <= filters.magnitudeMax!);
+    const max = filters.magnitudeMax;
+    filtered = filtered.filter((star) => star.magnitude <= max);
   }
 
   return filtered;
@@ -63,18 +68,24 @@ export const useCatalogSearch = () => {
       if (!searchFilters.query.trim()) {
         // Pas de requête : utilise l'API de filtrage avancé
         const response = await filterStars({
-          constellation: searchFilters.constellation.length > 0 ? searchFilters.constellation : undefined,
+          constellation:
+            searchFilters.constellation.length > 0 ? searchFilters.constellation : undefined,
           minPrice: searchFilters.priceMin ?? undefined,
           maxPrice: searchFilters.priceMax ?? undefined,
           minMagnitude: searchFilters.magnitudeMin ?? undefined,
           maxMagnitude: searchFilters.magnitudeMax ?? undefined,
-          sortBy: searchFilters.sortBy === "relevance" ? "name" :
-                 searchFilters.sortBy === "distance" ? "distanceFromEarth" :
-                 searchFilters.sortBy === "popularity" ? "magnitude" :
-                 searchFilters.sortBy === "newest" ? "createdAt" :
-                 searchFilters.sortBy,
-          sortOrder: searchFilters.sortOrder.toUpperCase() as 'ASC' | 'DESC',
-          limit: 100
+          sortBy:
+            searchFilters.sortBy === "relevance"
+              ? "name"
+              : searchFilters.sortBy === "distance"
+                ? "distanceFromEarth"
+                : searchFilters.sortBy === "popularity"
+                  ? "magnitude"
+                  : searchFilters.sortBy === "newest"
+                    ? "createdAt"
+                    : searchFilters.sortBy,
+          sortOrder: searchFilters.sortOrder.toUpperCase() as "ASC" | "DESC",
+          limit: 100,
         });
         setSearchResults(response.data);
       } else {
@@ -96,10 +107,7 @@ export const useCatalogSearch = () => {
    * Version debounced de la recherche (mémorisée)
    * Responsabilité : Debouncing stable
    */
-  const debouncedSearch = useMemo(
-    () => debounce(executeSearch, 300),
-    [executeSearch]
-  );
+  const debouncedSearch = useMemo(() => debounce(executeSearch, 300), [executeSearch]);
 
   /**
    * Fonction de suggestions (sans debouncing)
@@ -109,7 +117,7 @@ export const useCatalogSearch = () => {
     if (query.trim()) {
       try {
         const results = await searchStars(query);
-        setSuggestions(results.slice(0, 5));
+        setSuggestions(results.slice(0, APP_CONSTANTS.MAX_SEARCH_SUGGESTIONS));
       } catch (error) {
         logger.error("Erreur suggestions:", error, "useCatalogSearch");
         setSuggestions([]);
@@ -125,7 +133,7 @@ export const useCatalogSearch = () => {
    */
   const debouncedSuggestions = useMemo(
     () => debounce(executeSuggestions, 150),
-    [executeSuggestions]
+    [executeSuggestions],
   );
 
   /**
@@ -139,7 +147,7 @@ export const useCatalogSearch = () => {
 
       // Extraction des constellations uniques
       const constellations = Array.from(
-        new Set(response.data.map((star: Star) => star.constellation))
+        new Set(response.data.map((star: Star) => star.constellation)),
       ).sort();
       setUniqueConstellations(constellations);
 
@@ -153,24 +161,30 @@ export const useCatalogSearch = () => {
    * Effectuer une recherche
    * Responsabilité : Interface publique pour déclencher une recherche
    */
-  const performSearch = useCallback((filters: SearchFilters) => {
-    // Si pas de données initiales, les charger d'abord
-    if (stars.length === 0) {
-      loadInitialData().then(() => {
+  const performSearch = useCallback(
+    (filters: SearchFilters) => {
+      // Si pas de données initiales, les charger d'abord
+      if (stars.length === 0) {
+        loadInitialData().then(() => {
+          debouncedSearch(filters);
+        });
+      } else {
         debouncedSearch(filters);
-      });
-    } else {
-      debouncedSearch(filters);
-    }
-  }, [debouncedSearch, stars.length, loadInitialData]);
+      }
+    },
+    [debouncedSearch, stars.length, loadInitialData],
+  );
 
   /**
    * Effectuer des suggestions
    * Responsabilité : Interface publique pour déclencher les suggestions
    */
-  const performSuggestions = useCallback((query: string) => {
-    debouncedSuggestions(query);
-  }, [debouncedSuggestions]);
+  const performSuggestions = useCallback(
+    (query: string) => {
+      debouncedSuggestions(query);
+    },
+    [debouncedSuggestions],
+  );
 
   /**
    * Marquer la recherche initiale comme effectuée
