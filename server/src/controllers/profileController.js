@@ -4,6 +4,7 @@
 const { User } = require("../models");
 const { AppError } = require("../middlewares/errorHandler");
 const tokenService = require("../services/tokenService");
+const bcrypt = require("bcrypt");
 
 /**
  * Contrôleur de gestion des profils
@@ -105,6 +106,44 @@ class ProfileController {
   }
 
   /**
+   * Changer le mot de passe
+   */
+  static async changePassword(req, res, next) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return next(new AppError("Current and new passwords are required", 400));
+      }
+
+      if (newPassword.length < 8) {
+        return next(new AppError("New password must be at least 8 characters", 400));
+      }
+
+      const user = await User.findByPk(req.user.userId);
+      if (!user) {
+        return next(new AppError("User not found", 404));
+      }
+
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return next(new AppError("Current password is incorrect", 401));
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      res.json({
+        success: true,
+        message: "Password changed successfully",
+      });
+    } catch (error) {
+      next(new AppError(`Error changing password: ${error.message}`, 500));
+    }
+  }
+
+  /**
    * Obtenir les statistiques du profil utilisateur
    * Responsabilité : Calcul et présentation des métriques de profil
    */
@@ -149,6 +188,7 @@ module.exports = {
   ProfileController,
   getUserProfile: ProfileController.getUserProfile,
   updateProfile: ProfileController.updateProfile,
+  changePassword: ProfileController.changePassword,
   deleteAccount: ProfileController.deleteAccount,
   getProfileStats: ProfileController.getProfileStats,
 };

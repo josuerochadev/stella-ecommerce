@@ -56,7 +56,7 @@ router.get("/profile", requireAuth, profileController.getUserProfile);
  */
 router.put("/profile", requireAuth, profileController.updateProfile);
 
-// Route de logout déplacée vers /auth
+router.put("/change-password", requireAuth, profileController.changePassword);
 
 /**
  * @swagger

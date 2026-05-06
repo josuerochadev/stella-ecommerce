@@ -10,6 +10,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import FadeInSection from "./FadeInSection";
 import { SkeletonProfile } from "./Skeleton";
 import UserProfileSection from "./UserProfileSection";
+import ChangePasswordForm from "./ChangePasswordForm";
 import ProfileCartSection from "./ProfileCartSection";
 import ProfileWishlistSection from "./ProfileWishlistSection";
 
@@ -97,6 +98,8 @@ const Profile: React.FC = () => {
         <UserProfileSection
           user={user}
         />
+
+        <ChangePasswordForm />
 
         <ProfileCartSection cartItems={cartItems} />
 
