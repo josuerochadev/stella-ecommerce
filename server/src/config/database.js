@@ -26,10 +26,16 @@ module.exports = {
   },
   production: {
     ...defaultConfig,
-    username: process.env.PROD_DB_USERNAME,
-    password: process.env.PROD_DB_PASSWORD,
-    database: process.env.PROD_DB_DATABASE,
-    host: process.env.PROD_DB_HOST,
+    ...(process.env.DATABASE_URL
+      ? {
+          use_env_variable: 'DATABASE_URL',
+        }
+      : {
+          username: process.env.DB_USERNAME,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_DATABASE,
+          host: process.env.DB_HOST,
+        }),
     dialectOptions: {
       ssl: {
         require: true,

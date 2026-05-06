@@ -9,11 +9,20 @@ const config = env === "test"
   ? testConfig.test
   : allConfig[env] || allConfig.development;
 
-const sequelize = new Sequelize({
-  ...config,
-  dialect: config.dialect,
-  storage: config.storage,
-});
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialect: "postgres",
+      logging: false,
+      define: { underscored: true, timestamps: true },
+      dialectOptions: {
+        ssl: { require: true, rejectUnauthorized: false },
+      },
+    })
+  : new Sequelize({
+      ...config,
+      dialect: config.dialect,
+      storage: config.storage,
+    });
 
 const models = {};
 
