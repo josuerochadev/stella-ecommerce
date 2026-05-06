@@ -9,6 +9,7 @@ import ShoppingCart from "./components/ShoppingCart";
 import Wishlist from "./components/Wishlist";
 import CookieBanner from "./components/CookieBanner";
 import NotificationProvider from "./components/NotificationProvider";
+import { useAuth } from "./context/AuthContext";
 
 // Lazy loading of pages
 const Home = React.lazy(() => import("./pages/Home"));
@@ -19,8 +20,11 @@ const Profile = React.lazy(() => import("./components/Profile"));
 const About = React.lazy(() => import("./pages/About"));
 const Contact = React.lazy(() => import("./pages/Contact"));
 const FAQ = React.lazy(() => import("./pages/FAQ"));
-const Legal = React.lazy(() => import("./pages/Legal")); // Import en lazy loading
+const Legal = React.lazy(() => import("./pages/Legal"));
 const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+const Checkout = React.lazy(() => import("./pages/Checkout"));
+const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
+const Orders = React.lazy(() => import("./pages/Orders"));
 
 // Component to handle auth unauthorized events
 const AuthEventListener: React.FC = () => {
@@ -40,7 +44,7 @@ const AuthEventListener: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const isAuthenticated = !!localStorage.getItem("token"); // Check if the user is authenticated
+  const { isAuthenticated } = useAuth();
 
   return (
     <Router>
@@ -65,9 +69,12 @@ const App: React.FC = () => {
                 <Route path="/about" element={<About />} /> {/* About */}
                 <Route path="/contact" element={<Contact />} /> {/* Contact */}
                 <Route path="/faq" element={<FAQ />} /> {/* FAQ */}
-                <Route path="/cart" element={<ShoppingCart />} /> {/* Shopping Cart */}
-                <Route path="/wishlist" element={<Wishlist />} /> {/* Wishlist */}
-                <Route path="/legal" element={<Legal />} /> {/* Legal Notice */}
+                <Route path="/cart" element={<ShoppingCart />} />
+                <Route path="/checkout" element={isAuthenticated ? <Checkout /> : <Navigate to="/auth" />} />
+                <Route path="/order-confirmation" element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />} />
+                <Route path="/orders" element={isAuthenticated ? <Orders /> : <Navigate to="/auth" />} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/legal" element={<Legal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* Privacy Policy */}
                 <Route path="*" element={<Navigate to="/" />} /> {/* Default redirect to home page */}
               </Routes>

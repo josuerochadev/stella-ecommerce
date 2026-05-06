@@ -15,6 +15,7 @@ interface CartState {
   error: string | null;
   fetchCart: () => Promise<void>;
   addItem: (starId: number, quantity: number) => Promise<void>;
+  updateItem: (cartItemId: number, quantity: number) => Promise<void>;
   removeItem: (cartItemId: number) => Promise<void>;
   resetCart: () => void;
   clearCart: () => Promise<void>;
@@ -55,6 +56,19 @@ export const createCartStore = (cartRepository: CartRepository) =>
         set({ cartItems: transformedCartItems, loading: false, error: null });
       } catch (error) {
         const errorMessage = getErrorMessage(error, "Erreur lors de l'ajout au panier.");
+        set({ error: errorMessage, loading: false });
+      }
+    },
+
+    updateItem: async (cartItemId: number, quantity: number) => {
+      set({ loading: true, error: null });
+      try {
+        await cartRepository.updateCartItemQuantity(cartItemId, quantity);
+        const cart = await cartRepository.getCart();
+        const transformedCartItems = transformCartItems(cart.cartItems || []);
+        set({ cartItems: transformedCartItems, loading: false, error: null });
+      } catch (error) {
+        const errorMessage = getErrorMessage(error, "Erreur lors de la mise a jour de la quantite.");
         set({ error: errorMessage, loading: false });
       }
     },

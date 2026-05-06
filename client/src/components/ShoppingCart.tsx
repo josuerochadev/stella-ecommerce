@@ -19,6 +19,7 @@ const ShoppingCart: React.FC = () => {
     error,
     isAuthenticated,
     handleRemoveFromCart,
+    handleUpdateQuantity,
     initializeCart,
     navigateToAuth,
     navigateToCheckout,
@@ -68,6 +69,7 @@ const ShoppingCart: React.FC = () => {
           <CartItemsList
             cartItems={cartItems}
             onRemoveItem={handleRemoveFromCart}
+            onUpdateQuantity={handleUpdateQuantity}
           />
         </div>
 

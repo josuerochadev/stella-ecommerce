@@ -9,13 +9,14 @@ import type { CartItem } from "@/types";
 interface CartItemsListProps {
   cartItems: CartItem[];
   onRemoveItem: (cartItemId: number) => Promise<{ success: boolean; error?: string }>;
+  onUpdateQuantity?: (cartItemId: number, quantity: number) => void;
 }
 
 /**
  * Composant de liste des articles du panier
  * Responsabilité unique : Rendu de la liste des articles
  */
-const CartItemsList: React.FC<CartItemsListProps> = ({ cartItems, onRemoveItem }) => {
+const CartItemsList: React.FC<CartItemsListProps> = ({ cartItems, onRemoveItem, onUpdateQuantity }) => {
   const handleRemove = async (cartItemId: number) => {
     const result = await onRemoveItem(cartItemId);
     if (!result.success && result.error) {
@@ -34,6 +35,7 @@ const CartItemsList: React.FC<CartItemsListProps> = ({ cartItems, onRemoveItem }
             quantity={item.quantity}
             context="cart"
             onRemove={() => handleRemove(item.id)}
+            onUpdateQuantity={onUpdateQuantity ? (qty: number) => onUpdateQuantity(item.id, qty) : undefined}
           />
         )
       ))}
