@@ -97,7 +97,7 @@ class OrderService {
           userId,
           date: new Date(),
           status: 'pending',
-          total: totalAmount,
+          totalAmount,
           shippingAddress,
           paymentMethod
         },

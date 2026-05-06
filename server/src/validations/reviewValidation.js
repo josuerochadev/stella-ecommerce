@@ -7,4 +7,9 @@ const addReviewSchema = Joi.object({
   comment: Joi.string().max(500),
 });
 
-module.exports = { addReviewSchema };
+const updateReviewSchema = Joi.object({
+  rating: Joi.number().integer().min(1).max(5),
+  comment: Joi.string().max(500),
+}).min(1);
+
+module.exports = { addReviewSchema, updateReviewSchema };

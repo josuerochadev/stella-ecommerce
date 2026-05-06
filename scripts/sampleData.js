@@ -295,9 +295,11 @@ async function generateSampleData() {
     // Crée les étoiles avec un starid unique
     await Star.bulkCreate(stars);
 
-    // Crée les utilisateurs individuellement pour déclencher le hashing des mots de passe
+    // Crée les utilisateurs avec mots de passe hachés
+    const bcrypt = require('bcrypt');
     for (const userData of users) {
-      await User.create(userData);
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      await User.create({ ...userData, password: hashedPassword });
     }
 
     // Crée les commandes
