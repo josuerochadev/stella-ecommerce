@@ -12,7 +12,8 @@ const ORDER_STATUS = {
   CANCELLED: 'cancelled',
   PAYMENT_FAILED: 'payment_failed',
   REFUNDED: 'refunded',
-  PARTIALLY_REFUNDED: 'partially_refunded'
+  PARTIALLY_REFUNDED: 'partially_refunded',
+  DISPUTED: 'disputed'
 };
 
 /**

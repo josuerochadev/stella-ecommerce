@@ -8,7 +8,7 @@
 const setContentSecurityPolicy = (req, res, next) => {
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+    "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
     "img-src 'self' data: https: blob:",

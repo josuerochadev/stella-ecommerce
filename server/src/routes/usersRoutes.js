@@ -5,6 +5,7 @@ const express = require("express");
 const router = express.Router();
 const profileController = require("../controllers/profileController");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
+const { csrfValidate } = require("../middlewares/modernCsrf");
 
 router.use(authenticateUser);
 
@@ -54,9 +55,9 @@ router.get("/profile", requireAuth, profileController.getUserProfile);
  *       401:
  *         description: Unauthorized
  */
-router.put("/profile", requireAuth, profileController.updateProfile);
+router.put("/profile", requireAuth, csrfValidate, profileController.updateProfile);
 
-router.put("/change-password", requireAuth, profileController.changePassword);
+router.put("/change-password", requireAuth, csrfValidate, profileController.changePassword);
 
 /**
  * @swagger
@@ -121,6 +122,6 @@ router.get("/profile/stats", requireAuth, profileController.getProfileStats);
  *       500:
  *         description: Server error
  */
-router.delete("/me", requireAuth, profileController.deleteAccount);
+router.delete("/me", requireAuth, csrfValidate, profileController.deleteAccount);
 
 module.exports = router;

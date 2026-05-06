@@ -161,7 +161,8 @@ class PaymentWebhookController {
     // En production, utilisation d'une vraie vérification cryptographique
     // Pour la démo, simulation d'une vérification
     const expectedSignature = 'demo_signature_' + JSON.stringify(payload).length;
-    return signature === expectedSignature || !signature; // Permissif en mode démo
+    if (!signature) return false;
+    return signature === expectedSignature;
   }
 
   /**

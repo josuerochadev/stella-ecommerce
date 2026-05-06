@@ -2,9 +2,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { Sequelize } = require("sequelize");
-const config = process.env.NODE_ENV === "test"
-  ? require("../config/database.test.config.js").test
-  : require("../config/database.js").development;
+const env = process.env.NODE_ENV || "development";
+const allConfig = require("../config/database.js");
+const testConfig = require("../config/database.test.config.js");
+const config = env === "test"
+  ? testConfig.test
+  : allConfig[env] || allConfig.development;
 
 const sequelize = new Sequelize({
   ...config,
