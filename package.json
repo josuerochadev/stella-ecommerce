@@ -1,0 +1,23 @@
+{
+  "name": "stella-ecommerce-root",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && npm run lint",
+    "test:client": "cd client && npm test",
+    "typecheck": "cd client && npx tsc --noEmit"
+  },
+  "devDependencies": {
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "client/src/**/*.{ts,tsx}": [
+      "npx --prefix client biome check --write"
+    ],
+    "server/src/**/*.js": [
+      "npx --prefix server biome check --write"
+    ]
+  }
+}

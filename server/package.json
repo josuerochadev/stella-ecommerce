@@ -21,6 +21,9 @@
     "add-indexes": "node scripts/addDatabaseIndexes.js",
     "create-admin": "node scripts/createAdmin.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
