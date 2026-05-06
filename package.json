@@ -14,10 +14,10 @@
   },
   "lint-staged": {
     "client/src/**/*.{ts,tsx}": [
-      "npx --prefix client biome check --write"
+      "npx --prefix client biome check --apply"
     ],
     "server/src/**/*.js": [
-      "npx --prefix server biome check --write"
+      "npx --prefix server biome check --apply"
     ]
   }
 }

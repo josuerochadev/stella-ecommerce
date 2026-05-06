@@ -5,6 +5,14 @@ const { PaymentValidator } = require('./paymentValidator');
 const { PaymentProcessor } = require('./paymentProcessor');
 const { PaymentRefundService } = require('./paymentRefundService');
 
+const PAYMENT_METHOD_DISTRIBUTION = {
+  credit_card: { percentage: 60, share: 0.6 },
+  paypal: { percentage: 25, share: 0.25 },
+  bank_transfer: { percentage: 10, share: 0.1 },
+  apple_pay: { percentage: 3, share: 0.03 },
+  google_pay: { percentage: 2, share: 0.02 },
+};
+
 /**
  * Service principal de paiement
  * Responsabilité unique : orchestration des services spécialisés
@@ -99,13 +107,11 @@ class PaymentSimulator {
       totalRevenue,
       averageTransactionAmount: Math.round((totalRevenue / totalTransactions) * 100) / 100,
       successRate: Math.round((Math.random() * 10 + 90) * 100) / 100, // 90-100%
-      topPaymentMethods: [
-        { method: 'credit_card', count: Math.floor(totalTransactions * 0.6), percentage: 60 },
-        { method: 'paypal', count: Math.floor(totalTransactions * 0.25), percentage: 25 },
-        { method: 'bank_transfer', count: Math.floor(totalTransactions * 0.1), percentage: 10 },
-        { method: 'apple_pay', count: Math.floor(totalTransactions * 0.03), percentage: 3 },
-        { method: 'google_pay', count: Math.floor(totalTransactions * 0.02), percentage: 2 }
-      ]
+      topPaymentMethods: Object.entries(PAYMENT_METHOD_DISTRIBUTION).map(([method, { share, percentage }]) => ({
+        method,
+        count: Math.floor(totalTransactions * share),
+        percentage
+      }))
     };
   }
 }

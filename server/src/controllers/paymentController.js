@@ -6,6 +6,8 @@ const { Order, Star, User } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
 const logger = require('../utils/logger');
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 /**
  * Initier un processus de paiement
  */
@@ -66,37 +68,9 @@ exports.initiatePayment = async (req, res, next) => {
       await order.save();
     }
 
-    // Réponse sécurisée (sans exposer les données sensibles)
-    const response = {
-      success: paymentResult.status === 'completed',
-      transactionId: paymentResult.transactionId,
-      status: paymentResult.status,
-      amount: paymentResult.amount,
-      currency: paymentResult.currency,
-      method: paymentResult.method,
-      processingTime: paymentResult.processingTime,
-      orderId: order.id
-    };
-
-    // Ajouter des informations spécifiques selon la méthode
-    if (paymentResult.cardInfo) {
-      response.cardInfo = {
-        brand: paymentResult.cardInfo.brand,
-        last4: paymentResult.cardInfo.last4
-      };
-    }
-
-    if (paymentResult.bankInfo) {
-      response.bankInfo = paymentResult.bankInfo;
-    }
-
-    if (paymentResult.error) {
-      response.error = paymentResult.error;
-    }
-
-    // Status HTTP selon le résultat
-    const statusCode = paymentResult.status === 'completed' ? 200 :
-                      paymentResult.status === 'pending' ? 202 : 400;
+    // Réponse sécurisée
+    const response = buildPaymentResponse(paymentResult, order.id);
+    const statusCode = getResponseStatusCode(paymentResult.status);
 
     res.status(statusCode).json(response);
 
@@ -221,7 +195,7 @@ exports.getPaymentStats = async (req, res, next) => {
     const { days = 30 } = req.query;
 
     // Générer des stats de démonstration
-    const stats = paymentService.generatePaymentStats(parseInt(days));
+    const stats = paymentService.generatePaymentStats(parseInt(days, 10));
 
     // Ajouter des stats réelles de la base de données
     const realStats = await Order.findAll({
@@ -232,7 +206,7 @@ exports.getPaymentStats = async (req, res, next) => {
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+          [require('sequelize').Op.gte]: new Date(Date.now() - days * MS_PER_DAY)
         }
       }
     });
@@ -283,5 +257,52 @@ exports.simulateWebhook = async (req, res, next) => {
     next(new AppError(`Webhook simulation failed: ${error.message}`, 500));
   }
 };
+
+/**
+ * Construire la réponse de paiement sécurisée
+ */
+function buildPaymentResponse(paymentResult, orderId) {
+  const response = {
+    success: paymentResult.status === 'completed',
+    transactionId: paymentResult.transactionId,
+    status: paymentResult.status,
+    amount: paymentResult.amount,
+    currency: paymentResult.currency,
+    method: paymentResult.method,
+    processingTime: paymentResult.processingTime,
+    orderId
+  };
+
+  if (paymentResult.cardInfo) {
+    response.cardInfo = {
+      brand: paymentResult.cardInfo.brand,
+      last4: paymentResult.cardInfo.last4
+    };
+  }
+
+  if (paymentResult.bankInfo) {
+    response.bankInfo = paymentResult.bankInfo;
+  }
+
+  if (paymentResult.error) {
+    response.error = paymentResult.error;
+  }
+
+  return response;
+}
+
+/**
+ * Déterminer le code de statut HTTP
+ */
+function getResponseStatusCode(paymentStatus) {
+  switch (paymentStatus) {
+    case 'completed':
+      return 200;
+    case 'pending':
+      return 202;
+    default:
+      return 400;
+  }
+}
 
 module.exports = exports;

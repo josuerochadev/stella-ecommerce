@@ -5,6 +5,8 @@ const { paymentService } = require('../services/paymentService');
 const { Order } = require('../models');
 const { AppError } = require('../middlewares/errorHandler');
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 /**
  * Contrôleur des statistiques de paiement
  * Responsabilité unique : Génération et présentation des métriques de paiement
@@ -17,7 +19,7 @@ class PaymentStatsController {
   static async getPaymentStats(req, res, next) {
     try {
       const { days = 30 } = req.query;
-      const period = parseInt(days);
+      const period = parseInt(days, 10);
 
       // Statistiques de démonstration
       const demoStats = paymentService.generatePaymentStats(period);
@@ -49,7 +51,7 @@ class PaymentStatsController {
   static async getConversionMetrics(req, res, next) {
     try {
       const { days = 30 } = req.query;
-      const period = parseInt(days);
+      const period = parseInt(days, 10);
 
       const metrics = await PaymentStatsController._calculateConversionMetrics(period);
 
@@ -72,7 +74,7 @@ class PaymentStatsController {
   static async getRevenueReport(req, res, next) {
     try {
       const { days = 30, groupBy = 'day' } = req.query;
-      const period = parseInt(days);
+      const period = parseInt(days, 10);
 
       const revenueData = await PaymentStatsController._getRevenueData(period, groupBy);
 
@@ -94,7 +96,7 @@ class PaymentStatsController {
    * Responsabilité : Extraction des métriques de performance réelles
    */
   static async _getRealPaymentStats(days) {
-    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(Date.now() - days * MS_PER_DAY);
 
     const stats = await Order.findAll({
       attributes: [
@@ -133,7 +135,7 @@ class PaymentStatsController {
    * Responsabilité : Analyse de la performance par méthode
    */
   static async _getPaymentMethodStats(days) {
-    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(Date.now() - days * MS_PER_DAY);
 
     const methodStats = await Order.findAll({
       attributes: [
@@ -167,7 +169,7 @@ class PaymentStatsController {
    * Responsabilité : Analyse des taux de conversion et abandon
    */
   static async _calculateConversionMetrics(days) {
-    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(Date.now() - days * MS_PER_DAY);
 
     const conversionData = await Order.findAll({
       attributes: [
@@ -211,7 +213,7 @@ class PaymentStatsController {
    * Responsabilité : Génération de rapports de revenus temporels
    */
   static async _getRevenueData(days, groupBy) {
-    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(Date.now() - days * MS_PER_DAY);
 
     // Format de groupement selon la période
     let dateFormat;

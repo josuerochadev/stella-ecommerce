@@ -10,6 +10,16 @@ const { getService } = require('../container/containerConfig');
  * Contrôleur de la liste d'envies utilisant l'injection de dépendances
  * Délègue toute la logique métier au WishlistRepository
  */
+/**
+ * Transforme les prix string en nombres pour les items avec Star
+ */
+function transformStarPrice(item) {
+  if (item.Star && typeof item.Star.price === 'string') {
+    item.Star.price = parseFloat(item.Star.price);
+  }
+  return item;
+}
+
 class WishlistController {
   constructor(wishlistRepository) {
     this.wishlistRepository = wishlistRepository;
@@ -48,10 +58,7 @@ class WishlistController {
         starId: parsedStarId
       });
 
-      // Transformer le prix en nombre
-      if (wishlistItem?.Star && typeof wishlistItem.Star.price === 'string') {
-        wishlistItem.Star.price = parseFloat(wishlistItem.Star.price);
-      }
+      transformStarPrice(wishlistItem);
 
       res.status(201).json({
         success: true,
@@ -81,13 +88,7 @@ class WishlistController {
 
       const wishlist = await this.wishlistRepository.findByUserId(userId);
 
-      // Transformer les prix en nombres
-      const wishlistItems = wishlist.map(item => {
-        if (item.Star && typeof item.Star.price === 'string') {
-          item.Star.price = parseFloat(item.Star.price);
-        }
-        return item;
-      });
+      const wishlistItems = wishlist.map(transformStarPrice);
 
       res.json({
         success: true,
@@ -131,13 +132,7 @@ class WishlistController {
       // Récupérer la liste mise à jour
       const updatedWishlist = await this.wishlistRepository.findByUserId(userId);
 
-      // Transformer les prix en nombres
-      const updatedWishlistItems = updatedWishlist.map(item => {
-        if (item.Star && typeof item.Star.price === 'string') {
-          item.Star.price = parseFloat(item.Star.price);
-        }
-        return item;
-      });
+      const updatedWishlistItems = updatedWishlist.map(transformStarPrice);
 
       res.json({
         success: true,

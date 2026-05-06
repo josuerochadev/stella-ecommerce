@@ -1,13 +1,13 @@
-import { useState, memo, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { registerUser } from "@/services/api";
 import { useValidatedApiCall } from "@/hooks/useApiCall";
-import { validateEmail, sanitizeText } from "@/utils/security";
-import FadeInSection from "./FadeInSection";
-import FormInput from "./FormInput";
-import FormContainer from "./FormContainer";
+import { registerUser } from "@/services/api";
 import type { RegisterResponse } from "@/services/authService";
+import { sanitizeText, validateEmail, validatePassword } from "@/utils/security";
+import { memo, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import FadeInSection from "./FadeInSection";
+import FormContainer from "./FormContainer";
+import FormInput from "./FormInput";
 
 const Register: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -25,7 +25,10 @@ const Register: React.FC = () => {
 
   const from = location.state?.from || "/profile";
 
-  const { isLoading, error, execute } = useValidatedApiCall<RegisterResponse, { firstName: string; lastName: string; email: string; password: string }>(
+  const { isLoading, error, execute } = useValidatedApiCall<
+    RegisterResponse,
+    { firstName: string; lastName: string; email: string; password: string }
+  >(
     (data) => {
       const sanitizedFirstName = sanitizeText(data.firstName).trim();
       const sanitizedLastName = sanitizeText(data.lastName).trim();
@@ -33,48 +36,30 @@ const Register: React.FC = () => {
       const sanitizedPassword = data.password.trim();
 
       if (!sanitizedFirstName) {
-        setFirstNameError('Le prénom est requis');
-        return 'Le prénom est requis';
+        setFirstNameError("Le prénom est requis");
+        return "Le prénom est requis";
       }
 
       if (!sanitizedLastName) {
-        setLastNameError('Le nom est requis');
-        return 'Le nom est requis';
+        setLastNameError("Le nom est requis");
+        return "Le nom est requis";
       }
 
       if (!sanitizedEmail) {
-        setEmailError('L\'email est requis');
-        return 'L\'email est requis';
+        setEmailError("L'email est requis");
+        return "L'email est requis";
       }
 
       if (!validateEmail(sanitizedEmail)) {
-        setEmailError('Format d\'email invalide');
-        return 'Format d\'email invalide';
+        setEmailError("Format d'email invalide");
+        return "Format d'email invalide";
       }
 
-      if (!sanitizedPassword || sanitizedPassword.length < 8) {
-        setPasswordError('Le mot de passe doit contenir au moins 8 caractères');
-        return 'Le mot de passe doit contenir au moins 8 caractères';
-      }
-
-      if (!/[A-Z]/.test(sanitizedPassword)) {
-        setPasswordError('Le mot de passe doit contenir au moins une majuscule');
-        return 'Le mot de passe doit contenir au moins une majuscule';
-      }
-
-      if (!/[a-z]/.test(sanitizedPassword)) {
-        setPasswordError('Le mot de passe doit contenir au moins une minuscule');
-        return 'Le mot de passe doit contenir au moins une minuscule';
-      }
-
-      if (!/[0-9]/.test(sanitizedPassword)) {
-        setPasswordError('Le mot de passe doit contenir au moins un chiffre');
-        return 'Le mot de passe doit contenir au moins un chiffre';
-      }
-
-      if (!/[^A-Za-z0-9]/.test(sanitizedPassword)) {
-        setPasswordError('Le mot de passe doit contenir au moins un caractère spécial');
-        return 'Le mot de passe doit contenir au moins un caractère spécial';
+      const passwordValidation = validatePassword(sanitizedPassword);
+      if (!passwordValidation.isValid) {
+        const firstError = passwordValidation.errors[0];
+        setPasswordError(firstError);
+        return firstError;
       }
 
       return true;
@@ -88,8 +73,8 @@ const Register: React.FC = () => {
       },
       onError: () => {
         firstNameInputRef.current?.focus();
-      }
-    }
+      },
+    },
   );
 
   // Focus sur le premier champ au chargement
@@ -112,8 +97,19 @@ const Register: React.FC = () => {
     const sanitizedPassword = password.trim();
 
     await execute(
-      { firstName: sanitizedFirstName, lastName: sanitizedLastName, email: sanitizedEmail, password: sanitizedPassword },
-      (data) => registerUser({ firstName: data.firstName, lastName: data.lastName, email: data.email, password: data.password })
+      {
+        firstName: sanitizedFirstName,
+        lastName: sanitizedLastName,
+        email: sanitizedEmail,
+        password: sanitizedPassword,
+      },
+      (data) =>
+        registerUser({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password,
+        }),
     );
   };
 
@@ -175,14 +171,12 @@ const Register: React.FC = () => {
           />
 
           <div className="text-center">
-            <button
-              type="submit"
-              className="btn"
-              disabled={isLoading}
-            >
+            <button type="submit" className="btn" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <span className="inline-block animate-spin mr-2" aria-hidden="true">⟳</span>
+                  <span className="inline-block animate-spin mr-2" aria-hidden="true">
+                    ⟳
+                  </span>
                   Inscription en cours...
                 </>
               ) : (

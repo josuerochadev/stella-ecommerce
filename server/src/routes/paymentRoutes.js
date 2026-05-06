@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import des contrôleurs spécialisés suivant le principe SRP
-const paymentProcessController = require('../controllers/paymentProcessController');
+const paymentController = require('../controllers/paymentController');
 const refundController = require('../controllers/refundController');
 const paymentStatsController = require('../controllers/paymentStatsController');
 const paymentWebhookController = require('../controllers/paymentWebhookController');
@@ -67,7 +67,7 @@ const webhookSchema = Joi.object({
  *                 currencies:
  *                   type: array
  */
-router.get('/methods', requireAuth, paymentProcessController.getPaymentMethods);
+router.get('/methods', requireAuth, paymentController.getPaymentMethods);
 
 /**
  * @swagger
@@ -112,7 +112,7 @@ router.post('/initiate',
   requireAuth,
   csrfValidate,
   validate(initiatePaymentSchema),
-  paymentProcessController.initiatePayment
+  paymentController.initiatePayment
 );
 
 /**
@@ -135,7 +135,7 @@ router.post('/initiate',
  *       404:
  *         description: Transaction not found
  */
-router.get('/status/:transactionId', requireAuth, paymentProcessController.getPaymentStatus);
+router.get('/status/:transactionId', requireAuth, paymentController.getPaymentStatus);
 
 /**
  * @swagger
