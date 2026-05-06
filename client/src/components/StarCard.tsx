@@ -14,6 +14,7 @@ interface StarCardProps {
   context?: "catalog" | "cart" | "wishlist";
   quantity?: number;
   onRemove?: (starId: number) => void;
+  onUpdateQuantity?: (quantity: number) => void;
   isDetailedView?: boolean;
   showAddToCartButton?: boolean;
 }
@@ -23,6 +24,7 @@ const StarCard: React.FC<StarCardProps> = ({
   context = "catalog",
   quantity,
   onRemove,
+  onUpdateQuantity,
   isDetailedView = false,
 }) => {
   // Vue détaillée a priorité sur le contexte
@@ -37,7 +39,7 @@ const StarCard: React.FC<StarCardProps> = ({
         logger.warn("CartStarCard requires onRemove and quantity props", { starId: star.starid }, "StarCard");
         return null;
       }
-      return <CartStarCard star={star} quantity={quantity} onRemove={onRemove} />;
+      return <CartStarCard star={star} quantity={quantity} onRemove={() => onRemove(star.starid)} onUpdateQuantity={onUpdateQuantity} />;
 
     case "wishlist":
       if (!onRemove) {

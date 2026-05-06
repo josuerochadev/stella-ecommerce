@@ -5,6 +5,7 @@ import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@/utils/icons";
 import FadeInSection from "./FadeInSection";
+import AddToCartButton from "./AddToCartButton";
 import { getStarImagePath } from "@/utils/pathHelpers";
 import type { Star } from "@/types";
 
@@ -54,11 +55,12 @@ const DetailStarCard: React.FC<DetailStarCardProps> = ({ star }) => {
             <span className="text-lg font-semibold">{star.price} €</span>
           </div>
 
-          <div className="flex mt-4">
+          <div className="flex mt-4 gap-2">
             <button type="button" onClick={handleBackClick} className="btn mt-2">
               <ArrowLeftIcon className="text-xl" />
               <span className="sr-only">Retour</span>
             </button>
+            <AddToCartButton starId={star.starid} />
           </div>
         </div>
       </div>

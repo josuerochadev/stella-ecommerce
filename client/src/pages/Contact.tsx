@@ -1,7 +1,20 @@
+import { useState } from "react";
 import type React from "react";
 import FadeInSection from "@/components/FadeInSection";
 
 const Contact: React.FC = () => {
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <div className="container mx-auto pt-20 px-4 max-w-xl">
       <h1 className="text-4xl font-display mb-6 text-center">Contactez-nous</h1>
@@ -11,7 +24,14 @@ const Contact: React.FC = () => {
             Vous avez des questions sur nos services ou besoin d'informations supplémentaires ?
             N'hésitez pas à nous contacter. Notre équipe est là pour vous répondre.
           </p>
-          <form className="space-y-4">
+          {submitted ? (
+            <div className="text-center py-8">
+              <p className="text-lg font-serif">
+                Merci pour votre message ! Nous vous repondrons dans les plus brefs delais.
+              </p>
+            </div>
+          ) : (
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium mb-2">
                 Nom
@@ -20,6 +40,9 @@ const Contact: React.FC = () => {
                 id="name"
                 type="text"
                 placeholder="Votre nom"
+                value={formData.name}
+                onChange={handleChange}
+                required
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
@@ -29,6 +52,9 @@ const Contact: React.FC = () => {
                 id="email"
                 type="email"
                 placeholder="Votre email"
+                value={formData.email}
+                onChange={handleChange}
+                required
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
@@ -38,6 +64,9 @@ const Contact: React.FC = () => {
                 id="subject"
                 type="text"
                 placeholder="Sujet de votre message"
+                value={formData.subject}
+                onChange={handleChange}
+                required
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
               />
             </div>
@@ -46,6 +75,9 @@ const Contact: React.FC = () => {
               <textarea
                 id="message"
                 placeholder="Votre message..."
+                value={formData.message}
+                onChange={handleChange}
+                required
                 className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
                 rows={5}
               />
@@ -54,6 +86,7 @@ const Contact: React.FC = () => {
               Envoyer
             </button>
           </form>
+          )}
         </div>
       </FadeInSection>
 
