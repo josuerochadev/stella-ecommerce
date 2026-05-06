@@ -18,7 +18,7 @@ const Header: React.FC = () => {
   const isOnCatalogPage = location.pathname === "/catalog";
 
   return (
-    <header className="bg-background-inverse text-text fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-20 shadow-lg h-12 transition-all duration-300 ease-in-out">
+    <header id="navigation" className="bg-background-inverse text-text fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-20 shadow-lg h-12 transition-all duration-300 ease-in-out">
       <Navigation pageTitle={pageTitle} isTitleVisible={isTitleVisible} />
 
       <div className="flex items-center space-x-3 relative">

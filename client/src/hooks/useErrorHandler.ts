@@ -14,7 +14,7 @@ export const useErrorHandler = () => {
     // Gestion automatique des erreurs d'authentification
     if (errorService.isAuthError(apiError)) {
       logout();
-      navigate(ROUTES.LOGIN, {
+      navigate(ROUTES.AUTH, {
         state: { message: 'Votre session a expiré. Veuillez vous reconnecter.' }
       });
       return;

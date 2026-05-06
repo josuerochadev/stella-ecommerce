@@ -75,14 +75,14 @@ Corriger les failles identifiees pour un projet credible.
 
 Rendre le projet presentable et professionnel.
 
-- [ ] 5.1 Tests : auth flow (login, register, logout)
-- [ ] 5.2 Tests : cart flow (add, remove, update quantity)
-- [ ] 5.3 Tests : order flow (create, list, detail)
-- [ ] 5.4 Fix SkipLinks (ajouter les ancres #main-content et #navigation)
-- [ ] 5.5 Fix roles ARIA mal utilises (Profile, UserProfileSection)
-- [ ] 5.6 Unifier config Biome (meme version, memes regles client/server)
-- [ ] 5.7 Fix server format script (ajouter --write)
-- [ ] 5.8 Nettoyer les dead code (ROUTES inutilisees, cancelOrder non route, etc.)
+- [x] 5.1 Tests : CartCalculations (calculs prix, totaux, stats) — 2026-05-06
+- [x] 5.2 Tests : password validation (8 char, majuscule, minuscule, chiffre, special) — 2026-05-06
+- [x] 5.3 Tests : order status mapping (couverture des statuts) — 2026-05-06
+- [x] 5.4 Fix SkipLinks (ancres #main-content sur main, #navigation sur header) — 2026-05-06
+- [x] 5.5 Fix roles ARIA (retire role=contentinfo et role=form mal places) — 2026-05-06
+- [x] 5.6 Unifier config Biome (memes regles client/server, quoteStyle, semicolons) — 2026-05-06
+- [x] 5.7 Fix server format script (ajouter --write) — 2026-05-06
+- [x] 5.8 Nettoyer dead code (ROUTES alignees avec App.tsx, fix useErrorHandler, fix substr deprecie) — 2026-05-06
 
 ---
 

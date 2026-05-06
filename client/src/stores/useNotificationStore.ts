@@ -40,7 +40,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   modals: [],
 
   addToast: (toast) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = Math.random().toString(36).substring(2, 11);
     const newToast = { ...toast, id };
     set((state) => ({
       toasts: [...state.toasts, newToast],
@@ -55,7 +55,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   showModal: (modal) => {
     return new Promise<boolean>((resolve) => {
-      const id = Math.random().toString(36).substr(2, 9);
+      const id = Math.random().toString(36).substring(2, 11);
       const newModal: Modal = {
         ...modal,
         id,
