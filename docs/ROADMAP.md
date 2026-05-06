@@ -61,13 +61,13 @@ Ces features enrichissent le projet et montrent une maitrise plus large.
 
 Corriger les failles identifiees pour un projet credible.
 
-- [ ] 4.1 Ajouter requireRole('admin') sur PUT /orders/:id/update-status
-- [ ] 4.2 Ajouter CSRF sur PUT /users/profile et DELETE /users/me
-- [ ] 4.3 Fix webhook signature bypass (rejeter si pas de signature)
-- [ ] 4.4 Fix status 'disputed' absent de l'ENUM Order
-- [ ] 4.5 Ajouter branche production dans models/index.js
-- [ ] 4.6 Retirer unsafe-inline et unsafe-eval du CSP
-- [ ] 4.7 Ajouter guard NODE_ENV sur scripts destructifs (reset-db, create-tables)
+- [x] 4.1 Ajouter requireRole('admin') sur PUT /orders/:id/update-status — 2026-05-06
+- [x] 4.2 Ajouter CSRF sur PUT /users/profile, PUT /users/change-password et DELETE /users/me — 2026-05-06
+- [x] 4.3 Fix webhook signature bypass (rejeter si pas de signature) — 2026-05-06
+- [x] 4.4 Ajouter status 'disputed' dans l'ENUM Order — 2026-05-06
+- [x] 4.5 Ajouter branche production dans models/index.js — 2026-05-06
+- [x] 4.6 Retirer unsafe-inline et unsafe-eval du CSP script-src — 2026-05-06
+- [x] 4.7 Ajouter guard NODE_ENV sur scripts destructifs (reset-db, create-tables) — 2026-05-06
 
 ---
 

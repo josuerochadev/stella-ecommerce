@@ -4,6 +4,11 @@ const createTables = require("./createTables");
 const generateSampleData = require("./sampleData");
 
 async function resetDatabase() {
+  if (process.env.NODE_ENV === "production") {
+    console.error("ERROR: resetDatabase cannot run in production.");
+    process.exit(1);
+  }
+
   try {
     // Supprime toutes les tables existantes
     await sequelize.query("DROP SCHEMA public CASCADE;");

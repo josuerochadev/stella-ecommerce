@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
 const { csrfValidate } = require("../middlewares/modernCsrf");
-const { requireAuth } = require("../middlewares/authMiddleware");
+const { requireAuth, requireRole } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const { createOrderSchema, updateOrderStatusSchema } = require("../validations/orderValidation");
 
@@ -125,6 +125,7 @@ router.get("/:id", orderController.getOrderDetails);
  */
 router.put(
   "/:id/update-status",
+  requireRole("admin"),
   csrfValidate,
   validate(updateOrderStatusSchema),
   orderController.updateOrderStatus,
