@@ -216,9 +216,9 @@ Le projet a une bonne base documentaire (CLAUDE.md, audits, roadmap, Swagger 96%
 
 | #  | Action                                                                 | Ref      | Statut   |
 | -- | ---------------------------------------------------------------------- | -------- | -------- |
-| 14 | JSDoc sur les hooks critiques (useApiCall, useCartStatus, useAuth)     | I7       | A FAIRE  |
-| 15 | JSDoc sur les stores (useCartStore, useWishlistStore, useAuthStore)    | I7       | A FAIRE  |
-| 16 | JSDoc sur les services frontend (cartService, starService, authService)| I6       | A FAIRE  |
+| 14 | JSDoc sur les hooks critiques (useApiCall, useCartStatus, useAuth)     | I7       | FAIT     |
+| 15 | JSDoc sur les stores (useCartStore, useWishlistStore)                  | I7       | FAIT     |
+| 16 | JSDoc sur les services frontend (cartService — starService et authService deja documentes) | I6 | FAIT |
 
 ### Phase 5 — Polish (backlog)
 

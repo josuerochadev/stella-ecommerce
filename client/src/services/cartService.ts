@@ -22,12 +22,12 @@ interface UpdateCartItemData {
 }
 
 /**
- * Service de gestion du panier d'achat
- * Responsabilité unique : CRUD des articles du panier
+ * Service for shopping cart operations.
+ * All responses containing cartItems are normalized via transformCartItems
+ * to ensure consistent price types (string -> number) across the app.
  */
-/**
- * Normalise les cartItems d'une reponse API
- */
+
+/** Normalizes cartItems in an API response by applying price transformations. */
 function normalizeCartResponse<T extends ApiResponse<Cart>>(response: T): T {
   if (response.data?.cartItems) {
     response.data.cartItems = transformCartItems(response.data.cartItems);

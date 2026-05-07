@@ -1,13 +1,17 @@
-// client/src/stores/useCartStore.ts
-// Store du panier avec injection de dépendances
-// Responsabilité unique : gestion de l'état du panier via repository
+/**
+ * Zustand store for shopping cart state management.
+ * Uses the repository pattern via DI for data access.
+ * All cart data is normalized through transformCartItems before being stored.
+ *
+ * @module useCartStore
+ */
 
-import { create } from "zustand";
-import { transformCartItems, safeNumberTransform } from "@/utils/dataTransformers";
 import { getService } from "@/di/container";
-import type { CartItem } from "@/types";
 import type { CartRepository } from "@/interfaces/CartRepository";
+import type { CartItem } from "@/types";
+import { safeNumberTransform, transformCartItems } from "@/utils/dataTransformers";
 import { getErrorMessage } from "@/utils/errorHelpers";
+import { create } from "zustand";
 
 interface CartState {
   cartItems: CartItem[];
@@ -19,7 +23,7 @@ interface CartState {
   removeItem: (cartItemId: number) => Promise<void>;
   resetCart: () => void;
   clearCart: () => Promise<void>;
-  getCartSummary: () => Promise<{total: number, itemCount: number}>;
+  getCartSummary: () => Promise<{ total: number; itemCount: number }>;
   isInCart: (starId: number) => Promise<boolean>;
 }
 
@@ -68,7 +72,10 @@ export const createCartStore = (cartRepository: CartRepository) =>
         const transformedCartItems = transformCartItems(cart.cartItems || []);
         set({ cartItems: transformedCartItems, loading: false, error: null });
       } catch (error) {
-        const errorMessage = getErrorMessage(error, "Erreur lors de la mise a jour de la quantite.");
+        const errorMessage = getErrorMessage(
+          error,
+          "Erreur lors de la mise a jour de la quantite.",
+        );
         set({ error: errorMessage, loading: false });
       }
     },
@@ -82,7 +89,10 @@ export const createCartStore = (cartRepository: CartRepository) =>
         const transformedCartItems = transformCartItems(cart.cartItems || []);
         set({ cartItems: transformedCartItems, loading: false, error: null });
       } catch (error) {
-        const errorMessage = getErrorMessage(error, "Erreur lors de la suppression de l'article du panier.");
+        const errorMessage = getErrorMessage(
+          error,
+          "Erreur lors de la suppression de l'article du panier.",
+        );
         set({ error: errorMessage, loading: false });
       }
     },
@@ -104,12 +114,12 @@ export const createCartStore = (cartRepository: CartRepository) =>
     getCartSummary: async () => {
       try {
         return await cartRepository.getCartSummary();
-      } catch (error) {
+      } catch {
         // En cas d'erreur, calculer localement
         const { cartItems } = get();
         const total = cartItems.reduce((sum, item) => {
           const price = safeNumberTransform(item.Star.price, 0);
-          return sum + (price * item.quantity);
+          return sum + price * item.quantity;
         }, 0);
         const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
         return { total: Math.round(total * 100) / 100, itemCount };
@@ -119,13 +129,13 @@ export const createCartStore = (cartRepository: CartRepository) =>
     isInCart: async (starId: number) => {
       try {
         return await cartRepository.isInCart(starId);
-      } catch (error) {
+      } catch {
         // En cas d'erreur, vérifier localement
         const { cartItems } = get();
-        return cartItems.some(item => item.starId === starId);
+        return cartItems.some((item) => item.starId === starId);
       }
-    }
+    },
   }));
 
 // Instance par défaut avec injection de dépendances
-export const useCartStore = createCartStore(getService('cartRepository'));
+export const useCartStore = createCartStore(getService("cartRepository"));

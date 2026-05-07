@@ -13,6 +13,19 @@ interface UseApiCallOptions<T = unknown> {
   onError?: (error: string) => void;
 }
 
+/**
+ * Generic hook for executing async API calls with loading/error state management.
+ * Handles error display via the global error handler and provides success/error callbacks.
+ *
+ * @param options.showGlobalError - Whether to display errors via the global handler (default: true)
+ * @param options.onSuccess - Callback fired with the result on successful execution
+ * @param options.onError - Callback fired with the error message on failure
+ * @returns {object} State (data, isLoading, error) + execute(apiFunction) and reset()
+ *
+ * @example
+ * const { data, isLoading, execute } = useApiCall<Star[]>();
+ * await execute(() => StarService.fetchStars());
+ */
 export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
   const { showGlobalError = true, onSuccess, onError } = options;
   const { handleError } = useErrorHandler();
@@ -78,7 +91,13 @@ export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
   };
 };
 
-// Hook spécialisé pour les opérations de collection (panier, wishlist)
+/**
+ * Specialized hook for cart/wishlist operations that require authentication.
+ * Wraps useApiCall with an auth check before execution.
+ *
+ * @param type - Collection type ("cart" or "wishlist"), used for error messages
+ * @param options - Same options as useApiCall
+ */
 export const useCollectionOperation = (
   type: "cart" | "wishlist",
   options: UseApiCallOptions = {},
@@ -109,7 +128,13 @@ export const useCollectionOperation = (
   };
 };
 
-// Hook pour les opérations avec validation
+/**
+ * Hook that validates data before executing an API call.
+ * If validation fails, the error callback is fired without making the request.
+ *
+ * @param validator - Returns true if valid, or an error message string if invalid
+ * @param options - Same options as useApiCall
+ */
 export const useValidatedApiCall = <T = unknown, D = unknown>(
   validator: (data: D) => boolean | string,
   options: UseApiCallOptions<T> = {},
