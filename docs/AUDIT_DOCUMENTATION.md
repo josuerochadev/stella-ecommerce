@@ -224,10 +224,10 @@ Le projet a une bonne base documentaire (CLAUDE.md, audits, roadmap, Swagger 96%
 
 | #  | Action                                                                 | Ref      | Statut   |
 | -- | ---------------------------------------------------------------------- | -------- | -------- |
-| 17 | Enrichir `.env.example` client avec commentaires                       | I9       | A FAIRE  |
+| 17 | Enrichir `.env.example` client avec commentaires                       | I9       | FAIT     |
 | 18 | Corriger chemin `.env.example` client dans README                      | M8       | FAIT     |
-| 19 | Creer tag git v1.0.0 + release GitHub                                  | M9       | A FAIRE  |
-| 20 | Ajouter tests backend dans CI                                          | M7       | A FAIRE  |
+| 19 | Creer tag git v1.0.0 + release GitHub                                  | M9       | FAIT     |
+| 20 | Ajouter tests backend dans CI                                          | M7       | FAIT     |
 
 ---
 

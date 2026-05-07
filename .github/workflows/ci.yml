@@ -24,8 +24,8 @@ jobs:
       - run: npm run lint
       - run: npm test -- --no-coverage
 
-  lint-server:
-    name: Server - Lint
+  lint-and-test-server:
+    name: Server - Lint & Test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,6 +39,7 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npm test
 
   typecheck:
     name: Client - TypeScript
