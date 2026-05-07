@@ -273,54 +273,10 @@ router.get('/system', adminController.getSystemStats);
 // Routes pour les statistiques de paiement (réutilise le contrôleur payment)
 const paymentController = require('../controllers/paymentController');
 
-/**
- * @swagger
- * /admin/payments/stats:
- *   get:
- *     summary: Get detailed payment statistics
- *     tags: [Admin]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: query
- *         name: days
- *         schema:
- *           type: number
- *           default: 30
- *     responses:
- *       200:
- *         description: Payment statistics retrieved successfully
- *       403:
- *         description: Admin access required
- */
+// Payment stats and webhook simulation are also available via /payments/stats
+// and /payments/webhook/simulate (see paymentRoutes.js).
+// These admin aliases provide the same functionality under the /admin prefix.
 router.get('/payments/stats', paymentController.getPaymentStats);
-
-/**
- * @swagger
- * /admin/payments/webhook/simulate:
- *   post:
- *     summary: Simulate payment webhook for testing
- *     tags: [Admin]
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               transactionId:
- *                 type: string
- *               eventType:
- *                 type: string
- *                 enum: [payment.completed, payment.failed, refund.processed]
- *     responses:
- *       200:
- *         description: Webhook simulated successfully
- *       403:
- *         description: Admin access required
- */
 router.post('/payments/webhook/simulate',
   csrfValidate,
   paymentController.simulateWebhook

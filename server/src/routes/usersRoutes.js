@@ -57,6 +57,36 @@ router.get("/profile", requireAuth, profileController.getUserProfile);
  */
 router.put("/profile", requireAuth, csrfValidate, profileController.updateProfile);
 
+/**
+ * @swagger
+ * /users/change-password:
+ *   put:
+ *     summary: Change user password
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Invalid current password or weak new password
+ *       401:
+ *         description: Unauthorized
+ */
 router.put("/change-password", requireAuth, csrfValidate, profileController.changePassword);
 
 /**

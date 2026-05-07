@@ -208,9 +208,9 @@ Le projet a une bonne base documentaire (CLAUDE.md, audits, roadmap, Swagger 96%
 
 | #  | Action                                                                 | Ref      | Statut   |
 | -- | ---------------------------------------------------------------------- | -------- | -------- |
-| 11 | Ajouter schemas manquants dans swagger.js (UpdateReviewInput, UpdateUserInput) | I10 | A FAIRE |
-| 12 | Documenter PUT /users/change-password dans Swagger                     | M4       | A FAIRE  |
-| 13 | Dedupliquer doc Swagger paymentRoutes vs adminRoutes                   | M5       | A FAIRE  |
+| 11 | Ajouter schemas manquants dans swagger.js (UpdateReviewInput, UpdateUserInput) | I10 | FAIT    |
+| 12 | Documenter PUT /users/change-password dans Swagger                     | M4       | FAIT     |
+| 13 | Dedupliquer doc Swagger paymentRoutes vs adminRoutes                   | M5       | FAIT     |
 
 ### Phase 4 — JSDoc hooks/stores/services critiques (sprint 2)
 

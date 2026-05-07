@@ -196,6 +196,21 @@ const options = {
           },
           required: ["starId"],
         },
+        UpdateReviewInput: {
+          type: "object",
+          properties: {
+            rating: { type: "integer", minimum: 1, maximum: 5 },
+            comment: { type: "string", maxLength: 500 },
+          },
+        },
+        UpdateUserInput: {
+          type: "object",
+          properties: {
+            firstName: { type: "string" },
+            lastName: { type: "string" },
+            email: { type: "string", format: "email" },
+          },
+        },
       },
     },
   },
