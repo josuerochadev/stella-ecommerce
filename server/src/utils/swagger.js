@@ -29,31 +29,37 @@ const options = {
         Star: {
           type: "object",
           properties: {
-            id: { type: "string" },
+            starid: { type: "integer" },
             name: { type: "string" },
             constellation: { type: "string" },
             magnitude: { type: "number" },
             price: { type: "number" },
             description: { type: "string" },
+            distanceFromEarth: { type: "number" },
+            luminosity: { type: "number" },
+            mass: { type: "number" },
           },
         },
         User: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            username: { type: "string" },
+            id: { type: "integer" },
+            firstName: { type: "string" },
+            lastName: { type: "string" },
             email: { type: "string" },
+            role: { type: "string", enum: ["client", "admin"] },
             createdAt: { type: "string", format: "date-time" },
           },
         },
         RegisterUserInput: {
           type: "object",
           properties: {
-            username: { type: "string" },
+            firstName: { type: "string" },
+            lastName: { type: "string" },
             email: { type: "string" },
             password: { type: "string" },
           },
-          required: ["username", "email", "password"],
+          required: ["firstName", "lastName", "email", "password"],
         },
         LoginUserInput: {
           type: "object",
@@ -66,16 +72,17 @@ const options = {
         Cart: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            userId: { type: "string" },
-            items: {
+            id: { type: "integer" },
+            userId: { type: "integer" },
+            cartItems: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  starId: { type: "string" },
+                  id: { type: "integer" },
+                  starId: { type: "integer" },
                   quantity: { type: "integer" },
-                  price: { type: "number" },
+                  Star: { $ref: "#/components/schemas/Star" },
                 },
               },
             },
@@ -84,7 +91,7 @@ const options = {
         AddToCartInput: {
           type: "object",
           properties: {
-            starId: { type: "string" },
+            starId: { type: "integer" },
             quantity: { type: "integer" },
           },
           required: ["starId", "quantity"],
@@ -92,7 +99,7 @@ const options = {
         UpdateCartItemInput: {
           type: "object",
           properties: {
-            cartItemId: { type: "string" },
+            cartItemId: { type: "integer" },
             quantity: { type: "integer" },
           },
           required: ["cartItemId", "quantity"],
@@ -100,21 +107,21 @@ const options = {
         Order: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            userId: { type: "string" },
+            id: { type: "integer" },
+            userId: { type: "integer" },
             items: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  starId: { type: "string" },
+                  starId: { type: "integer" },
                   quantity: { type: "integer" },
                   price: { type: "number" },
                 },
               },
             },
             totalAmount: { type: "number" },
-            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered"] },
+            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered", "cancelled", "paid"] },
             createdAt: { type: "string", format: "date-time" },
           },
         },
@@ -126,28 +133,38 @@ const options = {
               items: {
                 type: "object",
                 properties: {
-                  starId: { type: "string" },
+                  starId: { type: "integer" },
                   quantity: { type: "integer" },
                 },
               },
             },
+            shippingAddress: {
+              type: "object",
+              properties: {
+                street: { type: "string" },
+                city: { type: "string" },
+                state: { type: "string" },
+                zipCode: { type: "string" },
+                country: { type: "string" },
+              },
+            },
+            paymentMethod: { type: "string", enum: ["credit_card", "paypal", "bank_transfer"] },
           },
-          required: ["items"],
+          required: ["items", "shippingAddress", "paymentMethod"],
         },
         UpdateOrderStatusInput: {
           type: "object",
           properties: {
-            orderId: { type: "string" },
-            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered"] },
+            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered", "cancelled"] },
           },
-          required: ["orderId", "status"],
+          required: ["status"],
         },
         Review: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            userId: { type: "string" },
-            starId: { type: "string" },
+            id: { type: "integer" },
+            userId: { type: "integer" },
+            starId: { type: "integer" },
             rating: { type: "integer", minimum: 1, maximum: 5 },
             comment: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
@@ -156,7 +173,7 @@ const options = {
         AddReviewInput: {
           type: "object",
           properties: {
-            starId: { type: "string" },
+            starId: { type: "integer" },
             rating: { type: "integer", minimum: 1, maximum: 5 },
             comment: { type: "string" },
           },
@@ -165,18 +182,17 @@ const options = {
         Wishlist: {
           type: "object",
           properties: {
-            id: { type: "string" },
-            userId: { type: "string" },
-            stars: {
-              type: "array",
-              items: { $ref: "#/components/schemas/Star" },
-            },
+            id: { type: "integer" },
+            userId: { type: "integer" },
+            starId: { type: "integer" },
+            Star: { $ref: "#/components/schemas/Star" },
+            createdAt: { type: "string", format: "date-time" },
           },
         },
         AddToWishlistInput: {
           type: "object",
           properties: {
-            starId: { type: "string" },
+            starId: { type: "integer" },
           },
           required: ["starId"],
         },

@@ -265,14 +265,14 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 18 | Standardiser Biome a ^1.9.4 (root + client + server)                  | I11      | FAIT       |
 | 19 | Remplacer setTimeout AuthContext par Promise.all                       | I12      | FAIT       |
 
-### Phase 5 — Dependencies & Config (sprint 2)
+### Phase 5 — Dependencies & Config (sprint 2) — TERMINEE
 
-| #  | Action                                                                 | Ref      |
-| -- | ---------------------------------------------------------------------- | -------- |
-| 20 | Supprimer sqlite3, upgrader @types/node, TypeScript a v5               | M5       |
-| 21 | Installer identity-obj-proxy manquant                                  | M5       |
-| 22 | Mettre a jour les schemas Swagger vs realite                           | M4       |
-| 23 | Synchroniser les versions package.json et packageManager               | M8       |
+| #  | Action                                                                 | Ref      | Statut     |
+| -- | ---------------------------------------------------------------------- | -------- | ---------- |
+| 20 | Upgrader @types/node v20, TypeScript v5 (sqlite3 garde: tests l'utilisent) | M5   | FAIT       |
+| 21 | Installer identity-obj-proxy manquant                                  | M5       | FAIT       |
+| 22 | Mettre a jour les schemas Swagger vs realite (IDs integer, User corrige) | M4     | FAIT       |
+| 23 | Synchroniser versions package.json (client 0.1.0 -> 1.0.0)            | M8       | FAIT       |
 
 ### Phase 6 — Polish (backlog)
 
