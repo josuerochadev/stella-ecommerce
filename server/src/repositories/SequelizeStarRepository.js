@@ -5,6 +5,7 @@
 const { Star } = require('../models');
 const { IStarRepository } = require('../interfaces/IStarRepository');
 const { Op } = require('sequelize');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les étoiles utilisant Sequelize ORM
@@ -24,9 +25,7 @@ class SequelizeStarRepository extends IStarRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const star = await this.Star.findByPk(id);
       return star ? star.toJSON() : null;
@@ -104,9 +103,7 @@ class SequelizeStarRepository extends IStarRepository {
    */
   async update(id, updateData) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       if (!updateData || typeof updateData !== 'object') {
         throw new Error('Update data must be an object');
@@ -136,9 +133,7 @@ class SequelizeStarRepository extends IStarRepository {
    */
   async delete(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.Star.destroy({
         where: { starid: id }

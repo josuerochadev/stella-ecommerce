@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { loginUser } from "@/services/api";
-import FadeInSection from "./FadeInSection";
-import FormInput from "./FormInput";
-import FormContainer from "./FormContainer";
 import { useValidatedApiCall } from "@/hooks/useApiCall";
-import { validateEmail, sanitizeText } from "@/utils/security";
+import { loginUser } from "@/services/api";
 import type { LoginResponse } from "@/services/authService";
+import { FieldValidationService } from "@/services/validationService";
+import { sanitizeText } from "@/utils/security";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import FadeInSection from "./FadeInSection";
+import FormContainer from "./FormContainer";
+import FormInput from "./FormInput";
 
 const Login: React.FC = () => {
   const { login } = useAuth();
@@ -22,24 +23,21 @@ const Login: React.FC = () => {
   const message = location.state?.message || "Connectez-vous pour accéder à votre compte.";
   const from = location.state?.from || "/profile";
 
-  const { isLoading, error, execute } = useValidatedApiCall<LoginResponse, { email: string; password: string }>(
+  const { isLoading, error, execute } = useValidatedApiCall<
+    LoginResponse,
+    { email: string; password: string }
+  >(
     (data) => {
-      const sanitizedEmail = sanitizeText(data.email).trim();
-      const sanitizedPassword = data.password.trim();
-
-      if (!sanitizedEmail) {
-        setEmailError('L\'email est requis');
-        return 'L\'email est requis';
+      const emailResult = FieldValidationService.validateEmailField(data.email);
+      if (!emailResult.isValid) {
+        setEmailError(emailResult.errors[0]);
+        return emailResult.errors[0];
       }
 
-      if (!validateEmail(sanitizedEmail)) {
-        setEmailError('Format d\'email invalide');
-        return 'Format d\'email invalide';
-      }
-
-      if (!sanitizedPassword) {
-        setPasswordError('Le mot de passe est requis');
-        return 'Le mot de passe est requis';
+      const passwordResult = FieldValidationService.validatePasswordField(data.password);
+      if (!passwordResult.isValid) {
+        setPasswordError(passwordResult.errors[0]);
+        return passwordResult.errors[0];
       }
 
       return true;
@@ -53,8 +51,8 @@ const Login: React.FC = () => {
       },
       onError: () => {
         emailInputRef.current?.focus();
-      }
-    }
+      },
+    },
   );
 
   // Focus sur le premier champ au chargement
@@ -72,9 +70,8 @@ const Login: React.FC = () => {
     const sanitizedEmail = sanitizeText(email).trim();
     const sanitizedPassword = password.trim();
 
-    await execute(
-      { email: sanitizedEmail, password: sanitizedPassword },
-      (data) => loginUser({ email: data.email, password: data.password })
+    await execute({ email: sanitizedEmail, password: sanitizedPassword }, (data) =>
+      loginUser({ email: data.email, password: data.password }),
     );
   };
 
@@ -85,11 +82,7 @@ const Login: React.FC = () => {
           {message}
         </p>
 
-        <FormContainer
-          error={error || undefined}
-          isLoading={isLoading}
-          onSubmit={handleSubmit}
-        >
+        <FormContainer error={error || undefined} isLoading={isLoading} onSubmit={handleSubmit}>
           <FormInput
             ref={emailInputRef}
             label="Email"
@@ -116,18 +109,16 @@ const Login: React.FC = () => {
           />
 
           <div className="text-center">
-            <button
-              type="submit"
-              className="btn"
-              disabled={isLoading}
-            >
+            <button type="submit" className="btn" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <span className="inline-block animate-spin mr-2" aria-hidden="true">⟳</span>
+                  <span className="inline-block animate-spin mr-2" aria-hidden="true">
+                    ⟳
+                  </span>
                   Connexion en cours...
                 </>
               ) : (
-                'Se connecter'
+                "Se connecter"
               )}
             </button>
           </div>

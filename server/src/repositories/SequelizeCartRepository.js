@@ -4,6 +4,7 @@
 
 const { Cart, CartItem, Star } = require('../models');
 const { ICartRepository } = require('../interfaces/ICartRepository');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les paniers utilisant Sequelize ORM
@@ -24,9 +25,7 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async findByUserId(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const cart = await this.Cart.findOne({
         where: { userId },
@@ -58,9 +57,7 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const cart = await this.Cart.findByPk(id, {
         include: [
@@ -113,9 +110,7 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async delete(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.Cart.destroy({
         where: { id }
@@ -134,9 +129,7 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async deleteByUserId(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const deletedCount = await this.Cart.destroy({
         where: { userId }

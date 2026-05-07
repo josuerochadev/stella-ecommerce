@@ -5,6 +5,7 @@
 const { Order, OrderItem, Star, User } = require('../models');
 const { IOrderRepository } = require('../interfaces/IOrderRepository');
 const { Op } = require('sequelize');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les commandes utilisant Sequelize ORM
@@ -24,9 +25,7 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const order = await this.Order.findByPk(id, {
         include: [
@@ -56,9 +55,7 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async findByIdSimple(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const order = await this.Order.findByPk(id);
       return order ? order.toJSON() : null;
@@ -75,9 +72,7 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async findByUserId(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const orders = await this.Order.findAll({
         where: { userId },
@@ -127,9 +122,7 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async update(id, updateData, transaction = null) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       if (!updateData || typeof updateData !== 'object') {
         throw new Error('Update data must be an object');
@@ -179,9 +172,7 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async delete(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.Order.destroy({
         where: { id }

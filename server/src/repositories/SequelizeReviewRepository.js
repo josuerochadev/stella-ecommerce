@@ -5,6 +5,7 @@
 const { Review, User, Star } = require('../models');
 const { IReviewRepository } = require('../interfaces/IReviewRepository');
 const { Op } = require('sequelize');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les avis utilisant Sequelize ORM
@@ -24,9 +25,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const review = await this.Review.findByPk(id, {
         include: [
@@ -57,9 +56,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async findByStarId(starId) {
     try {
-      if (!starId || typeof starId !== 'number') {
-        throw new Error('Star ID must be a valid number');
-      }
+      validateId(starId, 'Star ID');
 
       const reviews = await this.Review.findAll({
         where: { starId },
@@ -87,9 +84,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async findByUserId(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const reviews = await this.Review.findAll({
         where: { userId },
@@ -141,9 +136,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async update(id, updateData) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       if (!updateData || typeof updateData !== 'object') {
         throw new Error('Update data must be an object');
@@ -187,9 +180,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async delete(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.Review.destroy({
         where: { id }
@@ -256,9 +247,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async getAverageRating(starId) {
     try {
-      if (!starId || typeof starId !== 'number') {
-        throw new Error('Star ID must be a valid number');
-      }
+      validateId(starId, 'Star ID');
 
       const result = await this.Review.findOne({
         where: { starId },

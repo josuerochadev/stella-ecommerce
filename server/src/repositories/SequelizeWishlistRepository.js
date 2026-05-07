@@ -4,6 +4,7 @@
 
 const { Wishlist, Star } = require('../models');
 const { IWishlistRepository } = require('../interfaces/IWishlistRepository');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les listes d'envies utilisant Sequelize ORM
@@ -23,9 +24,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async findByUserId(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const wishlistItems = await this.Wishlist.findAll({
         where: { userId },
@@ -144,9 +143,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async clearWishlist(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       await this.Wishlist.destroy({
         where: { userId }
@@ -190,9 +187,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async count(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
-      }
+      validateId(userId, 'User ID');
 
       const count = await this.Wishlist.count({
         where: { userId }
@@ -211,9 +206,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const wishlistItem = await this.Wishlist.findByPk(id, {
         include: [{ model: Star, as: 'Star' }]
@@ -232,9 +225,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async deleteById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.Wishlist.destroy({
         where: { id }

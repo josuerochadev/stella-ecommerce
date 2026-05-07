@@ -236,14 +236,14 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 4  | Supprimer @types/react-router-dom (v7 embarque ses types)              | C5       | FAIT       |
 | 5  | Supprimer les casts `as unknown as` et `as any` — typer correctement   | C3       | FAIT       |
 
-### Phase 2 — DRY & Duplication (sprint 1)
+### Phase 2 — DRY & Duplication (sprint 1) — EN COURS
 
-| #  | Action                                                                 | Ref      |
-| -- | ---------------------------------------------------------------------- | -------- |
-| 6  | Creer un `StorageService` centralise pour localStorage                 | I1       |
-| 7  | Extraire la transformation cart dans un intercepteur unique            | I2       |
-| 8  | Brancher Register/Login sur le validationService existant              | I3       |
-| 9  | Creer un validateur d'ID reutilisable pour les repositories            | I4       |
+| #  | Action                                                                 | Ref      | Statut     |
+| -- | ---------------------------------------------------------------------- | -------- | ---------- |
+| 6  | Creer un `StorageService` centralise pour localStorage                 | I1       | A FAIRE    |
+| 7  | Extraire la transformation cart dans un helper `normalizeCartResponse`  | I2       | FAIT       |
+| 8  | Brancher Register/Login sur le validationService existant              | I3       | FAIT       |
+| 9  | Creer un validateur d'ID reutilisable pour les repositories            | I4       | FAIT       |
 
 ### Phase 3 — God Files & SRP (sprint 1-2)
 

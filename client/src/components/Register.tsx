@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useValidatedApiCall } from "@/hooks/useApiCall";
 import { registerUser } from "@/services/api";
 import type { RegisterResponse } from "@/services/authService";
-import { sanitizeText, validateEmail, validatePassword } from "@/utils/security";
+import { FormValidationService } from "@/services/validationService";
 import { memo, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FadeInSection from "./FadeInSection";
@@ -30,38 +30,14 @@ const Register: React.FC = () => {
     { firstName: string; lastName: string; email: string; password: string }
   >(
     (data) => {
-      const sanitizedFirstName = sanitizeText(data.firstName).trim();
-      const sanitizedLastName = sanitizeText(data.lastName).trim();
-      const sanitizedEmail = sanitizeText(data.email).trim();
-      const sanitizedPassword = data.password.trim();
-
-      if (!sanitizedFirstName) {
-        setFirstNameError("Le prénom est requis");
-        return "Le prénom est requis";
+      const result = FormValidationService.validateRegistrationForm(data);
+      if (!result.isValid) {
+        if (result.errors.firstName) setFirstNameError(result.errors.firstName);
+        if (result.errors.lastName) setLastNameError(result.errors.lastName);
+        if (result.errors.email) setEmailError(result.errors.email);
+        if (result.errors.password) setPasswordError(result.errors.password);
+        return Object.values(result.errors)[0];
       }
-
-      if (!sanitizedLastName) {
-        setLastNameError("Le nom est requis");
-        return "Le nom est requis";
-      }
-
-      if (!sanitizedEmail) {
-        setEmailError("L'email est requis");
-        return "L'email est requis";
-      }
-
-      if (!validateEmail(sanitizedEmail)) {
-        setEmailError("Format d'email invalide");
-        return "Format d'email invalide";
-      }
-
-      const passwordValidation = validatePassword(sanitizedPassword);
-      if (!passwordValidation.isValid) {
-        const firstError = passwordValidation.errors[0];
-        setPasswordError(firstError);
-        return firstError;
-      }
-
       return true;
     },
     {
@@ -91,17 +67,12 @@ const Register: React.FC = () => {
     setEmailError("");
     setPasswordError("");
 
-    const sanitizedFirstName = sanitizeText(firstName).trim();
-    const sanitizedLastName = sanitizeText(lastName).trim();
-    const sanitizedEmail = sanitizeText(email).trim();
-    const sanitizedPassword = password.trim();
-
     await execute(
       {
-        firstName: sanitizedFirstName,
-        lastName: sanitizedLastName,
-        email: sanitizedEmail,
-        password: sanitizedPassword,
+        firstName,
+        lastName,
+        email,
+        password,
       },
       (data) =>
         registerUser({

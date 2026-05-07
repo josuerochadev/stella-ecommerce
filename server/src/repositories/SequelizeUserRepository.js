@@ -5,6 +5,7 @@
 const { User } = require('../models');
 const { IUserRepository } = require('../interfaces/IUserRepository');
 const { Op } = require('sequelize');
+const { validateId } = require('../utils/validators');
 
 /**
  * Repository pour les utilisateurs utilisant Sequelize ORM
@@ -48,9 +49,7 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async findById(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const user = await this.User.findByPk(id);
       return user ? user.toJSON() : null;
@@ -97,9 +96,7 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async update(id, updateData) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       if (!updateData || typeof updateData !== 'object') {
         throw new Error('Update data must be an object');
@@ -156,9 +153,7 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async delete(id) {
     try {
-      if (!id || typeof id !== 'number') {
-        throw new Error('ID must be a valid number');
-      }
+      validateId(id);
 
       const deletedCount = await this.User.destroy({
         where: { id }
