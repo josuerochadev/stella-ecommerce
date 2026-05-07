@@ -1,14 +1,15 @@
 // client/src/App.tsx
 
 import React, { Suspense, useEffect } from "react";
-import { Route, BrowserRouter as Router, Routes, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from "react-router-dom";
+import CookieBanner from "./components/CookieBanner";
 import ErrorBoundary from "./components/ErrorBoundary";
+import FeatureErrorBoundary from "./components/FeatureErrorBoundary";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import NotificationProvider from "./components/NotificationProvider";
 import ShoppingCart from "./components/ShoppingCart";
 import Wishlist from "./components/Wishlist";
-import CookieBanner from "./components/CookieBanner";
-import NotificationProvider from "./components/NotificationProvider";
 import { useAuth } from "./context/AuthContext";
 
 // Lazy loading of pages
@@ -37,8 +38,8 @@ const AuthEventListener: React.FC = () => {
       navigate(customEvent.detail.redirectTo);
     };
 
-    window.addEventListener('auth:unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, [navigate]);
 
   return null;
@@ -54,8 +55,8 @@ const App: React.FC = () => {
         <div className="flex flex-col min-h-screen">
           <Header />
           <main id="main-content" className="flex-grow">
-          <CookieBanner />
-          <NotificationProvider />
+            <CookieBanner />
+            <NotificationProvider />
             <Suspense fallback={<div className="text-center text-text">Loading...</div>}>
               <Routes>
                 <Route path="/" element={<Home />} /> {/* Home page */}
@@ -70,15 +71,59 @@ const App: React.FC = () => {
                 <Route path="/about" element={<About />} /> {/* About */}
                 <Route path="/contact" element={<Contact />} /> {/* Contact */}
                 <Route path="/faq" element={<FAQ />} /> {/* FAQ */}
-                <Route path="/cart" element={<ShoppingCart />} />
-                <Route path="/checkout" element={isAuthenticated ? <Checkout /> : <Navigate to="/auth" />} />
-                <Route path="/order-confirmation" element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />} />
-                <Route path="/orders" element={isAuthenticated ? <Orders /> : <Navigate to="/auth" />} />
-                <Route path="/admin" element={isAuthenticated ? <Admin /> : <Navigate to="/auth" />} />
+                <Route
+                  path="/cart"
+                  element={
+                    <FeatureErrorBoundary featureName="le panier">
+                      <ShoppingCart />
+                    </FeatureErrorBoundary>
+                  }
+                />
+                <Route
+                  path="/checkout"
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="le paiement">
+                        <Checkout />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
+                />
+                <Route
+                  path="/order-confirmation"
+                  element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />}
+                />
+                <Route
+                  path="/orders"
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="les commandes">
+                        <Orders />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="l'administration">
+                        <Admin />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
+                />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* Privacy Policy */}
-                <Route path="*" element={<Navigate to="/" />} /> {/* Default redirect to home page */}
+                <Route path="*" element={<Navigate to="/" />} />{" "}
+                {/* Default redirect to home page */}
               </Routes>
             </Suspense>
           </main>

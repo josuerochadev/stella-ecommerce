@@ -274,17 +274,17 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 22 | Mettre a jour les schemas Swagger vs realite (IDs integer, User corrige) | M4     | FAIT       |
 | 23 | Synchroniser versions package.json (client 0.1.0 -> 1.0.0)            | M8       | FAIT       |
 
-### Phase 6 — Polish (backlog) — PARTIELLE
+### Phase 6 — Polish (backlog) — TERMINEE
 
 | #  | Action                                                                 | Ref      | Statut     |
 | -- | ---------------------------------------------------------------------- | -------- | ---------- |
 | 24 | Ajouter des barrel files pour components/, services/, controllers/     | M1       | BACKLOG    |
-| 25 | Extraire hooks useFormErrors et utiliser useLoadingState existant       | M2       | BACKLOG    |
+| 25 | Extraire hook useFormErrors, brancher Login + Register                  | M2       | FAIT       |
 | 26 | Fixer les classes Tailwind dynamiques dans ResponsiveGrid              | M3       | FAIT       |
 | 27 | Uniformiser la gestion d'erreurs (pas de catch silencieux)             | M6       | FAIT       |
-| 28 | Ajouter des Error Boundaries locales par feature                       | M9       | BACKLOG    |
-| 29 | Implementer un cache API pour le dashboard admin                       | M10      | BACKLOG    |
-| 30 | Implementer le monitoring/error tracking (TODO logger.ts)              | M7       | BACKLOG    |
+| 28 | FeatureErrorBoundary + integration Cart, Checkout, Orders, Admin       | M9       | FAIT       |
+| 29 | Cache API admin avec useRef pour eviter refetch par onglet             | M10      | FAIT       |
+| 30 | Monitoring via Beacon API en production (logger.ts)                    | M7       | FAIT       |
 
 ---
 

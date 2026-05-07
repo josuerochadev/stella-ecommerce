@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useValidatedApiCall } from "@/hooks/useApiCall";
+import { useFormErrors } from "@/hooks/useFormErrors";
 import { loginUser } from "@/services/api";
 import type { LoginResponse } from "@/services/authService";
 import { FieldValidationService } from "@/services/validationService";
@@ -14,8 +15,7 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const { getError, setFieldError, clearErrors } = useFormErrors<"email" | "password">();
   const location = useLocation();
   const navigate = useNavigate();
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -30,13 +30,13 @@ const Login: React.FC = () => {
     (data) => {
       const emailResult = FieldValidationService.validateEmailField(data.email);
       if (!emailResult.isValid) {
-        setEmailError(emailResult.errors[0]);
+        setFieldError("email", emailResult.errors[0]);
         return emailResult.errors[0];
       }
 
       const passwordResult = FieldValidationService.validatePasswordField(data.password);
       if (!passwordResult.isValid) {
-        setPasswordError(passwordResult.errors[0]);
+        setFieldError("password", passwordResult.errors[0]);
         return passwordResult.errors[0];
       }
 
@@ -64,8 +64,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailError("");
-    setPasswordError("");
+    clearErrors();
 
     const sanitizedEmail = sanitizeText(email).trim();
     const sanitizedPassword = password.trim();
@@ -92,7 +91,7 @@ const Login: React.FC = () => {
             placeholder="exemple@email.com"
             autoComplete="email"
             isRequired
-            error={emailError}
+            error={getError("email")}
             description="Saisissez votre adresse e-mail de connexion"
           />
 
@@ -104,7 +103,7 @@ const Login: React.FC = () => {
             placeholder="Votre mot de passe"
             autoComplete="current-password"
             isRequired
-            error={passwordError}
+            error={getError("password")}
             description="Saisissez votre mot de passe de connexion"
           />
 

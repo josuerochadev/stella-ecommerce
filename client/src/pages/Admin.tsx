@@ -1,9 +1,9 @@
-import { useState, useEffect, memo } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useUserStore } from "@/stores/useUserStore";
-import { Navigate } from "react-router-dom";
-import { httpClient } from "@/services/httpClient";
 import FadeInSection from "@/components/FadeInSection";
+import { useAuth } from "@/context/AuthContext";
+import { httpClient } from "@/services/httpClient";
+import { useUserStore } from "@/stores/useUserStore";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 interface DashboardData {
   overview: {
@@ -48,35 +48,41 @@ const Admin: React.FC = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchedTabs = useRef<Set<Tab>>(new Set());
+
+  const fetchData = useCallback(async (tab: Tab, force = false) => {
+    if (fetchedTabs.current.has(tab) && !force) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      if (tab === "dashboard") {
+        const res = await httpClient.get<{ success: boolean; dashboard: DashboardData }>(
+          "/admin/dashboard",
+        );
+        setDashboard(res.data.dashboard);
+      } else if (tab === "users") {
+        const res = await httpClient.get<{
+          success: boolean;
+          data: AdminUser[];
+        }>("/admin/users");
+        setUsers(res.data.data || []);
+      }
+      fetchedTabs.current.add(tab);
+    } catch {
+      setError("Erreur lors du chargement des donnees.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        if (activeTab === "dashboard") {
-          const res = await httpClient.get<{ success: boolean; dashboard: DashboardData }>(
-            "/admin/dashboard"
-          );
-          setDashboard(res.data.dashboard);
-        } else if (activeTab === "users") {
-          const res = await httpClient.get<{
-            success: boolean;
-            data: AdminUser[];
-          }>("/admin/users");
-          setUsers(res.data.data || []);
-        }
-      } catch {
-        setError("Erreur lors du chargement des donnees.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (isAuthenticated && user?.role === "admin") {
-      fetchData();
+      fetchData(activeTab);
     }
-  }, [activeTab, isAuthenticated, user?.role]);
+  }, [activeTab, isAuthenticated, user?.role, fetchData]);
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" />;
@@ -161,14 +167,10 @@ const DashboardView: React.FC<{ data: DashboardData }> = ({ data }) => {
                 >
                   <div>
                     <span className="font-serif">#{order.id}</span>
-                    <span className="ml-3 text-sm text-text/70 capitalize">
-                      {order.status}
-                    </span>
+                    <span className="ml-3 text-sm text-text/70 capitalize">{order.status}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold">
-                      {Number(order.totalAmount).toFixed(2)} €
-                    </span>
+                    <span className="font-bold">{Number(order.totalAmount).toFixed(2)} €</span>
                     <span className="ml-3 text-xs text-text/50">
                       {new Date(order.createdAt).toLocaleDateString("fr-FR")}
                     </span>

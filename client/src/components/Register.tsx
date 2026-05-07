@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useValidatedApiCall } from "@/hooks/useApiCall";
+import { useFormErrors } from "@/hooks/useFormErrors";
 import { registerUser } from "@/services/api";
 import type { RegisterResponse } from "@/services/authService";
 import { FormValidationService } from "@/services/validationService";
@@ -14,10 +15,9 @@ const Register: React.FC = () => {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [firstNameError, setFirstNameError] = useState("");
-  const [lastNameError, setLastNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const { getError, setFieldError, clearErrors } = useFormErrors<
+    "firstName" | "lastName" | "email" | "password"
+  >();
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,10 +32,9 @@ const Register: React.FC = () => {
     (data) => {
       const result = FormValidationService.validateRegistrationForm(data);
       if (!result.isValid) {
-        if (result.errors.firstName) setFirstNameError(result.errors.firstName);
-        if (result.errors.lastName) setLastNameError(result.errors.lastName);
-        if (result.errors.email) setEmailError(result.errors.email);
-        if (result.errors.password) setPasswordError(result.errors.password);
+        for (const [field, msg] of Object.entries(result.errors)) {
+          setFieldError(field as "firstName" | "lastName" | "email" | "password", msg);
+        }
         return Object.values(result.errors)[0];
       }
       return true;
@@ -62,10 +61,7 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFirstNameError("");
-    setLastNameError("");
-    setEmailError("");
-    setPasswordError("");
+    clearErrors();
 
     await execute(
       {
@@ -103,7 +99,7 @@ const Register: React.FC = () => {
             placeholder="Prénom"
             autoComplete="given-name"
             isRequired
-            error={firstNameError}
+            error={getError("firstName")}
           />
 
           <FormInput
@@ -114,7 +110,7 @@ const Register: React.FC = () => {
             placeholder="Nom"
             autoComplete="family-name"
             isRequired
-            error={lastNameError}
+            error={getError("lastName")}
           />
 
           <FormInput
@@ -125,7 +121,7 @@ const Register: React.FC = () => {
             placeholder="votre@email.com"
             autoComplete="email"
             isRequired
-            error={emailError}
+            error={getError("email")}
             description="Votre adresse email pour vous connecter"
           />
 
@@ -137,7 +133,7 @@ const Register: React.FC = () => {
             placeholder="Minimum 8 caractères"
             autoComplete="new-password"
             isRequired
-            error={passwordError}
+            error={getError("password")}
             description="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
           />
 

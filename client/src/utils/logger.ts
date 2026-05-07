@@ -1,7 +1,7 @@
 // client/src/utils/logger.ts
 // Centralized logging service for the application
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogEntry {
   level: LogLevel;
@@ -16,7 +16,7 @@ interface LogEntry {
  * In production, logs can be sent to monitoring services (Sentry, LogRocket, etc.)
  */
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private isDevelopment = process.env.NODE_ENV === "development";
   private logBuffer: LogEntry[] = [];
   private maxBufferSize = 100;
 
@@ -25,9 +25,9 @@ class Logger {
    */
   debug(message: string, data?: unknown, context?: string): void {
     if (this.isDevelopment) {
-      console.debug(`[DEBUG]${context ? ` [${context}]` : ''} ${message}`, data || '');
+      console.debug(`[DEBUG]${context ? ` [${context}]` : ""} ${message}`, data || "");
     }
-    this.addToBuffer('debug', message, data, context);
+    this.addToBuffer("debug", message, data, context);
   }
 
   /**
@@ -35,9 +35,9 @@ class Logger {
    */
   info(message: string, data?: unknown, context?: string): void {
     if (this.isDevelopment) {
-      console.info(`[INFO]${context ? ` [${context}]` : ''} ${message}`, data || '');
+      console.info(`[INFO]${context ? ` [${context}]` : ""} ${message}`, data || "");
     }
-    this.addToBuffer('info', message, data, context);
+    this.addToBuffer("info", message, data, context);
   }
 
   /**
@@ -45,10 +45,10 @@ class Logger {
    */
   warn(message: string, data?: unknown, context?: string): void {
     if (this.isDevelopment) {
-      console.warn(`[WARN]${context ? ` [${context}]` : ''} ${message}`, data || '');
+      console.warn(`[WARN]${context ? ` [${context}]` : ""} ${message}`, data || "");
     }
-    this.addToBuffer('warn', message, data, context);
-    // TODO: Send to monitoring service in production
+    this.addToBuffer("warn", message, data, context);
+    this.sendToMonitoring("warn", message, data, context);
   }
 
   /**
@@ -56,10 +56,41 @@ class Logger {
    */
   error(message: string, error?: unknown, context?: string): void {
     if (this.isDevelopment) {
-      console.error(`[ERROR]${context ? ` [${context}]` : ''} ${message}`, error || '');
+      console.error(`[ERROR]${context ? ` [${context}]` : ""} ${message}`, error || "");
     }
-    this.addToBuffer('error', message, error, context);
-    // TODO: Send to error tracking service (Sentry, etc.) in production
+    this.addToBuffer("error", message, error, context);
+    this.sendToMonitoring("error", message, error, context);
+  }
+
+  /**
+   * Send critical logs to monitoring in production.
+   * Replace the fetch URL with a real endpoint (Sentry, LogRocket, etc.)
+   */
+  private sendToMonitoring(
+    level: LogLevel,
+    message: string,
+    data?: unknown,
+    context?: string,
+  ): void {
+    if (this.isDevelopment) return;
+
+    try {
+      const payload = {
+        level,
+        message,
+        context,
+        timestamp: new Date().toISOString(),
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        data: data instanceof Error ? { message: data.message, stack: data.stack } : data,
+      };
+
+      // Beacon API for reliable delivery even on page unload
+      const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+      navigator.sendBeacon("/api/logs", blob);
+    } catch {
+      // Monitoring failure must never break the app
+    }
   }
 
   /**
@@ -71,7 +102,7 @@ class Logger {
       message,
       timestamp: new Date().toISOString(),
       data,
-      context
+      context,
     };
 
     this.logBuffer.push(entry);
@@ -85,7 +116,7 @@ class Logger {
   /**
    * Get recent logs (useful for debugging)
    */
-  getRecentLogs(count: number = 50): LogEntry[] {
+  getRecentLogs(count = 50): LogEntry[] {
     return this.logBuffer.slice(-count);
   }
 
