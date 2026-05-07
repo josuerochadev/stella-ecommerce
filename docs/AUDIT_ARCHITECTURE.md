@@ -278,7 +278,7 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 
 | #  | Action                                                                 | Ref      | Statut     |
 | -- | ---------------------------------------------------------------------- | -------- | ---------- |
-| 24 | Ajouter des barrel files pour components/, services/, controllers/     | M1       | BACKLOG    |
+| 24 | Barrel files pour components/, services/, hooks/                       | M1       | FAIT       |
 | 25 | Extraire hook useFormErrors, brancher Login + Register                  | M2       | FAIT       |
 | 26 | Fixer les classes Tailwind dynamiques dans ResponsiveGrid              | M3       | FAIT       |
 | 27 | Uniformiser la gestion d'erreurs (pas de catch silencieux)             | M6       | FAIT       |
