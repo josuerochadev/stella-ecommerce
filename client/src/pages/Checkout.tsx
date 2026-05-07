@@ -1,12 +1,12 @@
-import { useState, memo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCartStore } from "@/stores/useCartStore";
-import { useAuth } from "@/context/AuthContext";
-import { CartCalculations } from "@/utils/cartCalculations";
-import { OrderService } from "@/services/orderService";
 import FadeInSection from "@/components/FadeInSection";
 import FormInput from "@/components/FormInput";
+import { useAuth } from "@/context/AuthContext";
+import { OrderService } from "@/services/orderService";
+import { useCartStore } from "@/stores/useCartStore";
 import type { OrderData } from "@/types";
+import { CartCalculations } from "@/utils/cartCalculations";
+import { memo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PAYMENT_METHODS = [
   { value: "credit_card" as const, label: "Carte bancaire" },
@@ -64,15 +64,13 @@ const Checkout: React.FC = () => {
       await clearCart();
       navigate("/order-confirmation", {
         state: {
-          orderId: response.data?.id || (response as unknown as { orderId: number }).orderId,
+          orderId: response.data?.id,
           total: stats.totalAmount,
           status: "pending",
         },
       });
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Une erreur est survenue lors de la commande."
-      );
+      setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la commande.");
     } finally {
       setIsSubmitting(false);
     }
@@ -175,9 +173,7 @@ const Checkout: React.FC = () => {
                       <span>
                         {item.Star.name} x{item.quantity}
                       </span>
-                      <span>
-                        {CartCalculations.formatPrice(item.Star.price * item.quantity)}
-                      </span>
+                      <span>{CartCalculations.formatPrice(item.Star.price * item.quantity)}</span>
                     </div>
                   ))}
                 </div>

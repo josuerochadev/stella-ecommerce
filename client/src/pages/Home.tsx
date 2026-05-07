@@ -1,16 +1,15 @@
 // client/src/pages/Home.tsx
 
-import { memo } from "react";
-import HeroSection from "@/components/HeroSection";
-import { useHeroPhrases } from "@/hooks/useHeroPhrases";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
-import StarCard from "@/components/StarCard";
-import { useLatestStars } from "@/hooks/useLatestStars";
-import { useFunFacts } from "@/hooks/useFunFacts";
 import FadeInSection from "@/components/FadeInSection";
-import { useAuth } from "@/context/AuthContext";
+import HeroSection from "@/components/HeroSection";
+import StarCard from "@/components/StarCard";
 import { APP_CONSTANTS } from "@/constants/app";
-
+import { useAuth } from "@/context/AuthContext";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useFunFacts } from "@/hooks/useFunFacts";
+import { useHeroPhrases } from "@/hooks/useHeroPhrases";
+import { useLatestStars } from "@/hooks/useLatestStars";
+import { memo } from "react";
 
 const Home: React.FC = () => {
   const { stars, loading, error } = useLatestStars(APP_CONSTANTS.STARS_PER_PAGE_HOME);
@@ -62,9 +61,9 @@ const Home: React.FC = () => {
                 personnaliser pour en faire un cadeau inoubliable. Notre mission est d'illuminer la
                 vie de nos clients en leur offrant un morceau du ciel.
               </p>
-              <button type="button" className="btn mt-4">
-                <a href="/about">Voir plus</a>
-              </button>
+              <a href="/about" className="btn mt-4 inline-block">
+                Voir plus
+              </a>
             </div>
           </div>
         </section>
@@ -100,8 +99,7 @@ const Home: React.FC = () => {
           <h2 className="text-xl font-display my-6">Le saviez-vous ?</h2>
         </section>
       </FadeInSection>
-            {/* Afficher la section "Rejoignez-nous" seulement si l'utilisateur n'est pas connecté */}
-
+      {/* Afficher la section "Rejoignez-nous" seulement si l'utilisateur n'est pas connecté */}
       {!isAuthenticated && (
         <FadeInSection>
           <section className="bg-primary my-12 text-text py-8 text-center">
@@ -111,11 +109,7 @@ const Home: React.FC = () => {
               événements autour des étoiles. Inscrivez-vous à notre newsletter et faites partie de
               notre univers.
             </p>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => redirectToAuth()}
-            >
+            <button type="button" className="btn" onClick={() => redirectToAuth()}>
               Se connecter
             </button>
           </section>

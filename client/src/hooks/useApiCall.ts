@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useErrorHandler } from './useErrorHandler';
+import { useCallback, useState } from "react";
+import { useErrorHandler } from "./useErrorHandler";
 
 interface ApiCallState<T> {
   data: T | null;
@@ -23,44 +23,45 @@ export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
     error: null,
   });
 
-  const execute = useCallback(async (
-    apiFunction: () => Promise<T>
-  ): Promise<T | null> => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }));
+  const execute = useCallback(
+    async (apiFunction: () => Promise<T>): Promise<T | null> => {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-    try {
-      const result = await apiFunction();
-      setState({
-        data: result,
-        isLoading: false,
-        error: null,
-      });
+      try {
+        const result = await apiFunction();
+        setState({
+          data: result,
+          isLoading: false,
+          error: null,
+        });
 
-      if (onSuccess) {
-        onSuccess(result);
+        if (onSuccess) {
+          onSuccess(result);
+        }
+
+        return result;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Une erreur est survenue";
+
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: errorMessage,
+        }));
+
+        if (showGlobalError) {
+          handleError(error instanceof Error ? error : new Error(String(error)));
+        }
+
+        if (onError) {
+          onError(errorMessage);
+        }
+
+        return null;
       }
-
-      return result;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
-
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: errorMessage,
-      }));
-
-      if (showGlobalError) {
-        handleError(error as any);
-      }
-
-      if (onError) {
-        onError(errorMessage);
-      }
-
-      return null;
-    }
-  }, [handleError, onSuccess, onError, showGlobalError]);
+    },
+    [handleError, onSuccess, onError, showGlobalError],
+  );
 
   const reset = useCallback(() => {
     setState({
@@ -79,24 +80,28 @@ export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
 
 // Hook spécialisé pour les opérations de collection (panier, wishlist)
 export const useCollectionOperation = (
-  type: 'cart' | 'wishlist',
-  options: UseApiCallOptions = {}
+  type: "cart" | "wishlist",
+  options: UseApiCallOptions = {},
 ) => {
   const apiCall = useApiCall(options);
 
-  const executeWithAuth = useCallback(async (
-    apiFunction: () => Promise<any>,
-    requireAuth: boolean = true
-  ) => {
-    if (requireAuth) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error(`Veuillez vous connecter pour ${type === 'cart' ? 'ajouter au panier' : 'ajouter aux favoris'}.`);
+  const executeWithAuth = useCallback(
+    async (apiFunction: () => Promise<unknown>, requireAuth = true) => {
+      if (requireAuth) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error(
+            `Veuillez vous connecter pour ${
+              type === "cart" ? "ajouter au panier" : "ajouter aux favoris"
+            }.`,
+          );
+        }
       }
-    }
 
-    return apiCall.execute(apiFunction);
-  }, [apiCall, type]);
+      return apiCall.execute(apiFunction);
+    },
+    [apiCall, type],
+  );
 
   return {
     ...apiCall,
@@ -107,30 +112,29 @@ export const useCollectionOperation = (
 // Hook pour les opérations avec validation
 export const useValidatedApiCall = <T = unknown, D = unknown>(
   validator: (data: D) => boolean | string,
-  options: UseApiCallOptions<T> = {}
+  options: UseApiCallOptions<T> = {},
 ) => {
   const apiCall = useApiCall<T>(options);
 
-  const executeWithValidation = useCallback(async (
-    data: D,
-    apiFunction: (validatedData: D) => Promise<T>
-  ): Promise<T | null> => {
-    const validationResult = validator(data);
+  const executeWithValidation = useCallback(
+    async (data: D, apiFunction: (validatedData: D) => Promise<T>): Promise<T | null> => {
+      const validationResult = validator(data);
 
-    if (validationResult !== true) {
-      const errorMessage = typeof validationResult === 'string'
-        ? validationResult
-        : 'Données invalides';
+      if (validationResult !== true) {
+        const errorMessage =
+          typeof validationResult === "string" ? validationResult : "Données invalides";
 
-      apiCall.reset();
-      if (options.onError) {
-        options.onError(errorMessage);
+        apiCall.reset();
+        if (options.onError) {
+          options.onError(errorMessage);
+        }
+        return null;
       }
-      return null;
-    }
 
-    return apiCall.execute(() => apiFunction(data));
-  }, [apiCall, validator, options]);
+      return apiCall.execute(() => apiFunction(data));
+    },
+    [apiCall, validator, options],
+  );
 
   return {
     ...apiCall,
