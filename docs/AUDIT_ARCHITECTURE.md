@@ -274,17 +274,17 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 22 | Mettre a jour les schemas Swagger vs realite (IDs integer, User corrige) | M4     | FAIT       |
 | 23 | Synchroniser versions package.json (client 0.1.0 -> 1.0.0)            | M8       | FAIT       |
 
-### Phase 6 — Polish (backlog)
+### Phase 6 — Polish (backlog) — PARTIELLE
 
-| #  | Action                                                                 | Ref      |
-| -- | ---------------------------------------------------------------------- | -------- |
-| 24 | Ajouter des barrel files pour components/, services/, controllers/     | M1       |
-| 25 | Extraire hooks useFormErrors et utiliser useLoadingState existant       | M2       |
-| 26 | Fixer les classes Tailwind dynamiques dans ResponsiveGrid              | M3       |
-| 27 | Uniformiser la gestion d'erreurs (pas de catch silencieux)             | M6       |
-| 28 | Ajouter des Error Boundaries locales par feature                       | M9       |
-| 29 | Implementer un cache API pour le dashboard admin                       | M10      |
-| 30 | Implementer le monitoring/error tracking (TODO logger.ts)              | M7       |
+| #  | Action                                                                 | Ref      | Statut     |
+| -- | ---------------------------------------------------------------------- | -------- | ---------- |
+| 24 | Ajouter des barrel files pour components/, services/, controllers/     | M1       | BACKLOG    |
+| 25 | Extraire hooks useFormErrors et utiliser useLoadingState existant       | M2       | BACKLOG    |
+| 26 | Fixer les classes Tailwind dynamiques dans ResponsiveGrid              | M3       | FAIT       |
+| 27 | Uniformiser la gestion d'erreurs (pas de catch silencieux)             | M6       | FAIT       |
+| 28 | Ajouter des Error Boundaries locales par feature                       | M9       | BACKLOG    |
+| 29 | Implementer un cache API pour le dashboard admin                       | M10      | BACKLOG    |
+| 30 | Implementer le monitoring/error tracking (TODO logger.ts)              | M7       | BACKLOG    |
 
 ---
 

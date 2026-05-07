@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { ReviewService } from "@/services/reviewService";
 import type { Review } from "@/types";
+import { logger } from "@/utils/logger";
 import { useCallback, useEffect, useState } from "react";
 import FadeInSection from "./FadeInSection";
 
@@ -47,8 +48,8 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
     try {
       const response = await ReviewService.getReviewsForStar(starId);
       setReviews(response.data || []);
-    } catch {
-      // Silently fail - reviews are not critical
+    } catch (error) {
+      logger.warn("Failed to fetch reviews:", error, "ReviewSection");
     } finally {
       setLoading(false);
     }
