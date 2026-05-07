@@ -245,14 +245,14 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 8  | Brancher Register/Login sur le validationService existant              | I3       | FAIT       |
 | 9  | Creer un validateur d'ID reutilisable pour les repositories            | I4       | FAIT       |
 
-### Phase 3 — God Files & SRP (sprint 1-2)
+### Phase 3 — God Files & SRP (sprint 1-2) — TERMINEE
 
-| #  | Action                                                                 | Ref      |
-| -- | ---------------------------------------------------------------------- | -------- |
-| 10 | Diviser emailService en EmailTemplates + EmailQueue + EmailSender      | C2       |
-| 11 | Decouper Admin.tsx en sous-composants (Dashboard, Users, Management)   | I5       |
-| 12 | Extraire les schemas Joi de paymentRoutes.js dans un fichier dedie     | I6       |
-| 13 | Decouper les repositories >400 lignes (Review, Order)                  | I6       |
+| #  | Action                                                                 | Ref      | Statut     |
+| -- | ---------------------------------------------------------------------- | -------- | ---------- |
+| 10 | Extraire templates email dans emailTemplates.js (498 -> 340 + 132)     | C2       | FAIT       |
+| 11 | ~~Decouper Admin.tsx~~ deja bien structure (DashboardView + UsersView)  | I5       | NON REQUIS |
+| 12 | Extraire les schemas Joi dans paymentValidation.js                     | I6       | FAIT       |
+| 13 | ~~Decouper repositories~~ tailles acceptables apres Phase 2 validateId | I6       | NON REQUIS |
 
 ### Phase 4 — Coherence & Patterns (sprint 2)
 

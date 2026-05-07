@@ -1,173 +1,28 @@
 // server/src/services/emailService.js
-// Service de simulation d'emails pour démonstration portfolio
+// Service de simulation d'emails pour demonstration portfolio
 
-const fs = require('fs').promises;
-const path = require('path');
-const logger = require('../utils/logger');
+const fs = require("fs").promises;
+const path = require("path");
+const logger = require("../utils/logger");
+const { createEmailTemplates } = require("./emailTemplates");
 
 class EmailSimulator {
   constructor() {
     this.emailQueue = [];
     this.sentEmails = [];
-    this.templates = new Map();
+    this.templates = createEmailTemplates();
     this.isProcessing = false;
 
-    // Configuration pour simulation
     this.config = {
-      fromEmail: 'noreply@stella.com',
-      fromName: 'Stella E-commerce',
+      fromEmail: "noreply@stella.com",
+      fromName: "Stella E-commerce",
       simulateDelay: true,
       saveToFile: true,
-      logToConsole: true
+      logToConsole: true,
     };
-
-    // Initialiser les templates d'email
-    this.initializeTemplates();
   }
 
-  // Initialiser les templates d'email
-  initializeTemplates() {
-    // Template de bienvenue
-    this.templates.set('welcome', {
-      subject: '🌟 Bienvenue chez Stella !',
-      template: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3D2A54 0%, #1E1326 100%); color: white; padding: 30px; text-align: center;">
-            <h1 style="margin: 0; font-size: 2.5rem;">🌟 Stella</h1>
-            <p style="margin: 10px 0 0 0; font-size: 1.1rem;">Votre boutique d'étoiles</p>
-          </div>
-          <div style="padding: 30px; background: white;">
-            <h2 style="color: #3D2A54;">Bienvenue {{firstName}} !</h2>
-            <p>Nous sommes ravis de vous accueillir dans la communauté Stella.</p>
-            <p>Chez nous, chaque étoile a une histoire à raconter, et nous sommes là pour vous aider à trouver la vôtre.</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{catalogUrl}}" style="background: #FFB347; color: #3D2A54; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">Découvrir notre catalogue</a>
-            </div>
-            <p style="color: #666; font-size: 0.9rem;">Si vous avez des questions, n'hésitez pas à nous contacter.</p>
-          </div>
-          <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #666;">
-            <p>© 2024 Stella E-commerce. Tous droits réservés.</p>
-          </div>
-        </div>
-      `
-    });
-
-    // Template de confirmation de commande
-    this.templates.set('orderConfirmation', {
-      subject: '✅ Confirmation de votre commande #{{orderNumber}}',
-      template: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3D2A54 0%, #1E1326 100%); color: white; padding: 30px; text-align: center;">
-            <h1 style="margin: 0; font-size: 2.5rem;">🌟 Stella</h1>
-            <p style="margin: 10px 0 0 0;">Confirmation de commande</p>
-          </div>
-          <div style="padding: 30px; background: white;">
-            <h2 style="color: #3D2A54;">Merci pour votre commande !</h2>
-            <p>Bonjour {{firstName}},</p>
-            <p>Votre commande <strong>#{{orderNumber}}</strong> a été confirmée et sera traitée sous peu.</p>
-
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #3D2A54;">Détails de la commande</h3>
-              <p><strong>Numéro :</strong> {{orderNumber}}</p>
-              <p><strong>Date :</strong> {{orderDate}}</p>
-              <p><strong>Montant total :</strong> {{totalAmount}}€</p>
-              <p><strong>Méthode de paiement :</strong> {{paymentMethod}}</p>
-            </div>
-
-            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <h4 style="margin-top: 0;">🌟 Vos étoiles</h4>
-              {{#stars}}
-              <p>• {{name}} ({{constellation}}) - {{quantity}}x {{price}}€</p>
-              {{/stars}}
-            </div>
-
-            <p>Vous recevrez bientôt un email avec les certificats personnalisés de vos étoiles.</p>
-          </div>
-          <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #666;">
-            <p>© 2024 Stella E-commerce. Tous droits réservés.</p>
-          </div>
-        </div>
-      `
-    });
-
-    // Template de notification de paiement
-    this.templates.set('paymentSuccess', {
-      subject: '💳 Paiement confirmé pour votre commande #{{orderNumber}}',
-      template: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center;">
-            <h1 style="margin: 0; font-size: 2rem;">✅ Paiement confirmé</h1>
-          </div>
-          <div style="padding: 30px; background: white;">
-            <h2 style="color: #28a745;">Paiement reçu avec succès !</h2>
-            <p>Bonjour {{firstName}},</p>
-            <p>Nous avons bien reçu votre paiement de <strong>{{amount}}€</strong> pour la commande #{{orderNumber}}.</p>
-            <p>Votre commande est maintenant en cours de préparation.</p>
-
-            <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-              <p><strong>ID Transaction :</strong> {{transactionId}}</p>
-              <p><strong>Méthode :</strong> {{paymentMethod}}</p>
-            </div>
-          </div>
-        </div>
-      `
-    });
-
-    // Template de reset de mot de passe
-    this.templates.set('passwordReset', {
-      subject: '🔐 Réinitialisation de votre mot de passe Stella',
-      template: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%); color: white; padding: 30px; text-align: center;">
-            <h1 style="margin: 0; font-size: 2rem;">🔐 Réinitialisation</h1>
-          </div>
-          <div style="padding: 30px; background: white;">
-            <h2 style="color: #dc3545;">Réinitialisation de mot de passe</h2>
-            <p>Bonjour {{firstName}},</p>
-            <p>Vous avez demandé la réinitialisation de votre mot de passe.</p>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{resetUrl}}" style="background: #dc3545; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">Réinitialiser mon mot de passe</a>
-            </div>
-
-            <p style="color: #666; font-size: 0.9rem;">Ce lien expire dans 1 heure. Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
-          </div>
-        </div>
-      `
-    });
-
-    // Template de newsletter
-    this.templates.set('newsletter', {
-      subject: '🌟 Nouvelles étoiles découvertes chez Stella !',
-      template: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #3D2A54 0%, #1E1326 100%); color: white; padding: 30px; text-align: center;">
-            <h1 style="margin: 0; font-size: 2.5rem;">🌟 Stella Newsletter</h1>
-            <p style="margin: 10px 0 0 0;">{{monthYear}}</p>
-          </div>
-          <div style="padding: 30px; background: white;">
-            <h2 style="color: #3D2A54;">Nouvelles découvertes stellaires</h2>
-            <p>Bonjour {{firstName}},</p>
-            <p>Ce mois-ci, nous avons ajouté {{newStarsCount}} nouvelles étoiles à notre catalogue !</p>
-
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0;">⭐ Étoile du mois</h3>
-              <p><strong>{{featuredStar.name}}</strong> dans la constellation {{featuredStar.constellation}}</p>
-              <p>{{featuredStar.description}}</p>
-              <p><strong>Prix spécial :</strong> {{featuredStar.price}}€</p>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{catalogUrl}}" style="background: #FFB347; color: #3D2A54; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">Voir les nouveautés</a>
-            </div>
-          </div>
-        </div>
-      `
-    });
-  }
-
-  // Créer et envoyer un email
-  async sendEmail({ to, template, data, priority = 'normal' }) {
+  async sendEmail({ to, template, data, priority = "normal" }) {
     const emailData = {
       id: this.generateEmailId(),
       to,
@@ -175,31 +30,28 @@ class EmailSimulator {
       data,
       priority,
       createdAt: new Date(),
-      status: 'queued',
+      status: "queued",
       attempts: 0,
-      maxAttempts: 3
+      maxAttempts: 3,
     };
 
-    // Ajouter à la queue
-    if (priority === 'high') {
+    if (priority === "high") {
       this.emailQueue.unshift(emailData);
     } else {
       this.emailQueue.push(emailData);
     }
 
-    // Démarrer le traitement si pas déjà en cours
     if (!this.isProcessing) {
       this.processQueue();
     }
 
     return {
       emailId: emailData.id,
-      status: 'queued',
-      message: 'Email ajouté à la queue de traitement'
+      status: "queued",
+      message: "Email ajoute a la queue de traitement",
     };
   }
 
-  // Traiter la queue d'emails
   async processQueue() {
     if (this.isProcessing || this.emailQueue.length === 0) {
       return;
@@ -212,47 +64,45 @@ class EmailSimulator {
 
       try {
         await this.processEmail(email);
-        email.status = 'sent';
+        email.status = "sent";
         email.sentAt = new Date();
         this.sentEmails.push(email);
 
         if (this.config.logToConsole) {
-          logger.info(`📧 Email envoyé: ${email.template} → ${email.to}`);
+          logger.info(`Email envoye: ${email.template} -> ${email.to}`);
         }
-
       } catch (error) {
         email.attempts += 1;
         email.lastError = error.message;
 
         if (email.attempts < email.maxAttempts) {
-          // Remettre en queue avec délai
           setTimeout(() => {
             this.emailQueue.push(email);
-          }, 5000 * email.attempts); // Délai croissant
+          }, 5000 * email.attempts);
         } else {
-          email.status = 'failed';
+          email.status = "failed";
           this.sentEmails.push(email);
-          logger.error(`❌ Échec email après ${email.maxAttempts} tentatives:`, error);
+          logger.error(
+            `Echec email apres ${email.maxAttempts} tentatives:`,
+            error
+          );
         }
       }
 
-      // Délai entre emails pour simulation réaliste
       if (this.config.simulateDelay) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
     this.isProcessing = false;
   }
 
-  // Traiter un email individuel
   async processEmail(email) {
     const template = this.templates.get(email.template);
     if (!template) {
-      throw new Error(`Template '${email.template}' non trouvé`);
+      throw new Error(`Template '${email.template}' non trouve`);
     }
 
-    // Interpoler les données dans le template
     const htmlContent = this.interpolateTemplate(template.template, email.data);
     const subject = this.interpolateTemplate(template.subject, email.data);
 
@@ -264,10 +114,9 @@ class EmailSimulator {
       html: htmlContent,
       sentAt: new Date(),
       template: email.template,
-      data: email.data
+      data: email.data,
     };
 
-    // Sauvegarder l'email pour la démo
     if (this.config.saveToFile) {
       await this.saveEmailToFile(emailContent);
     }
@@ -275,34 +124,31 @@ class EmailSimulator {
     return emailContent;
   }
 
-  // Interpoler les variables dans un template
   interpolateTemplate(template, data) {
     let result = template;
 
-    // Remplacer les variables simples {{variable}}
     result = result.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return data[key] !== undefined ? data[key] : match;
     });
 
-    // Traiter les boucles {{#array}}...{{/array}}
-    result = result.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (match, arrayKey, itemTemplate) => {
-      const array = data[arrayKey];
-      if (!Array.isArray(array)) return '';
-
-      return array.map(item => {
-        return this.interpolateTemplate(itemTemplate, item);
-      }).join('');
-    });
+    result = result.replace(
+      /\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g,
+      (match, arrayKey, itemTemplate) => {
+        const array = data[arrayKey];
+        if (!Array.isArray(array)) return "";
+        return array
+          .map((item) => this.interpolateTemplate(itemTemplate, item))
+          .join("");
+      }
+    );
 
     return result;
   }
 
-  // Sauvegarder l'email dans un fichier pour démo
   async saveEmailToFile(email) {
     try {
-      const emailsDir = path.join(__dirname, '../public/demo-emails');
+      const emailsDir = path.join(__dirname, "../public/demo-emails");
 
-      // Créer le dossier s'il n'existe pas
       try {
         await fs.access(emailsDir);
       } catch {
@@ -312,7 +158,6 @@ class EmailSimulator {
       const filename = `email-${email.id}.html`;
       const filepath = path.join(emailsDir, filename);
 
-      // Template HTML complet pour la prévisualisation
       const previewHtml = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -330,13 +175,13 @@ class EmailSimulator {
 <body>
     <div class="email-preview">
         <div class="email-header">
-            <h2 style="margin: 0;">📧 Aperçu Email - Stella</h2>
+            <h2 style="margin: 0;">Apercu Email - Stella</h2>
         </div>
         <div class="email-meta">
-            <p><strong>À :</strong> ${email.to}</p>
+            <p><strong>A :</strong> ${email.to}</p>
             <p><strong>De :</strong> ${email.from}</p>
             <p><strong>Sujet :</strong> ${email.subject}</p>
-            <p><strong>Envoyé le :</strong> ${email.sentAt.toLocaleString('fr-FR')}</p>
+            <p><strong>Envoye le :</strong> ${email.sentAt.toLocaleString("fr-FR")}</p>
             <p><strong>Template :</strong> ${email.template}</p>
         </div>
         <div>
@@ -346,102 +191,100 @@ class EmailSimulator {
 </body>
 </html>`;
 
-      await fs.writeFile(filepath, previewHtml, 'utf8');
+      await fs.writeFile(filepath, previewHtml, "utf8");
       email.previewUrl = `/demo-emails/${filename}`;
-
     } catch (error) {
-      logger.error('Erreur sauvegarde email:', error);
+      logger.error("Erreur sauvegarde email:", error);
     }
   }
 
-  // Générer un ID unique pour l'email
   generateEmailId() {
     return `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // Méthodes utilitaires pour différents types d'emails
+  // Methodes utilitaires pour differents types d'emails
 
   async sendWelcomeEmail(userEmail, firstName) {
     return this.sendEmail({
       to: userEmail,
-      template: 'welcome',
-      data: {
-        firstName,
-        catalogUrl: 'http://localhost:3001/catalog'
-      },
-      priority: 'high'
+      template: "welcome",
+      data: { firstName, catalogUrl: "http://localhost:3001/catalog" },
+      priority: "high",
     });
   }
 
   async sendOrderConfirmation(userEmail, orderData) {
     return this.sendEmail({
       to: userEmail,
-      template: 'orderConfirmation',
+      template: "orderConfirmation",
       data: {
         firstName: orderData.firstName,
         orderNumber: orderData.orderNumber,
-        orderDate: new Date().toLocaleDateString('fr-FR'),
+        orderDate: new Date().toLocaleDateString("fr-FR"),
         totalAmount: orderData.totalAmount,
         paymentMethod: orderData.paymentMethod,
-        stars: orderData.stars
+        stars: orderData.stars,
       },
-      priority: 'high'
+      priority: "high",
     });
   }
 
   async sendPaymentConfirmation(userEmail, paymentData) {
     return this.sendEmail({
       to: userEmail,
-      template: 'paymentSuccess',
+      template: "paymentSuccess",
       data: {
         firstName: paymentData.firstName,
         orderNumber: paymentData.orderNumber,
         amount: paymentData.amount,
         transactionId: paymentData.transactionId,
-        paymentMethod: paymentData.paymentMethod
+        paymentMethod: paymentData.paymentMethod,
       },
-      priority: 'high'
+      priority: "high",
     });
   }
 
   async sendPasswordReset(userEmail, firstName, resetToken) {
     return this.sendEmail({
       to: userEmail,
-      template: 'passwordReset',
+      template: "passwordReset",
       data: {
         firstName,
-        resetUrl: `http://localhost:3001/reset-password?token=${resetToken}`
+        resetUrl: `http://localhost:3001/reset-password?token=${resetToken}`,
       },
-      priority: 'high'
+      priority: "high",
     });
   }
 
   async sendNewsletter(userEmail, firstName, newsletterData) {
     return this.sendEmail({
       to: userEmail,
-      template: 'newsletter',
+      template: "newsletter",
       data: {
         firstName,
-        monthYear: new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+        monthYear: new Date().toLocaleDateString("fr-FR", {
+          month: "long",
+          year: "numeric",
+        }),
         newStarsCount: newsletterData.newStarsCount,
         featuredStar: newsletterData.featuredStar,
-        catalogUrl: 'http://localhost:3001/catalog'
+        catalogUrl: "http://localhost:3001/catalog",
       },
-      priority: 'normal'
+      priority: "normal",
     });
   }
 
-  // Obtenir les statistiques d'emails
   getEmailStats() {
     const total = this.sentEmails.length;
-    const sent = this.sentEmails.filter(e => e.status === 'sent').length;
-    const failed = this.sentEmails.filter(e => e.status === 'failed').length;
+    const sent = this.sentEmails.filter((e) => e.status === "sent").length;
+    const failed = this.sentEmails.filter((e) => e.status === "failed").length;
     const queued = this.emailQueue.length;
 
     const templateStats = {};
-    this.sentEmails.forEach(email => {
-      templateStats[email.template] = (templateStats[email.template] || 0) + 1;
-    });
+    for (const email of this.sentEmails) {
+      templateStats[email.template] =
+        (templateStats[email.template] || 0) + 1;
+    }
 
     return {
       total,
@@ -450,42 +293,40 @@ class EmailSimulator {
       queued,
       successRate: total > 0 ? Math.round((sent / total) * 100) : 0,
       templateStats,
-      recentEmails: this.sentEmails.slice(-5).map(email => ({
+      recentEmails: this.sentEmails.slice(-5).map((email) => ({
         id: email.id,
         to: email.to,
         template: email.template,
         status: email.status,
         sentAt: email.sentAt,
-        previewUrl: email.previewUrl
-      }))
+        previewUrl: email.previewUrl,
+      })),
     };
   }
 
-  // Obtenir un email par ID
   getEmailById(emailId) {
-    return this.sentEmails.find(email => email.id === emailId);
+    return this.sentEmails.find((email) => email.id === emailId);
   }
 
-  // Lister tous les emails avec pagination
   getEmails(page = 1, limit = 10) {
     const start = (page - 1) * limit;
     const emails = this.sentEmails.slice(start, start + limit);
 
     return {
-      emails: emails.map(email => ({
+      emails: emails.map((email) => ({
         id: email.id,
         to: email.to,
         template: email.template,
         status: email.status,
         createdAt: email.createdAt,
         sentAt: email.sentAt,
-        previewUrl: email.previewUrl
+        previewUrl: email.previewUrl,
       })),
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(this.sentEmails.length / limit),
-        total: this.sentEmails.length
-      }
+        total: this.sentEmails.length,
+      },
     };
   }
 }
@@ -495,5 +336,5 @@ const emailService = new EmailSimulator();
 
 module.exports = {
   EmailSimulator,
-  emailService
+  emailService,
 };
