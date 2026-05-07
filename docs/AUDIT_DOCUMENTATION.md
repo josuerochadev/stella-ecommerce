@@ -200,9 +200,9 @@ Le projet a une bonne base documentaire (CLAUDE.md, audits, roadmap, Swagger 96%
 
 | #  | Action                                                                 | Ref      | Statut   |
 | -- | ---------------------------------------------------------------------- | -------- | -------- |
-| 8  | Creer CONTRIBUTING.md (conventional commits, Biome, Husky, 1PR=1theme) | I3       | A FAIRE  |
-| 9  | Creer CHANGELOG.md retroactif (basé sur les phases de la roadmap)      | I4       | A FAIRE  |
-| 10 | Creer docs/adr/ avec 4-5 ADR fondamentaux                             | I5       | A FAIRE  |
+| 8  | Creer CONTRIBUTING.md (conventional commits, Biome, Husky, 1PR=1theme) | I3       | FAIT     |
+| 9  | Creer CHANGELOG.md retroactif (base sur les phases de la roadmap)      | I4       | FAIT     |
+| 10 | Creer docs/adr/ avec 5 ADR fondamentaux                               | I5       | FAIT     |
 
 ### Phase 3 — Documentation API (sprint 1)
 
