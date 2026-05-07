@@ -56,17 +56,8 @@ exports.initiatePayment = async (req, res, next) => {
     // Traiter le paiement
     const paymentResult = await paymentService.processPayment(paymentData);
 
-    // Mettre à jour le statut de la commande selon le résultat
-    if (paymentResult.status === 'completed') {
-      order.status = 'paid';
-      order.paymentMethod = method;
-      order.transactionId = paymentResult.transactionId;
-      await order.save();
-    } else if (paymentResult.status === 'failed') {
-      order.status = 'payment_failed';
-      order.paymentError = paymentResult.error;
-      await order.save();
-    }
+    // Déléguer la mise à jour de commande au service
+    await paymentService.updateOrderAfterPayment(order, paymentResult, method);
 
     // Réponse sécurisée
     const response = buildPaymentResponse(paymentResult, order.id);

@@ -14,6 +14,8 @@ const { CartService } = require('../services/CartService');
 const { StarAdminService } = require('../services/StarAdminService');
 const { OrderService } = require('../services/OrderService');
 const tokenService = require('../services/tokenService');
+const { paymentService } = require('../services/paymentService');
+const { emailService } = require('../services/emailService');
 
 /**
  * Configure et retourne le container d'injection de dépendances
@@ -96,8 +98,10 @@ function createContainer() {
       true // Singleton
     );
 
-    // Services existants (token service)
+    // Services existants (instances pre-configurees)
     container.registerInstance('tokenService', tokenService);
+    container.registerInstance('paymentService', paymentService);
+    container.registerInstance('emailService', emailService);
 
     // Validation des dépendances
     container.validateAllDependencies();

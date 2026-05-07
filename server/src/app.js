@@ -10,7 +10,7 @@ const cors = require("cors");
 const { sequelize } = require("./models");
 const { errorHandler, AppError } = require("./middlewares/errorHandler");
 const routes = require("./routes");
-const { NODE_ENV, PORT: _PORT } = require("./config/config");
+const { NODE_ENV, SESSION_SECRET } = require("./config/config");
 const { APP_CONSTANTS, HTTP_STATUS, CORS_OPTIONS, SESSION_CONFIG } = require("./constants/app");
 const { info, error: _error } = require("./utils/logger");
 const { serve, setup } = require("./utils/swagger");
@@ -43,7 +43,7 @@ app.use(cookieParser());
 
 // Configure session for CSRF protection
 app.use(session({
-	secret: process.env.SESSION_SECRET || process.env.JWT_SECRET + '_session',
+	secret: SESSION_SECRET,
 	...SESSION_CONFIG,
 	cookie: {
 		...SESSION_CONFIG.cookie,

@@ -254,16 +254,16 @@ L'architecture de base est saine (MVC, DI Container, Zustand, services separes) 
 | 12 | Extraire les schemas Joi dans paymentValidation.js                     | I6       | FAIT       |
 | 13 | ~~Decouper repositories~~ tailles acceptables apres Phase 2 validateId | I6       | NON REQUIS |
 
-### Phase 4 — Coherence & Patterns (sprint 2)
+### Phase 4 — Coherence & Patterns (sprint 2) — TERMINEE
 
-| #  | Action                                                                 | Ref      |
-| -- | ---------------------------------------------------------------------- | -------- |
-| 14 | Uniformiser le pattern d'export des controllers (un seul style)        | I7       |
-| 15 | Enregistrer paymentService et emailService dans le DI Container        | I8       |
-| 16 | Extraire la logique metier de paymentController vers un service        | I9       |
-| 17 | Centraliser la config serveur (validation des env vars au demarrage)   | I10      |
-| 18 | Standardiser Biome a une version unique (^1.9.4)                       | I11      |
-| 19 | Remplacer le setTimeout AuthContext par un flow async propre           | I12      |
+| #  | Action                                                                 | Ref      | Statut     |
+| -- | ---------------------------------------------------------------------- | -------- | ---------- |
+| 14 | ~~Uniformiser exports controllers~~ 2 patterns justifies (DI vs non-DI)| I7       | ACCEPTABLE |
+| 15 | Enregistrer paymentService et emailService dans le DI Container        | I8       | FAIT       |
+| 16 | Extraire logique metier paymentController -> updateOrderAfterPayment   | I9       | FAIT       |
+| 17 | Centraliser config serveur + validation env vars au demarrage          | I10      | FAIT       |
+| 18 | Standardiser Biome a ^1.9.4 (root + client + server)                  | I11      | FAIT       |
+| 19 | Remplacer setTimeout AuthContext par Promise.all                       | I12      | FAIT       |
 
 ### Phase 5 — Dependencies & Config (sprint 2)
 

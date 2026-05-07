@@ -1,11 +1,11 @@
 // client/src/context/AuthContext.tsx
 
-import type { ReactNode } from "react";
-import { createContext, useState, useEffect, useContext } from "react";
 import { useCartStore } from "@/stores/useCartStore";
-import { useWishlistStore } from "@/stores/useWishlistStore";
 import { useUserStore } from "@/stores/useUserStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
 import { logger } from "@/utils/logger";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -31,13 +31,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      // Différer le chargement pour s'assurer que tout est prêt
-      setTimeout(() => {
-        useCartStore.getState().fetchCart();
-        useWishlistStore.getState().fetchWishlist();
-        useUserStore.getState().fetchProfile();
-        setIsLoading(false);
-      }, 100);
+      Promise.all([
+        useCartStore.getState().fetchCart(),
+        useWishlistStore.getState().fetchWishlist(),
+        useUserStore.getState().fetchProfile(),
+      ]).finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
     }
@@ -48,18 +46,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(true);
     setIsLoading(true);
 
-    // Différer les appels aux stores pour éviter les re-renders immédiats
-    setTimeout(() => {
-      try {
-        useCartStore.getState().fetchCart();
-        useWishlistStore.getState().fetchWishlist();
-        useUserStore.getState().fetchProfile();
-      } catch (error) {
+    Promise.all([
+      useCartStore.getState().fetchCart(),
+      useWishlistStore.getState().fetchWishlist(),
+      useUserStore.getState().fetchProfile(),
+    ])
+      .catch((error) => {
         logger.warn("Error fetching user data after login:", error, "AuthContext");
-      } finally {
-        setIsLoading(false);
-      }
-    }, 100);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const logout = () => {

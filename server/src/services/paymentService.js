@@ -55,6 +55,22 @@ class PaymentOrchestrator {
   }
 
   /**
+   * Met a jour le statut d'une commande apres paiement
+   */
+  async updateOrderAfterPayment(order, paymentResult, method) {
+    if (paymentResult.status === "completed") {
+      order.status = "paid";
+      order.paymentMethod = method;
+      order.transactionId = paymentResult.transactionId;
+      await order.save();
+    } else if (paymentResult.status === "failed") {
+      order.status = "payment_failed";
+      order.paymentError = paymentResult.error;
+      await order.save();
+    }
+  }
+
+  /**
    * Générer un payload webhook - délégation au processeur
    * Responsabilité unique : orchestration
    */
