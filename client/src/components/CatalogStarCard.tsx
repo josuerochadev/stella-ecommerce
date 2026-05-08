@@ -4,7 +4,7 @@
 import type { Star } from "@/types";
 import { cn } from "@/utils/classNames";
 import { EyeIcon } from "@/utils/icons";
-import { getStarImagePath } from "@/utils/pathHelpers";
+import { getStarImagePath, getStarImagePathWebP } from "@/utils/pathHelpers";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import AddToCartButton from "./AddToCartButton";
@@ -30,14 +30,17 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
     <FadeInSection>
       <div className={cardClass}>
         <div className="relative overflow-hidden">
-          <img
-            src={getStarImagePath(star)}
-            alt={star.name}
-            width={400}
-            height={192}
-            loading="lazy"
-            className="w-full h-48 object-cover transition-transform duration-[600ms] ease-out hover:scale-105 brightness-75 saturate-90"
-          />
+          <picture>
+            <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
+            <img
+              src={getStarImagePath(star)}
+              alt={star.name}
+              width={400}
+              height={192}
+              loading="lazy"
+              className="w-full h-48 object-cover transition-transform duration-[600ms] ease-out hover:scale-105 brightness-75 saturate-90"
+            />
+          </picture>
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-surface-0/90 to-transparent" />
         </div>
         <div className="p-4 flex-grow flex flex-col justify-between">

@@ -22,34 +22,43 @@ const HeroSection: React.FC<HeroSectionProps> = ({ children }) => {
     <section className="w-full h-screen overflow-hidden relative">
       <Slider {...settings}>
         <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-          <img
-            src="/assets/images/hero/1.jpg"
-            alt="Constellations"
-            width={1920}
-            height={1080}
-            fetchPriority="high"
-            className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
-          />
+          <picture>
+            <source srcSet="/assets/images/hero/1.webp" type="image/webp" />
+            <img
+              src="/assets/images/hero/1.jpg"
+              alt="Constellations"
+              width={1920}
+              height={1080}
+              fetchPriority="high"
+              className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
+            />
+          </picture>
         </div>
         <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-          <img
-            src="/assets/images/hero/2.jpg"
-            alt="Etoiles eclatantes"
-            width={1920}
-            height={1080}
-            loading="lazy"
-            className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
-          />
+          <picture>
+            <source srcSet="/assets/images/hero/2.webp" type="image/webp" />
+            <img
+              src="/assets/images/hero/2.jpg"
+              alt="Etoiles eclatantes"
+              width={1920}
+              height={1080}
+              loading="lazy"
+              className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
+            />
+          </picture>
         </div>
         <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-          <img
-            src="/assets/images/hero/3.jpg"
-            alt="Adopter une etoile"
-            width={1920}
-            height={1080}
-            loading="lazy"
-            className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
-          />
+          <picture>
+            <source srcSet="/assets/images/hero/3.webp" type="image/webp" />
+            <img
+              src="/assets/images/hero/3.jpg"
+              alt="Adopter une etoile"
+              width={1920}
+              height={1080}
+              loading="lazy"
+              className="w-full h-full object-cover hero-img-animate brightness-[0.28] saturate-[0.7]"
+            />
+          </picture>
         </div>
       </Slider>
 

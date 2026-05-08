@@ -3,7 +3,7 @@
 
 import type { Star } from "@/types";
 import { EyeIcon, TrashIcon } from "@/utils/icons";
-import { getStarImagePath } from "@/utils/pathHelpers";
+import { getStarImagePath, getStarImagePathWebP } from "@/utils/pathHelpers";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import FadeInSection from "./FadeInSection";
@@ -24,14 +24,17 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
   return (
     <FadeInSection>
       <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
-        <img
-          src={getStarImagePath(star)}
-          alt={star.name}
-          width={200}
-          height={200}
-          loading="lazy"
-          className="w-1/4 flex-shrink-0 object-cover"
-        />
+        <picture className="w-1/4 flex-shrink-0">
+          <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
+          <img
+            src={getStarImagePath(star)}
+            alt={star.name}
+            width={200}
+            height={200}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </picture>
         <div className="p-4 flex-grow flex flex-col justify-between">
           <h2 className="text-xl font-display mb-2 text-text">{star.name}</h2>
           <p className="text-sm mb-4">{star.description}</p>

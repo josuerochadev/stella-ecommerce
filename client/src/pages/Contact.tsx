@@ -1,6 +1,7 @@
+import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
 import { useState } from "react";
 import type React from "react";
-import FadeInSection from "@/components/FadeInSection";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -17,6 +18,11 @@ const Contact: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 max-w-xl">
+      <SEO
+        title="Contact"
+        description="Contactez l'equipe Stella. Questions, support ou informations sur nos etoiles."
+        path="/contact"
+      />
       <h1 className="text-4xl font-display mb-6 text-center">Contactez-nous</h1>
       <FadeInSection>
         <div className="bg-secondary text-text p-6 rounded-md shadow-lg mb-8">
@@ -31,61 +37,67 @@ const Contact: React.FC = () => {
               </p>
             </div>
           ) : (
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
-                Nom
-              </label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Votre nom"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Votre email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
-              />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium mb-2">Sujet</label>
-              <input
-                id="subject"
-                type="text"
-                placeholder="Sujet de votre message"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
-              />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-              <textarea
-                id="message"
-                placeholder="Votre message..."
-                value={formData.message}
-                onChange={handleChange}
-                required
-                className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
-                rows={5}
-              />
-            </div>
-            <button type="submit" className="btn">
-              Envoyer
-            </button>
-          </form>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  Nom
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Votre nom"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Votre email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                />
+              </div>
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                  Sujet
+                </label>
+                <input
+                  id="subject"
+                  type="text"
+                  placeholder="Sujet de votre message"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  placeholder="Votre message..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                  rows={5}
+                />
+              </div>
+              <button type="submit" className="btn">
+                Envoyer
+              </button>
+            </form>
           )}
         </div>
       </FadeInSection>

@@ -2,6 +2,7 @@
 
 import FadeInSection from "@/components/FadeInSection";
 import HeroSection from "@/components/HeroSection";
+import SEO from "@/components/SEO";
 import StarCard from "@/components/StarCard";
 import { APP_CONSTANTS } from "@/constants/app";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +22,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <SEO path="/" />
       {/* Hero */}
       <FadeInSection>
         <HeroSection>
@@ -75,14 +77,17 @@ const Home: React.FC = () => {
               </a>
             </div>
             <div className="flex justify-center">
-              <img
-                src="/assets/images/astro.png"
-                alt="Astronaute"
-                width={380}
-                height={380}
-                loading="lazy"
-                className="w-full max-w-[380px] object-contain drop-shadow-[0_0_40px_rgba(61,42,84,0.8)]"
-              />
+              <picture>
+                <source srcSet="/assets/images/astro.webp" type="image/webp" />
+                <img
+                  src="/assets/images/astro.png"
+                  alt="Astronaute"
+                  width={380}
+                  height={380}
+                  loading="lazy"
+                  className="w-full max-w-[380px] object-contain drop-shadow-[0_0_40px_rgba(61,42,84,0.8)]"
+                />
+              </picture>
             </div>
           </div>
         </section>

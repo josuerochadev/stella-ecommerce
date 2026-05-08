@@ -1,16 +1,17 @@
 // client/src/pages/Catalog.tsx
 // Responsabilité unique : Orchestrateur principal de la page catalogue
 
-import { useEffect, memo } from "react";
-import { useCatalogFilters } from "@/hooks/useCatalogFilters";
-import { useCatalogSearch } from "@/hooks/useCatalogSearch";
-import { useCatalogSorting } from "@/hooks/useCatalogSorting";
-import { useCatalogNavigation } from "@/hooks/useCatalogNavigation";
-import CatalogSearchBar from "@/components/CatalogSearchBar";
 import CatalogAdvancedFilters from "@/components/CatalogAdvancedFilters";
 import CatalogResultsGrid from "@/components/CatalogResultsGrid";
+import CatalogSearchBar from "@/components/CatalogSearchBar";
 import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
+import { useCatalogFilters } from "@/hooks/useCatalogFilters";
+import { useCatalogNavigation } from "@/hooks/useCatalogNavigation";
+import { useCatalogSearch } from "@/hooks/useCatalogSearch";
+import { useCatalogSorting } from "@/hooks/useCatalogSorting";
 import type { Star } from "@/types";
+import { memo, useEffect } from "react";
 
 /**
  * Page principale du catalogue
@@ -54,6 +55,7 @@ const Catalogue: React.FC = () => {
   }, [filters.query, updateSearchURL]);
 
   // Recherche initiale au montage seulement
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — run once on mount
   useEffect(() => {
     if (!hasInitialSearched) {
       performSearch(filters);
@@ -62,6 +64,7 @@ const Catalogue: React.FC = () => {
   }, [hasInitialSearched, performSearch, markInitialSearchComplete]);
 
   // Recherche uniquement sur changement de filtres (après initialisation)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: individual filter fields listed to control re-run granularity
   useEffect(() => {
     if (hasInitialSearched) {
       performSearch(filters);
@@ -76,7 +79,7 @@ const Catalogue: React.FC = () => {
     filters.sortBy,
     filters.sortOrder,
     hasInitialSearched,
-    performSearch
+    performSearch,
   ]);
 
   // Suggestions lors du changement de requête
@@ -108,6 +111,11 @@ const Catalogue: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-12 px-4">
+      <SEO
+        title="Catalogue"
+        description="Explorez notre catalogue d'etoiles. Filtrez par constellation, prix et magnitude."
+        path="/catalog"
+      />
       <FadeInSection>
         <section className="my-8">
           <div className="max-w-4xl mx-auto">

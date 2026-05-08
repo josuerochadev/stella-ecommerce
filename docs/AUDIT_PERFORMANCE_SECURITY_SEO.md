@@ -401,11 +401,11 @@ Toutes les routes sont lazy-loaded via `React.lazy()` + `Suspense` dans `client/
 
 | # | Action | Ref | Impact |
 |---|--------|-----|--------|
-| 16 | Convertir images en WebP + generer variantes responsive | C-A1 | Perf majeur |
-| 17 | Installer react-helmet-async pour meta tags dynamiques + OG | C-S2 | SEO |
-| 18 | Ajouter JSON-LD pour Product, Review, Organization | I-S4 | SEO |
-| 19 | Ajouter AbortController dans httpClient | I-P1 | Perf |
-| 20 | Ajouter web-vitals monitoring | I-S5 | Mesure |
+| 16 | Convertir images en WebP + generer variantes responsive | C-A1 | FAIT (24 WebP + `<picture>` dans 6 composants) |
+| 17 | Installer react-helmet-async pour meta tags dynamiques + OG | C-S2 | FAIT (SEO.tsx + 5 pages) |
+| 18 | Ajouter JSON-LD pour Product, Review, Organization | I-S4 | FAIT (Product LD sur ProductDetail, Organization dans App) |
+| 19 | Ajouter AbortController dans httpClient | I-P1 | FAIT (createCancelToken dans httpClient.ts) |
+| 20 | Ajouter web-vitals monitoring | I-S5 | FAIT (CLS, INP, FCP, LCP, TTFB) |
 
 ### Phase 4 — Architecture perf (sprint)
 

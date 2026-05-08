@@ -3,7 +3,7 @@
 
 import type { Star } from "@/types";
 import { ArrowLeftIcon } from "@/utils/icons";
-import { getStarImagePath } from "@/utils/pathHelpers";
+import { getStarImagePath, getStarImagePathWebP } from "@/utils/pathHelpers";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import AddToCartButton from "./AddToCartButton";
@@ -23,14 +23,17 @@ const DetailStarCard: React.FC<DetailStarCardProps> = ({ star }) => {
   return (
     <FadeInSection>
       <div className="bg-surface-1 text-text rounded-lg shadow-lg flex md:flex-row flex-col h-full mb-4 overflow-hidden border border-text/[0.07]">
-        <img
-          src={getStarImagePath(star)}
-          alt={star.name}
-          width={600}
-          height={600}
-          loading="lazy"
-          className="md:w-1/2 w-full object-cover brightness-[0.85] saturate-[0.9]"
-        />
+        <picture className="md:w-1/2 w-full">
+          <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
+          <img
+            src={getStarImagePath(star)}
+            alt={star.name}
+            width={600}
+            height={600}
+            loading="lazy"
+            className="w-full h-full object-cover brightness-[0.85] saturate-[0.9]"
+          />
+        </picture>
         <div className="p-6 flex-grow flex flex-col justify-between md:pl-8">
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] text-special/70 mb-2">

@@ -1,6 +1,7 @@
 // client/src/App.tsx
 
 import React, { Suspense, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from "react-router-dom";
 import CookieBanner from "./components/CookieBanner";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -51,6 +52,23 @@ const App: React.FC = () => {
   return (
     <Router>
       <AuthEventListener />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Stella",
+            url: "https://stella-ecommerce.fr",
+            description: "Adoptez une etoile et offrez un cadeau unique.",
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: "+33-1-23-45-67-89",
+              contactType: "customer service",
+              availableLanguage: "French",
+            },
+          })}
+        </script>
+      </Helmet>
       <ErrorBoundary>
         <div className="flex flex-col min-h-screen">
           <Header />

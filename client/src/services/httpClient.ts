@@ -77,6 +77,24 @@ export const httpClient = createHttpClient();
 export const createNewHttpClient = createHttpClient;
 
 /**
+ * Creates an AbortController-backed cancel token for API calls.
+ * Use with httpClient requests to cancel them on component unmount.
+ *
+ * @example
+ * const { signal, cancel } = createCancelToken();
+ * httpClient.get("/stars", { signal });
+ * // on cleanup:
+ * cancel();
+ */
+export const createCancelToken = () => {
+  const controller = new AbortController();
+  return {
+    signal: controller.signal,
+    cancel: () => controller.abort(),
+  };
+};
+
+/**
  * Utilitaires de cookies réexportés pour les services
  */
 export { getCookie };

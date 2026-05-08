@@ -1,10 +1,16 @@
+import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
 // client/src/pages/About.tsx
 import type React from "react";
-import FadeInSection from "@/components/FadeInSection";
 
 const About: React.FC = () => {
   return (
     <div className="container mx-auto pt-20 px-4">
+      <SEO
+        title="A propos"
+        description="Decouvrez Stella, votre portail vers les etoiles. Notre mission est de rapprocher l'univers de chacun."
+        path="/about"
+      />
       <h1 className="text-4xl font-display mb-8 text-center">À propos de Stella</h1>
       <FadeInSection>
         <div className="bg-secondary text-text p-6 rounded-md shadow-lg">
