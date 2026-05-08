@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stella — Toasts</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .card { padding: 24px; gap: 12px; }
+  .toast {
+    display:flex; gap:12px; padding: 14px;
+    border-radius: 8px; backdrop-filter: blur(4px);
+    border-left: 4px solid; min-width: 320px; max-width: 480px;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / .35);
+  }
+  .toast h4 { margin: 0 0 4px; font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 600; }
+  .toast p  { margin: 0; font-size: 13px; opacity: .9; line-height: 1.5; }
+  .t-success { background: rgba(20,83,45,.9); border-color: #16a34a; color: #bbf7d0; }
+  .t-error   { background: rgba(127,29,29,.9); border-color: #dc2626; color: #fecaca; }
+  .t-warning { background: rgba(120,53,15,.9); border-color: #f59e0b; color: #fde68a; }
+  .t-info    { background: rgba(30,58,138,.9); border-color: #3b82f6; color: #bfdbfe; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="toast t-success">
+    <span style="font-size:18px">✓</span>
+    <div><h4>Étoile ajoutée au panier</h4><p>Sirius a bien été ajoutée à votre panier.</p></div>
+  </div>
+  <div class="toast t-error">
+    <span style="font-size:18px">✕</span>
+    <div><h4>Connexion impossible</h4><p>Vérifiez votre email et votre mot de passe.</p></div>
+  </div>
+  <div class="toast t-info">
+    <span style="font-size:18px">ⓘ</span>
+    <div><h4>Nouveauté disponible</h4><p>Découvrez la dernière étoile ajoutée au catalogue.</p></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from "react";
 
 interface SkeletonProps {
   className?: string;
@@ -9,19 +9,19 @@ interface SkeletonProps {
 }
 
 export const Skeleton: React.FC<SkeletonProps> = ({
-  className = '',
-  width = '100%',
-  height = '1rem',
+  className = "",
+  width = "100%",
+  height = "1rem",
   rounded = false,
   animate = true,
 }) => {
-  const baseClasses = 'bg-gray-200 dark:bg-gray-700';
-  const animationClasses = animate ? 'skeleton-shimmer' : '';
-  const roundedClasses = rounded ? 'rounded-full' : 'rounded';
+  const baseClasses = "bg-surface-2";
+  const animationClasses = animate ? "skeleton-shimmer" : "";
+  const roundedClasses = rounded ? "rounded-full" : "rounded";
 
   const style = {
-    width: typeof width === 'number' ? `${width}px` : width,
-    height: typeof height === 'number' ? `${height}px` : height,
+    width: typeof width === "number" ? `${width}px` : width,
+    height: typeof height === "number" ? `${height}px` : height,
   };
 
   return (
@@ -35,15 +35,11 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 export const SkeletonText: React.FC<{
   lines?: number;
   className?: string;
-}> = ({ lines = 3, className = '' }) => {
+}> = ({ lines = 3, className = "" }) => {
   return (
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: lines }, (_, i) => (
-        <Skeleton
-          key={i}
-          height="0.875rem"
-          width={i === lines - 1 ? '75%' : '100%'}
-        />
+        <Skeleton key={i} height="0.875rem" width={i === lines - 1 ? "75%" : "100%"} />
       ))}
     </div>
   );
@@ -60,25 +56,17 @@ export const SkeletonCard: React.FC<{
   showTitle = true,
   showDescription = true,
   showAction = true,
-  className = ''
+  className = "",
 }) => {
   return (
     <div className={`bg-secondary p-4 rounded-lg shadow-lg ${className}`}>
-      {showImage && (
-        <Skeleton height="12rem" className="mb-4" rounded />
-      )}
+      {showImage && <Skeleton height="12rem" className="mb-4" rounded />}
       <div className="space-y-3">
-        {showTitle && (
-          <Skeleton height="1.25rem" width="80%" />
-        )}
-        {showDescription && (
-          <SkeletonText lines={2} />
-        )}
+        {showTitle && <Skeleton height="1.25rem" width="80%" />}
+        {showDescription && <SkeletonText lines={2} />}
         <div className="flex justify-between items-center mt-4">
           <Skeleton height="1.5rem" width="4rem" />
-          {showAction && (
-            <Skeleton height="2.5rem" width="6rem" rounded />
-          )}
+          {showAction && <Skeleton height="2.5rem" width="6rem" rounded />}
         </div>
       </div>
     </div>
@@ -89,13 +77,14 @@ export const SkeletonGrid: React.FC<{
   count?: number;
   columns?: number;
   className?: string;
-}> = ({ count = 6, columns = 3, className = '' }) => {
-  const gridCols = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 md:grid-cols-2',
-    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
-  }[columns] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+}> = ({ count = 6, columns = 3, className = "" }) => {
+  const gridCols =
+    {
+      1: "grid-cols-1",
+      2: "grid-cols-1 md:grid-cols-2",
+      3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+      4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
+    }[columns] || "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
     <div className={`grid ${gridCols} gap-6 ${className}`}>
@@ -106,7 +95,7 @@ export const SkeletonGrid: React.FC<{
   );
 };
 
-export const SkeletonProfile: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const SkeletonProfile: React.FC<{ className?: string }> = ({ className = "" }) => {
   return (
     <div className={`bg-secondary p-6 rounded-lg shadow-lg ${className}`}>
       <div className="flex items-center space-x-4 mb-6">
@@ -133,14 +122,12 @@ export const SkeletonList: React.FC<{
   count?: number;
   showAvatar?: boolean;
   className?: string;
-}> = ({ count = 5, showAvatar = true, className = '' }) => {
+}> = ({ count = 5, showAvatar = true, className = "" }) => {
   return (
     <div className={`space-y-4 ${className}`}>
       {Array.from({ length: count }, (_, i) => (
         <div key={i} className="flex items-center space-x-4 p-4 bg-secondary rounded-lg">
-          {showAvatar && (
-            <Skeleton width={48} height={48} rounded />
-          )}
+          {showAvatar && <Skeleton width={48} height={48} rounded />}
           <div className="flex-1 space-y-2">
             <Skeleton height="1.25rem" width="60%" />
             <Skeleton height="1rem" width="40%" />

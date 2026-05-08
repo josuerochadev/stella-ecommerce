@@ -22,7 +22,8 @@
         "noUnusedVariables": "error"
       },
       "suspicious": {
-        "noConsoleLog": "warn"
+        "noConsoleLog": "warn",
+        "noArrayIndexKey": "off"
       },
       "style": {
         "useConst": "error"

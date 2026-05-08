@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Type system v2</title>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<link rel="stylesheet" href="_base.css"/>
+<style>
+.card { padding:24px; gap:0; }
+.row  { display:grid; grid-template-columns: 110px 70px 1fr; gap:12px; align-items:baseline; padding:8px 0; border-bottom: 1px solid rgba(174,201,255,.06); }
+.row:last-child { border-bottom:none; }
+.role { font-family:'Bebas Neue',sans-serif; letter-spacing:.1em; font-size:11px; color:rgba(174,201,255,.45); text-transform:uppercase; }
+.meta { font-family:ui-monospace,Menlo,monospace; font-size:10px; color:rgba(174,201,255,.35); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="row"><span class="role">Display</span><span class="meta">96 / display</span><span class="stl-display" style="font-size:56px">Stella</span></div>
+  <div class="row"><span class="role">H1</span><span class="meta">60 / display</span><span class="stl-h1" style="font-size:40px">Catalogue</span></div>
+  <div class="row"><span class="role">H2</span><span class="meta">36 / display</span><span class="stl-h2" style="font-size:26px">Nouveautés</span></div>
+  <div class="row"><span class="role">H3</span><span class="meta">20 / serif bold</span><span class="stl-h3">Sirius · Grand Chien</span></div>
+  <div class="row"><span class="role">Body lg</span><span class="meta">18 / serif</span><span class="stl-body-lg">Adoptez une étoile et illuminez votre vie.</span></div>
+  <div class="row"><span class="role">Body</span><span class="meta">16 / sans</span><span class="stl-body">Parcourir les constellations et trouver la bonne étoile.</span></div>
+  <div class="row"><span class="role">Small</span><span class="meta">14 / sans muted</span><span class="stl-small">Saisissez votre adresse e-mail de connexion.</span></div>
+  <div class="row"><span class="role">Caption</span><span class="meta">12 / sans faint</span><span class="stl-caption">Magnitude : -1.46 · Distance : 8,6 al · Constellation : Grand Chien</span></div>
+  <div class="row"><span class="role">Eyebrow</span><span class="meta">14 / action wide</span><span class="stl-eyebrow">Le saviez-vous ?</span></div>
+  <div class="row"><span class="role">Action</span><span class="meta">18 / action</span><span class="stl-action">Voir notre catalogue</span></div>
+  <div class="row"><span class="role">Price</span><span class="meta">24 / action amber</span><span class="stl-price">149 €</span></div>
+  <div class="row"><span class="role">Quote</span><span class="meta">20 / serif italic</span><span class="stl-quote">«&nbsp;Un morceau du ciel, pour toujours.&nbsp;»</span></div>
+</div>
+</body>
+</html>

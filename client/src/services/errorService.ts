@@ -93,7 +93,7 @@ export class ErrorService {
   }
 
   public logError(error: ErrorDetails): void {
-    for (const handler of this.errorHandlers.values()) {
+    for (const handler of Array.from(this.errorHandlers.values())) {
       try {
         handler(error);
       } catch (handlerError) {

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Stella — UI Kit v3</title>
+<link rel="stylesheet" href="../../colors_and_type.css"/>
+<style>
+html, body { margin:0; padding:0; background:#080610; }
+*, *::before, *::after { box-sizing:border-box; }
+body { font-family:'Roboto',sans-serif; -webkit-font-smoothing:antialiased; }
+
+@keyframes stlZoom {
+  0%   { transform: scale(1)    translateY(0); }
+  50%  { transform: scale(1.08) translateY(-12px); }
+  100% { transform: scale(1)    translateY(0); }
+}
+@keyframes stlFloat {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-8px); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(174,201,255,0.12); border-radius:2px; }
+
+/* Tweaks panel */
+#tweaks {
+  position:fixed; bottom:20px; right:20px; z-index:9999;
+  background:rgba(10,6,18,0.95); border:1px solid rgba(174,201,255,0.1);
+  border-radius:8px; padding:16px; width:210px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 16px 32px rgba(0,0,0,.6);
+  display:none;
+}
+#tweaks.on { display:block; }
+#tweaks h5 { margin:0 0 14px; font-family:'Bebas Neue',sans-serif; letter-spacing:.1em;
+  font-size:13px; color:#AEC9FF; }
+#tweaks label { display:block; font-family:'Roboto',sans-serif; font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase; color:rgba(174,201,255,.4); margin-bottom:5px; }
+#tweaks select { width:100%; background:rgba(174,201,255,.06); color:#AEC9FF;
+  border:1px solid rgba(174,201,255,.1); border-radius:4px; padding:6px 8px;
+  font-family:'Roboto',sans-serif; font-size:12px; margin-bottom:14px; outline:none; }
+.tw-row { display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:10px; font-family:'Roboto',sans-serif; font-size:11px; color:rgba(174,201,255,.5); }
+.tw-tog { width:32px; height:18px; background:rgba(174,201,255,.08); border-radius:9px;
+  position:relative; cursor:pointer; transition:background 200ms; border:none; padding:0; }
+.tw-tog.on { background:rgba(255,179,71,.3); }
+.tw-tog::after { content:''; position:absolute; top:2px; left:2px; width:14px; height:14px;
+  border-radius:50%; background:rgba(174,201,255,.5); transition:transform 200ms; }
+.tw-tog.on::after { transform:translateX(14px); background:#FFB347; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<div id="tweaks">
+  <h5>Tweaks</h5>
+  <label>Écran</label>
+  <select id="tw-route"></select>
+  <div class="tw-row"><span>Grain / noise</span><button class="tw-tog on" id="tw-grain"></button></div>
+  <div class="tw-row"><span>Orbites</span><button class="tw-tog on" id="tw-orbit"></button></div>
+</div>
+
+<script type="text/babel" src="../../brand-motifs.jsx"></script>
+<script type="text/babel" src="Components.jsx"></script>
+<script type="text/babel" src="Pages.jsx"></script>
+<script type="text/babel" src="PagesExtended.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const ROUTES = [
+  ["home","Accueil"],["catalog","Catalogue"],["detail","Détail produit"],
+  ["cart","Panier"],["login","Connexion"],["profile","Profil"],
+  ["wishlist","Favoris"],["checkout","Paiement"],
+  ["confirm","Confirmation"],["certificate","Certificat"],
+];
+
+function App() {
+  const [route, setRoute]   = useState("home");
+  const [current, setCurrent] = useState(null);
+  const [cart, setCart]     = useState([]);
+  const [wish, setWish]     = useState([]);
+  const [tweaksOpen, setTweaksOpen] = useState(false);
+  const [showGrain, setShowGrain]   = useState(true);
+  const [showOrbits, setShowOrbits] = useState(true);
+
+  const go = (r, payload) => {
+    setRoute(r);
+    if (payload !== undefined) setCurrent(payload);
+    // scroll to top of the shell's scroll container
+    const el = document.querySelector("[data-scroll]");
+    if (el) el.scrollTop = 0;
+  };
+
+  const addToCart   = s => setCart(c => c.find(x=>x.id===s.id) ? c : [...c, s]);
+  const removeCart  = id => setCart(c => c.filter(x=>x.id!==id));
+  const toggleWish  = s => setWish(w => w.find(x=>x.id===s.id) ? w.filter(x=>x.id!==s.id) : [...w, s]);
+  const removeWish  = id => setWish(w => w.filter(x=>x.id!==id));
+
+  // Tweaks panel host protocol
+  useEffect(() => {
+    const handler = e => {
+      if (e.data?.type === "__activate_edit_mode")   setTweaksOpen(true);
+      if (e.data?.type === "__deactivate_edit_mode") setTweaksOpen(false);
+    };
+    window.addEventListener("message", handler);
+    window.parent.postMessage({ type:"__edit_mode_available" }, "*");
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
+  // Wire native tweaks panel controls
+  useEffect(() => {
+    const sel = document.getElementById("tw-route");
+    if (!sel) return;
+    sel.innerHTML = ROUTES.map(([r,l]) => `<option value="${r}"${r===route?" selected":""}>${l}</option>`).join("");
+    const onChange = () => { go(sel.value); };
+    sel.addEventListener("change", onChange);
+    return () => sel.removeEventListener("change", onChange);
+  }, [route]);
+
+  useEffect(() => {
+    document.getElementById("tweaks").className = tweaksOpen ? "on" : "";
+    const sel = document.getElementById("tw-route");
+    if (sel) ROUTES.forEach(([r],i) => { sel.options[i] && (sel.options[i].selected = r===route); });
+  }, [tweaksOpen, route]);
+
+  useEffect(() => {
+    const btn = document.getElementById("tw-grain");
+    if (!btn) return;
+    btn.className = `tw-tog ${showGrain?"on":""}`;
+    const h = () => setShowGrain(v=>!v);
+    btn.addEventListener("click", h);
+    return () => btn.removeEventListener("click", h);
+  }, [showGrain]);
+
+  useEffect(() => {
+    const btn = document.getElementById("tw-orbit");
+    if (!btn) return;
+    btn.className = `tw-tog ${showOrbits?"on":""}`;
+    const h = () => setShowOrbits(v=>!v);
+    btn.addEventListener("click", h);
+    return () => btn.removeEventListener("click", h);
+  }, [showOrbits]);
+
+  const common = { go, cart, wish, onAdd:addToCart, onWish:toggleWish };
+
+  return (
+    <div style={{ height:"100vh", overflow:"hidden",
+      background:"#080610", color:"#AEC9FF", display:"flex", flexDirection:"column" }}>
+      <Header route={route} go={go} cartCount={cart.length} wishCount={wish.length}/>
+      <div data-scroll="1" style={{ flex:1, overflowY:"auto", position:"relative" }}>
+        {route==="home"        && <HomeScreen      {...common}/>}
+        {route==="catalog"     && <CatalogScreen   {...common}/>}
+        {route==="detail"      && <DetailScreen    {...common} current={current}/>}
+        {route==="cart"        && <CartScreen      go={go} cart={cart} onRemove={removeCart}/>}
+        {route==="login"       && <LoginScreen     go={go}/>}
+        {route==="profile"     && <ProfileScreen   go={go} cart={cart} wish={wish}/>}
+        {route==="wishlist"    && <WishlistScreen  go={go} wish={wish} onRemoveWish={removeWish} onAddToCart={addToCart} cart={cart}/>}
+        {route==="checkout"    && <CheckoutScreen  go={go} cart={cart}/>}
+        {route==="confirm"     && <ConfirmScreen   go={go} cart={cart}/>}
+        {route==="certificate" && <CertificateScreen go={go} star={current || (cart[0]||null)}/>}
+        <Footer/>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

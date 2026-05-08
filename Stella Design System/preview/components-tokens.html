@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Component tokens</title>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<link rel="stylesheet" href="_base.css"/>
+<style>
+.card { padding:24px; gap:20px; }
+.section { display:flex; flex-direction:column; gap:10px; }
+.lbl { font-family:'Bebas Neue',sans-serif; letter-spacing:.12em; font-size:11px; color:rgba(174,201,255,.45); text-transform:uppercase; }
+.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+/* inputs */
+.stl-input { width:280px; }
+.stl-input.has-error::after { content:" "; }
+/* badges */
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="section">
+    <span class="lbl">Boutons</span>
+    <div class="row">
+      <button class="stl-btn">Voir notre catalogue</button>
+      <button class="stl-btn stl-btn-lg" style="font-size:18px;padding:10px 24px">Adopter une étoile</button>
+      <button class="stl-btn-secondary">En savoir plus</button>
+      <button class="stl-btn-ghost">Annuler</button>
+      <button class="stl-btn" disabled>Ajouté</button>
+    </div>
+  </div>
+  <div class="section">
+    <span class="lbl">Champs</span>
+    <div class="row">
+      <input class="stl-input" type="text" placeholder="Rechercher une étoile…"/>
+      <input class="stl-input has-error" type="email" value="email-invalide" style="border-color:var(--stl-danger);box-shadow:0 0 0 3px rgba(220,38,38,.2)"/>
+    </div>
+  </div>
+  <div class="section">
+    <span class="lbl">Badges</span>
+    <div class="row">
+      <span class="stl-badge stl-badge-amber">Nouveauté</span>
+      <span class="stl-badge stl-badge-cyan">Disponible</span>
+      <span class="stl-badge stl-badge-green">En stock</span>
+      <span class="stl-badge stl-badge-red">Épuisé</span>
+      <span class="stl-badge">Orion</span>
+      <span class="stl-badge">Grand Chien</span>
+    </div>
+  </div>
+  <div class="section">
+    <span class="lbl">Carte produit</span>
+    <div class="row">
+      <div class="stl-card" style="width:240px">
+        <img src="../assets/stars/sirius.jpg" style="width:100%;height:150px;object-fit:cover;display:block"/>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+          <span class="stl-eyebrow">Grand Chien</span>
+          <span class="stl-h3" style="font-size:18px">Sirius</span>
+          <span class="stl-body" style="font-size:13px;opacity:.85">L'étoile la plus brillante du ciel nocturne.</span>
+          <span class="stl-price" style="font-size:20px">149 €</span>
+          <button class="stl-btn" style="width:100%;margin-top:4px">Ajouter au panier</button>
+        </div>
+      </div>
+      <div class="stl-card" style="width:240px">
+        <img src="../assets/stars/vega.jpg" style="width:100%;height:150px;object-fit:cover;display:block"/>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+          <span class="stl-eyebrow">Lyre</span>
+          <span class="stl-h3" style="font-size:18px">Vega</span>
+          <span class="stl-body" style="font-size:13px;opacity:.85">Cinquième étoile la plus brillante du ciel.</span>
+          <span class="stl-price" style="font-size:20px">119 €</span>
+          <button class="stl-btn-secondary" style="width:100%;margin-top:4px">Découvrir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

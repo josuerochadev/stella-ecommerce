@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stella — Buttons</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .card { padding: 24px; gap: 18px; }
+  .row { display:flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    background:#FFB347; color:#3D2A54;
+    font-family:'Bebas Neue', sans-serif; letter-spacing:.06em; font-size: 16px;
+    padding: 8px 16px; border-radius: 6px; border:none; cursor:pointer;
+    transition: transform 500ms ease, background 200ms ease, color 200ms ease, box-shadow 300ms ease;
+  }
+  .btn:hover { background:#3D2A54; color:#AEC9FF; transform: scale(1.05); box-shadow: 0 10px 15px -3px rgb(0 0 0 / .3); }
+  .btn-outline { background: transparent; color:#AEC9FF; border: 2px solid #3D2A54; }
+  .btn-outline:hover { background:#3D2A54; color:#fff; }
+  .btn-ghost { background: transparent; color:#AEC9FF; }
+  .btn-ghost:hover { background: rgba(61,42,84,.5); }
+  .btn-danger { background:#dc2626; color:#fff; }
+  .btn-disabled { opacity: .5; cursor: not-allowed; }
+  .lbl { font-family: var(--stl-font-action); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(174,201,255,.5); min-width: 80px; }
+  .group { display:flex; align-items:center; gap: 14px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="group"><span class="lbl">Default</span><div class="row"><button class="btn">Voir notre catalogue</button><button class="btn">Se connecter</button></div></div>
+  <div class="group"><span class="lbl">Outline</span><div class="row"><button class="btn btn-outline">En savoir plus</button></div></div>
+  <div class="group"><span class="lbl">Ghost</span><div class="row"><button class="btn btn-ghost">Annuler</button></div></div>
+  <div class="group"><span class="lbl">Danger</span><div class="row"><button class="btn btn-danger">Supprimer</button></div></div>
+  <div class="group"><span class="lbl">Disabled</span><div class="row"><button class="btn btn-disabled" disabled>Ajouté au panier</button></div></div>
+</div>
+</body>
+</html>

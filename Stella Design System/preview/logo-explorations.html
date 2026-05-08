@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Logo explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #080610;
+  color: #AEC9FF;
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  gap: 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  flex: 1;
+}
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 48px 40px;
+  background: #0c0918;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 250ms;
+}
+.option:hover { background: #110d20; }
+.option .num {
+  position: absolute;
+  top: 18px; left: 20px;
+  font-size: 10px; letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(174,201,255,.25);
+  font-family: 'Roboto', sans-serif;
+}
+.option .desc {
+  text-align: center;
+  font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(174,201,255,.35);
+  max-width: 260px;
+  line-height: 1.7;
+}
+.option .name {
+  font-family: 'Dela Gothic One', serif;
+  font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,179,71,.6);
+  margin-bottom: -14px;
+}
+</style>
+</head>
+<body>
+
+<div class="grid">
+
+  <!-- Option A — Cross / Crosshair -->
+  <div class="option">
+    <span class="num">A — Croix de visée</span>
+    <span class="name">Crosshair</span>
+    <svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gA" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E8DEFF"/>
+          <stop offset="100%" stop-color="#C4DAFF"/>
+        </linearGradient>
+        <filter id="fA">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Crosshair circle -->
+      <circle cx="36" cy="40" r="22" stroke="#E8DEFF" stroke-width="0.8" opacity="0.25"/>
+      <circle cx="36" cy="40" r="14" stroke="#E8DEFF" stroke-width="0.7" opacity="0.5"/>
+      <!-- Cross lines -->
+      <line x1="36" y1="10" x2="36" y2="25" stroke="#E8DEFF" stroke-width="0.9" opacity="0.7"/>
+      <line x1="36" y1="55" x2="36" y2="70" stroke="#E8DEFF" stroke-width="0.9" opacity="0.7"/>
+      <line x1="6" y1="40" x2="21" y2="40" stroke="#E8DEFF" stroke-width="0.9" opacity="0.7"/>
+      <line x1="51" y1="40" x2="66" y2="40" stroke="#E8DEFF" stroke-width="0.9" opacity="0.7"/>
+      <!-- Centre dot -->
+      <circle cx="36" cy="40" r="2.5" fill="#FFB347" filter="url(#fA)"/>
+      <!-- Wordmark -->
+      <text x="80" y="54" font-family="'Dela Gothic One',serif" font-size="44" fill="url(#gA)" letter-spacing="-1">Stella</text>
+    </svg>
+    <span class="desc">Cercle + croix de visée astronomique.<br/>Point ambre = l'étoile ciblée.</span>
+  </div>
+
+  <!-- Option B — Diamond / Losange -->
+  <div class="option">
+    <span class="num">B — Losange</span>
+    <span class="name">Diamond</span>
+    <svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gB" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E8DEFF"/>
+          <stop offset="100%" stop-color="#C4DAFF"/>
+        </linearGradient>
+        <filter id="fB">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Outer diamond -->
+      <polygon points="36,8 62,40 36,72 10,40"
+        fill="none" stroke="#E8DEFF" stroke-width="0.8" opacity="0.35"/>
+      <!-- Inner diamond (rotated 45°) -->
+      <polygon points="36,20 52,40 36,60 20,40"
+        fill="none" stroke="#E8DEFF" stroke-width="0.8" opacity="0.6"/>
+      <!-- Diagonals -->
+      <line x1="36" y1="8" x2="36" y2="72" stroke="#E8DEFF" stroke-width="0.4" opacity="0.2"/>
+      <line x1="10" y1="40" x2="62" y2="40" stroke="#E8DEFF" stroke-width="0.4" opacity="0.2"/>
+      <!-- Centre -->
+      <circle cx="36" cy="40" r="2.5" fill="#FFB347" filter="url(#fB)"/>
+      <!-- Wordmark -->
+      <text x="80" y="54" font-family="'Dela Gothic One',serif" font-size="44" fill="url(#gB)" letter-spacing="-1">Stella</text>
+    </svg>
+    <span class="desc">Deux losanges imbriqués + axe.<br/>Évoque un cristal, une gemme céleste.</span>
+  </div>
+
+  <!-- Option C — Starburst / Diffraction spikes -->
+  <div class="option">
+    <span class="num">C — Diffraction</span>
+    <span class="name">Starburst</span>
+    <svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gC" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E8DEFF"/>
+          <stop offset="100%" stop-color="#C4DAFF"/>
+        </linearGradient>
+        <filter id="fC">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="fC2">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- 4 diffraction spikes (cross) — long thin lines -->
+      <line x1="36" y1="6" x2="36" y2="74" stroke="#E8DEFF" stroke-width="0.6" opacity="0.4"/>
+      <line x1="4" y1="40" x2="68" y2="40" stroke="#E8DEFF" stroke-width="0.6" opacity="0.4"/>
+      <!-- 2 diagonal spikes (shorter) -->
+      <line x1="14" y1="18" x2="58" y2="62" stroke="#E8DEFF" stroke-width="0.4" opacity="0.2"/>
+      <line x1="58" y1="18" x2="14" y2="62" stroke="#E8DEFF" stroke-width="0.4" opacity="0.2"/>
+      <!-- Glow core -->
+      <circle cx="36" cy="40" r="6" fill="#FFB347" opacity="0.15" filter="url(#fC2)"/>
+      <circle cx="36" cy="40" r="3" fill="#FFB347" filter="url(#fC)"/>
+      <circle cx="36" cy="40" r="1.5" fill="white" opacity="0.9"/>
+      <!-- Wordmark -->
+      <text x="80" y="54" font-family="'Dela Gothic One',serif" font-size="44" fill="url(#gC)" letter-spacing="-1">Stella</text>
+    </svg>
+    <span class="desc">Piques de diffraction JWST.<br/>4 rayons + 2 diagonales, point lumineux.</span>
+  </div>
+
+  <!-- Option D — Initial S with orbit arc -->
+  <div class="option">
+    <span class="num">D — Monogramme S</span>
+    <span class="name">S-Mark</span>
+    <svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gD" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E8DEFF"/>
+          <stop offset="100%" stop-color="#C4DAFF"/>
+        </linearGradient>
+        <linearGradient id="gDs" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E8DEFF"/>
+          <stop offset="100%" stop-color="#AEC9FF"/>
+        </linearGradient>
+        <filter id="fD">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- S letterform in Dela Gothic One style — drawn as path -->
+      <text x="14" y="58" font-family="'Dela Gothic One',serif" font-size="52"
+        fill="url(#gDs)" opacity="0.9" letter-spacing="-1">S</text>
+      <!-- Orbit arc around the S -->
+      <ellipse cx="32" cy="40" rx="28" ry="16"
+        stroke="rgba(255,179,71,0.2)" stroke-width="0.7" fill="none"
+        transform="rotate(-15,32,40)"/>
+      <path d="M 7 32 A 28 16 0 0 1 57 32"
+        stroke="#FFB347" stroke-width="0.9" fill="none" stroke-linecap="round"
+        transform="rotate(-15,32,40)" opacity="0.7" filter="url(#fD)"/>
+      <circle cx="54" cy="28" r="2.2" fill="#FFB347" filter="url(#fD)"/>
+      <!-- Wordmark (no S repeat — show full name for context) -->
+      <text x="80" y="54" font-family="'Dela Gothic One',serif" font-size="44" fill="url(#gD)" letter-spacing="-1">tella</text>
+    </svg>
+    <span class="desc">S stylisé en Dela Gothic + orbite ambre.<br/>Monogramme lisible à toute taille.</span>
+  </div>
+
+</div>
+
+</body>
+</html>

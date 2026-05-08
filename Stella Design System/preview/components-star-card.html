@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stella — Catalog star card</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .card { padding: 24px; }
+  .star-card {
+    background:#1E1326; color:#AEC9FF;
+    border-radius: 8px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / .3);
+    overflow: hidden; max-width: 280px;
+  }
+  .star-card img { width:100%; height: 160px; object-fit: cover; display:block; }
+  .star-card .body { padding: 16px; display:flex; flex-direction: column; gap: 8px; }
+  .star-card h2 { font-family: 'Dela Gothic One', serif; font-size: 18px; margin: 0; }
+  .star-card p { font-family: 'Roboto Slab', serif; font-size: 13px; line-height: 1.5; margin: 0; opacity: .9; }
+  .price { font-weight: 600; font-size: 16px; font-family: 'Roboto', sans-serif; }
+  .acts { display:flex; gap: 6px; margin-top: 6px; }
+  .acts .btn {
+    background:#FFB347; color:#3D2A54; border:none; cursor:pointer;
+    font-family:'Bebas Neue', sans-serif; padding: 6px 10px; border-radius:4px; font-size: 14px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+</style>
+</head>
+<body>
+<div class="card" style="display:flex; align-items: flex-start; gap: 24px;">
+  <div class="star-card">
+    <img src="../assets/stars/sirius.jpg" alt="Sirius" />
+    <div class="body">
+      <h2>Sirius</h2>
+      <p>L'étoile la plus brillante du ciel nocturne, située dans le Grand Chien.</p>
+      <span class="price">149 €</span>
+      <div class="acts">
+        <button class="btn">DÉCOUVRIR</button>
+        <button class="btn">+ PANIER</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="star-card" style="opacity:.95">
+    <img src="../assets/stars/vega.jpg" alt="Vega" />
+    <div class="body">
+      <h2>Vega</h2>
+      <p>Cinquième étoile la plus brillante, dans la constellation de la Lyre.</p>
+      <span class="price">119 €</span>
+      <div class="acts">
+        <button class="btn">DÉCOUVRIR</button>
+        <button class="btn">+ PANIER</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

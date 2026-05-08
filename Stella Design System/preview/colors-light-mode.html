@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Light mode</title>
+<link rel="stylesheet" href="../colors_and_type.css"/>
+<link rel="stylesheet" href="_base.css"/>
+<style>
+.card { padding: 20px; gap: 14px; }
+.half { display:grid; grid-template-columns:1fr 1fr; gap: 16px; }
+.panel {
+  border-radius: 10px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.dark-panel  { background: linear-gradient(135deg,#3D2A54 0%,#1E1326 100%); }
+.light-panel { background: linear-gradient(135deg,#f0ecfd 0%,#eef4ff 100%); }
+.row { display:flex; gap:8px; }
+.swatch { width:36px; height:36px; border-radius:6px; flex-shrink:0; box-shadow:0 2px 4px rgb(0 0 0/.2); }
+.info { display:flex; flex-direction:column; gap:2px; }
+.info .name { font-size:11px; font-family:'Bebas Neue',sans-serif; letter-spacing:.1em; }
+.info .hex  { font-size:10px; font-family:ui-monospace,Menlo,monospace; }
+.lbl { font-family:'Bebas Neue',sans-serif; letter-spacing:.12em; font-size:10px; text-transform:uppercase; opacity:.55; }
+.btn { display:inline-flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; letter-spacing:.06em; font-size:14px;
+  padding: 6px 14px; border-radius:5px; border:none; cursor:default; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="half">
+    <!-- DARK -->
+    <div class="panel dark-panel">
+      <span class="lbl" style="color:rgba(174,201,255,.5)">Mode sombre (défaut)</span>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#0f0a18"></div>
+        <div class="info" style="color:#AEC9FF"><span class="name">Surface 0</span><span class="hex">#0F0A18</span></div>
+      </div>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#1E1326"></div>
+        <div class="info" style="color:#AEC9FF"><span class="name">Surface 1 · Card</span><span class="hex">#1E1326</span></div>
+      </div>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#3D2A54"></div>
+        <div class="info" style="color:#AEC9FF"><span class="name">Surface 3 · Panel</span><span class="hex">#3D2A54</span></div>
+      </div>
+      <div class="row" style="gap:8px; margin-top:4px">
+        <div class="btn" style="background:#FFB347;color:#3D2A54">CTA</div>
+        <div class="btn" style="background:transparent;color:#38bdf8;border:2px solid #38bdf8">Secondary</div>
+      </div>
+    </div>
+    <!-- LIGHT -->
+    <div class="panel light-panel">
+      <span class="lbl" style="color:rgba(42,26,62,.5)">Mode clair</span>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#ffffff;border:1px solid #e4e4e9"></div>
+        <div class="info" style="color:#2a1a3e"><span class="name">Surface 0 · Fond</span><span class="hex">#FFFFFF</span></div>
+      </div>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#f4f4f7;border:1px solid #e4e4e9"></div>
+        <div class="info" style="color:#2a1a3e"><span class="name">Surface 1 · Card</span><span class="hex">#F4F4F7</span></div>
+      </div>
+      <div class="row" style="align-items:center;gap:10px">
+        <div class="swatch" style="background:#d8cff4;border:1px solid #b8a3e3"></div>
+        <div class="info" style="color:#2a1a3e"><span class="name">Surface 3 · Panel</span><span class="hex">#D8CFF4</span></div>
+      </div>
+      <div class="row" style="gap:8px; margin-top:4px">
+        <div class="btn" style="background:#d4811a;color:#fff">CTA</div>
+        <div class="btn" style="background:transparent;color:#0d6b86;border:2px solid #0d6b86">Secondary</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
