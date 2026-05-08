@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       tableName: "reviews",
       timestamps: true,
+      indexes: [
+        { fields: ["userId"] },
+        { fields: ["starId"] },
+        { fields: ["userId", "starId"], unique: true },
+      ],
     },
   );
 

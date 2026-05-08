@@ -20,97 +20,138 @@ const Home: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="space-y-12">
-      {" "}
-      {/* Ajout d'un espace global entre les sections */}
+    <div>
+      {/* Hero */}
       <FadeInSection>
         <HeroSection>
-          <h1 className="text-5xl md:text-6xl font-display mb-4 text-text h1-neon">Stella</h1>
-          <p
-            className={`text-lg md:text-2xl font-serif text-text transition-opacity duration-800 ease-in-out ${
-              fade ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {currentPhrase}
-          </p>
-          <a href="/catalog" className="btn mt-4">
-            Voir notre catalogue
-          </a>
+          <div className="relative z-10">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-special/70 mb-5 font-sans">
+              STELLA — ADOPT A STAR
+            </p>
+            <h1 className="text-5xl md:text-[clamp(64px,10vw,120px)] font-display mb-2 text-periwinkle-100 leading-[0.95] tracking-tight h1-neon">
+              Stella
+            </h1>
+            <p
+              className={`text-lg md:text-[clamp(17px,2.5vw,22px)] font-serif text-periwinkle-100/65 font-light mt-5 mb-9 max-w-[720px] mx-auto leading-normal transition-opacity duration-500 ease-in-out ${
+                fade ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {currentPhrase}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <a href="/catalog" className="btn text-lg py-2.5 px-6">
+                Voir le catalogue
+              </a>
+              <a
+                href="/about"
+                className="btn-secondary text-lg py-2.5 px-6 inline-flex items-center"
+              >
+                En savoir plus
+              </a>
+            </div>
+          </div>
         </HeroSection>
       </FadeInSection>
+
       {/* Section Qui sommes-nous ? */}
       <FadeInSection>
-        <section className="mx-auto text-text py-8 text-center">
-          <h2 className="text-3xl font-display mb-8">Qui sommes-nous ?</h2>
-          <div className="flex flex-col md:flex-row items-center px-8">
-            {" "}
-            {/* Uniformisation des padding */}
-            <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
+        <section className="max-w-[1100px] mx-auto text-text py-24 px-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-special/60 mb-4 font-sans">
+                QUI SOMMES-NOUS
+              </p>
+              <h2 className="text-3xl md:text-[clamp(32px,4vw,52px)] font-display mb-6 text-periwinkle-100 leading-[1.05] tracking-tight">
+                Un morceau du ciel, pour vous.
+              </h2>
+              <p className="text-base font-serif text-text/70 leading-relaxed mb-8 font-light">
+                Chez Stella, nous sommes passionnés par les étoiles et leur capacité à inspirer des
+                générations. Nous vous proposons une expérience unique : adopter une étoile et la
+                personnaliser pour en faire un cadeau inoubliable. Notre mission est
+                d&apos;illuminer la vie de nos clients en leur offrant un morceau du ciel.
+              </p>
+              <a href="/about" className="btn-secondary inline-flex items-center">
+                Notre histoire
+              </a>
+            </div>
+            <div className="flex justify-center">
               <img
                 src="/assets/images/astro.png"
                 alt="Astronaute"
-                className="w-2/3 md:w-full object-contain md:h-[300px]"
+                width={380}
+                height={380}
+                loading="lazy"
+                className="w-full max-w-[380px] object-contain drop-shadow-[0_0_40px_rgba(61,42,84,0.8)]"
               />
-            </div>
-            <div className="md:w-2/3 md:pl-8 text-center md:text-left">
-              {" "}
-              {/* Alignement du contenu */}
-              <p className="text-lg font-serif text-text">
-                Chez Stella, nous sommes passionnés par les étoiles et leur capacité à inspirer des
-                générations. Nous vous proposons une expérience unique : adopter une étoile et la
-                personnaliser pour en faire un cadeau inoubliable. Notre mission est d'illuminer la
-                vie de nos clients en leur offrant un morceau du ciel.
-              </p>
-              <a href="/about" className="btn mt-4 inline-block">
-                Voir plus
-              </a>
             </div>
           </div>
         </section>
       </FadeInSection>
+
       {/* Section Nouveautés */}
       <FadeInSection>
-        <section className="mb-12 text-text py-8 text-center">
-          <h2 className="text-3xl font-display my-6">Nouveautés</h2>
-          {loading && <p className="text-center text-text">Chargement des étoiles...</p>}
-          {error && <p className="text-center text-red-600">{error}</p>}
+        <section className="pb-24 text-text">
+          <div className="max-w-[1100px] mx-auto px-10">
+            <div className="flex items-baseline justify-between mb-10">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-special/60 mb-2 font-sans">
+                  CATALOGUE
+                </p>
+                <h2 className="text-3xl md:text-[clamp(28px,3.5vw,42px)] font-display text-periwinkle-100 tracking-tight">
+                  Dernières étoiles
+                </h2>
+              </div>
+              <a href="/catalog" className="btn-ghost text-sm flex items-center gap-2">
+                Voir tout &rarr;
+              </a>
+            </div>
 
-          {!loading && !error && (
-            <div className="relative px-8">
-              {" "}
-              <div className="flex overflow-y-auto pb-6 space-x-6 scrollbar-thumb-rounded scrollbar-thin scrollbar-thumb-gray-400">
+            {loading && <p className="text-center text-text/50">Chargement des étoiles...</p>}
+            {error && <p className="text-center text-red-400">{error}</p>}
+
+            {!loading && !error && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stars.slice(0, APP_CONSTANTS.MAX_STARS_DISPLAY).map((star) => (
-                  <div key={star.starid} className="min-w-[200px] flex justify-evenly">
+                  <div key={star.starid}>
                     <StarCard star={star} />
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       </FadeInSection>
+
       {/* Section Le saviez-vous */}
       <FadeInSection>
-        <section className="my-12 text-text py-8 text-center">
-          {" "}
-          <p className="mx-auto font-serif text-2xl text-secondary inline-block max-w-2xl">
-            <span className="bg-special px-2 py-1">{currentFact}</span>
-          </p>
-          <h2 className="text-xl font-display my-6">Le saviez-vous ?</h2>
+        <section className="py-20 text-text border-t border-text/[0.05] border-b border-b-text/[0.05]">
+          <div className="max-w-[700px] mx-auto text-center px-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-special/60 mb-5 font-sans">
+              LE SAVIEZ-VOUS ?
+            </p>
+            <blockquote className="font-serif font-light text-xl md:text-[clamp(18px,2.5vw,26px)] text-periwinkle-100/75 leading-relaxed">
+              &laquo; {currentFact} &raquo;
+            </blockquote>
+          </div>
         </section>
       </FadeInSection>
+
       {/* Afficher la section "Rejoignez-nous" seulement si l'utilisateur n'est pas connecté */}
       {!isAuthenticated && (
         <FadeInSection>
-          <section className="bg-primary my-12 text-text py-8 text-center">
-            <h2 className="text-3xl font-display mb-6">Rejoignez-nous</h2>
-            <p className="text-lg font-serif mx-auto max-w-2xl mb-6">
-              Rejoignez la communauté Stella pour être au courant des dernières nouveautés et
-              événements autour des étoiles. Inscrivez-vous à notre newsletter et faites partie de
-              notre univers.
+          <section className="py-24 text-text text-center px-10">
+            <h2 className="text-3xl md:text-[clamp(32px,5vw,64px)] font-display mb-4 text-periwinkle-100 tracking-tight leading-none">
+              Rejoignez-nous
+            </h2>
+            <p className="text-base font-serif font-light text-text/60 max-w-[480px] mx-auto mb-9 leading-relaxed">
+              Rejoignez la communauté Stella et faites partie de notre univers.
             </p>
-            <button type="button" className="btn" onClick={() => redirectToAuth()}>
-              Se connecter
+            <button
+              type="button"
+              className="btn text-lg py-2.5 px-6"
+              onClick={() => redirectToAuth()}
+            >
+              Créer un compte
             </button>
           </section>
         </FadeInSection>

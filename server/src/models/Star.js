@@ -44,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
     {
       tableName: "stars",
       timestamps: true,
+      indexes: [
+        { fields: ["constellation"] },
+        { fields: ["price"] },
+        { fields: ["name"] },
+      ],
     },
   );
 

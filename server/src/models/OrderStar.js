@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: "order_stars",
     timestamps: true,
+    indexes: [
+      { fields: ["order_id"] },
+      { fields: ["star_id"] },
+      { fields: ["order_id", "star_id"], unique: true },
+    ],
   });
 
   OrderStar.associate = (models) => {

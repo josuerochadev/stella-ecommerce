@@ -10,7 +10,7 @@ const cors = require("cors");
 const { sequelize } = require("./models");
 const { errorHandler, AppError } = require("./middlewares/errorHandler");
 const routes = require("./routes");
-const { NODE_ENV, SESSION_SECRET } = require("./config/config");
+const { PORT: _PORT, NODE_ENV, SESSION_SECRET } = require("./config/config");
 const { APP_CONSTANTS, HTTP_STATUS, CORS_OPTIONS, SESSION_CONFIG } = require("./constants/app");
 const { info, error: _error } = require("./utils/logger");
 const { serve, setup } = require("./utils/swagger");
@@ -23,8 +23,12 @@ const { generateRequestId } = require("./middlewares/requestId");
 const { sanitizeInput } = require("./middlewares/sanitization");
 const { setApiSecurityHeaders } = require("./middlewares/contentSecurity");
 const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
+const compression = require("compression");
 
 const app = express();
+
+// Compress all HTTP responses (gzip/brotli)
+app.use(compression());
 
 // Generate unique request IDs for tracking
 app.use(generateRequestId);
@@ -33,7 +37,22 @@ app.use(generateRequestId);
 app.use(cors(CORS_OPTIONS));
 
 // Use Helmet to secure the app by setting various HTTP headers
-app.use(helmet());
+app.use(helmet({
+	contentSecurityPolicy: {
+		directives: {
+			defaultSrc: ["'self'"],
+			scriptSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+			styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+			fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+			imgSrc: ["'self'", "data:", "https:", "blob:"],
+			connectSrc: ["'self'", process.env.FRONTEND_URL || "http://localhost:3001"],
+			objectSrc: ["'none'"],
+			baseUri: ["'self'"],
+			formAction: ["'self'"],
+			frameAncestors: ["'none'"],
+		},
+	},
+}));
 
 // Apply rate limiting to all requests
 app.use(generalLimiter);
@@ -123,6 +142,16 @@ const startServer = async () => {
 		process.exit(1);
 	}
 };
+
+// Global process-level exception handlers
+process.on("unhandledRejection", (reason) => {
+	_error("Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+	_error("Uncaught Exception:", error);
+	process.exit(1);
+});
 
 if (require.main === module) {
 	startServer();

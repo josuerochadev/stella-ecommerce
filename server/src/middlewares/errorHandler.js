@@ -93,7 +93,7 @@ const errorHandler = (err, _req, res, _next) => {
 
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+  } else {
     let error = { ...err };
     error.message = err.message;
 

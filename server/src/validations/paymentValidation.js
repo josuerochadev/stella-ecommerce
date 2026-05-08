@@ -8,13 +8,14 @@ const initiatePaymentSchema = Joi.object({
   method: Joi.string()
     .valid("credit_card", "paypal", "bank_transfer", "apple_pay", "google_pay")
     .required(),
-  cardData: Joi.when("method", {
+  // Payment tokenization: only accept gateway tokens, never raw card numbers
+  paymentToken: Joi.when("method", {
     is: "credit_card",
     then: Joi.object({
-      number: Joi.string().pattern(/^\d{13,19}$/).required(),
-      expiry: Joi.string().pattern(/^\d{2}\/\d{2}$/).required(),
-      cvv: Joi.string().pattern(/^\d{3,4}$/).required(),
-      name: Joi.string().min(2).max(100).required(),
+      token: Joi.string().min(10).max(500).required()
+        .messages({ "string.min": "Invalid payment token" }),
+      last4: Joi.string().pattern(/^\d{4}$/).required(),
+      brand: Joi.string().valid("visa", "mastercard", "amex", "discover").required(),
     }).required(),
     otherwise: Joi.optional(),
   }),

@@ -10,7 +10,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => void;
+  login: () => void;
   logout: () => void;
 }
 
@@ -28,21 +28,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const resetUser = useUserStore((state) => state.resetUser);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-      Promise.all([
-        useCartStore.getState().fetchCart(),
-        useWishlistStore.getState().fetchWishlist(),
-        useUserStore.getState().fetchProfile(),
-      ]).finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
-    }
+    // Try to fetch profile to check if httpOnly cookie is valid
+    useUserStore
+      .getState()
+      .fetchProfile()
+      .then(() => {
+        setIsAuthenticated(true);
+        return Promise.all([
+          useCartStore.getState().fetchCart(),
+          useWishlistStore.getState().fetchWishlist(),
+        ]);
+      })
+      .catch(() => {
+        // No valid session — user is not authenticated
+        setIsAuthenticated(false);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
+  const login = () => {
+    // Access token is now in httpOnly cookie, set by the server
     setIsAuthenticated(true);
     setIsLoading(true);
 
@@ -58,7 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
     setIsAuthenticated(false);
     setIsLoading(false);
     resetCart();

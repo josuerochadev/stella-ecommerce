@@ -6,6 +6,11 @@ module.exports = (sequelize, _DataTypes) => {
     {
       tableName: "wishlists",
       timestamps: true,
+      indexes: [
+        { fields: ["userId"] },
+        { fields: ["starId"] },
+        { fields: ["userId", "starId"], unique: true },
+      ],
     },
   );
 

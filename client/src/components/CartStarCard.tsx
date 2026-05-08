@@ -1,12 +1,12 @@
 // client/src/components/CartStarCard.tsx
 // Responsabilité unique : Affichage d'une étoile dans le panier
 
+import type { Star } from "@/types";
+import { EyeIcon, TrashIcon } from "@/utils/icons";
+import { getStarImagePath } from "@/utils/pathHelpers";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { EyeIcon, TrashIcon } from "@/utils/icons";
 import FadeInSection from "./FadeInSection";
-import { getStarImagePath } from "@/utils/pathHelpers";
-import type { Star } from "@/types";
 
 interface CartStarCardProps {
   star: Star;
@@ -15,13 +15,21 @@ interface CartStarCardProps {
   onUpdateQuantity?: (quantity: number) => void;
 }
 
-const CartStarCard: React.FC<CartStarCardProps> = ({ star, quantity, onRemove, onUpdateQuantity }) => {
+const CartStarCard: React.FC<CartStarCardProps> = ({
+  star,
+  quantity,
+  onRemove,
+  onUpdateQuantity,
+}) => {
   return (
     <FadeInSection>
-      <div className="bg-secondary text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden card-hover-effect">
+      <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
         <img
           src={getStarImagePath(star)}
           alt={star.name}
+          width={200}
+          height={200}
+          loading="lazy"
           className="w-1/4 flex-shrink-0 object-cover"
         />
         <div className="p-4 flex-grow flex flex-col justify-between">

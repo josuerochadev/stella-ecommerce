@@ -4,7 +4,7 @@
 
 const { AppError } = require("../middlewares/errorHandler");
 const { getService } = require("../container/containerConfig");
-const { REFRESH_TOKEN_COOKIE_OPTIONS } = require("../config/cookieConfig");
+const { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } = require("../config/cookieConfig");
 const logger = require("../utils/logger");
 
 /**
@@ -56,14 +56,14 @@ class AuthController {
 
       await this.tokenService.saveRefreshToken(newUser.id, refreshToken);
 
-      // Configuration du cookie de refresh token
+      // Configuration des cookies httpOnly pour les tokens
+      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
       res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.status(201).json({
         success: true,
         message: "User registered successfully",
         userId: newUser.id,
-        accessToken,
       });
     } catch (error) {
       next(new AppError(`Error registering user: ${error.message}`, 400));
@@ -106,13 +106,13 @@ class AuthController {
 
       await this.tokenService.saveRefreshToken(user.id, refreshToken);
 
-      // Configuration du cookie de refresh token
+      // Configuration des cookies httpOnly pour les tokens
+      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
       res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,
         message: "Login successful",
-        accessToken,
         userId: user.id,
         role: user.role,
       });
@@ -138,7 +138,8 @@ class AuthController {
         await this.tokenService.revokeAllUserTokens(req.user.userId);
       }
 
-      // Suppression du cookie de refresh token
+      // Suppression des cookies de tokens
+      res.clearCookie('accessToken', { path: '/api' });
       res.clearCookie('refreshToken');
 
       res.status(200).json({
@@ -180,12 +181,12 @@ class AuthController {
       await this.tokenService.revokeRefreshToken(refreshToken);
       await this.tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
 
-      // Configuration du nouveau cookie de refresh token
+      // Configuration des nouveaux cookies httpOnly
+      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
       res.cookie('refreshToken', newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,
-        accessToken,
       });
     } catch (error) {
       next(new AppError(`Error refreshing token: ${error.message}`, 500));

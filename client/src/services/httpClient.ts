@@ -28,19 +28,14 @@ const createHttpClient = (): AxiosInstance => {
     withCredentials: true, // Permet l'envoi de cookies
   });
 
-  // Interceptor pour ajouter les tokens d'authentification et CSRF
+  // Interceptor pour ajouter le token CSRF
+  // Note: access token is sent automatically via httpOnly cookie (withCredentials: true)
   client.interceptors.request.use(
     (config) => {
       // Ajouter le token CSRF depuis les cookies
       const csrfToken = getCookie("XSRF-TOKEN");
       if (csrfToken) {
         config.headers["X-CSRF-Token"] = csrfToken;
-      }
-
-      // Ajouter le token d'authentification si présent
-      const authToken = localStorage.getItem("token");
-      if (authToken) {
-        config.headers.Authorization = `Bearer ${authToken}`;
       }
 
       return config;
@@ -54,14 +49,12 @@ const createHttpClient = (): AxiosInstance => {
     (error) => {
       // Gestion globale des erreurs d'authentification
       if (error.response?.status === 401) {
-        // Token expiré ou invalide
-        localStorage.removeItem("token");
-
-        // Émettre un événement personnalisé pour la navigation
-        // L'App écoutera cet événement et naviguera avec React Router
-        window.dispatchEvent(new CustomEvent('auth:unauthorized', {
-          detail: { redirectTo: '/auth' }
-        }));
+        // Token expiré ou invalide — cookie sera supprime cote serveur
+        window.dispatchEvent(
+          new CustomEvent("auth:unauthorized", {
+            detail: { redirectTo: "/auth" },
+          }),
+        );
       }
 
       return Promise.reject(error);

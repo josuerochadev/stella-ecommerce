@@ -44,8 +44,8 @@ const Login: React.FC = () => {
     },
     {
       onSuccess: (response) => {
-        if (response.accessToken) {
-          login(response.accessToken);
+        if (response.success !== false) {
+          login();
           navigate(from, { replace: true });
         }
       },

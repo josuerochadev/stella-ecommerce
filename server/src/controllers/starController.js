@@ -18,13 +18,18 @@ class StarController {
   /**
    * Récupère toutes les étoiles
    */
-  getAllStars = async (_, res, next) => {
+  getAllStars = async (req, res, next) => {
     try {
-      const stars = await this.starRepository.findAll();
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+      const offset = (page - 1) * limit;
+
+      const stars = await this.starRepository.findAll({}, { limit, offset, order: [['name', 'ASC']] });
 
       res.json({
         success: true,
-        data: stars
+        data: stars,
+        pagination: { page, limit, offset }
       });
     } catch (error) {
       logger.error('Error in getAllStars:', error);
