@@ -411,11 +411,11 @@ Toutes les routes sont lazy-loaded via `React.lazy()` + `Suspense` dans `client/
 
 | # | Action | Ref | Impact |
 |---|--------|-----|--------|
-| 21 | Integrer React Query ou SWR pour cache API client | I-P2 | Perf |
-| 22 | Ajouter cache applicatif backend (node-cache ou Redis) | I-B2 | Perf |
-| 23 | Configurer pool Sequelize pour production | M-B1 | Perf |
-| 24 | Differencier Cache-Control par type d'endpoint | M-B2 | Perf |
-| 25 | Ajouter webpack-bundle-analyzer | I-P3 | Mesure |
+| 21 | Integrer React Query ou SWR pour cache API client | I-P2 | FAIT (QueryClient + useStarDetail, useLatestStars) |
+| 22 | Ajouter cache applicatif backend (node-cache ou Redis) | I-B2 | FAIT (cacheService.js, getAllStars/getStarById/getConstellations) |
+| 23 | Configurer pool Sequelize pour production | M-B1 | FAIT (min:2, max:20, acquire:30s, idle:10s) |
+| 24 | Differencier Cache-Control par type d'endpoint | M-B2 | FAIT (publicCache middleware, 300s catalogue, 120s search) |
+| 25 | Ajouter webpack-bundle-analyzer | I-P3 | FAIT (ANALYZE=true npm run build) |
 
 ### Phase 5 — SSR/Pre-rendering (long terme)
 

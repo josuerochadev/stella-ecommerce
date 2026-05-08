@@ -5,6 +5,7 @@
 const { AppError } = require('../middlewares/errorHandler');
 const logger = require('../utils/logger');
 const { getService } = require('../container/containerConfig');
+const cacheService = require('../utils/cacheService');
 
 /**
  * Contrôleur des étoiles utilisant l'injection de dépendances
@@ -23,8 +24,11 @@ class StarController {
       const page = Math.max(1, parseInt(req.query.page) || 1);
       const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
       const offset = (page - 1) * limit;
+      const cacheKey = `stars:all:${page}:${limit}`;
 
-      const stars = await this.starRepository.findAll({}, { limit, offset, order: [['name', 'ASC']] });
+      const stars = await cacheService.getOrSet(cacheKey, () =>
+        this.starRepository.findAll({}, { limit, offset, order: [['name', 'ASC']] })
+      );
 
       res.json({
         success: true,
@@ -48,7 +52,10 @@ class StarController {
         return next(new AppError('Invalid star ID', 400));
       }
 
-      const star = await this.starRepository.findById(starId);
+      const cacheKey = `stars:id:${starId}`;
+      const star = await cacheService.getOrSet(cacheKey, () =>
+        this.starRepository.findById(starId)
+      );
 
       if (!star) {
         return next(new AppError('Star not found', 404));
@@ -168,7 +175,9 @@ class StarController {
    */
   getConstellations = async (req, res, next) => {
     try {
-      const constellations = await this.starRepository.getUniqueConstellations();
+      const constellations = await cacheService.getOrSet('stars:constellations', () =>
+        this.starRepository.getUniqueConstellations()
+      );
 
       res.json({
         success: true,

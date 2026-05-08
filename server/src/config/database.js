@@ -36,6 +36,12 @@ module.exports = {
           database: process.env.DB_DATABASE,
           host: process.env.DB_HOST,
         }),
+    pool: {
+      min: 2,
+      max: 20,
+      acquire: 30000,
+      idle: 10000,
+    },
     dialectOptions: {
       ssl: {
         require: true,

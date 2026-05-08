@@ -43,7 +43,20 @@ const setApiSecurityHeaders = (req, res, next) => {
   next();
 };
 
+/**
+ * Middleware de cache public pour les endpoints en lecture seule.
+ * @param {number} seconds - durée du cache en secondes
+ */
+const publicCache = (seconds) => (req, res, next) => {
+  res.setHeader('Cache-Control', `public, max-age=${seconds}`);
+  res.removeHeader('Pragma');
+  res.removeHeader('Expires');
+  res.removeHeader('Surrogate-Control');
+  next();
+};
+
 module.exports = {
   setContentSecurityPolicy,
-  setApiSecurityHeaders
+  setApiSecurityHeaders,
+  publicCache
 };
