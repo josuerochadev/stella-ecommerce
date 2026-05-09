@@ -1,5 +1,12 @@
 module.exports = {
   extends: ["@commitlint/config-conventional"],
+  parserPreset: {
+    parserOpts: {
+      // Allow compound types like perf/seo, perf/security
+      headerPattern: /^(\w+(?:\/\w+)?)(?:\(([^)]*)\))?!?:\s(.+)$/,
+      headerCorrespondence: ["type", "scope", "subject"],
+    },
+  },
   rules: {
     "type-enum": [
       2,
@@ -15,6 +22,8 @@ module.exports = {
         "infra",
         "style",
         "perf",
+        "perf/seo",
+        "perf/security",
         "merge",
       ],
     ],
