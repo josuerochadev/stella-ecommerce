@@ -1,9 +1,9 @@
 // client/src/components/SearchToggleButton.tsx
 // Responsabilité unique : Bouton de bascule pour la recherche
 
-import React from 'react';
-import { SearchIcon } from "@/utils/icons";
 import { ARIA_LABELS } from "@/utils/accessibility";
+import { SearchIcon } from "@/utils/icons";
+import type React from "react";
 
 interface SearchToggleButtonProps {
   isVisible: boolean;
@@ -18,16 +18,16 @@ interface SearchToggleButtonProps {
 const SearchToggleButton: React.FC<SearchToggleButtonProps> = ({
   isVisible,
   onToggle,
-  className = '',
+  className = "",
 }) => {
   return (
     <button
       type="button"
       onClick={onToggle}
       className={`p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent ${className}`}
-      aria-label={isVisible ? 'Fermer la recherche' : ARIA_LABELS.SEARCH}
+      aria-label={isVisible ? "Fermer la recherche" : ARIA_LABELS.SEARCH}
       aria-expanded={isVisible}
-      aria-controls={isVisible ? 'main-search' : undefined}
+      aria-controls={isVisible ? "main-search" : undefined}
     >
       <SearchIcon className="text-xl" />
     </button>

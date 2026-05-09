@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const CookieBanner: React.FC = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(false);

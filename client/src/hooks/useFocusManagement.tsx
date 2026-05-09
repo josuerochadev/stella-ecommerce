@@ -1,5 +1,5 @@
-import { useEffect, useRef, useCallback } from 'react';
 import { FocusTrap } from "@/utils/accessibility";
+import { useCallback, useEffect, useRef } from "react";
 
 // Hook pour gérer le focus lors de l'ouverture/fermeture de modals
 export const useFocusTrap = (isOpen: boolean) => {
@@ -19,10 +19,10 @@ export const useFocusTrap = (isOpen: boolean) => {
       // Écouter l'événement Escape pour fermer
       const handleEscape = () => {
         // Dispatch event pour notifier le composant parent
-        elementRef.current?.dispatchEvent(new CustomEvent('close-modal'));
+        elementRef.current?.dispatchEvent(new CustomEvent("close-modal"));
       };
 
-      elementRef.current.addEventListener('escape-pressed', handleEscape);
+      elementRef.current.addEventListener("escape-pressed", handleEscape);
 
       return () => {
         // Désactiver le focus trap
@@ -35,7 +35,7 @@ export const useFocusTrap = (isOpen: boolean) => {
           previousActiveElement.current.focus();
         }
 
-        elementRef.current?.removeEventListener('escape-pressed', handleEscape);
+        elementRef.current?.removeEventListener("escape-pressed", handleEscape);
       };
     }
   }, [isOpen]);
@@ -44,22 +44,19 @@ export const useFocusTrap = (isOpen: boolean) => {
 };
 
 // Hook pour gérer le focus sur les éléments dynamiques (listes, résultats de recherche)
-export const useFocusOnChange = <T,>(
-  data: T[],
-  shouldFocus: boolean = false
-) => {
+export const useFocusOnChange = <T,>(data: T[], shouldFocus = false) => {
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (shouldFocus && data.length > 0 && containerRef.current) {
       // Annoncer les changements aux lecteurs d'écran
-      const announcement = `${data.length} résultat${data.length > 1 ? 's' : ''} trouvé${data.length > 1 ? 's' : ''}`;
+      const announcement = `${data.length} résultat${data.length > 1 ? "s" : ""} trouvé${data.length > 1 ? "s" : ""}`;
 
       // Créer une annonce temporaire
-      const announcer = document.createElement('div');
-      announcer.setAttribute('aria-live', 'polite');
-      announcer.setAttribute('aria-atomic', 'true');
-      announcer.className = 'sr-only';
+      const announcer = document.createElement("div");
+      announcer.setAttribute("aria-live", "polite");
+      announcer.setAttribute("aria-atomic", "true");
+      announcer.className = "sr-only";
       announcer.textContent = announcement;
 
       document.body.appendChild(announcer);
@@ -67,7 +64,7 @@ export const useFocusOnChange = <T,>(
       // Focus sur le premier élément focusable du container
       setTimeout(() => {
         const firstFocusable = containerRef.current?.querySelector(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         ) as HTMLElement;
 
         if (firstFocusable) {
@@ -87,7 +84,7 @@ export const useFocusOnChange = <T,>(
 export const useKeyboardNavigation = (
   items: unknown[],
   onSelect: (index: number) => void,
-  isOpen: boolean = false
+  isOpen = false,
 ) => {
   const activeIndexRef = useRef(-1);
   const containerRef = useRef<HTMLElement>(null);
@@ -97,46 +94,46 @@ export const useKeyboardNavigation = (
       if (!isOpen || items.length === 0) return;
 
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           activeIndexRef.current = Math.min(activeIndexRef.current + 1, items.length - 1);
           updateFocus();
           break;
 
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
           activeIndexRef.current = Math.max(activeIndexRef.current - 1, -1);
           updateFocus();
           break;
 
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           if (activeIndexRef.current >= 0) {
             onSelect(activeIndexRef.current);
           }
           break;
 
-        case 'Escape':
+        case "Escape":
           e.preventDefault();
           activeIndexRef.current = -1;
           // Dispatch event pour fermer la liste
-          containerRef.current?.dispatchEvent(new CustomEvent('close-list'));
+          containerRef.current?.dispatchEvent(new CustomEvent("close-list"));
           break;
 
-        case 'Home':
+        case "Home":
           e.preventDefault();
           activeIndexRef.current = 0;
           updateFocus();
           break;
 
-        case 'End':
+        case "End":
           e.preventDefault();
           activeIndexRef.current = items.length - 1;
           updateFocus();
           break;
       }
     },
-    [items, onSelect, isOpen]
+    [items, onSelect, isOpen],
   );
 
   const updateFocus = () => {
@@ -146,7 +143,7 @@ export const useKeyboardNavigation = (
 
     // Retirer l'état actif de tous les éléments
     items.forEach((item, index) => {
-      item.setAttribute('aria-selected', index === activeIndexRef.current ? 'true' : 'false');
+      item.setAttribute("aria-selected", index === activeIndexRef.current ? "true" : "false");
     });
 
     // Focuser l'élément actif
@@ -157,12 +154,12 @@ export const useKeyboardNavigation = (
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
       activeIndexRef.current = -1; // Reset à l'ouverture
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, handleKeyDown]);
 
@@ -194,12 +191,7 @@ export const useFormAnnouncements = () => {
   }, []);
 
   const createAnnouncer = () => (
-    <div
-      ref={announcerRef}
-      aria-live="assertive"
-      aria-atomic="true"
-      className="sr-only"
-    />
+    <div ref={announcerRef} aria-live="assertive" aria-atomic="true" className="sr-only" />
   );
 
   return {

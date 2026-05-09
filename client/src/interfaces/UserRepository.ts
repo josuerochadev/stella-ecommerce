@@ -2,7 +2,7 @@
 // Interface du repository utilisateur suivant le principe d'inversion de dépendances (DIP)
 // Responsabilité unique : Définir le contrat pour les opérations utilisateur
 
-import type { User, UserProfileData, ApiResponse } from "@/types";
+import type { ApiResponse, User, UserProfileData } from "@/types";
 
 /**
  * Représente une activité utilisateur dans l'historique

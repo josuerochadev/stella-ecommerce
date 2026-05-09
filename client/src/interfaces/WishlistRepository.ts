@@ -14,7 +14,7 @@ export interface WishlistRepository {
    * @returns {Promise<{wishlist: WishlistItem[]}>} Wishlist avec ses articles
    * @throws {Error} Si la récupération échoue
    */
-  getWishlist(): Promise<{wishlist: WishlistItem[]}>;
+  getWishlist(): Promise<{ wishlist: WishlistItem[] }>;
 
   /**
    * Ajoute un article à la wishlist
@@ -22,7 +22,7 @@ export interface WishlistRepository {
    * @returns {Promise<{wishlistItem: WishlistItem}>} Article ajouté
    * @throws {Error} Si l'ajout échoue
    */
-  addToWishlist(starId: number): Promise<{wishlistItem: WishlistItem}>;
+  addToWishlist(starId: number): Promise<{ wishlistItem: WishlistItem }>;
 
   /**
    * Supprime un article de la wishlist
@@ -69,7 +69,7 @@ export interface WishlistRepository {
    * @returns {Promise<{wishlist: WishlistItem[]}>} Wishlist synchronisée
    * @throws {Error} Si la synchronisation échoue
    */
-  syncWishlist(localItems: WishlistItem[]): Promise<{wishlist: WishlistItem[]}>;
+  syncWishlist(localItems: WishlistItem[]): Promise<{ wishlist: WishlistItem[] }>;
 
   /**
    * Recherche dans la wishlist
@@ -84,5 +84,5 @@ export interface WishlistRepository {
    * @returns {Promise<{shareUrl: string}>} URL de partage
    * @throws {Error} Si la génération échoue
    */
-  shareWishlist(): Promise<{shareUrl: string}>;
+  shareWishlist(): Promise<{ shareUrl: string }>;
 }

@@ -1,10 +1,10 @@
-import { useState, useEffect, memo } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { Navigate } from "react-router-dom";
-import { OrderService } from "@/services/orderService";
-import { CartCalculations } from "@/utils/cartCalculations";
 import FadeInSection from "@/components/FadeInSection";
+import { useAuth } from "@/context/AuthContext";
+import { OrderService } from "@/services/orderService";
 import type { Order, OrderStatus } from "@/types";
+import { CartCalculations } from "@/utils/cartCalculations";
+import { memo, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "En attente",
@@ -33,7 +33,7 @@ const Orders: React.FC = () => {
       try {
         const response = await OrderService.getUserOrders();
         setOrders(response.data || []);
-      } catch (err) {
+      } catch (_err) {
         setError("Impossible de charger vos commandes.");
       } finally {
         setLoading(false);

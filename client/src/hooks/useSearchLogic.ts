@@ -137,7 +137,6 @@ export const useSearchLogic = () => {
    * Sélectionner une suggestion
    * Responsabilité : Action de sélection et navigation
    */
-  // biome-ignore lint/correctness/useExhaustiveDependencies: suggestions array covers suggestions[index]
   const selectSuggestion = useCallback(
     (index: number) => {
       const star = suggestions[index];

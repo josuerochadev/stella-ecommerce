@@ -6,8 +6,8 @@ const PrivacyPolicy: React.FC = () => {
       <h1 className="text-4xl font-display mb-6 text-center">Politique de Confidentialité</h1>
       <div className="text-text font-serif space-y-6">
         <p>
-          Nous respectons votre vie privée. Cette politique de confidentialité explique comment
-          nous collectons, utilisons et protégeons vos informations personnelles.
+          Nous respectons votre vie privée. Cette politique de confidentialité explique comment nous
+          collectons, utilisons et protégeons vos informations personnelles.
         </p>
         <h2 className="text-2xl font-bold">Données collectées</h2>
         <p>

@@ -1,13 +1,13 @@
 // client/src/components/StarCard.tsx
 // Responsabilité unique : Orchestration des StarCards par contexte
 
-import { memo } from "react";
-import CatalogStarCard from "./CatalogStarCard";
-import CartStarCard from "./CartStarCard";
-import WishlistStarCard from "./WishlistStarCard";
-import DetailStarCard from "./DetailStarCard";
-import { logger } from "@/utils/logger";
 import type { Star } from "@/types";
+import { logger } from "@/utils/logger";
+import { memo } from "react";
+import CartStarCard from "./CartStarCard";
+import CatalogStarCard from "./CatalogStarCard";
+import DetailStarCard from "./DetailStarCard";
+import WishlistStarCard from "./WishlistStarCard";
 
 interface StarCardProps {
   star: Star;
@@ -36,10 +36,21 @@ const StarCard: React.FC<StarCardProps> = ({
   switch (context) {
     case "cart":
       if (!onRemove || quantity === undefined) {
-        logger.warn("CartStarCard requires onRemove and quantity props", { starId: star.starid }, "StarCard");
+        logger.warn(
+          "CartStarCard requires onRemove and quantity props",
+          { starId: star.starid },
+          "StarCard",
+        );
         return null;
       }
-      return <CartStarCard star={star} quantity={quantity} onRemove={() => onRemove(star.starid)} onUpdateQuantity={onUpdateQuantity} />;
+      return (
+        <CartStarCard
+          star={star}
+          quantity={quantity}
+          onRemove={() => onRemove(star.starid)}
+          onUpdateQuantity={onUpdateQuantity}
+        />
+      );
 
     case "wishlist":
       if (!onRemove) {
@@ -47,8 +58,6 @@ const StarCard: React.FC<StarCardProps> = ({
         return null;
       }
       return <WishlistStarCard star={star} onRemove={onRemove} />;
-
-    case "catalog":
     default:
       return <CatalogStarCard star={star} />;
   }

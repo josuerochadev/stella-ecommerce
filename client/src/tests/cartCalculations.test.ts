@@ -1,5 +1,5 @@
-import { CartCalculations } from "@/utils/cartCalculations";
 import type { CartItem, Star } from "@/types";
+import { CartCalculations } from "@/utils/cartCalculations";
 
 const makeStar = (overrides: Partial<Star> = {}): Star => ({
   starid: 1,
@@ -96,10 +96,7 @@ describe("CartCalculations", () => {
 
   describe("getTotalItemCount", () => {
     it("sums quantities across items", () => {
-      const items = [
-        makeCartItem({ quantity: 3 }),
-        makeCartItem({ id: 2, quantity: 5 }),
-      ];
+      const items = [makeCartItem({ quantity: 3 }), makeCartItem({ id: 2, quantity: 5 })];
       expect(CartCalculations.getTotalItemCount(items)).toBe(8);
     });
   });

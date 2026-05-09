@@ -1,24 +1,24 @@
 // client/src/components/Profile.tsx
 // Responsabilité unique : Orchestration des sections du profil
 
-import { useEffect, memo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useCartStore } from "@/stores/useCartStore";
-import { useWishlistStore } from "@/stores/useWishlistStore";
 import { useUserStore } from "@/stores/useUserStore";
-import FadeInSection from "./FadeInSection";
-import { SkeletonProfile } from "./Skeleton";
-import UserProfileSection from "./UserProfileSection";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { memo, useEffect } from "react";
 import ChangePasswordForm from "./ChangePasswordForm";
+import FadeInSection from "./FadeInSection";
 import ProfileCartSection from "./ProfileCartSection";
 import ProfileWishlistSection from "./ProfileWishlistSection";
+import { SkeletonProfile } from "./Skeleton";
+import UserProfileSection from "./UserProfileSection";
 
 const Profile: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { redirectToLogin, redirectToRegister } = useAuthRedirect();
   const { cartItems } = useCartStore();
-  const { wishlistItems, fetchWishlist } = useWishlistStore();
+  const { wishlistItems } = useWishlistStore();
   const { user, loading: loadingProfile, error, fetchProfile } = useUserStore();
 
   useEffect(() => {
@@ -26,7 +26,6 @@ const Profile: React.FC = () => {
       fetchProfile();
     }
   }, [isAuthenticated, authLoading, fetchProfile]);
-
 
   if (authLoading || (loadingProfile && !user)) {
     return (
@@ -41,7 +40,9 @@ const Profile: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto pt-20 px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Veuillez vous connecter pour accéder à votre profil</h1>
+        <h1 className="text-3xl font-bold mb-4">
+          Veuillez vous connecter pour accéder à votre profil
+        </h1>
         <div className="flex justify-center space-x-4">
           <button
             type="button"
@@ -68,11 +69,7 @@ const Profile: React.FC = () => {
       <div className="container mx-auto pt-20 px-4 py-8 text-center">
         <h1 className="text-3xl font-bold mb-4 text-red-600">Erreur</h1>
         <p className="text-lg mb-6">{error}</p>
-        <button
-          type="button"
-          onClick={() => fetchProfile()}
-          className="btn"
-        >
+        <button type="button" onClick={() => fetchProfile()} className="btn">
           Réessayer
         </button>
       </div>
@@ -90,14 +87,10 @@ const Profile: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 max-w-md">
-      <h1 className="text-4xl font-display mb-8 text-center">
-        Bonjour, {user.firstName}
-      </h1>
+      <h1 className="text-4xl font-display mb-8 text-center">Bonjour, {user.firstName}</h1>
 
       <FadeInSection>
-        <UserProfileSection
-          user={user}
-        />
+        <UserProfileSection user={user} />
 
         <ChangePasswordForm />
 

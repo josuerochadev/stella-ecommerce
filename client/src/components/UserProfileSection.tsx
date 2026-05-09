@@ -1,12 +1,12 @@
 // client/src/components/UserProfileSection.tsx
 // Responsabilité unique : Gestion du profil utilisateur
 
-import { useState, memo } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { useUserStore } from "@/stores/useUserStore";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { useUserStore } from "@/stores/useUserStore";
 import type { User } from "@/types";
+import { memo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface UserProfileSectionProps {
   user: User;
@@ -31,7 +31,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
       showSuccess("Profil mis à jour avec succès !");
       setIsEditingProfile(false);
       setErrorMessage("");
-    } catch (error) {
+    } catch (_error) {
       setErrorMessage("Erreur lors de la mise à jour du profil.");
     }
   };
@@ -40,7 +40,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
     const confirmed = await showConfirm(
       "Déconnexion",
       "Vous allez être déconnecté. Vous serez redirigé vers la page d'accueil.",
-      "warning"
+      "warning",
     );
     if (confirmed) {
       logout();
@@ -52,7 +52,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
     const confirmed = await showConfirm(
       "Supprimer le compte",
       "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
-      "danger"
+      "danger",
     );
     if (confirmed) {
       try {
@@ -60,7 +60,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
         showSuccess("Compte supprimé avec succès.");
         logout();
         navigate("/");
-      } catch (error) {
+      } catch (_error) {
         // Error already handled by store
       }
     }

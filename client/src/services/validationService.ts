@@ -1,8 +1,8 @@
 // client/src/services/validationService.ts
 // Responsabilité unique : Services de validation centralisés et réutilisables
 
-import { validateEmail, validateUsername, validatePassword, sanitizeText } from "@/utils/security";
 import { safeNumberTransform } from "@/utils/dataTransformers";
+import { sanitizeText, validateEmail, validatePassword, validateUsername } from "@/utils/security";
 
 /**
  * Interface pour les résultats de validation
@@ -36,21 +36,23 @@ export class FieldValidationService {
     if (!sanitized) {
       return {
         isValid: false,
-        errors: ["Le nom d'utilisateur est requis."]
+        errors: ["Le nom d'utilisateur est requis."],
       };
     }
 
     if (!validateUsername(sanitized)) {
       return {
         isValid: false,
-        errors: ["Le nom d'utilisateur doit contenir 3-30 caractères alphanumériques, tirets ou underscores."]
+        errors: [
+          "Le nom d'utilisateur doit contenir 3-30 caractères alphanumériques, tirets ou underscores.",
+        ],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: sanitized
+      sanitizedValue: sanitized,
     };
   }
 
@@ -63,21 +65,21 @@ export class FieldValidationService {
     if (!sanitized) {
       return {
         isValid: false,
-        errors: ["L'email est requis."]
+        errors: ["L'email est requis."],
       };
     }
 
     if (!validateEmail(sanitized)) {
       return {
         isValid: false,
-        errors: ["Veuillez entrer une adresse email valide."]
+        errors: ["Veuillez entrer une adresse email valide."],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: sanitized
+      sanitizedValue: sanitized,
     };
   }
 
@@ -90,7 +92,7 @@ export class FieldValidationService {
     if (!trimmed) {
       return {
         isValid: false,
-        errors: ["Le mot de passe est requis."]
+        errors: ["Le mot de passe est requis."],
       };
     }
 
@@ -99,41 +101,41 @@ export class FieldValidationService {
     return {
       isValid: passwordValidation.isValid,
       errors: passwordValidation.isValid ? [] : passwordValidation.errors,
-      sanitizedValue: passwordValidation.isValid ? trimmed : undefined
+      sanitizedValue: passwordValidation.isValid ? trimmed : undefined,
     };
   }
 
   /**
    * Valider et sanitiser un nom (prénom/nom de famille)
    */
-  static validateNameField(name: string, fieldName: string = "nom"): ValidationResult {
+  static validateNameField(name: string, fieldName = "nom"): ValidationResult {
     const sanitized = sanitizeText(name).trim();
 
     if (!sanitized) {
       return {
         isValid: false,
-        errors: [`Le ${fieldName} est requis.`]
+        errors: [`Le ${fieldName} est requis.`],
       };
     }
 
     if (sanitized.length < 2) {
       return {
         isValid: false,
-        errors: [`Le ${fieldName} doit contenir au moins 2 caractères.`]
+        errors: [`Le ${fieldName} doit contenir au moins 2 caractères.`],
       };
     }
 
     if (sanitized.length > 50) {
       return {
         isValid: false,
-        errors: [`Le ${fieldName} ne peut pas dépasser 50 caractères.`]
+        errors: [`Le ${fieldName} ne peut pas dépasser 50 caractères.`],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: sanitized
+      sanitizedValue: sanitized,
     };
   }
 }
@@ -192,7 +194,7 @@ export class FormValidationService {
     return {
       isValid,
       errors,
-      sanitizedData: isValid ? sanitizedData : undefined
+      sanitizedData: isValid ? sanitizedData : undefined,
     };
   }
 
@@ -236,7 +238,7 @@ export class FormValidationService {
     return {
       isValid,
       errors,
-      sanitizedData: isValid ? sanitizedData : undefined
+      sanitizedData: isValid ? sanitizedData : undefined,
     };
   }
 }
@@ -250,17 +252,17 @@ export class BusinessValidationService {
    * Valider un ID d'étoile
    */
   static validateStarId(starId: unknown): ValidationResult {
-    if (typeof starId !== "number" || isNaN(starId) || starId <= 0) {
+    if (typeof starId !== "number" || Number.isNaN(starId) || starId <= 0) {
       return {
         isValid: false,
-        errors: ["ID d'étoile invalide."]
+        errors: ["ID d'étoile invalide."],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: starId.toString()
+      sanitizedValue: starId.toString(),
     };
   }
 
@@ -268,17 +270,17 @@ export class BusinessValidationService {
    * Valider une quantité
    */
   static validateQuantity(quantity: unknown): ValidationResult {
-    if (typeof quantity !== "number" || isNaN(quantity) || quantity <= 0 || quantity > 100) {
+    if (typeof quantity !== "number" || Number.isNaN(quantity) || quantity <= 0 || quantity > 100) {
       return {
         isValid: false,
-        errors: ["La quantité doit être entre 1 et 100."]
+        errors: ["La quantité doit être entre 1 et 100."],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: quantity.toString()
+      sanitizedValue: quantity.toString(),
     };
   }
 
@@ -286,21 +288,20 @@ export class BusinessValidationService {
    * Valider un prix
    */
   static validatePrice(price: unknown): ValidationResult {
-    const numPrice = typeof price === "string" || typeof price === "number"
-      ? safeNumberTransform(price, -1)
-      : -1;
+    const numPrice =
+      typeof price === "string" || typeof price === "number" ? safeNumberTransform(price, -1) : -1;
 
-    if (typeof numPrice !== "number" || isNaN(numPrice) || numPrice < 0) {
+    if (typeof numPrice !== "number" || Number.isNaN(numPrice) || numPrice < 0) {
       return {
         isValid: false,
-        errors: ["Prix invalide."]
+        errors: ["Prix invalide."],
       };
     }
 
     return {
       isValid: true,
       errors: [],
-      sanitizedValue: numPrice.toString()
+      sanitizedValue: numPrice.toString(),
     };
   }
 }

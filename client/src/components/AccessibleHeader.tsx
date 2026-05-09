@@ -1,13 +1,13 @@
-import { useState, memo } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, UserIcon, ShoppingCartIcon, HeartIcon } from "@/utils/icons";
 import { useAuth } from "@/context/AuthContext";
+import { usePageTitleOnScroll } from "@/hooks/usePageTitleOnScroll";
 import { useCartStore } from "@/stores/useCartStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
-import { usePageTitleOnScroll } from "@/hooks/usePageTitleOnScroll";
-import { ARIA_LABELS, ARIA_DESCRIPTIONS } from "@/utils/accessibility";
-import SkipLinks from "./SkipLinks";
+import { ARIA_DESCRIPTIONS, ARIA_LABELS } from "@/utils/accessibility";
+import { HeartIcon, HomeIcon, ShoppingCartIcon, UserIcon } from "@/utils/icons";
+import { memo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import AccessibleSearchBox from "./AccessibleSearchBox";
+import SkipLinks from "./SkipLinks";
 
 const AccessibleHeader: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -28,24 +28,18 @@ const AccessibleHeader: React.FC = () => {
     <>
       <SkipLinks />
 
-      <header
-        className="bg-background-inverse text-text fixed top-0 left-0 right-0 z-50 shadow-lg transition-all duration-300 ease-in-out"
-        role="banner"
-      >
+      <header className="bg-background-inverse text-text fixed top-0 left-0 right-0 z-50 shadow-lg transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center px-4 sm:px-6 lg:px-20 h-12">
-
           {/* Logo and Home Link */}
           <div className="flex items-center">
             <Link
               to="/"
               className="flex items-center p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent"
               aria-label="Stella - Retour à l'accueil"
-              aria-current={isCurrentPage('/') ? 'page' : undefined}
+              aria-current={isCurrentPage("/") ? "page" : undefined}
             >
               <HomeIcon className="text-xl text-text hover:text-accent transition-colors" />
-              <span className="ml-2 font-display text-lg hidden sm:inline">
-                Stella
-              </span>
+              <span className="ml-2 font-display text-lg hidden sm:inline">Stella</span>
             </Link>
           </div>
 
@@ -61,16 +55,11 @@ const AccessibleHeader: React.FC = () => {
           {/* Main Navigation */}
           <nav
             className="flex items-center space-x-2"
-            role="navigation"
             aria-label={ARIA_LABELS.MAIN_NAVIGATION}
             id="navigation"
           >
-
             {/* Search */}
-            <AccessibleSearchBox
-              isVisible={isSearchVisible}
-              onToggle={toggleSearch}
-            />
+            <AccessibleSearchBox isVisible={isSearchVisible} onToggle={toggleSearch} />
 
             {/* Wishlist */}
             {isAuthenticated && (
@@ -78,7 +67,7 @@ const AccessibleHeader: React.FC = () => {
                 to="/wishlist"
                 className="relative p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent hover:text-accent transition-colors"
                 aria-label={`Liste de souhaits, ${ARIA_DESCRIPTIONS.WISHLIST_ITEMS(wishlistItemCount)}`}
-                aria-current={isCurrentPage('/wishlist') ? 'page' : undefined}
+                aria-current={isCurrentPage("/wishlist") ? "page" : undefined}
               >
                 <HeartIcon className="text-xl" />
                 {wishlistItemCount > 0 && (
@@ -87,10 +76,11 @@ const AccessibleHeader: React.FC = () => {
                       className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
                       aria-hidden="true"
                     >
-                      {wishlistItemCount > 9 ? '9+' : wishlistItemCount}
+                      {wishlistItemCount > 9 ? "9+" : wishlistItemCount}
                     </span>
                     <span className="sr-only">
-                      {wishlistItemCount} {wishlistItemCount > 1 ? 'articles' : 'article'} en favoris
+                      {wishlistItemCount} {wishlistItemCount > 1 ? "articles" : "article"} en
+                      favoris
                     </span>
                   </>
                 )}
@@ -102,7 +92,7 @@ const AccessibleHeader: React.FC = () => {
               to="/cart"
               className="relative p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent hover:text-accent transition-colors"
               aria-label={`Panier, ${ARIA_DESCRIPTIONS.CART_ITEMS(cartItemCount)}`}
-              aria-current={isCurrentPage('/cart') ? 'page' : undefined}
+              aria-current={isCurrentPage("/cart") ? "page" : undefined}
             >
               <ShoppingCartIcon className="text-xl" />
               {cartItemCount > 0 && (
@@ -111,10 +101,10 @@ const AccessibleHeader: React.FC = () => {
                     className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
                     aria-hidden="true"
                   >
-                    {cartItemCount > 9 ? '9+' : cartItemCount}
+                    {cartItemCount > 9 ? "9+" : cartItemCount}
                   </span>
                   <span className="sr-only">
-                    {cartItemCount} {cartItemCount > 1 ? 'articles' : 'article'} dans le panier
+                    {cartItemCount} {cartItemCount > 1 ? "articles" : "article"} dans le panier
                   </span>
                 </>
               )}
@@ -125,19 +115,20 @@ const AccessibleHeader: React.FC = () => {
               to={isAuthenticated ? "/profile" : "/auth"}
               className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent hover:text-accent transition-colors"
               aria-label={isAuthenticated ? "Mon profil" : "Se connecter"}
-              aria-current={isCurrentPage(isAuthenticated ? '/profile' : '/auth') ? 'page' : undefined}
+              aria-current={
+                isCurrentPage(isAuthenticated ? "/profile" : "/auth") ? "page" : undefined
+              }
             >
               <UserIcon className="text-xl" />
               <span className="sr-only">
-                {isAuthenticated ? 'Accéder à mon profil' : 'Se connecter ou créer un compte'}
+                {isAuthenticated ? "Accéder à mon profil" : "Se connecter ou créer un compte"}
               </span>
             </Link>
-
           </nav>
         </div>
 
         {/* Breadcrumb Navigation (if needed) */}
-        {location.pathname !== '/' && (
+        {location.pathname !== "/" && (
           <nav
             aria-label={ARIA_LABELS.BREADCRUMB}
             className="px-4 sm:px-6 lg:px-20 py-2 bg-background-inverse/90 border-t border-primary/10"
@@ -151,7 +142,9 @@ const AccessibleHeader: React.FC = () => {
                   Accueil
                 </Link>
               </li>
-              <li aria-hidden="true" className="text-text/50">/</li>
+              <li aria-hidden="true" className="text-text/50">
+                /
+              </li>
               <li>
                 <span className="text-text font-medium" aria-current="page">
                   {getBreadcrumbName(location.pathname)}
@@ -160,11 +153,10 @@ const AccessibleHeader: React.FC = () => {
             </ol>
           </nav>
         )}
-
       </header>
 
       {/* Spacer to prevent content from going under fixed header */}
-      <div className={`${location.pathname !== '/' ? 'h-20' : 'h-12'}`} aria-hidden="true" />
+      <div className={`${location.pathname !== "/" ? "h-20" : "h-12"}`} aria-hidden="true" />
     </>
   );
 };
@@ -172,23 +164,23 @@ const AccessibleHeader: React.FC = () => {
 // Helper function to get breadcrumb names
 function getBreadcrumbName(pathname: string): string {
   const routes: Record<string, string> = {
-    '/catalog': 'Catalogue',
-    '/cart': 'Panier',
-    '/profile': 'Profil',
-    '/wishlist': 'Favoris',
-    '/auth': 'Connexion',
-    '/contact': 'Contact',
-    '/about': 'À propos',
-    '/legal': 'Mentions légales',
-    '/privacy': 'Confidentialité',
+    "/catalog": "Catalogue",
+    "/cart": "Panier",
+    "/profile": "Profil",
+    "/wishlist": "Favoris",
+    "/auth": "Connexion",
+    "/contact": "Contact",
+    "/about": "À propos",
+    "/legal": "Mentions légales",
+    "/privacy": "Confidentialité",
   };
 
   // Handle dynamic routes like /star/123
-  if (pathname.startsWith('/star/')) {
-    return 'Détails de l\'étoile';
+  if (pathname.startsWith("/star/")) {
+    return "Détails de l'étoile";
   }
 
-  return routes[pathname] || 'Page';
+  return routes[pathname] || "Page";
 }
 
 export default memo(AccessibleHeader);

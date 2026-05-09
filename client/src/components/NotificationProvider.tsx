@@ -1,7 +1,7 @@
-import React from 'react';
 import { useNotificationStore } from "@/stores/useNotificationStore";
-import Toast from './Toast';
-import AccessibleModal from './AccessibleModal';
+import type React from "react";
+import AccessibleModal from "./AccessibleModal";
+import Toast from "./Toast";
 
 const NotificationProvider: React.FC = () => {
   const { toasts, modals, removeToast, closeModal } = useNotificationStore();

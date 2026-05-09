@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
 import { APP_CONSTANTS } from "@/constants/app";
+import { useCallback, useEffect, useState } from "react";
 
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+export type LoadingState = "idle" | "loading" | "success" | "error";
 
 interface UseLoadingStateOptions {
   initialState?: LoadingState;
@@ -9,12 +9,12 @@ interface UseLoadingStateOptions {
 }
 
 export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
-  const { initialState = 'idle', minLoadingTime = APP_CONSTANTS.LOADING_MIN_TIME } = options;
+  const { initialState = "idle", minLoadingTime = APP_CONSTANTS.LOADING_MIN_TIME } = options;
   const [state, setState] = useState<LoadingState>(initialState);
   const [startTime, setStartTime] = useState<number>(0);
 
   const setLoading = useCallback(() => {
-    setState('loading');
+    setState("loading");
     setStartTime(Date.now());
   }, []);
 
@@ -23,9 +23,9 @@ export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
     const remainingTime = Math.max(0, minLoadingTime - elapsed);
 
     if (remainingTime > 0) {
-      setTimeout(() => setState('success'), remainingTime);
+      setTimeout(() => setState("success"), remainingTime);
     } else {
-      setState('success');
+      setState("success");
     }
   }, [startTime, minLoadingTime]);
 
@@ -34,22 +34,22 @@ export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
     const remainingTime = Math.max(0, minLoadingTime - elapsed);
 
     if (remainingTime > 0) {
-      setTimeout(() => setState('error'), remainingTime);
+      setTimeout(() => setState("error"), remainingTime);
     } else {
-      setState('error');
+      setState("error");
     }
   }, [startTime, minLoadingTime]);
 
   const setIdle = useCallback(() => {
-    setState('idle');
+    setState("idle");
   }, []);
 
   return {
     state,
-    isLoading: state === 'loading',
-    isSuccess: state === 'success',
-    isError: state === 'error',
-    isIdle: state === 'idle',
+    isLoading: state === "loading",
+    isSuccess: state === "success",
+    isError: state === "error",
+    isIdle: state === "idle",
     setLoading,
     setSuccess,
     setError,
@@ -60,7 +60,7 @@ export const useLoadingState = (options: UseLoadingStateOptions = {}) => {
 // Hook pour les requêtes async avec skeleton loading
 export const useAsyncOperation = <T>(
   operation: () => Promise<T>,
-  dependencies: React.DependencyList = []
+  dependencies: React.DependencyList = [],
 ) => {
   const { state, setLoading, setSuccess, setError, ...rest } = useLoadingState({
     minLoadingTime: APP_CONSTANTS.SKELETON_LOADING_TIME, // Un peu plus long pour voir les skeletons
@@ -77,7 +77,7 @@ export const useAsyncOperation = <T>(
       setSuccess();
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error ? err : new Error("Unknown error");
       setErrorData(error);
       setError();
       throw error;

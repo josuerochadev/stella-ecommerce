@@ -1,7 +1,7 @@
 // client/src/hooks/useModalBehavior.ts
 // Responsabilité unique : Gestion des comportements et événements de modal
 
-import { useEffect, useState, RefObject } from 'react';
+import { type RefObject, useEffect, useState } from "react";
 
 interface ModalBehaviorConfig {
   isOpen: boolean;
@@ -30,19 +30,19 @@ export const useModalBehavior = ({
     if (isOpen) {
       setIsVisible(true);
       // Empêcher le scroll du body et marquer comme hidden pour les lecteurs d'écran
-      document.body.style.overflow = 'hidden';
-      document.body.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = "hidden";
+      document.body.setAttribute("aria-hidden", "true");
     } else {
       setIsVisible(false);
       // Restaurer le scroll et l'accessibilité
-      document.body.style.overflow = '';
-      document.body.removeAttribute('aria-hidden');
+      document.body.style.overflow = "";
+      document.body.removeAttribute("aria-hidden");
     }
 
     // Cleanup au démontage
     return () => {
-      document.body.style.overflow = '';
-      document.body.removeAttribute('aria-hidden');
+      document.body.style.overflow = "";
+      document.body.removeAttribute("aria-hidden");
     };
   }, [isOpen]);
 
@@ -62,12 +62,12 @@ export const useModalBehavior = ({
     // Écouter les événements personnalisés du focus trap
     const modalElement = modalRef.current;
     if (modalElement) {
-      modalElement.addEventListener('close-modal', handleCloseModal);
-      modalElement.addEventListener('escape-pressed', handleCloseModal);
+      modalElement.addEventListener("close-modal", handleCloseModal);
+      modalElement.addEventListener("escape-pressed", handleCloseModal);
 
       return () => {
-        modalElement.removeEventListener('close-modal', handleCloseModal);
-        modalElement.removeEventListener('escape-pressed', handleCloseModal);
+        modalElement.removeEventListener("close-modal", handleCloseModal);
+        modalElement.removeEventListener("escape-pressed", handleCloseModal);
       };
     }
   }, [isOpen, closeOnEscape, onClose, modalRef]);

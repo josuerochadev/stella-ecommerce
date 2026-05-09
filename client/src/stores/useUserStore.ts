@@ -2,11 +2,11 @@
 // Store du profil utilisateur avec injection de dépendances
 // Responsabilité unique : gestion de l'état du profil utilisateur via repository
 
-import { create } from "zustand";
 import { getService } from "@/di/container";
-import type { User, UserProfileData, ApiResponse } from "@/types";
 import type { UserRepository } from "@/interfaces/UserRepository";
+import type { ApiResponse, User, UserProfileData } from "@/types";
 import { getErrorMessage } from "@/utils/errorHelpers";
+import { create } from "zustand";
 
 interface UserState {
   user: User | null;
@@ -80,7 +80,10 @@ export const createUserStore = (userRepository: UserRepository) =>
         const response: ApiResponse<User> = await userRepository.updatePreferences(preferences);
         set({ user: response.data, loading: false, error: null });
       } catch (error) {
-        const errorMessage = getErrorMessage(error, "Erreur lors de la mise à jour des préférences.");
+        const errorMessage = getErrorMessage(
+          error,
+          "Erreur lors de la mise à jour des préférences.",
+        );
         set({ error: errorMessage, loading: false });
       }
     },
@@ -98,8 +101,8 @@ export const createUserStore = (userRepository: UserRepository) =>
 
     resetUser: () => set({ user: null, loading: false, error: null }),
 
-    setUser: (user: User | null) => set({ user })
+    setUser: (user: User | null) => set({ user }),
   }));
 
 // Instance par défaut avec injection de dépendances
-export const useUserStore = createUserStore(getService('userRepository'));
+export const useUserStore = createUserStore(getService("userRepository"));

@@ -1,5 +1,5 @@
-import { useState } from "react";
 import FadeInSection from "@/components/FadeInSection";
+import { useState } from "react";
 
 const faqItems = [
   {

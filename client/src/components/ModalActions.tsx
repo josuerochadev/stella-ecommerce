@@ -1,8 +1,8 @@
 // client/src/components/ModalActions.tsx
 // Responsabilité unique : Boutons d'action de la modal
 
-import React from 'react';
-import { ModalStylesService, ModalType } from "@/utils/modalStyles";
+import { ModalStylesService, type ModalType } from "@/utils/modalStyles";
+import type React from "react";
 
 interface ModalActionsProps {
   type: ModalType;
@@ -32,7 +32,7 @@ const ModalActions: React.FC<ModalActionsProps> = ({
   const typeConfig = ModalStylesService.getTypeConfig(type);
   const confirmButtonClass = typeConfig
     ? typeConfig.confirmButton
-    : 'bg-blue-600 hover:bg-blue-700 text-white';
+    : "bg-blue-600 hover:bg-blue-700 text-white";
 
   return (
     <div className="px-6 py-4 bg-gray-50 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0">

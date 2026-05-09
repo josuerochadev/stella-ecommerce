@@ -1,39 +1,41 @@
 // Utilitaires d'accessibilité pour WCAG 2.1 AA
 export const ARIA_LABELS = {
   // Navigation
-  MAIN_NAVIGATION: 'Navigation principale',
-  BREADCRUMB: 'Fil d\'Ariane',
-  PAGINATION: 'Navigation des pages',
-  SEARCH: 'Recherche',
+  MAIN_NAVIGATION: "Navigation principale",
+  BREADCRUMB: "Fil d'Ariane",
+  PAGINATION: "Navigation des pages",
+  SEARCH: "Recherche",
 
   // Actions
-  ADD_TO_CART: 'Ajouter au panier',
-  ADD_TO_WISHLIST: 'Ajouter à la liste de souhaits',
-  REMOVE_FROM_CART: 'Retirer du panier',
-  REMOVE_FROM_WISHLIST: 'Retirer de la liste de souhaits',
+  ADD_TO_CART: "Ajouter au panier",
+  ADD_TO_WISHLIST: "Ajouter à la liste de souhaits",
+  REMOVE_FROM_CART: "Retirer du panier",
+  REMOVE_FROM_WISHLIST: "Retirer de la liste de souhaits",
 
   // States
-  LOADING: 'Chargement en cours',
-  ERROR: 'Erreur',
-  SUCCESS: 'Succès',
-  REQUIRED_FIELD: 'Champ requis',
+  LOADING: "Chargement en cours",
+  ERROR: "Erreur",
+  SUCCESS: "Succès",
+  REQUIRED_FIELD: "Champ requis",
 
   // UI Elements
-  CLOSE_DIALOG: 'Fermer la boîte de dialogue',
-  EXPAND_MENU: 'Développer le menu',
-  COLLAPSE_MENU: 'Réduire le menu',
-  SHOW_PASSWORD: 'Afficher le mot de passe',
-  HIDE_PASSWORD: 'Masquer le mot de passe',
-  ACCESSIBILITY_SETTINGS: 'Paramètres d\'accessibilité',
+  CLOSE_DIALOG: "Fermer la boîte de dialogue",
+  EXPAND_MENU: "Développer le menu",
+  COLLAPSE_MENU: "Réduire le menu",
+  SHOW_PASSWORD: "Afficher le mot de passe",
+  HIDE_PASSWORD: "Masquer le mot de passe",
+  ACCESSIBILITY_SETTINGS: "Paramètres d'accessibilité",
 } as const;
 
 export const ARIA_DESCRIPTIONS = {
   STAR_RATING: (rating: number) => `Note de ${rating} étoiles sur 5`,
   PRICE: (price: number) => `Prix : ${price} euros`,
-  CART_ITEMS: (count: number) => `${count} ${count > 1 ? 'articles' : 'article'} dans le panier`,
-  WISHLIST_ITEMS: (count: number) => `${count} ${count > 1 ? 'articles' : 'article'} en favoris`,
-  SEARCH_RESULTS: (count: number) => `${count} ${count > 1 ? 'résultats trouvés' : 'résultat trouvé'}`,
-  PASSWORD_REQUIREMENTS: 'Minimum 8 caractères, incluant une majuscule, une minuscule et un chiffre',
+  CART_ITEMS: (count: number) => `${count} ${count > 1 ? "articles" : "article"} dans le panier`,
+  WISHLIST_ITEMS: (count: number) => `${count} ${count > 1 ? "articles" : "article"} en favoris`,
+  SEARCH_RESULTS: (count: number) =>
+    `${count} ${count > 1 ? "résultats trouvés" : "résultat trouvé"}`,
+  PASSWORD_REQUIREMENTS:
+    "Minimum 8 caractères, incluant une majuscule, une minuscule et un chiffre",
 } as const;
 
 // Utilitaire pour gérer le focus trap
@@ -52,21 +54,21 @@ export class FocusTrap {
 
   private getFocusableElements(): HTMLElement[] {
     const focusableSelectors = [
-      'button',
-      '[href]',
-      'input',
-      'select',
-      'textarea',
-      '[tabindex]:not([tabindex="-1"])'
-    ].join(', ');
+      "button",
+      "[href]",
+      "input",
+      "select",
+      "textarea",
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(", ");
 
     return Array.from(this.element.querySelectorAll(focusableSelectors))
-      .filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'))
-      .filter(el => (el as HTMLElement).offsetParent !== null) as HTMLElement[]; // Visible elements only
+      .filter((el) => !el.hasAttribute("disabled") && !el.getAttribute("aria-hidden"))
+      .filter((el) => (el as HTMLElement).offsetParent !== null) as HTMLElement[]; // Visible elements only
   }
 
   public activate() {
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener("keydown", this.handleKeyDown);
 
     // Focus sur le premier élément
     if (this.firstFocusable) {
@@ -75,11 +77,11 @@ export class FocusTrap {
   }
 
   public deactivate() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Tab') {
+    if (e.key === "Tab") {
       if (e.shiftKey) {
         // Shift + Tab
         if (document.activeElement === this.firstFocusable) {
@@ -95,17 +97,17 @@ export class FocusTrap {
       }
     }
 
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       e.preventDefault();
       // Dispatch custom event pour fermer le modal/dialog
-      this.element.dispatchEvent(new CustomEvent('escape-pressed'));
+      this.element.dispatchEvent(new CustomEvent("escape-pressed"));
     }
   };
 }
 
 // Type definitions for accessibility components
 export interface StatusMessageProps {
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   message: string;
   id?: string;
 }

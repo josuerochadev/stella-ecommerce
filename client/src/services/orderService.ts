@@ -1,8 +1,8 @@
 // client/src/services/orderService.ts
 // Responsabilité unique : Gestion des commandes
 
+import type { ApiResponse, Order, OrderData, OrderStatus } from "@/types";
 import { httpClient } from "./httpClient";
-import type { Order, OrderData, OrderStatus, ApiResponse } from "@/types";
 
 /**
  * Service de gestion des commandes
@@ -36,8 +36,13 @@ export class OrderService {
   /**
    * Mettre à jour le statut d'une commande (admin)
    */
-  static async updateOrderStatus(orderId: number, status: OrderStatus): Promise<ApiResponse<Order>> {
-    const response = await httpClient.put<ApiResponse<Order>>(`/orders/${orderId}/update-status`, { status });
+  static async updateOrderStatus(
+    orderId: number,
+    status: OrderStatus,
+  ): Promise<ApiResponse<Order>> {
+    const response = await httpClient.put<ApiResponse<Order>>(`/orders/${orderId}/update-status`, {
+      status,
+    });
     return response.data;
   }
 

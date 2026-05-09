@@ -1,9 +1,9 @@
 // client/src/components/AddToWishlistButton.tsx
 
-import { useWishlistStore } from "@/stores/useWishlistStore";
 import { useAuth } from "@/context/AuthContext";
-import { HeartIcon } from "@/utils/icons";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { HeartIcon } from "@/utils/icons";
 import { useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
@@ -39,7 +39,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
 
     try {
       await addItemToWishlist(starId);
-    } catch (err) {
+    } catch (_err) {
       // L'erreur est gérée par le store useWishlistStore
     }
   }, [isAuthenticated, redirectToLogin, addItemToWishlist, starId]);

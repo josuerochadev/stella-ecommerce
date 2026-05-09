@@ -1,7 +1,7 @@
 // client/src/hooks/useHeroPhrases.ts
 
-import { useEffect, useState, useMemo, useCallback } from "react";
 import { APP_CONSTANTS } from "@/constants/app";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const heroPhrases = [
   "Illuminer votre vie.",
@@ -19,7 +19,7 @@ export const useHeroPhrases = (interval = APP_CONSTANTS.HERO_PHRASES_INTERVAL) =
   const updatePhrase = useCallback(() => {
     setFade(false);
     setTimeout(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % heroPhrases.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % heroPhrases.length);
       setFade(true);
     }, APP_CONSTANTS.DEBOUNCE_DELAY);
   }, []);

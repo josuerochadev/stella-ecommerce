@@ -1,7 +1,7 @@
 // client/src/hooks/useCatalogFilters.ts
 // Responsabilité unique : Gestion de l'état et logique des filtres du catalogue
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from "react";
 
 export interface SearchFilters {
   query: string;
@@ -10,7 +10,15 @@ export interface SearchFilters {
   priceMax: number | null;
   magnitudeMin: number | null;
   magnitudeMax: number | null;
-  sortBy: "relevance" | "price" | "name" | "magnitude" | "distance" | "luminosity" | "popularity" | "newest";
+  sortBy:
+    | "relevance"
+    | "price"
+    | "name"
+    | "magnitude"
+    | "distance"
+    | "luminosity"
+    | "popularity"
+    | "newest";
   sortOrder: "asc" | "desc";
 }
 
@@ -22,7 +30,7 @@ export interface UseCatalogFiltersOptions {
  * Hook pour la gestion des filtres du catalogue
  * Responsabilité unique : État et mutations des filtres
  */
-export const useCatalogFilters = ({ initialQuery = '' }: UseCatalogFiltersOptions = {}) => {
+export const useCatalogFilters = ({ initialQuery = "" }: UseCatalogFiltersOptions = {}) => {
   const [filters, setFilters] = useState<SearchFilters>({
     query: initialQuery,
     constellation: [],
@@ -31,7 +39,7 @@ export const useCatalogFilters = ({ initialQuery = '' }: UseCatalogFiltersOption
     magnitudeMin: null,
     magnitudeMax: null,
     sortBy: "relevance",
-    sortOrder: "asc"
+    sortOrder: "asc",
   });
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -40,12 +48,12 @@ export const useCatalogFilters = ({ initialQuery = '' }: UseCatalogFiltersOption
    * Mise à jour d'un filtre spécifique
    * Responsabilité : Mutation d'état typée
    */
-  const updateFilter = useCallback(<K extends keyof SearchFilters>(
-    key: K,
-    value: SearchFilters[K]
-  ) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  }, []);
+  const updateFilter = useCallback(
+    <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   /**
    * Réinitialisation de tous les filtres
@@ -60,7 +68,7 @@ export const useCatalogFilters = ({ initialQuery = '' }: UseCatalogFiltersOption
       magnitudeMin: null,
       magnitudeMax: null,
       sortBy: "relevance",
-      sortOrder: "asc"
+      sortOrder: "asc",
     });
   }, []);
 
@@ -68,19 +76,22 @@ export const useCatalogFilters = ({ initialQuery = '' }: UseCatalogFiltersOption
    * Toggle d'une constellation
    * Responsabilité : Logique de sélection multiple
    */
-  const toggleConstellation = useCallback((constellation: string) => {
-    const current = filters.constellation;
-    const updated = current.includes(constellation)
-      ? current.filter(c => c !== constellation)
-      : [...current, constellation];
-    updateFilter("constellation", updated);
-  }, [filters.constellation, updateFilter]);
+  const toggleConstellation = useCallback(
+    (constellation: string) => {
+      const current = filters.constellation;
+      const updated = current.includes(constellation)
+        ? current.filter((c) => c !== constellation)
+        : [...current, constellation];
+      updateFilter("constellation", updated);
+    },
+    [filters.constellation, updateFilter],
+  );
 
   /**
    * Toggle des filtres avancés
    */
   const toggleAdvancedFilters = useCallback(() => {
-    setShowAdvancedFilters(prev => !prev);
+    setShowAdvancedFilters((prev) => !prev);
   }, []);
 
   /**

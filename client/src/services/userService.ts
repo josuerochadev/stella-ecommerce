@@ -1,8 +1,8 @@
 // client/src/services/userService.ts
 // Responsabilité unique : Gestion des profils utilisateurs
 
+import type { ApiResponse, User, UserProfileData } from "@/types";
 import { httpClient } from "./httpClient";
-import type { User, UserProfileData, ApiResponse } from "@/types";
 
 /**
  * Service de gestion des profils utilisateurs
@@ -80,7 +80,7 @@ export class UserService {
    */
   static async checkUsernameAvailability(username: string): Promise<{ available: boolean }> {
     const response = await httpClient.get<{ available: boolean }>("/users/check-username", {
-      params: { username }
+      params: { username },
     });
     return response.data;
   }

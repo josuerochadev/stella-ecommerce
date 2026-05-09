@@ -1,10 +1,10 @@
 // client/src/components/CatalogResultsGrid.tsx
 // Responsabilité unique : Affichage des résultats de recherche du catalogue
 
-import StarCard from './StarCard';
-import { SkeletonGrid } from './Skeleton';
-import { SearchIcon } from "@/utils/icons";
 import type { Star } from "@/types";
+import { SearchIcon } from "@/utils/icons";
+import { SkeletonGrid } from "./Skeleton";
+import StarCard from "./StarCard";
 
 interface CatalogResultsGridProps {
   stars: Star[];
@@ -49,13 +49,8 @@ const CatalogResultsGrid: React.FC<CatalogResultsGridProps> = ({
         <div className="text-center py-12">
           <SearchIcon size={48} className="mx-auto mb-4 text-text opacity-50" />
           <h3 className="text-xl font-display mb-2">Aucun résultat trouvé</h3>
-          <p className="text-text opacity-70 mb-4">
-            Essayez de modifier vos critères de recherche
-          </p>
-          <button
-            onClick={onClearFilters}
-            className="btn"
-          >
+          <p className="text-text opacity-70 mb-4">Essayez de modifier vos critères de recherche</p>
+          <button onClick={onClearFilters} className="btn">
             Réinitialiser la recherche
           </button>
         </div>

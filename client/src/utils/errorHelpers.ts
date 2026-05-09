@@ -21,7 +21,7 @@
  */
 export const getErrorMessage = (
   error: unknown,
-  fallbackMessage: string = "Une erreur inattendue est survenue."
+  fallbackMessage = "Une erreur inattendue est survenue.",
 ): string => {
   // Cas 1: Error standard
   if (error instanceof Error) {
@@ -79,7 +79,7 @@ export const getErrorMessage = (
 export const formatErrorMessage = (
   error: unknown,
   prefix: string,
-  fallback: string = "Unknown error"
+  fallback = "Unknown error",
 ): string => {
   const message = getErrorMessage(error, fallback);
   return `${prefix}: ${message}`;
@@ -100,7 +100,7 @@ export const formatErrorMessage = (
 export const createFormattedError = (
   error: unknown,
   prefix: string,
-  fallback: string = "Unknown error"
+  fallback = "Unknown error",
 ): Error => {
   const message = formatErrorMessage(error, prefix, fallback);
   return new Error(message);

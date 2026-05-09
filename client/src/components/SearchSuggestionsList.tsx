@@ -1,9 +1,10 @@
 // client/src/components/SearchSuggestionsList.tsx
 // Responsabilité unique : Affichage des suggestions de recherche
 
-import React, { forwardRef } from 'react';
-import { ARIA_DESCRIPTIONS } from "@/utils/accessibility";
 import type { Star } from "@/types";
+import { ARIA_DESCRIPTIONS } from "@/utils/accessibility";
+import type React from "react";
+import { forwardRef } from "react";
 
 interface SearchSuggestionsListProps {
   suggestions: Star[];
@@ -32,7 +33,7 @@ const SearchSuggestionsList = forwardRef<HTMLDivElement, SearchSuggestionsListPr
       onSelectSuggestion,
       onKeyDown,
     },
-    ref
+    ref,
   ) => {
     // Ne pas afficher si pas de suggestions à montrer
     if (!showSuggestions) {
@@ -66,21 +67,17 @@ const SearchSuggestionsList = forwardRef<HTMLDivElement, SearchSuggestionsListPr
     // Message "aucun résultat" si recherche suffisamment longue
     if (searchValue.length >= 2 && !isLoading) {
       return (
-        <div
-          className="mt-2 p-3 text-text/70 text-center italic"
-          role="status"
-          aria-live="polite"
-        >
+        <div className="mt-2 p-3 text-text/70 text-center italic" role="status" aria-live="polite">
           Aucune étoile trouvée pour "{searchValue}"
         </div>
       );
     }
 
     return null;
-  }
+  },
 );
 
-SearchSuggestionsList.displayName = 'SearchSuggestionsList';
+SearchSuggestionsList.displayName = "SearchSuggestionsList";
 
 /**
  * Composant d'élément de suggestion individuel
@@ -93,12 +90,7 @@ interface SearchSuggestionItemProps {
   onClick: () => void;
 }
 
-const SearchSuggestionItem: React.FC<SearchSuggestionItemProps> = ({
-  star,
-  index,
-  isActive,
-  onClick,
-}) => {
+const SearchSuggestionItem: React.FC<SearchSuggestionItemProps> = ({ star, isActive, onClick }) => {
   return (
     <button
       type="button"
@@ -106,18 +98,14 @@ const SearchSuggestionItem: React.FC<SearchSuggestionItemProps> = ({
       aria-selected={isActive}
       onClick={onClick}
       className={`w-full text-left p-3 hover:bg-primary/50 focus:bg-primary/50 focus:outline-none border-b border-primary/10 last:border-b-0 ${
-        isActive ? 'bg-primary/50' : ''
+        isActive ? "bg-primary/50" : ""
       }`}
     >
       <div className="font-medium text-text">{star.name}</div>
       <div className="text-sm text-text/70">
         {star.constellation} • {ARIA_DESCRIPTIONS.PRICE(star.price)}
       </div>
-      {star.magnitude && (
-        <div className="text-xs text-text/50">
-          Magnitude: {star.magnitude}
-        </div>
-      )}
+      {star.magnitude && <div className="text-xs text-text/50">Magnitude: {star.magnitude}</div>}
     </button>
   );
 };

@@ -1,8 +1,9 @@
 // client/src/components/SearchInputField.tsx
 // Responsabilité unique : Champ de saisie de recherche
 
-import React, { forwardRef } from 'react';
 import { SearchIcon } from "@/utils/icons";
+import type React from "react";
+import { forwardRef } from "react";
 
 interface SearchInputFieldProps {
   value: string;
@@ -35,9 +36,9 @@ const SearchInputField = forwardRef<HTMLInputElement, SearchInputFieldProps>(
       showSuggestions,
       searchId,
       suggestionsId,
-      autoFocus = false,
+      autoFocus: _autoFocus = false,
     },
-    ref
+    ref,
   ) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       // La validation de sécurité sera gérée par le hook parent
@@ -67,11 +68,11 @@ const SearchInputField = forwardRef<HTMLInputElement, SearchInputFieldProps>(
             aria-haspopup="listbox"
             aria-owns={showSuggestions ? suggestionsId : undefined}
             aria-describedby={`${searchId}-description`}
-            autoFocus={autoFocus}
           />
 
           <div id={`${searchId}-description`} className="sr-only">
-            Tapez au moins 2 caractères pour voir les suggestions. Utilisez les flèches pour naviguer.
+            Tapez au moins 2 caractères pour voir les suggestions. Utilisez les flèches pour
+            naviguer.
           </div>
 
           {/* Indicateur de chargement */}
@@ -92,9 +93,9 @@ const SearchInputField = forwardRef<HTMLInputElement, SearchInputFieldProps>(
         </div>
       </form>
     );
-  }
+  },
 );
 
-SearchInputField.displayName = 'SearchInputField';
+SearchInputField.displayName = "SearchInputField";
 
 export default SearchInputField;

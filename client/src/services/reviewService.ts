@@ -1,8 +1,8 @@
 // client/src/services/reviewService.ts
 // Responsabilité unique : Gestion des avis clients
 
+import type { ApiResponse, Review } from "@/types";
 import { httpClient } from "./httpClient";
-import type { Review, ApiResponse } from "@/types";
 
 /**
  * Interface pour les données d'ajout d'avis
@@ -22,7 +22,9 @@ export class ReviewService {
    * Récupérer les avis pour une étoile spécifique
    */
   static async getReviewsForStar(starId: number): Promise<ApiResponse<Review[]>> {
-    const response = await httpClient.get<ApiResponse<Review[]>>("/reviews", { params: { starId } });
+    const response = await httpClient.get<ApiResponse<Review[]>>("/reviews", {
+      params: { starId },
+    });
     return response.data;
   }
 
@@ -37,7 +39,10 @@ export class ReviewService {
   /**
    * Mettre à jour un avis existant
    */
-  static async updateReview(reviewId: number, reviewData: Partial<AddReviewData>): Promise<ApiResponse<Review>> {
+  static async updateReview(
+    reviewId: number,
+    reviewData: Partial<AddReviewData>,
+  ): Promise<ApiResponse<Review>> {
     const response = await httpClient.put<ApiResponse<Review>>(`/reviews/${reviewId}`, reviewData);
     return response.data;
   }
@@ -62,7 +67,9 @@ export class ReviewService {
    * Signaler un avis inapproprié
    */
   static async reportReview(reviewId: number, reason: string): Promise<ApiResponse<null>> {
-    const response = await httpClient.post<ApiResponse<null>>(`/reviews/${reviewId}/report`, { reason });
+    const response = await httpClient.post<ApiResponse<null>>(`/reviews/${reviewId}/report`, {
+      reason,
+    });
     return response.data;
   }
 }

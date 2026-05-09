@@ -14,7 +14,7 @@ export interface CartRepository {
    * @returns {Promise<{cartItems: CartItem[]}>} Panier avec ses articles
    * @throws {Error} Si la récupération échoue
    */
-  getCart(): Promise<{cartItems: CartItem[]}>;
+  getCart(): Promise<{ cartItems: CartItem[] }>;
 
   /**
    * Ajoute un article au panier
@@ -54,7 +54,7 @@ export interface CartRepository {
    * @returns {Promise<{total: number, itemCount: number}>} Totaux du panier
    * @throws {Error} Si le calcul échoue
    */
-  getCartSummary(): Promise<{total: number, itemCount: number}>;
+  getCartSummary(): Promise<{ total: number; itemCount: number }>;
 
   /**
    * Vérifie si un article est déjà dans le panier
@@ -70,5 +70,5 @@ export interface CartRepository {
    * @returns {Promise<{cartItems: CartItem[]}>} Panier synchronisé
    * @throws {Error} Si la synchronisation échoue
    */
-  syncCart(localItems: CartItem[]): Promise<{cartItems: CartItem[]}>;
+  syncCart(localItems: CartItem[]): Promise<{ cartItems: CartItem[] }>;
 }

@@ -1,9 +1,9 @@
 // client/src/components/AddToCartButton.tsx
 
-import { useCartStore } from "@/stores/useCartStore";
 import { useAuth } from "@/context/AuthContext";
-import { ShoppingCartIcon } from "@/utils/icons";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useCartStore } from "@/stores/useCartStore";
+import { ShoppingCartIcon } from "@/utils/icons";
 import type React from "react";
 
 interface AddToCartButtonProps {
@@ -33,7 +33,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
 
     try {
       await addItem(starId, 1);
-    } catch (err) {
+    } catch (_err) {
       // L'erreur est gérée par le store useCartStore
     }
   };
