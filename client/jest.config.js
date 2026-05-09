@@ -15,8 +15,17 @@ module.exports = {
   collectCoverage: false, // Use --coverage flag to enable
   coverageDirectory: '<rootDir>/coverage', // Dossier de rapport de couverture
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}', // Fichiers source pour la couverture
-    '!src/**/*.d.ts', // Exclusion des fichiers de définition de type
-    '!src/index.tsx', // Exclusion du fichier d'entrée principal
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/index.tsx',
+    '!src/tests/**',
   ],
+  coverageThreshold: {
+    global: {
+      branches: 0,
+      functions: 1,
+      lines: 1,
+      statements: 1,
+    },
+  },
 };
