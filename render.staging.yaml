@@ -1,41 +1,42 @@
 databases:
-  - name: stella-db
+  - name: stella-db-staging
     plan: free
-    databaseName: stella_ecommerce
+    databaseName: stella_ecommerce_staging
     user: stella_user
 
 services:
   - type: web
-    name: stella-api
+    name: stella-api-staging
     runtime: node
     plan: free
     rootDir: server
+    branch: dev
     buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
-        value: production
+        value: staging
       - key: DB_DIALECT
         value: postgres
       - key: DB_HOST
         fromDatabase:
-          name: stella-db
+          name: stella-db-staging
           property: host
       - key: DB_USERNAME
         fromDatabase:
-          name: stella-db
+          name: stella-db-staging
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: stella-db
+          name: stella-db-staging
           property: password
       - key: DB_DATABASE
         fromDatabase:
-          name: stella-db
+          name: stella-db-staging
           property: database
       - key: DATABASE_URL
         fromDatabase:
-          name: stella-db
+          name: stella-db-staging
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
@@ -43,13 +44,13 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
-    healthCheckPath: /api/health
 
   - type: web
-    name: stella-client
+    name: stella-client-staging
     runtime: static
     plan: free
     rootDir: client
+    branch: dev
     buildCommand: npm install && npm run build
     staticPublishPath: build
     headers:
