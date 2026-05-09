@@ -1,4 +1,22 @@
 const winston = require("winston");
+const Sentry = require("@sentry/node");
+
+const sentryTransport = new winston.transports.Stream({
+  level: "error",
+  stream: {
+    write: (message) => {
+      try {
+        const parsed = JSON.parse(message);
+        Sentry.captureMessage(parsed.message || message, {
+          level: "error",
+          extra: parsed,
+        });
+      } catch {
+        Sentry.captureMessage(message, "error");
+      }
+    },
+  },
+});
 
 const logger = winston.createLogger({
   level: "info",
@@ -17,6 +35,7 @@ const logger = winston.createLogger({
       maxFiles: 5,
       tailable: true,
     }),
+    sentryTransport,
   ],
 });
 

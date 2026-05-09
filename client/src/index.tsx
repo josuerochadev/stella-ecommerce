@@ -4,9 +4,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
+import { initSentry } from "./config/sentry";
 import { AuthProvider } from "./context/AuthContext";
 import { reportWebVitals } from "./utils/webVitals";
 import "./styles/index.css";
+
+initSentry();
 
 const queryClient = new QueryClient({
   defaultOptions: {

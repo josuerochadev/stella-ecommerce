@@ -24,6 +24,7 @@ const { sanitizeInput } = require("./middlewares/sanitization");
 const { setApiSecurityHeaders } = require("./middlewares/contentSecurity");
 const { scheduleTokenCleanup } = require("./utils/tokenCleanup");
 const compression = require("compression");
+const { initSentry } = require("./config/sentry");
 
 const app = express();
 
@@ -117,6 +118,9 @@ app.get("*", (_, res) => {
 app.use("/api", (req, _, next) => {
 	next(new AppError(`Can't find ${req.originalUrl} on this server!`, HTTP_STATUS.NOT_FOUND));
 });
+
+// Sentry error handler (must be before app errorHandler)
+initSentry(app);
 
 // Global error handling
 app.use(errorHandler);
