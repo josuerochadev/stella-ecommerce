@@ -34,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "RefreshTokens",
       timestamps: true,
       indexes: [
-        { fields: ["userId"] },
-        { fields: ["userId", "isRevoked"] },
-        { fields: ["expiresAt"] },
+        { fields: ["user_id"] },
+        { fields: ["user_id", "is_revoked"] },
+        { fields: ["expires_at"] },
       ],
     },
   );
