@@ -23,9 +23,12 @@ export default defineConfig({
       port: 3000,
       reuseExistingServer: true,
       timeout: 30_000,
+      env: { ...process.env, NODE_ENV: "development" },
     },
     {
-      command: "CI= npm start",
+      command: process.env.CI
+        ? "npx serve -s build -l 3001"
+        : "npm start",
       cwd: "./client",
       port: 3001,
       reuseExistingServer: true,

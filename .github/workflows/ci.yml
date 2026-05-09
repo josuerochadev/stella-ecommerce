@@ -100,6 +100,12 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix client
       - run: npm ci --prefix server
+      - name: Build client for E2E
+        run: npm run build
+        working-directory: client
+        env:
+          CI: false
+          REACT_APP_API_URL: http://localhost:3000/api
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
       - name: Init database
