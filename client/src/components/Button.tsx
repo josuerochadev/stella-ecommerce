@@ -78,7 +78,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button ref={ref} className={buttonClasses} disabled={isDisabled} {...props}>
         {isLoading && (
-          <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2" />
+          <div className="motion-safe:animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2" />
         )}
         {isLoading && loadingText ? loadingText : children}
       </button>

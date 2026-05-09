@@ -99,7 +99,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isVisible, onToggle }) => {
             {/* Loading indicator */}
             {isLoading && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <span className="animate-spin">⟳</span>
+                <span className="motion-safe:animate-spin">⟳</span>
               </div>
             )}
 

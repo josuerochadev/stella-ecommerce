@@ -53,7 +53,7 @@ const FormContainer = forwardRef<HTMLFormElement, FormContainerProps>(
           {isLoading && (
             <div className="absolute inset-0 bg-secondary/50 flex items-center justify-center rounded-md">
               <div className="flex items-center space-x-2">
-                <div className="animate-spin h-6 w-6 border-2 border-accent border-t-transparent rounded-full" />
+                <div className="motion-safe:animate-spin h-6 w-6 border-2 border-accent border-t-transparent rounded-full" />
                 <span className="text-text">Chargement...</span>
               </div>
             </div>

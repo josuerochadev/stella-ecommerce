@@ -122,7 +122,7 @@ const Catalogue: React.FC = () => {
             {/* En-tête */}
             <div className="flex justify-center items-center mb-6">
               <h1 className="text-4xl font-display">Catalogue</h1>
-              <span className="ml-4 text-lg font-serif text-text animate-pulse">
+              <span className="ml-4 text-lg font-serif text-text motion-safe:animate-pulse">
                 Illuminez votre vie
               </span>
             </div>

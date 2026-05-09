@@ -141,7 +141,7 @@ const Register: React.FC = () => {
             <button type="submit" className="btn" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <span className="inline-block animate-spin mr-2" aria-hidden="true">
+                  <span className="inline-block motion-safe:animate-spin mr-2" aria-hidden="true">
                     ⟳
                   </span>
                   Inscription en cours...

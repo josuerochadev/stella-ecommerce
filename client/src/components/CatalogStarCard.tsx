@@ -20,8 +20,8 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
     "bg-surface-1 text-text rounded-lg overflow-hidden",
     "flex flex-col h-full mb-4",
     "border border-text/[0.07]",
-    "transition-all duration-300 ease-out",
-    "hover:border-special/25 hover:scale-[1.02] hover:-translate-y-1",
+    "motion-safe:transition-all motion-safe:duration-300 ease-out",
+    "motion-safe:hover:scale-[1.02] motion-safe:hover:-translate-y-1 hover:border-special/25",
     "hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,179,71,0.15)]",
     "shadow-lg",
   );
@@ -38,7 +38,7 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
               width={400}
               height={192}
               loading="lazy"
-              className="w-full h-48 object-cover transition-transform duration-[600ms] ease-out hover:scale-105 brightness-75 saturate-90"
+              className="w-full h-48 object-cover motion-safe:transition-transform motion-safe:duration-300 ease-out motion-safe:hover:scale-105 brightness-75 saturate-90"
             />
           </picture>
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-surface-0/90 to-transparent" />

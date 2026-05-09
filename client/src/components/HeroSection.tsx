@@ -1,19 +1,22 @@
 import type { ReactNode } from "react";
 import Slider from "react-slick";
+import { useReducedMotion } from "@/hooks";
 
 interface HeroSectionProps {
   children?: ReactNode;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ children }) => {
+  const prefersReducedMotion = useReducedMotion();
+
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
-    fade: true,
+    speed: prefersReducedMotion ? 0 : 500,
+    fade: !prefersReducedMotion,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: !prefersReducedMotion,
     autoplaySpeed: 5000,
     arrows: false,
   };

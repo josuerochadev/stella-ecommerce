@@ -184,7 +184,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     >
       <div className="flex items-center space-x-3">
         <div
-          className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full"
+          className="motion-safe:animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full"
           aria-hidden="true"
         />
         <span className="text-text font-medium">{message}</span>

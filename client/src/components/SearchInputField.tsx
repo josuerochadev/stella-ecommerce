@@ -78,7 +78,7 @@ const SearchInputField = forwardRef<HTMLInputElement, SearchInputFieldProps>(
           {/* Indicateur de chargement */}
           {isLoading && (
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2" aria-hidden="true">
-              <span className="animate-spin">⟳</span>
+              <span className="motion-safe:animate-spin">⟳</span>
             </div>
           )}
 

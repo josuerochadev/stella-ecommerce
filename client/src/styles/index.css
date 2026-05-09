@@ -203,6 +203,12 @@
     animation: shimmer 1.5s infinite;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer::before {
+      animation: none;
+    }
+  }
+
   .button-press {
     @apply transition-all duration-150 ease-out;
     @apply active:scale-95 active:shadow-inner;
@@ -237,6 +243,14 @@
   }
   .stagger-children > *:nth-child(6) {
     animation-delay: 0.6s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .smooth-bounce,
+    .fade-slide-in,
+    .stagger-children > * {
+      animation: none;
+    }
   }
 
   /* Interactions tactiles */
@@ -327,6 +341,15 @@
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .animate-shimmer,
+    .animate-smooth-bounce,
+    .animate-fade-slide-in,
+    .animate-pulse-glow {
+      animation: none;
+    }
+  }
+
   /* Responsive et mobile-first */
   .mobile-scroll-snap {
     scroll-snap-type: x mandatory;
@@ -402,6 +425,12 @@
     color: #fff;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .h1-neon:hover {
+      animation: none;
+    }
+  }
+
   /* Zoom subtil pour l'image d'arriere-plan du heros */
   @keyframes subtleZoom {
     0% {
@@ -419,6 +448,12 @@
     @apply relative;
     animation: subtleZoom 15s ease-in-out infinite;
     filter: brightness(50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-img-animate {
+      animation: none;
+    }
   }
 
   /* Transition pour l'apparition dans le header */
@@ -441,9 +476,18 @@
 }
 
 .star-card-img {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .star-card-img:hover {
   transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-card-img {
+    transition: none;
+  }
+  .star-card-img:hover {
+    transform: none;
+  }
 }

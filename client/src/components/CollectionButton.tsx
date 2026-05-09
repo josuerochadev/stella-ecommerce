@@ -147,7 +147,7 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
       aria-label={getAriaLabel()}
     >
       {isLoading ? (
-        <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+        <div className="motion-safe:animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
       ) : (
         <Icon className="h-4 w-4" />
       )}

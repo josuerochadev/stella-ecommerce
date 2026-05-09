@@ -1,5 +1,6 @@
 import type React from "react";
 import { useInView } from "react-intersection-observer";
+import { useReducedMotion } from "@/hooks";
 
 interface FadeInSectionProps {
   children: React.ReactNode;
@@ -14,10 +15,15 @@ const FadeInSection: React.FC<FadeInSectionProps> = ({
   translateY = 10,
   customClass = "",
 }) => {
+  const prefersReducedMotion = useReducedMotion();
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  if (prefersReducedMotion) {
+    return <div className={customClass}>{children}</div>;
+  }
 
   return (
     <div
