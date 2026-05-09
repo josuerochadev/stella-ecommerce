@@ -6,7 +6,7 @@ test.describe("Authentication Flow", () => {
   });
 
   test("displays login form by default", async ({ page }) => {
-    await expect(page.locator("h2").filter({ hasText: "Connexion" })).toBeVisible();
+    await expect(page.locator("h1").filter({ hasText: "Connexion" })).toBeVisible();
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
     await expect(page.getByRole("button", { name: "Se connecter" })).toBeVisible();
@@ -15,12 +15,12 @@ test.describe("Authentication Flow", () => {
   test("toggles between login and register forms", async ({ page }) => {
     // Switch to register
     await page.getByRole("button", { name: "Inscrivez-vous ici" }).click();
-    await expect(page.locator("h2").filter({ hasText: "Inscription" })).toBeVisible();
+    await expect(page.locator("h1").filter({ hasText: "Inscription" })).toBeVisible();
     await expect(page.getByRole("button", { name: "S'inscrire" })).toBeVisible();
 
     // Switch back to login
     await page.getByRole("button", { name: "Connectez-vous ici" }).click();
-    await expect(page.locator("h2").filter({ hasText: "Connexion" })).toBeVisible();
+    await expect(page.locator("h1").filter({ hasText: "Connexion" })).toBeVisible();
   });
 
   test("shows validation errors on empty login submission", async ({ page }) => {
