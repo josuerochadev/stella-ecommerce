@@ -1,4 +1,5 @@
 import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/context/AuthContext";
 import { OrderService } from "@/services/orderService";
 import type { Order, OrderStatus } from "@/types";
@@ -67,6 +68,11 @@ const Orders: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 py-8 max-w-3xl">
+      <SEO
+        title="Mes commandes"
+        description="Consultez l'historique et le statut de vos commandes d'etoiles sur Stella."
+        path="/orders"
+      />
       <h1 className="text-3xl font-bold mb-8 text-text">Mes commandes</h1>
 
       {orders.length === 0 ? (

@@ -3,6 +3,7 @@ import SEO from "@/components/SEO";
 import { sendContactMessage } from "@/services/contactService";
 import { useState } from "react";
 import type React from "react";
+import { Helmet } from "react-helmet-async";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -38,6 +39,17 @@ const Contact: React.FC = () => {
         description="Contactez l'equipe Stella. Questions, support ou informations sur nos etoiles."
         path="/contact"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            name: "Contactez Stella",
+            description: "Contactez l'équipe Stella pour toute question sur nos étoiles.",
+            url: "https://stella-ecommerce.fr/contact",
+          })}
+        </script>
+      </Helmet>
       <h1 className="text-4xl font-display mb-6 text-center">Contactez-nous</h1>
       <FadeInSection>
         <div className="bg-secondary text-text p-6 rounded-md shadow-lg mb-8">

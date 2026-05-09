@@ -114,7 +114,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
             showSuggestions={showSuggestions}
             searchId={searchId}
             suggestionsId={suggestionsId}
-            autoFocus={true}
+            autoFocus={isVisible}
           />
 
           {/* Liste des suggestions */}

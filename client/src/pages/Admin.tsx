@@ -190,6 +190,7 @@ const UsersView: React.FC<{ users: AdminUser[] }> = ({ users }) => {
     <FadeInSection>
       <div className="bg-secondary text-text rounded-lg shadow-lg overflow-hidden">
         <table className="w-full">
+          <caption className="sr-only">Liste des utilisateurs inscrits</caption>
           <thead>
             <tr className="border-b border-primary/20">
               <th className="text-left p-4 font-display">Nom</th>

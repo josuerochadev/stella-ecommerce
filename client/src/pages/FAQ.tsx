@@ -1,5 +1,7 @@
 import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 const faqItems = [
   {
@@ -41,8 +43,29 @@ const FAQ: React.FC = () => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.content,
+      },
+    })),
+  };
+
   return (
     <div className="container mx-auto pt-20 px-4">
+      <SEO
+        title="Foire aux questions"
+        description="Trouvez les reponses a vos questions sur l'achat d'etoiles, la propriete symbolique et les cadeaux sur Stella."
+        path="/faq"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+      </Helmet>
       <h1 className="text-4xl font-display mb-6 text-center">Foire aux questions</h1>
       <FadeInSection>
         <div className="space-y-4">

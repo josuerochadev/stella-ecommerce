@@ -1,5 +1,6 @@
 import FadeInSection from "@/components/FadeInSection";
 import FormInput from "@/components/FormInput";
+import SEO from "@/components/SEO";
 import { useAuth } from "@/context/AuthContext";
 import { OrderService } from "@/services/orderService";
 import { useCartStore } from "@/stores/useCartStore";
@@ -78,6 +79,11 @@ const Checkout: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 py-8 max-w-4xl">
+      <SEO
+        title="Finaliser la commande"
+        description="Completez votre commande d'etoile. Renseignez votre adresse de livraison et choisissez votre mode de paiement."
+        path="/checkout"
+      />
       <h1 className="text-3xl font-bold mb-8 text-text">Finaliser la commande</h1>
 
       <form onSubmit={handleSubmit}>

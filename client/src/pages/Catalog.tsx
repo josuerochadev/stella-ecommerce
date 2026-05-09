@@ -12,6 +12,7 @@ import { useCatalogSearch } from "@/hooks/useCatalogSearch";
 import { useCatalogSorting } from "@/hooks/useCatalogSorting";
 import type { Star } from "@/types";
 import { memo, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 /**
  * Page principale du catalogue
@@ -125,6 +126,18 @@ const Catalogue: React.FC = () => {
         description="Explorez notre catalogue d'etoiles. Filtrez par constellation, prix et magnitude."
         path="/catalog"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Catalogue d'étoiles — Stella",
+            description:
+              "Explorez notre catalogue d'étoiles personnalisables. Filtrez par constellation, prix et magnitude.",
+            url: "https://stella-ecommerce.fr/catalog",
+          })}
+        </script>
+      </Helmet>
       <FadeInSection>
         <section className="my-8">
           <div className="max-w-4xl mx-auto">

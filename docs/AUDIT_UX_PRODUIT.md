@@ -310,9 +310,9 @@ L'application possede des fondations solides — composant `FormInput` accessibl
 | Phase | Titre                            | Statut      |
 | ----- | -------------------------------- | ----------- |
 | 1     | prefers-reduced-motion           | ✅ Complete  |
-| 2     | Navigation & Routing             | ⬜ A faire   |
-| 3     | Formulaires & Feedback           | ⬜ A faire   |
-| 4     | Accessibilite & Semantique       | ⬜ A faire   |
+| 2     | Navigation & Routing             | ✅ Complete  |
+| 3     | Formulaires & Feedback           | ✅ Complete  |
+| 4     | Accessibilite & Semantique       | ✅ Complete  |
 | 5     | Responsive & Polish              | ⬜ A faire   |
 
 ## Journal des corrections
@@ -332,3 +332,14 @@ L'application possede des fondations solides — composant `FormInput` accessibl
 - `Catalog.tsx:125` : `animate-pulse` → `motion-safe:animate-pulse`
 - `CatalogStarCard.tsx` : transition carte et image protegees avec `motion-safe:` ; duree image 600ms → 300ms
 - 8 spinners (`Button`, `FormContainer`, `Login`, `Register`, `CollectionButton`, `SearchBar`, `SearchInputField`, `AccessiblePageLayout`) : `animate-spin` → `motion-safe:animate-spin`
+
+### Phase 4 — Accessibilite & Semantique (2026-05-09)
+
+- `Checkout.tsx`, `Orders.tsx`, `OrderConfirmation.tsx` : ajout du composant `<SEO>` avec title, description, path
+- `FAQ.tsx` : ajout `<SEO>` + JSON-LD `FAQPage` genere depuis le tableau `faqItems` (5 Q&A)
+- `Catalog.tsx` : ajout JSON-LD `CollectionPage` via `<Helmet>` (complementaire au `<SEO>` existant)
+- `Contact.tsx` : ajout JSON-LD `ContactPage` via `<Helmet>` (complementaire au `<SEO>` existant)
+- `Navigation.tsx` : ajout `useLocation`, `aria-label="Accueil"` et `aria-current="page"` sur le lien home
+- `MobileNavigation.tsx` : ajout `aria-current={isActive(item.path) ? "page" : undefined}` et `aria-label` sur chaque lien
+- `Admin.tsx` : ajout `<caption className="sr-only">` sur la table `UsersView`
+- `AccessibleSearchBox.tsx` : `autoFocus={true}` → `autoFocus={isVisible}` (focus conditionnel a l'ouverture du panneau)

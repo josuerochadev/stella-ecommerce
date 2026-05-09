@@ -50,6 +50,8 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ className = 
               <Link
                 key={item.path}
                 to={item.path}
+                aria-current={isActive(item.path) ? "page" : undefined}
+                aria-label={item.label}
                 className={`
                   touch-target flex flex-col items-center justify-center
                   transition-colors duration-200

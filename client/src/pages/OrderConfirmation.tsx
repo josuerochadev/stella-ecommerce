@@ -1,4 +1,5 @@
 import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
 import { CartCalculations } from "@/utils/cartCalculations";
 import { memo } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
@@ -19,6 +20,11 @@ const OrderConfirmation: React.FC = () => {
 
   return (
     <div className="container mx-auto pt-20 px-4 py-8 max-w-xl text-center">
+      <SEO
+        title="Commande confirmee"
+        description="Votre commande d'etoile a ete confirmee avec succes. Merci pour votre achat sur Stella."
+        path="/order-confirmation"
+      />
       <FadeInSection>
         <div className="bg-secondary text-text p-8 rounded-lg shadow-lg">
           <div className="text-4xl mb-4">&#10003;</div>
