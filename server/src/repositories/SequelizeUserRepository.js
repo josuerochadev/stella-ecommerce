@@ -2,10 +2,10 @@
 // Implémentation du repository utilisateur avec Sequelize
 // Responsabilité unique : opérations de persistance des données utilisateur
 
-const { User } = require('../models');
-const { IUserRepository } = require('../interfaces/IUserRepository');
-const { Op } = require('sequelize');
-const { validateId } = require('../utils/validators');
+const { User } = require("../models");
+const { IUserRepository } = require("../interfaces/IUserRepository");
+const { Op } = require("sequelize");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les utilisateurs utilisant Sequelize ORM
@@ -25,14 +25,14 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async findByEmail(email) {
     try {
-      if (!email || typeof email !== 'string') {
-        throw new Error('Email must be a non-empty string');
+      if (!email || typeof email !== "string") {
+        throw new Error("Email must be a non-empty string");
       }
 
       const user = await this.User.findOne({
         where: {
-          email: email.toLowerCase().trim()
-        }
+          email: email.toLowerCase().trim(),
+        },
       });
 
       return user ? user.toJSON() : null;
@@ -74,14 +74,14 @@ class SequelizeUserRepository extends IUserRepository {
         lastName: userData.lastName.trim(),
         email: userData.email.toLowerCase().trim(),
         password: userData.password,
-        role: userData.role || 'client'
+        role: userData.role || "client",
       };
 
       const user = await this.User.create(userToCreate);
       return user.toJSON();
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new Error('Email already exists');
+      if (error.name === "SequelizeUniqueConstraintError") {
+        throw new Error("Email already exists");
       }
       throw new Error(`Failed to create user: ${error.message}`);
     }
@@ -98,8 +98,8 @@ class SequelizeUserRepository extends IUserRepository {
     try {
       validateId(id);
 
-      if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Update data must be an object');
+      if (!updateData || typeof updateData !== "object") {
+        throw new Error("Update data must be an object");
       }
 
       // Préparation des données à mettre à jour
@@ -127,19 +127,19 @@ class SequelizeUserRepository extends IUserRepository {
 
       const [updatedCount] = await this.User.update(dataToUpdate, {
         where: { id },
-        returning: true
+        returning: true,
       });
 
       if (updatedCount === 0) {
-        throw new Error('User not found or no changes made');
+        throw new Error("User not found or no changes made");
       }
 
       // Récupérer l'utilisateur mis à jour
       const updatedUser = await this.findById(id);
       return updatedUser;
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new Error('Email already exists');
+      if (error.name === "SequelizeUniqueConstraintError") {
+        throw new Error("Email already exists");
       }
       throw new Error(`Failed to update user: ${error.message}`);
     }
@@ -156,7 +156,7 @@ class SequelizeUserRepository extends IUserRepository {
       validateId(id);
 
       const deletedCount = await this.User.destroy({
-        where: { id }
+        where: { id },
       });
 
       return deletedCount > 0;
@@ -174,22 +174,22 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async emailExists(email, excludeId = null) {
     try {
-      if (!email || typeof email !== 'string') {
-        throw new Error('Email must be a non-empty string');
+      if (!email || typeof email !== "string") {
+        throw new Error("Email must be a non-empty string");
       }
 
       const whereCondition = {
-        email: email.toLowerCase().trim()
+        email: email.toLowerCase().trim(),
       };
 
       if (excludeId) {
         whereCondition.id = {
-          [Op.ne]: excludeId
+          [Op.ne]: excludeId,
         };
       }
 
       const count = await this.User.count({
-        where: whereCondition
+        where: whereCondition,
       });
 
       return count > 0;
@@ -206,15 +206,15 @@ class SequelizeUserRepository extends IUserRepository {
    */
   async findAndCountAll(options) {
     try {
-      if (!options || typeof options !== 'object') {
-        throw new Error('Options must be an object');
+      if (!options || typeof options !== "object") {
+        throw new Error("Options must be an object");
       }
 
       const result = await this.User.findAndCountAll(options);
 
       return {
         count: result.count,
-        rows: result.rows.map(user => user.toJSON())
+        rows: result.rows.map((user) => user.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to find and count users: ${error.message}`);
@@ -232,10 +232,10 @@ class SequelizeUserRepository extends IUserRepository {
     try {
       const users = await this.User.findAll({
         where,
-        ...options
+        ...options,
       });
 
-      return users.map(user => user.toJSON());
+      return users.map((user) => user.toJSON());
     } catch (error) {
       throw new Error(`Failed to find users: ${error.message}`);
     }
@@ -263,26 +263,26 @@ class SequelizeUserRepository extends IUserRepository {
    * @private
    */
   validateUserData(userData) {
-    if (!userData || typeof userData !== 'object') {
-      throw new Error('User data must be an object');
+    if (!userData || typeof userData !== "object") {
+      throw new Error("User data must be an object");
     }
 
-    const requiredFields = ['firstName', 'lastName', 'email', 'password'];
-    const missingFields = requiredFields.filter(field => !userData[field]);
+    const requiredFields = ["firstName", "lastName", "email", "password"];
+    const missingFields = requiredFields.filter((field) => !userData[field]);
 
     if (missingFields.length > 0) {
-      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
     }
 
     // Validation email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userData.email)) {
-      throw new Error('Invalid email format');
+      throw new Error("Invalid email format");
     }
 
     // Validation rôle
-    if (userData.role && !['client', 'admin'].includes(userData.role)) {
-      throw new Error('Invalid role. Must be client or admin');
+    if (userData.role && !["client", "admin"].includes(userData.role)) {
+      throw new Error("Invalid role. Must be client or admin");
     }
   }
 
@@ -301,7 +301,7 @@ class SequelizeUserRepository extends IUserRepository {
         whereCondition[Op.or] = [
           { firstName: { [Op.iLike]: `%${search}%` } },
           { lastName: { [Op.iLike]: `%${search}%` } },
-          { email: { [Op.iLike]: `%${search}%` } }
+          { email: { [Op.iLike]: `%${search}%` } },
         ];
       }
 
@@ -313,11 +313,11 @@ class SequelizeUserRepository extends IUserRepository {
         where: whereCondition,
         limit: Math.min(limit, 100), // Limite de sécurité
         offset,
-        order: [['createdAt', 'DESC']],
-        attributes: { exclude: ['password'] } // Exclure le mot de passe
+        order: [["createdAt", "DESC"]],
+        attributes: { exclude: ["password"] }, // Exclure le mot de passe
       });
 
-      return users.map(user => user.toJSON());
+      return users.map((user) => user.toJSON());
     } catch (error) {
       throw new Error(`Failed to search users: ${error.message}`);
     }

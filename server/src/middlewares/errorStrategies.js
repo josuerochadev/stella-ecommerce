@@ -12,7 +12,7 @@ class ErrorStrategy {
    * @param {Error} error - L'erreur à traiter
    * @returns {AppError} - L'erreur formatée
    */
-  handle(error) {
+  handle(_error) {
     throw new Error("La méthode handle() doit être implémentée par la sous-classe");
   }
 
@@ -21,7 +21,7 @@ class ErrorStrategy {
    * @param {Error} error - L'erreur à vérifier
    * @returns {boolean} - True si la stratégie peut traiter l'erreur
    */
-  canHandle(error) {
+  canHandle(_error) {
     throw new Error("La méthode canHandle() doit être implémentée par la sous-classe");
   }
 }
@@ -35,7 +35,7 @@ class SequelizeValidationErrorStrategy extends ErrorStrategy {
   }
 
   handle(error) {
-    const { AppError } = require('./errorHandler');
+    const { AppError } = require("./errorHandler");
     const messages = error.errors.map((err) => err.message);
     return new AppError(messages.join(". "), HTTP_STATUS.BAD_REQUEST);
   }
@@ -50,7 +50,7 @@ class SequelizeUniqueConstraintErrorStrategy extends ErrorStrategy {
   }
 
   handle(error) {
-    const { AppError } = require('./errorHandler');
+    const { AppError } = require("./errorHandler");
     const value = error.errors[0].value;
     const message = `Duplicate field value: ${value}. Please use another value!`;
     return new AppError(message, HTTP_STATUS.BAD_REQUEST);
@@ -66,8 +66,8 @@ class SequelizeDatabaseErrorStrategy extends ErrorStrategy {
   }
 
   handle(error) {
-    const { AppError } = require('./errorHandler');
-    const message = error.message || 'Database operation failed';
+    const { AppError } = require("./errorHandler");
+    const message = error.message || "Database operation failed";
     return new AppError(message, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 }
@@ -81,7 +81,7 @@ class JWTErrorStrategy extends ErrorStrategy {
   }
 
   handle() {
-    const { AppError } = require('./errorHandler');
+    const { AppError } = require("./errorHandler");
     return new AppError("Invalid token. Please log in again!", HTTP_STATUS.UNAUTHORIZED);
   }
 }
@@ -95,7 +95,7 @@ class TokenExpiredErrorStrategy extends ErrorStrategy {
   }
 
   handle() {
-    const { AppError } = require('./errorHandler');
+    const { AppError } = require("./errorHandler");
     return new AppError("Your token has expired! Please log in again.", HTTP_STATUS.UNAUTHORIZED);
   }
 }
@@ -109,15 +109,15 @@ class ValidationErrorStrategy extends ErrorStrategy {
   }
 
   handle(error) {
-    const { AppError } = require('./errorHandler');
+    const { AppError } = require("./errorHandler");
     const errors = {};
     if (error.details) {
-      error.details.forEach(detail => {
-        const key = detail.path.join('.');
+      error.details.forEach((detail) => {
+        const key = detail.path.join(".");
         errors[key] = detail.message;
       });
     }
-    return new AppError('Validation failed', HTTP_STATUS.BAD_REQUEST, errors);
+    return new AppError("Validation failed", HTTP_STATUS.BAD_REQUEST, errors);
   }
 }
 
@@ -126,12 +126,12 @@ class ValidationErrorStrategy extends ErrorStrategy {
  */
 class RateLimitErrorStrategy extends ErrorStrategy {
   canHandle(error) {
-    return error.message && error.message.includes('Too Many Requests');
+    return error.message?.includes("Too Many Requests");
   }
 
   handle() {
-    const { AppError } = require('./errorHandler');
-    return new AppError('Too many requests. Please try again later.', 429);
+    const { AppError } = require("./errorHandler");
+    return new AppError("Too many requests. Please try again later.", 429);
   }
 }
 
@@ -173,7 +173,7 @@ class ErrorStrategyManager {
    * @returns {AppError} - L'erreur formatée
    */
   handleError(error) {
-    const strategy = this.strategies.find(strategy => strategy.canHandle(error));
+    const strategy = this.strategies.find((strategy) => strategy.canHandle(error));
     return strategy.handle(error);
   }
 

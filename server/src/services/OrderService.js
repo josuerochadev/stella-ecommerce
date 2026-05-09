@@ -2,7 +2,7 @@
 // Service métier pour la gestion des commandes
 // Responsabilité unique : logique métier des commandes
 
-const { sequelize, OrderStar } = require('../models');
+const { sequelize, OrderStar } = require("../models");
 
 /**
  * Service pour la gestion des commandes
@@ -33,20 +33,20 @@ class OrderService {
 
     try {
       // Validation
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       if (!Array.isArray(items) || items.length === 0) {
-        throw new Error('Items must be a non-empty array');
+        throw new Error("Items must be a non-empty array");
       }
 
       if (!shippingAddress) {
-        throw new Error('Shipping address is required');
+        throw new Error("Shipping address is required");
       }
 
       if (!paymentMethod) {
-        throw new Error('Payment method is required');
+        throw new Error("Payment method is required");
       }
 
       // Vérifier que l'utilisateur existe
@@ -56,19 +56,19 @@ class OrderService {
       }
 
       // Récupérer toutes les étoiles en une seule requête (optimisation)
-      const starIds = items.map(item => item.starId);
+      const starIds = items.map((item) => item.starId);
       const stars = await this.starRepository.findAll(
         { starid: starIds },
-        { attributes: ['starid', 'price'], raw: true }
+        { attributes: ["starid", "price"], raw: true },
       );
 
       // Créer un map pour accès O(1)
-      const starMap = new Map(stars.map(star => [star.starid, star]));
+      const starMap = new Map(stars.map((star) => [star.starid, star]));
 
       // Vérifier que toutes les étoiles existent
-      const missingStars = starIds.filter(id => !starMap.has(id));
+      const missingStars = starIds.filter((id) => !starMap.has(id));
       if (missingStars.length > 0) {
-        throw new Error(`Stars not found: ${missingStars.join(', ')}`);
+        throw new Error(`Stars not found: ${missingStars.join(", ")}`);
       }
 
       // Calculer le montant total
@@ -85,10 +85,10 @@ class OrderService {
 
         orderStarsToCreate.push({
           starId: star.starid,
-          quantity: item.quantity
+          quantity: item.quantity,
         });
 
-        totalAmount += parseFloat(star.price) * item.quantity;
+        totalAmount += Number.parseFloat(star.price) * item.quantity;
       }
 
       // Créer la commande
@@ -96,22 +96,22 @@ class OrderService {
         {
           userId,
           date: new Date(),
-          status: 'pending',
+          status: "pending",
           totalAmount,
           shippingAddress,
-          paymentMethod
+          paymentMethod,
         },
-        transaction
+        transaction,
       );
 
       if (!order || !order.id) {
-        throw new Error('Order creation failed');
+        throw new Error("Order creation failed");
       }
 
       // Ajouter orderId aux items
-      const orderStarsWithOrderId = orderStarsToCreate.map(item => ({
+      const orderStarsWithOrderId = orderStarsToCreate.map((item) => ({
         ...item,
-        orderId: order.id
+        orderId: order.id,
       }));
 
       // Insertion en lot des OrderStar
@@ -123,7 +123,7 @@ class OrderService {
       return {
         orderId: order.id,
         total: totalAmount,
-        status: order.status
+        status: order.status,
       };
     } catch (error) {
       // Rollback en cas d'erreur
@@ -139,8 +139,8 @@ class OrderService {
    */
   async getUserOrders(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const orders = await this.orderRepository.findByUserId(userId);
@@ -158,18 +158,18 @@ class OrderService {
    */
   async getOrderDetails(orderId, userId) {
     try {
-      if (!orderId || typeof orderId !== 'number') {
-        throw new Error('Order ID must be a valid number');
+      if (!orderId || typeof orderId !== "number") {
+        throw new Error("Order ID must be a valid number");
       }
 
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       // Vérifier que la commande appartient à l'utilisateur
       const belongsToUser = await this.orderRepository.belongsToUser(orderId, userId);
       if (!belongsToUser) {
-        throw new Error('Order not found');
+        throw new Error("Order not found");
       }
 
       const order = await this.orderRepository.findById(orderId);
@@ -188,28 +188,28 @@ class OrderService {
    */
   async updateOrderStatus(orderId, status, adminUserId) {
     try {
-      if (!orderId || typeof orderId !== 'number') {
-        throw new Error('Order ID must be a valid number');
+      if (!orderId || typeof orderId !== "number") {
+        throw new Error("Order ID must be a valid number");
       }
 
       if (!status) {
-        throw new Error('Status is required');
+        throw new Error("Status is required");
       }
 
-      if (!adminUserId || typeof adminUserId !== 'number') {
-        throw new Error('Admin user ID must be a valid number');
+      if (!adminUserId || typeof adminUserId !== "number") {
+        throw new Error("Admin user ID must be a valid number");
       }
 
       // Vérifier que l'utilisateur est admin
       const adminUser = await this.userRepository.findById(adminUserId);
-      if (!adminUser || adminUser.role !== 'admin') {
-        throw new Error('Only admins can update order status');
+      if (!adminUser || adminUser.role !== "admin") {
+        throw new Error("Only admins can update order status");
       }
 
       // Vérifier que la commande existe
       const order = await this.orderRepository.findById(orderId);
       if (!order) {
-        throw new Error('Order not found');
+        throw new Error("Order not found");
       }
 
       // Mettre à jour le statut
@@ -227,8 +227,8 @@ class OrderService {
    */
   async getUserOrderStats(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const orders = await this.orderRepository.findByUserId(userId);
@@ -236,11 +236,11 @@ class OrderService {
       const stats = {
         totalOrders: orders.length,
         totalSpent: 0,
-        ordersByStatus: {}
+        ordersByStatus: {},
       };
 
       for (const order of orders) {
-        stats.totalSpent += parseFloat(order.total || 0);
+        stats.totalSpent += Number.parseFloat(order.total || 0);
 
         if (!stats.ordersByStatus[order.status]) {
           stats.ordersByStatus[order.status] = 0;
@@ -262,29 +262,29 @@ class OrderService {
    */
   async cancelOrder(orderId, userId) {
     try {
-      if (!orderId || typeof orderId !== 'number') {
-        throw new Error('Order ID must be a valid number');
+      if (!orderId || typeof orderId !== "number") {
+        throw new Error("Order ID must be a valid number");
       }
 
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       // Vérifier que la commande appartient à l'utilisateur
       const belongsToUser = await this.orderRepository.belongsToUser(orderId, userId);
       if (!belongsToUser) {
-        throw new Error('Order not found');
+        throw new Error("Order not found");
       }
 
       const order = await this.orderRepository.findById(orderId);
 
       // Vérifier le statut
-      if (order.status !== 'pending') {
-        throw new Error('Only pending orders can be cancelled');
+      if (order.status !== "pending") {
+        throw new Error("Only pending orders can be cancelled");
       }
 
       // Mettre à jour le statut
-      const cancelledOrder = await this.orderRepository.updateStatus(orderId, 'cancelled');
+      const cancelledOrder = await this.orderRepository.updateStatus(orderId, "cancelled");
       return cancelledOrder;
     } catch (error) {
       throw new Error(`Failed to cancel order: ${error.message}`);

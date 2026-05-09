@@ -1,28 +1,28 @@
 // src/middlewares/modernCsrf.js
 // Alternative moderne et sécurisée au package csurf obsolète
 
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
+const crypto = require("node:crypto");
+const jwt = require("jsonwebtoken");
 
 class ModernCSRF {
   constructor(options = {}) {
-    this.secret = options.secret || process.env.CSRF_SECRET || process.env.JWT_SECRET + '_csrf';
-    this.tokenName = options.tokenName || 'X-CSRF-Token';
-    this.cookieName = options.cookieName || 'XSRF-TOKEN';
-    this.ignoreMethods = options.ignoreMethods || ['GET', 'HEAD', 'OPTIONS'];
+    this.secret = options.secret || process.env.CSRF_SECRET || `${process.env.JWT_SECRET}_csrf`;
+    this.tokenName = options.tokenName || "X-CSRF-Token";
+    this.cookieName = options.cookieName || "XSRF-TOKEN";
+    this.ignoreMethods = options.ignoreMethods || ["GET", "HEAD", "OPTIONS"];
     this.maxAge = options.maxAge || 60 * 60; // 1 hour
   }
 
   // Générer un token CSRF sécurisé
   generateToken() {
     const payload = {
-      random: crypto.randomBytes(16).toString('hex'),
-      timestamp: Date.now()
+      random: crypto.randomBytes(16).toString("hex"),
+      timestamp: Date.now(),
     };
 
     return jwt.sign(payload, this.secret, {
       expiresIn: this.maxAge,
-      algorithm: 'HS256'
+      algorithm: "HS256",
     });
   }
 
@@ -38,7 +38,7 @@ class ModernCSRF {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -58,9 +58,9 @@ class ModernCSRF {
         // Exposer via cookie pour JavaScript (lecture seule côté client)
         res.cookie(this.cookieName, token, {
           httpOnly: false, // Accessible en JS pour headers
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-          maxAge: this.maxAge * 1000
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+          maxAge: this.maxAge * 1000,
         });
 
         // Disponible dans req pour usage serveur
@@ -75,35 +75,34 @@ class ModernCSRF {
 
   // Middleware de validation
   validateMiddleware() {
-    return (req, res, next) => {
+    return (req, _res, next) => {
       // Ignorer les méthodes de lecture
       if (this.ignoreMethods.includes(req.method)) {
         return next();
       }
 
       // Récupérer le token depuis les headers ou body
-      const clientToken = req.headers[this.tokenName.toLowerCase()] ||
-                         req.headers['x-csrf-token'] ||
-                         req.body._csrf;
+      const clientToken =
+        req.headers[this.tokenName.toLowerCase()] || req.headers["x-csrf-token"] || req.body._csrf;
 
       // Récupérer le token de référence depuis la session
       const sessionToken = req.session?.csrfToken;
 
       if (!clientToken) {
-        const err = new Error('CSRF token missing. Please include X-CSRF-Token header.');
+        const err = new Error("CSRF token missing. Please include X-CSRF-Token header.");
         err.status = 403;
         return next(err);
       }
 
       if (!sessionToken) {
-        const err = new Error('No CSRF session found. Please refresh the page.');
+        const err = new Error("No CSRF session found. Please refresh the page.");
         err.status = 403;
         return next(err);
       }
 
       // Validation double : JWT + correspondance session
       if (!this.validateToken(clientToken) || clientToken !== sessionToken) {
-        const err = new Error('Invalid CSRF token. Please refresh the page and try again.');
+        const err = new Error("Invalid CSRF token. Please refresh the page and try again.");
         err.status = 403;
         return next(err);
       }
@@ -143,5 +142,5 @@ module.exports = {
   csrfProtection,
   csrfGenerate,
   csrfValidate,
-  csrfMiddleware
+  csrfMiddleware,
 };

@@ -1,19 +1,23 @@
 // server/src/routes/paymentRoutes.js
 // Responsabilité unique : Routes de gestion des paiements décomposées
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 // Import des contrôleurs spécialisés suivant le principe SRP
-const paymentController = require('../controllers/paymentController');
-const refundController = require('../controllers/refundController');
-const paymentStatsController = require('../controllers/paymentStatsController');
-const paymentWebhookController = require('../controllers/paymentWebhookController');
+const paymentController = require("../controllers/paymentController");
+const refundController = require("../controllers/refundController");
+const paymentStatsController = require("../controllers/paymentStatsController");
+const paymentWebhookController = require("../controllers/paymentWebhookController");
 
-const { csrfValidate } = require('../middlewares/modernCsrf');
-const { authenticateUser, requireAuth, requireRole } = require('../middlewares/authMiddleware');
-const validate = require('../middlewares/validate');
-const { initiatePaymentSchema, refundSchema, webhookSchema } = require('../validations/paymentValidation');
+const { csrfValidate } = require("../middlewares/modernCsrf");
+const { authenticateUser, requireAuth, requireRole } = require("../middlewares/authMiddleware");
+const validate = require("../middlewares/validate");
+const {
+  initiatePaymentSchema,
+  refundSchema,
+  webhookSchema,
+} = require("../validations/paymentValidation");
 
 // Middleware d'authentification pour toutes les routes
 router.use(authenticateUser);
@@ -41,7 +45,7 @@ router.use(authenticateUser);
  *                 currencies:
  *                   type: array
  */
-router.get('/methods', requireAuth, paymentController.getPaymentMethods);
+router.get("/methods", requireAuth, paymentController.getPaymentMethods);
 
 /**
  * @swagger
@@ -82,11 +86,12 @@ router.get('/methods', requireAuth, paymentController.getPaymentMethods);
  *       400:
  *         description: Payment failed
  */
-router.post('/initiate',
+router.post(
+  "/initiate",
   requireAuth,
   csrfValidate,
   validate(initiatePaymentSchema),
-  paymentController.initiatePayment
+  paymentController.initiatePayment,
 );
 
 /**
@@ -109,7 +114,7 @@ router.post('/initiate',
  *       404:
  *         description: Transaction not found
  */
-router.get('/status/:transactionId', requireAuth, paymentController.getPaymentStatus);
+router.get("/status/:transactionId", requireAuth, paymentController.getPaymentStatus);
 
 /**
  * @swagger
@@ -145,11 +150,12 @@ router.get('/status/:transactionId', requireAuth, paymentController.getPaymentSt
  *         description: Transaction not found
  */
 // Routes de remboursement
-router.post('/refund/:transactionId',
+router.post(
+  "/refund/:transactionId",
   requireAuth,
   csrfValidate,
   validate(refundSchema),
-  refundController.processRefund
+  refundController.processRefund,
 );
 
 /**
@@ -164,7 +170,7 @@ router.post('/refund/:transactionId',
  *       200:
  *         description: User refund history
  */
-router.get('/refunds', requireAuth, refundController.getUserRefunds);
+router.get("/refunds", requireAuth, refundController.getUserRefunds);
 
 /**
  * @swagger
@@ -186,7 +192,7 @@ router.get('/refunds', requireAuth, refundController.getUserRefunds);
  *       404:
  *         description: Refund not found
  */
-router.get('/refunds/:refundId', requireAuth, refundController.getRefundStatus);
+router.get("/refunds/:refundId", requireAuth, refundController.getRefundStatus);
 
 /**
  * @swagger
@@ -209,11 +215,7 @@ router.get('/refunds/:refundId', requireAuth, refundController.getRefundStatus);
  *         description: Admin access required
  */
 // Routes de statistiques (Admin uniquement)
-router.get('/stats',
-  requireAuth,
-  requireRole('admin'),
-  paymentStatsController.getPaymentStats
-);
+router.get("/stats", requireAuth, requireRole("admin"), paymentStatsController.getPaymentStats);
 
 /**
  * @swagger
@@ -235,10 +237,11 @@ router.get('/stats',
  *       403:
  *         description: Admin access required
  */
-router.get('/stats/conversion',
+router.get(
+  "/stats/conversion",
   requireAuth,
-  requireRole('admin'),
-  paymentStatsController.getConversionMetrics
+  requireRole("admin"),
+  paymentStatsController.getConversionMetrics,
 );
 
 /**
@@ -267,10 +270,11 @@ router.get('/stats/conversion',
  *       403:
  *         description: Admin access required
  */
-router.get('/stats/revenue',
+router.get(
+  "/stats/revenue",
   requireAuth,
-  requireRole('admin'),
-  paymentStatsController.getRevenueReport
+  requireRole("admin"),
+  paymentStatsController.getRevenueReport,
 );
 
 /**
@@ -300,12 +304,13 @@ router.get('/stats/revenue',
  *         description: Admin access required
  */
 // Routes de webhook
-router.post('/webhook/simulate',
+router.post(
+  "/webhook/simulate",
   requireAuth,
-  requireRole('admin'),
+  requireRole("admin"),
   csrfValidate,
   validate(webhookSchema),
-  paymentWebhookController.simulateWebhook
+  paymentWebhookController.simulateWebhook,
 );
 
 /**
@@ -333,7 +338,7 @@ router.post('/webhook/simulate',
  *       401:
  *         description: Invalid signature
  */
-router.post('/webhook', paymentWebhookController.handleWebhook);
+router.post("/webhook", paymentWebhookController.handleWebhook);
 
 /**
  * @swagger
@@ -355,9 +360,10 @@ router.post('/webhook', paymentWebhookController.handleWebhook);
  *       404:
  *         description: Transaction not found
  */
-router.get('/webhook/events/:transactionId',
+router.get(
+  "/webhook/events/:transactionId",
   requireAuth,
-  paymentWebhookController.getWebhookEvents
+  paymentWebhookController.getWebhookEvents,
 );
 
 /**
@@ -380,10 +386,11 @@ router.get('/webhook/events/:transactionId',
  *       403:
  *         description: Admin access required
  */
-router.post('/webhook/retry/:webhookId',
+router.post(
+  "/webhook/retry/:webhookId",
   requireAuth,
-  requireRole('admin'),
-  paymentWebhookController.retryWebhook
+  requireRole("admin"),
+  paymentWebhookController.retryWebhook,
 );
 
 module.exports = router;

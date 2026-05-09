@@ -1,10 +1,10 @@
 // server/src/controllers/paymentController.js
 // Contrôleur pour la gestion des paiements (simulation)
 
-const { paymentService } = require('../services/paymentService');
-const { Order, Star, User } = require('../models');
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
+const { paymentService } = require("../services/paymentService");
+const { Order, Star, User } = require("../models");
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -21,36 +21,36 @@ exports.initiatePayment = async (req, res, next) => {
       include: [
         {
           model: Star,
-          through: { attributes: ['quantity'] }
-        }
-      ]
+          through: { attributes: ["quantity"] },
+        },
+      ],
     });
 
     if (!order) {
-      return next(new AppError('Order not found', 404));
+      return next(new AppError("Order not found", 404));
     }
 
-    if (order.status !== 'pending') {
-      return next(new AppError('Order cannot be paid. Current status: ' + order.status, 400));
+    if (order.status !== "pending") {
+      return next(new AppError(`Order cannot be paid. Current status: ${order.status}`, 400));
     }
 
     // Récupérer les informations utilisateur pour le paiement
     const user = await User.findByPk(req.user.userId, {
-      attributes: ['email', 'firstName', 'lastName']
+      attributes: ["email", "firstName", "lastName"],
     });
 
     // Préparer les données de paiement
     const paymentData = {
-      amount: parseFloat(order.totalAmount),
-      currency: 'EUR',
+      amount: Number.parseFloat(order.totalAmount),
+      currency: "EUR",
       method,
       orderId: order.id,
       customerData: {
         email: user.email,
         name: `${user.firstName} ${user.lastName}`,
-        userId: user.id
+        userId: user.id,
       },
-      cardData: method === 'credit_card' ? cardData : null
+      cardData: method === "credit_card" ? cardData : null,
     };
 
     // Traiter le paiement
@@ -64,7 +64,6 @@ exports.initiatePayment = async (req, res, next) => {
     const statusCode = getResponseStatusCode(paymentResult.status);
 
     res.status(statusCode).json(response);
-
   } catch (error) {
     next(new AppError(`Payment processing failed: ${error.message}`, 500));
   }
@@ -73,15 +72,15 @@ exports.initiatePayment = async (req, res, next) => {
 /**
  * Obtenir les méthodes de paiement disponibles
  */
-exports.getPaymentMethods = async (req, res, next) => {
+exports.getPaymentMethods = async (_req, res, next) => {
   try {
     const methods = paymentService.getPaymentMethods();
 
     res.json({
       success: true,
       paymentMethods: methods,
-      currencies: ['EUR', 'USD', 'GBP'],
-      message: 'Available payment methods (Demo mode)'
+      currencies: ["EUR", "USD", "GBP"],
+      message: "Available payment methods (Demo mode)",
     });
   } catch (error) {
     next(new AppError(`Failed to get payment methods: ${error.message}`, 500));
@@ -99,13 +98,13 @@ exports.getPaymentStatus = async (req, res, next) => {
     const order = await Order.findOne({
       where: {
         transactionId,
-        userId: req.user.userId
+        userId: req.user.userId,
       },
-      attributes: ['id', 'status', 'totalAmount', 'paymentMethod', 'transactionId', 'createdAt']
+      attributes: ["id", "status", "totalAmount", "paymentMethod", "transactionId", "createdAt"],
     });
 
     if (!order) {
-      return next(new AppError('Transaction not found', 404));
+      return next(new AppError("Transaction not found", 404));
     }
 
     res.json({
@@ -116,10 +115,9 @@ exports.getPaymentStatus = async (req, res, next) => {
         status: order.status,
         amount: order.totalAmount,
         method: order.paymentMethod,
-        processedAt: order.createdAt
-      }
+        processedAt: order.createdAt,
+      },
     });
-
   } catch (error) {
     next(new AppError(`Failed to get payment status: ${error.message}`, 500));
   }
@@ -138,24 +136,25 @@ exports.processRefund = async (req, res, next) => {
       where: {
         transactionId,
         userId: req.user.userId,
-        status: 'paid'
-      }
+        status: "paid",
+      },
     });
 
     if (!order) {
-      return next(new AppError('Paid order with this transaction not found', 404));
+      return next(new AppError("Paid order with this transaction not found", 404));
     }
 
     // Vérifier que le montant du remboursement est valide
-    if (amount > parseFloat(order.totalAmount)) {
-      return next(new AppError('Refund amount cannot exceed order total', 400));
+    if (amount > Number.parseFloat(order.totalAmount)) {
+      return next(new AppError("Refund amount cannot exceed order total", 400));
     }
 
     // Traiter le remboursement
     const refundResult = await paymentService.processRefund(transactionId, amount, reason);
 
     // Mettre à jour le statut de la commande
-    order.status = amount >= parseFloat(order.totalAmount) ? 'refunded' : 'partially_refunded';
+    order.status =
+      amount >= Number.parseFloat(order.totalAmount) ? "refunded" : "partially_refunded";
     order.refundId = refundResult.refundId;
     order.refundReason = reason;
     await order.save();
@@ -168,11 +167,10 @@ exports.processRefund = async (req, res, next) => {
         amount: refundResult.amount,
         reason: refundResult.reason,
         status: refundResult.status,
-        estimatedArrival: refundResult.estimatedArrival
+        estimatedArrival: refundResult.estimatedArrival,
       },
-      message: 'Refund processed successfully (Demo mode)'
+      message: "Refund processed successfully (Demo mode)",
     });
-
   } catch (error) {
     next(new AppError(`Refund processing failed: ${error.message}`, 500));
   }
@@ -186,20 +184,23 @@ exports.getPaymentStats = async (req, res, next) => {
     const { days = 30 } = req.query;
 
     // Générer des stats de démonstration
-    const stats = paymentService.generatePaymentStats(parseInt(days, 10));
+    const stats = paymentService.generatePaymentStats(Number.parseInt(days, 10));
 
     // Ajouter des stats réelles de la base de données
     const realStats = await Order.findAll({
       attributes: [
-        [require('sequelize').fn('COUNT', '*'), 'totalOrders'],
-        [require('sequelize').fn('SUM', require('sequelize').col('totalAmount')), 'totalRevenue'],
-        [require('sequelize').fn('AVG', require('sequelize').col('totalAmount')), 'averageOrderValue']
+        [require("sequelize").fn("COUNT", "*"), "totalOrders"],
+        [require("sequelize").fn("SUM", require("sequelize").col("totalAmount")), "totalRevenue"],
+        [
+          require("sequelize").fn("AVG", require("sequelize").col("totalAmount")),
+          "averageOrderValue",
+        ],
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: new Date(Date.now() - days * MS_PER_DAY)
-        }
-      }
+          [require("sequelize").Op.gte]: new Date(Date.now() - days * MS_PER_DAY),
+        },
+      },
     });
 
     const realData = realStats[0]?.dataValues || {};
@@ -209,13 +210,12 @@ exports.getPaymentStats = async (req, res, next) => {
       period: `${days} days`,
       demoStats: stats,
       realStats: {
-        totalOrders: parseInt(realData.totalOrders) || 0,
-        totalRevenue: parseFloat(realData.totalRevenue) || 0,
-        averageOrderValue: parseFloat(realData.averageOrderValue) || 0
+        totalOrders: Number.parseInt(realData.totalOrders) || 0,
+        totalRevenue: Number.parseFloat(realData.totalRevenue) || 0,
+        averageOrderValue: Number.parseFloat(realData.averageOrderValue) || 0,
       },
-      message: 'Payment statistics (Combined demo + real data)'
+      message: "Payment statistics (Combined demo + real data)",
     });
-
   } catch (error) {
     next(new AppError(`Failed to get payment stats: ${error.message}`, 500));
   }
@@ -226,24 +226,23 @@ exports.getPaymentStats = async (req, res, next) => {
  */
 exports.simulateWebhook = async (req, res, next) => {
   try {
-    const { transactionId, eventType = 'payment.completed' } = req.body;
+    const { transactionId, eventType = "payment.completed" } = req.body;
 
     // Générer un payload de webhook
     const webhookPayload = paymentService.generateWebhookPayload({
       transactionId,
       eventType,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // En production, ce serait envoyé à une URL de webhook
-    logger.info('🔗 Webhook simulated:', webhookPayload);
+    logger.info("🔗 Webhook simulated:", webhookPayload);
 
     res.json({
       success: true,
       webhook: webhookPayload,
-      message: 'Webhook simulation sent (Demo mode)'
+      message: "Webhook simulation sent (Demo mode)",
     });
-
   } catch (error) {
     next(new AppError(`Webhook simulation failed: ${error.message}`, 500));
   }
@@ -254,20 +253,20 @@ exports.simulateWebhook = async (req, res, next) => {
  */
 function buildPaymentResponse(paymentResult, orderId) {
   const response = {
-    success: paymentResult.status === 'completed',
+    success: paymentResult.status === "completed",
     transactionId: paymentResult.transactionId,
     status: paymentResult.status,
     amount: paymentResult.amount,
     currency: paymentResult.currency,
     method: paymentResult.method,
     processingTime: paymentResult.processingTime,
-    orderId
+    orderId,
   };
 
   if (paymentResult.cardInfo) {
     response.cardInfo = {
       brand: paymentResult.cardInfo.brand,
-      last4: paymentResult.cardInfo.last4
+      last4: paymentResult.cardInfo.last4,
     };
   }
 
@@ -287,9 +286,9 @@ function buildPaymentResponse(paymentResult, orderId) {
  */
 function getResponseStatusCode(paymentStatus) {
   switch (paymentStatus) {
-    case 'completed':
+    case "completed":
       return 200;
-    case 'pending':
+    case "pending":
       return 202;
     default:
       return 400;

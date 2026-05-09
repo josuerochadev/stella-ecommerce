@@ -2,14 +2,14 @@
 // Contrôleur pour le panel d'administration
 // Responsabilité unique : orchestration des services et gestion des erreurs HTTP
 
-const { User } = require('../models');
-const { AppError } = require('../middlewares/errorHandler');
-const { DashboardService } = require('../services/dashboardService');
-const { UserSearchService } = require('../services/userSearchService');
-const { UserStatsService } = require('../services/userStatsService');
-const { UserResponseFormatter } = require('../formatters/userResponseFormatter');
-const { SystemStatsService } = require('../services/SystemStatsService');
-const { getService } = require('../container/containerConfig');
+const { User } = require("../models");
+const { AppError } = require("../middlewares/errorHandler");
+const { DashboardService } = require("../services/dashboardService");
+const { UserSearchService } = require("../services/userSearchService");
+const { UserStatsService } = require("../services/userStatsService");
+const { UserResponseFormatter } = require("../formatters/userResponseFormatter");
+const { SystemStatsService } = require("../services/SystemStatsService");
+const { getService } = require("../container/containerConfig");
 
 /**
  * Dashboard général avec statistiques
@@ -24,9 +24,8 @@ exports.getDashboard = async (req, res, next) => {
 
     res.json({
       success: true,
-      dashboard
+      dashboard,
     });
-
   } catch (error) {
     next(new AppError(`Failed to get dashboard: ${error.message}`, 500));
   }
@@ -42,14 +41,19 @@ exports.getUsers = async (req, res, next) => {
 
     // Délégation à UserSearchService pour construire les options de requête
     const queryOptions = UserSearchService.buildQueryOptions({
-      search, role, page, limit, sortBy, order
+      search,
+      role,
+      page,
+      limit,
+      sortBy,
+      order,
     });
 
     // Obtenir les utilisateurs avec pagination via le modèle
     const { count, rows: users } = await User.findAndCountAll(queryOptions);
 
     // Délégation à UserStatsService pour les statistiques
-    const userIds = users.map(user => user.id);
+    const userIds = users.map((user) => user.id);
     const statsMap = await UserStatsService.getUserOrderStats(userIds);
 
     // Délégation à UserResponseFormatter pour le formatage de la réponse
@@ -57,11 +61,10 @@ exports.getUsers = async (req, res, next) => {
       users,
       statsMap,
       { page: queryOptions.offset / queryOptions.limit + 1, limit: queryOptions.limit },
-      count
+      count,
     );
 
     res.json(response);
-
   } catch (error) {
     next(new AppError(`Failed to get users: ${error.message}`, 500));
   }
@@ -77,18 +80,18 @@ exports.updateUserRole = async (req, res, next) => {
     const { role } = req.body;
 
     // Validation des données d'entrée
-    if (!['client', 'admin'].includes(role)) {
-      return next(new AppError('Invalid role. Must be client or admin', 400));
+    if (!["client", "admin"].includes(role)) {
+      return next(new AppError("Invalid role. Must be client or admin", 400));
     }
 
     const user = await User.findByPk(userId);
     if (!user) {
-      return next(new AppError('User not found', 404));
+      return next(new AppError("User not found", 404));
     }
 
     // Règles métier : empêcher de changer son propre rôle
     if (user.id === req.user.userId) {
-      return next(new AppError('Cannot change your own role', 400));
+      return next(new AppError("Cannot change your own role", 400));
     }
 
     // Mise à jour via le modèle
@@ -98,11 +101,10 @@ exports.updateUserRole = async (req, res, next) => {
     // Délégation du formatage de réponse
     const response = UserResponseFormatter.formatUserRoleUpdateResponse(
       user,
-      `User role updated to ${role}`
+      `User role updated to ${role}`,
     );
 
     res.json(response);
-
   } catch (error) {
     next(new AppError(`Failed to update user role: ${error.message}`, 500));
   }
@@ -114,7 +116,7 @@ exports.updateUserRole = async (req, res, next) => {
  */
 exports.getStars = async (req, res, next) => {
   try {
-    const starAdminService = getService('starAdminService');
+    const starAdminService = getService("starAdminService");
 
     const { page, limit, search, constellation, sortBy, order } = req.query;
 
@@ -124,15 +126,14 @@ exports.getStars = async (req, res, next) => {
       search,
       constellation,
       sortBy,
-      order
+      order,
     });
 
     res.json({
       success: true,
       stars: result.stars,
-      pagination: result.pagination
+      pagination: result.pagination,
     });
-
   } catch (error) {
     next(new AppError(`Failed to get stars: ${error.message}`, 500));
   }
@@ -144,30 +145,29 @@ exports.getStars = async (req, res, next) => {
  */
 exports.updateStarPrice = async (req, res, next) => {
   try {
-    const starAdminService = getService('starAdminService');
+    const starAdminService = getService("starAdminService");
 
-    const starId = parseInt(req.params.starId, 10);
+    const starId = Number.parseInt(req.params.starId, 10);
     const { price } = req.body;
 
     // Validation
-    if (isNaN(starId)) {
-      return next(new AppError('Invalid star ID', 400));
+    if (Number.isNaN(starId)) {
+      return next(new AppError("Invalid star ID", 400));
     }
 
     if (!price || price <= 0) {
-      return next(new AppError('Price must be positive', 400));
+      return next(new AppError("Price must be positive", 400));
     }
 
     const result = await starAdminService.updateStarPrice(starId, price);
 
     res.json({
       success: true,
-      message: 'Star price updated successfully',
-      star: result.star
+      message: "Star price updated successfully",
+      star: result.star,
     });
-
   } catch (error) {
-    if (error.message === 'Star not found') {
+    if (error.message === "Star not found") {
       return next(new AppError(error.message, 404));
     }
     next(new AppError(`Failed to update star price: ${error.message}`, 500));
@@ -178,15 +178,14 @@ exports.updateStarPrice = async (req, res, next) => {
  * Statistiques système
  * Utilise SystemStatsService pour encapsuler les requêtes SQL
  */
-exports.getSystemStats = async (req, res, next) => {
+exports.getSystemStats = async (_req, res, next) => {
   try {
     const systemStats = await SystemStatsService.getSystemStats();
 
     res.json({
       success: true,
-      system: systemStats
+      system: systemStats,
     });
-
   } catch (error) {
     next(new AppError(`Failed to get system stats: ${error.message}`, 500));
   }

@@ -121,7 +121,10 @@ const options = {
               },
             },
             totalAmount: { type: "number" },
-            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered", "cancelled", "paid"] },
+            status: {
+              type: "string",
+              enum: ["pending", "processing", "shipped", "delivered", "cancelled", "paid"],
+            },
             createdAt: { type: "string", format: "date-time" },
           },
         },
@@ -155,7 +158,10 @@ const options = {
         UpdateOrderStatusInput: {
           type: "object",
           properties: {
-            status: { type: "string", enum: ["pending", "processing", "shipped", "delivered", "cancelled"] },
+            status: {
+              type: "string",
+              enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+            },
           },
           required: ["status"],
         },

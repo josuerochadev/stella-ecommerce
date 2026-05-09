@@ -1,20 +1,19 @@
 // server/src/services/paymentProcessor.js
 // Service de traitement des paiements - principe KISS
 
-const crypto = require('crypto');
-const { PaymentValidator } = require('./paymentValidator');
+const crypto = require("node:crypto");
+const { PaymentValidator } = require("./paymentValidator");
 
 /**
  * Service dédié au traitement des paiements
  * Responsabilité unique : orchestration des différents processeurs de paiement
  */
 class PaymentProcessor {
-
   constructor() {
     this.successRate = 0.9; // 90% de succès par défaut
     this.processingTime = {
       min: 1000, // 1 seconde minimum
-      max: 3000  // 3 secondes maximum
+      max: 3000, // 3 secondes maximum
     };
   }
 
@@ -23,50 +22,49 @@ class PaymentProcessor {
    * Responsabilité unique : orchestration du processus
    */
   async processPayment(paymentData) {
-    const { amount, currency = 'EUR', method, orderId, customerData, cardData } = paymentData;
+    const { amount, currency = "EUR", method, orderId, customerData, cardData } = paymentData;
 
     // Validation préalable
     const validation = PaymentValidator.validatePaymentData(paymentData);
     if (!validation.isValid) {
       return {
-        status: 'failed',
-        error: `Validation error: ${validation.errors.join(', ')}`,
-        transactionId: null
+        status: "failed",
+        error: `Validation error: ${validation.errors.join(", ")}`,
+        transactionId: null,
       };
     }
 
     // Délai de traitement réaliste
-    const processingDelay = Math.random() *
-      (this.processingTime.max - this.processingTime.min) +
-      this.processingTime.min;
+    const processingDelay =
+      Math.random() * (this.processingTime.max - this.processingTime.min) + this.processingTime.min;
 
-    await new Promise(resolve => setTimeout(resolve, processingDelay));
+    await new Promise((resolve) => setTimeout(resolve, processingDelay));
 
     // Génération des données de base
     const result = {
       transactionId: this.generateTransactionId(),
-      status: 'pending',
-      amount: parseFloat(amount),
+      status: "pending",
+      amount: Number.parseFloat(amount),
       currency,
       method,
       orderId,
       createdAt: new Date().toISOString(),
-      processingFee: this.calculateProcessingFee(amount, method)
+      processingFee: this.calculateProcessingFee(amount, method),
     };
 
     // Traitement selon la méthode
     switch (method) {
-      case 'credit_card':
+      case "credit_card":
         return await this.processCreditCard(result, cardData);
-      case 'paypal':
+      case "paypal":
         return await this.processPayPal(result, customerData);
-      case 'bank_transfer':
+      case "bank_transfer":
         return await this.processBankTransfer(result, customerData);
-      case 'apple_pay':
-      case 'google_pay':
+      case "apple_pay":
+      case "google_pay":
         return await this.processDigitalWallet(result, method);
       default:
-        result.status = 'failed';
+        result.status = "failed";
         result.error = `Unsupported payment method: ${method}`;
         return result;
     }
@@ -78,38 +76,38 @@ class PaymentProcessor {
    */
   async processCreditCard(result, cardData) {
     if (!cardData) {
-      result.status = 'failed';
-      result.error = 'Card data required';
+      result.status = "failed";
+      result.error = "Card data required";
       return result;
     }
 
     const cardValidation = PaymentValidator.validateCreditCard(cardData);
 
     if (!cardValidation.isValid) {
-      result.status = 'failed';
-      result.error = cardValidation.error || 'Card validation failed';
+      result.status = "failed";
+      result.error = cardValidation.error || "Card validation failed";
       result.cardInfo = {
         brand: cardValidation.brand,
-        last4: cardValidation.last4
+        last4: cardValidation.last4,
       };
       return result;
     }
 
     // Simulation de succès/échec
-    const isSuccessful = Math.random() > (1 - this.successRate);
+    const isSuccessful = Math.random() > 1 - this.successRate;
 
-    result.status = isSuccessful ? 'completed' : 'failed';
+    result.status = isSuccessful ? "completed" : "failed";
     result.cardInfo = {
       brand: cardValidation.brand,
-      last4: cardValidation.last4
+      last4: cardValidation.last4,
     };
 
     if (!isSuccessful) {
       const errors = [
-        'Transaction declined by bank',
-        'Insufficient funds',
-        'Card expired',
-        'Security check failed'
+        "Transaction declined by bank",
+        "Insufficient funds",
+        "Card expired",
+        "Security check failed",
       ];
       result.error = errors[Math.floor(Math.random() * errors.length)];
     }
@@ -125,14 +123,14 @@ class PaymentProcessor {
     // PayPal a généralement un taux de succès plus élevé
     const isSuccessful = Math.random() > 0.05; // 95% succès
 
-    result.status = isSuccessful ? 'completed' : 'failed';
+    result.status = isSuccessful ? "completed" : "failed";
     result.paypalInfo = {
-      payerId: `PAYER_${crypto.randomBytes(4).toString('hex').toUpperCase()}`,
-      email: customerData?.email || 'demo@paypal.com'
+      payerId: `PAYER_${crypto.randomBytes(4).toString("hex").toUpperCase()}`,
+      email: customerData?.email || "demo@paypal.com",
     };
 
     if (!isSuccessful) {
-      result.error = 'PayPal transaction declined';
+      result.error = "PayPal transaction declined";
     }
 
     return result;
@@ -142,13 +140,13 @@ class PaymentProcessor {
    * Traiter un virement bancaire
    * Responsabilité unique : logique virement
    */
-  async processBankTransfer(result, customerData) {
+  async processBankTransfer(result, _customerData) {
     // Virement toujours en pending initialement
-    result.status = 'pending';
+    result.status = "pending";
     result.bankInfo = {
       reference: `BT_${Date.now()}`,
       estimatedCompletion: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      instructions: 'Transfer will be processed within 1-2 business days'
+      instructions: "Transfer will be processed within 1-2 business days",
     };
 
     return result;
@@ -161,11 +159,11 @@ class PaymentProcessor {
   async processDigitalWallet(result, method) {
     const isSuccessful = Math.random() > 0.1; // 90% succès
 
-    result.status = isSuccessful ? 'completed' : 'failed';
+    result.status = isSuccessful ? "completed" : "failed";
     result.walletInfo = {
       walletType: method,
-      deviceId: `DEVICE_${crypto.randomBytes(6).toString('hex')}`,
-      biometricUsed: Math.random() > 0.3 // 70% chance d'utilisation biométrique
+      deviceId: `DEVICE_${crypto.randomBytes(6).toString("hex")}`,
+      biometricUsed: Math.random() > 0.3, // 70% chance d'utilisation biométrique
     };
 
     if (!isSuccessful) {
@@ -181,7 +179,7 @@ class PaymentProcessor {
    */
   generateTransactionId() {
     const timestamp = Date.now().toString();
-    const random = crypto.randomBytes(8).toString('hex');
+    const random = crypto.randomBytes(8).toString("hex");
     return `demo_${timestamp}_${random}`;
   }
 
@@ -191,11 +189,11 @@ class PaymentProcessor {
    */
   calculateProcessingFee(amount, method) {
     const fees = {
-      credit_card: 0.029,   // 2.9%
-      paypal: 0.034,        // 3.4%
-      bank_transfer: 0.01,  // 1%
-      apple_pay: 0.029,     // 2.9%
-      google_pay: 0.029     // 2.9%
+      credit_card: 0.029, // 2.9%
+      paypal: 0.034, // 3.4%
+      bank_transfer: 0.01, // 1%
+      apple_pay: 0.029, // 2.9%
+      google_pay: 0.029, // 2.9%
     };
 
     const feeRate = fees[method] || 0.03;
@@ -208,19 +206,19 @@ class PaymentProcessor {
    */
   generateWebhookPayload(transactionData) {
     return {
-      event: 'payment.processed',
+      event: "payment.processed",
       timestamp: new Date().toISOString(),
       data: {
         transactionId: transactionData.transactionId,
         status: transactionData.status,
         amount: transactionData.amount,
         currency: transactionData.currency,
-        orderId: transactionData.orderId
+        orderId: transactionData.orderId,
       },
       signature: crypto
-        .createHmac('sha256', 'demo_webhook_secret')
+        .createHmac("sha256", "demo_webhook_secret")
         .update(JSON.stringify(transactionData))
-        .digest('hex')
+        .digest("hex"),
     };
   }
 }

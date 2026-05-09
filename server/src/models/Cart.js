@@ -9,9 +9,7 @@ module.exports = (sequelize, _DataTypes) => {
     {
       tableName: "Carts",
       timestamps: true,
-      indexes: [
-        { fields: ["userId"], unique: true },
-      ],
+      indexes: [{ fields: ["userId"], unique: true }],
     },
   );
 
@@ -23,14 +21,16 @@ module.exports = (sequelize, _DataTypes) => {
   Cart.prototype.getTotalPrice = async function () {
     // Optimisation : inclure les données Star pour éviter les requêtes N+1
     const cartItems = await this.getCartItems({
-      include: [{
-        model: sequelize.models.Star,
-        attributes: ['price']
-      }]
+      include: [
+        {
+          model: sequelize.models.Star,
+          attributes: ["price"],
+        },
+      ],
     });
 
     return cartItems.reduce((total, item) => {
-      return total + (item.quantity * parseFloat(item.Star.price));
+      return total + item.quantity * Number.parseFloat(item.Star.price);
     }, 0);
   };
 

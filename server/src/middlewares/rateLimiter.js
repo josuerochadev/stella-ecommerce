@@ -1,13 +1,13 @@
 // src/middlewares/rateLimiter.js
-const rateLimit = require('express-rate-limit');
+const rateLimit = require("express-rate-limit");
 
 // General API rate limiter (more permissive in development)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'development' ? 50000 : 100, // Higher limit in dev for debugging
+  max: process.env.NODE_ENV === "development" ? 50000 : 100, // Higher limit in dev for debugging
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again later.'
+    message: "Too many requests from this IP, please try again later.",
   },
   standardHeaders: true, // Return rate limit info in headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -19,7 +19,7 @@ const authLimiter = rateLimit({
   max: 5, // Limit each IP to 5 login attempts per windowMs
   message: {
     success: false,
-    message: 'Too many authentication attempts from this IP, please try again in 15 minutes.'
+    message: "Too many authentication attempts from this IP, please try again in 15 minutes.",
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -32,7 +32,7 @@ const createAccountLimiter = rateLimit({
   max: 3, // Limit each IP to 3 account creation attempts per hour
   message: {
     success: false,
-    message: 'Too many account creation attempts from this IP, please try again in 1 hour.'
+    message: "Too many account creation attempts from this IP, please try again in 1 hour.",
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -44,7 +44,7 @@ const passwordResetLimiter = rateLimit({
   max: 3, // Limit each IP to 3 password reset attempts per windowMs
   message: {
     success: false,
-    message: 'Too many password reset attempts from this IP, please try again in 15 minutes.'
+    message: "Too many password reset attempts from this IP, please try again in 15 minutes.",
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -54,5 +54,5 @@ module.exports = {
   generalLimiter,
   authLimiter,
   createAccountLimiter,
-  passwordResetLimiter
+  passwordResetLimiter,
 };

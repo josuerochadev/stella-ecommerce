@@ -50,7 +50,7 @@ function createEmailTemplates() {
        <div style="text-align: center; margin: 30px 0;">
          <a href="{{catalogUrl}}" style="background: #FFB347; color: #3D2A54; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">D&eacute;couvrir notre catalogue</a>
        </div>
-       <p style="color: #666; font-size: 0.9rem;">Si vous avez des questions, n'h&eacute;sitez pas &agrave; nous contacter.</p>`
+       <p style="color: #666; font-size: 0.9rem;">Si vous avez des questions, n'h&eacute;sitez pas &agrave; nous contacter.</p>`,
     ),
   });
 
@@ -74,7 +74,7 @@ function createEmailTemplates() {
          <p>&bull; {{name}} ({{constellation}}) - {{quantity}}x {{price}}&euro;</p>
          {{/stars}}
        </div>
-       <p>Vous recevrez bient&ocirc;t un email avec les certificats personnalis&eacute;s de vos &eacute;toiles.</p>`
+       <p>Vous recevrez bient&ocirc;t un email avec les certificats personnalis&eacute;s de vos &eacute;toiles.</p>`,
     ),
   });
 
@@ -89,7 +89,7 @@ function createEmailTemplates() {
        <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
          <p><strong>ID Transaction :</strong> {{transactionId}}</p>
          <p><strong>M&eacute;thode :</strong> {{paymentMethod}}</p>
-       </div>`
+       </div>`,
     ),
   });
 
@@ -103,7 +103,7 @@ function createEmailTemplates() {
        <div style="text-align: center; margin: 30px 0;">
          <a href="{{resetUrl}}" style="background: #dc3545; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">R&eacute;initialiser mon mot de passe</a>
        </div>
-       <p style="color: #666; font-size: 0.9rem;">Ce lien expire dans 1 heure. Si vous n'avez pas demand&eacute; cette r&eacute;initialisation, ignorez cet email.</p>`
+       <p style="color: #666; font-size: 0.9rem;">Ce lien expire dans 1 heure. Si vous n'avez pas demand&eacute; cette r&eacute;initialisation, ignorez cet email.</p>`,
     ),
   });
 
@@ -122,7 +122,7 @@ function createEmailTemplates() {
        </div>
        <div style="text-align: center; margin: 30px 0;">
          <a href="{{catalogUrl}}" style="background: #FFB347; color: #3D2A54; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">Voir les nouveaut&eacute;s</a>
-       </div>`
+       </div>`,
     ),
   });
 

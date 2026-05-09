@@ -38,22 +38,29 @@ app.use(generateRequestId);
 app.use(cors(CORS_OPTIONS));
 
 // Use Helmet to secure the app by setting various HTTP headers
-app.use(helmet({
-	contentSecurityPolicy: {
-		directives: {
-			defaultSrc: ["'self'"],
-			scriptSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-			styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-			fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-			imgSrc: ["'self'", "data:", "https:", "blob:"],
-			connectSrc: ["'self'", process.env.FRONTEND_URL || "http://localhost:3001"],
-			objectSrc: ["'none'"],
-			baseUri: ["'self'"],
-			formAction: ["'self'"],
-			frameAncestors: ["'none'"],
-		},
-	},
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com",
+          "https://cdnjs.cloudflare.com",
+        ],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", process.env.FRONTEND_URL || "http://localhost:3001"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  }),
+);
 
 // Apply rate limiting to all requests
 app.use(generalLimiter);
@@ -62,25 +69,27 @@ app.use(generalLimiter);
 app.use(cookieParser());
 
 // Configure session for CSRF protection
-app.use(session({
-	secret: SESSION_SECRET,
-	...SESSION_CONFIG,
-	cookie: {
-		...SESSION_CONFIG.cookie,
-		secure: NODE_ENV === 'production',
-	}
-}));
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    ...SESSION_CONFIG,
+    cookie: {
+      ...SESSION_CONFIG.cookie,
+      secure: NODE_ENV === "production",
+    },
+  }),
+);
 
 // Modern CSRF protection (génération des tokens)
 app.use(csrfGenerate);
 
 // Logging middleware
 if (NODE_ENV !== "test") {
-	app.use(
-		morgan("combined", {
-			stream: { write: (message) => info(message.trim()) },
-		}),
-	);
+  app.use(
+    morgan("combined", {
+      stream: { write: (message) => info(message.trim()) },
+    }),
+  );
 }
 
 // Middleware to parse JSON
@@ -90,7 +99,7 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 // Input sanitization middleware (apply after parsing but before routes)
-app.use(sanitizeInput('strict'));
+app.use(sanitizeInput("strict"));
 
 // Swagger UI setup
 app.use("/api-docs", serve, setup);
@@ -106,17 +115,17 @@ app.use("/api", routes);
 
 // Route spécifique pour la démo admin
 app.get("/admin-demo", (_, res) => {
-	res.sendFile(join(__dirname, "public", "admin-demo.html"));
+  res.sendFile(join(__dirname, "public", "admin-demo.html"));
 });
 
 // Route to handle all non-API requests
 app.get("*", (_, res) => {
-	res.sendFile(join(__dirname, "public", "index.html"));
+  res.sendFile(join(__dirname, "public", "index.html"));
 });
 
 // Handle 404 errors for the API
 app.use("/api", (req, _, next) => {
-	next(new AppError(`Can't find ${req.originalUrl} on this server!`, HTTP_STATUS.NOT_FOUND));
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, HTTP_STATUS.NOT_FOUND));
 });
 
 // Sentry error handler (must be before app errorHandler)
@@ -129,36 +138,36 @@ const PORT = _PORT || APP_CONSTANTS.DEFAULT_PORT;
 
 // Function to start the server
 const startServer = async () => {
-	try {
-		await sequelize.sync({ force: false });
-		info("Database synced");
-		info(`Connected to database: ${sequelize.config.database}`);
+  try {
+    await sequelize.sync({ force: false });
+    info("Database synced");
+    info(`Connected to database: ${sequelize.config.database}`);
 
-		// Schedule token cleanup job
-		scheduleTokenCleanup();
-		info("Token cleanup job scheduled");
+    // Schedule token cleanup job
+    scheduleTokenCleanup();
+    info("Token cleanup job scheduled");
 
-		app.listen(PORT, () => {
-			info(`Server is running in ${NODE_ENV} mode on port ${PORT}`);
-		});
-	} catch (error) {
-		_error("Unable to start server:", error);
-		process.exit(1);
-	}
+    app.listen(PORT, () => {
+      info(`Server is running in ${NODE_ENV} mode on port ${PORT}`);
+    });
+  } catch (error) {
+    _error("Unable to start server:", error);
+    process.exit(1);
+  }
 };
 
 // Global process-level exception handlers
 process.on("unhandledRejection", (reason) => {
-	_error("Unhandled Rejection:", reason);
+  _error("Unhandled Rejection:", reason);
 });
 
 process.on("uncaughtException", (error) => {
-	_error("Uncaught Exception:", error);
-	process.exit(1);
+  _error("Uncaught Exception:", error);
+  process.exit(1);
 });
 
 if (require.main === module) {
-	startServer();
+  startServer();
 }
 
 module.exports = app;

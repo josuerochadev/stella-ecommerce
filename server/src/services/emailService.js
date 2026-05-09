@@ -1,8 +1,8 @@
 // server/src/services/emailService.js
 // Service de simulation d'emails pour demonstration portfolio
 
-const fs = require("fs").promises;
-const path = require("path");
+const fs = require("node:fs").promises;
+const path = require("node:path");
 const logger = require("../utils/logger");
 const { createEmailTemplates } = require("./emailTemplates");
 
@@ -82,10 +82,7 @@ class EmailSimulator {
         } else {
           email.status = "failed";
           this.sentEmails.push(email);
-          logger.error(
-            `Echec email apres ${email.maxAttempts} tentatives:`,
-            error
-          );
+          logger.error(`Echec email apres ${email.maxAttempts} tentatives:`, error);
         }
       }
 
@@ -133,13 +130,11 @@ class EmailSimulator {
 
     result = result.replace(
       /\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g,
-      (match, arrayKey, itemTemplate) => {
+      (_match, arrayKey, itemTemplate) => {
         const array = data[arrayKey];
         if (!Array.isArray(array)) return "";
-        return array
-          .map((item) => this.interpolateTemplate(itemTemplate, item))
-          .join("");
-      }
+        return array.map((item) => this.interpolateTemplate(itemTemplate, item)).join("");
+      },
     );
 
     return result;
@@ -282,8 +277,7 @@ class EmailSimulator {
 
     const templateStats = {};
     for (const email of this.sentEmails) {
-      templateStats[email.template] =
-        (templateStats[email.template] || 0) + 1;
+      templateStats[email.template] = (templateStats[email.template] || 0) + 1;
     }
 
     return {

@@ -1,7 +1,7 @@
 // server/src/config/cookieConfig.js
 // Centralized cookie configuration
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 /**
  * Access token cookie options
@@ -10,9 +10,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 const ACCESS_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? 'strict' : 'lax',
+  sameSite: isProduction ? "strict" : "lax",
   maxAge: 15 * 60 * 1000, // 15 minutes
-  path: '/api',
+  path: "/api",
 };
 
 /**
@@ -22,11 +22,11 @@ const ACCESS_TOKEN_COOKIE_OPTIONS = {
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? 'strict' : 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  sameSite: isProduction ? "strict" : "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 module.exports = {
   ACCESS_TOKEN_COOKIE_OPTIONS,
-  REFRESH_TOKEN_COOKIE_OPTIONS
+  REFRESH_TOKEN_COOKIE_OPTIONS,
 };

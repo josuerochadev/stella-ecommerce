@@ -2,9 +2,9 @@ const APP_CONSTANTS = {
   // Server configuration
   DEFAULT_PORT: 3000,
   FRONTEND_URLS: [
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://localhost:3003',
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003",
     process.env.FRONTEND_URL,
   ].filter(Boolean),
 
@@ -17,7 +17,7 @@ const APP_CONSTANTS = {
   EMAIL_PROCESSING_DELAY: 1000, // 1 second delay for email processing
 
   // Cron jobs
-  CLEANUP_CRON_SCHEDULE: '0 2 * * *', // Daily at 2 AM
+  CLEANUP_CRON_SCHEDULE: "0 2 * * *", // Daily at 2 AM
 
   // Payment processing
   PAYMENT_MIN_DELAY: 1000, // 1 second minimum
@@ -51,8 +51,8 @@ const APP_CONSTANTS = {
   MAX_RATING: 5,
 
   // Default skeleton width
-  SKELETON_DEFAULT_WIDTH: '100%',
-  SKELETON_LAST_LINE_WIDTH: '75%',
+  SKELETON_DEFAULT_WIDTH: "100%",
+  SKELETON_LAST_LINE_WIDTH: "75%",
 };
 
 const HTTP_STATUS = {
@@ -70,14 +70,14 @@ const CORS_OPTIONS = {
   credentials: true,
   optionsSuccessStatus: HTTP_STATUS.OK,
   allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'X-CSRF-Token',
-    'Accept',
-    'Origin'
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "X-CSRF-Token",
+    "Accept",
+    "Origin",
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
 };
 
 const SESSION_CONFIG = {
@@ -86,8 +86,8 @@ const SESSION_CONFIG = {
   cookie: {
     httpOnly: true,
     maxAge: APP_CONSTANTS.SESSION_MAX_AGE,
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
-  }
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  },
 };
 
 module.exports = {

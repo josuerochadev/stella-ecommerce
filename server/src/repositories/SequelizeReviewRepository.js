@@ -2,10 +2,10 @@
 // Implémentation du repository avis avec Sequelize
 // Responsabilité unique : opérations de persistance des données avis
 
-const { Review, User, Star } = require('../models');
-const { IReviewRepository } = require('../interfaces/IReviewRepository');
-const { Op } = require('sequelize');
-const { validateId } = require('../utils/validators');
+const { Review, User, Star } = require("../models");
+const { IReviewRepository } = require("../interfaces/IReviewRepository");
+const { Op } = require("sequelize");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les avis utilisant Sequelize ORM
@@ -31,15 +31,15 @@ class SequelizeReviewRepository extends IReviewRepository {
         include: [
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName']
+            as: "User",
+            attributes: ["id", "firstName", "lastName"],
           },
           {
             model: Star,
-            as: 'Star',
-            attributes: ['starid', 'name']
-          }
-        ]
+            as: "Star",
+            attributes: ["starid", "name"],
+          },
+        ],
       });
 
       return review ? review.toJSON() : null;
@@ -56,21 +56,21 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async findByStarId(starId) {
     try {
-      validateId(starId, 'Star ID');
+      validateId(starId, "Star ID");
 
       const reviews = await this.Review.findAll({
         where: { starId },
         include: [
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName']
-          }
+            as: "User",
+            attributes: ["id", "firstName", "lastName"],
+          },
         ],
-        order: [['createdAt', 'DESC']]
+        order: [["createdAt", "DESC"]],
       });
 
-      return reviews.map(review => review.toJSON());
+      return reviews.map((review) => review.toJSON());
     } catch (error) {
       throw new Error(`Failed to find reviews by star ID: ${error.message}`);
     }
@@ -84,21 +84,21 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async findByUserId(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const reviews = await this.Review.findAll({
         where: { userId },
         include: [
           {
             model: Star,
-            as: 'Star',
-            attributes: ['starid', 'name', 'image']
-          }
+            as: "Star",
+            attributes: ["starid", "name", "image"],
+          },
         ],
-        order: [['createdAt', 'DESC']]
+        order: [["createdAt", "DESC"]],
       });
 
-      return reviews.map(review => review.toJSON());
+      return reviews.map((review) => review.toJSON());
     } catch (error) {
       throw new Error(`Failed to find reviews by user ID: ${error.message}`);
     }
@@ -120,8 +120,8 @@ class SequelizeReviewRepository extends IReviewRepository {
       const createdReview = await this.findById(review.id);
       return createdReview;
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new Error('You have already reviewed this star');
+      if (error.name === "SequelizeUniqueConstraintError") {
+        throw new Error("You have already reviewed this star");
       }
       throw new Error(`Failed to create review: ${error.message}`);
     }
@@ -138,16 +138,20 @@ class SequelizeReviewRepository extends IReviewRepository {
     try {
       validateId(id);
 
-      if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Update data must be an object');
+      if (!updateData || typeof updateData !== "object") {
+        throw new Error("Update data must be an object");
       }
 
       // Validation des données
       const dataToUpdate = {};
 
       if (updateData.rating !== undefined) {
-        if (typeof updateData.rating !== 'number' || updateData.rating < 1 || updateData.rating > 5) {
-          throw new Error('Rating must be between 1 and 5');
+        if (
+          typeof updateData.rating !== "number" ||
+          updateData.rating < 1 ||
+          updateData.rating > 5
+        ) {
+          throw new Error("Rating must be between 1 and 5");
         }
         dataToUpdate.rating = updateData.rating;
       }
@@ -158,11 +162,11 @@ class SequelizeReviewRepository extends IReviewRepository {
 
       const [updatedCount] = await this.Review.update(dataToUpdate, {
         where: { id },
-        returning: true
+        returning: true,
       });
 
       if (updatedCount === 0) {
-        throw new Error('Review not found or no changes made');
+        throw new Error("Review not found or no changes made");
       }
 
       const updatedReview = await this.findById(id);
@@ -183,7 +187,7 @@ class SequelizeReviewRepository extends IReviewRepository {
       validateId(id);
 
       const deletedCount = await this.Review.destroy({
-        where: { id }
+        where: { id },
       });
 
       return deletedCount > 0;
@@ -221,20 +225,20 @@ class SequelizeReviewRepository extends IReviewRepository {
         include: [
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName']
+            as: "User",
+            attributes: ["id", "firstName", "lastName"],
           },
           {
             model: Star,
-            as: 'Star',
-            attributes: ['starid', 'name', 'image']
-          }
+            as: "Star",
+            attributes: ["starid", "name", "image"],
+          },
         ],
-        order: [['createdAt', 'DESC']],
-        ...options
+        order: [["createdAt", "DESC"]],
+        ...options,
       });
 
-      return reviews.map(review => review.toJSON());
+      return reviews.map((review) => review.toJSON());
     } catch (error) {
       throw new Error(`Failed to find reviews: ${error.message}`);
     }
@@ -247,19 +251,21 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async getAverageRating(starId) {
     try {
-      validateId(starId, 'Star ID');
+      validateId(starId, "Star ID");
 
       const result = await this.Review.findOne({
         where: { starId },
-        attributes: [[require('sequelize').fn('AVG', require('sequelize').col('rating')), 'avgRating']],
-        raw: true
+        attributes: [
+          [require("sequelize").fn("AVG", require("sequelize").col("rating")), "avgRating"],
+        ],
+        raw: true,
       });
 
       if (!result || !result.avgRating) {
         return null;
       }
 
-      return parseFloat(result.avgRating);
+      return Number.parseFloat(result.avgRating);
     } catch (error) {
       throw new Error(`Failed to get average rating: ${error.message}`);
     }
@@ -280,8 +286,8 @@ class SequelizeReviewRepository extends IReviewRepository {
       const count = await this.Review.count({
         where: {
           userId,
-          starId
-        }
+          starId,
+        },
       });
 
       return count > 0;
@@ -299,26 +305,26 @@ class SequelizeReviewRepository extends IReviewRepository {
   async findUserReviewForStar(userId, starId) {
     try {
       if (!userId || !starId) {
-        throw new Error('User ID and Star ID are required');
+        throw new Error("User ID and Star ID are required");
       }
 
       const review = await this.Review.findOne({
         where: {
           userId,
-          starId
+          starId,
         },
         include: [
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName']
+            as: "User",
+            attributes: ["id", "firstName", "lastName"],
           },
           {
             model: Star,
-            as: 'Star',
-            attributes: ['starid', 'name']
-          }
-        ]
+            as: "Star",
+            attributes: ["starid", "name"],
+          },
+        ],
       });
 
       return review ? review.toJSON() : null;
@@ -334,14 +340,7 @@ class SequelizeReviewRepository extends IReviewRepository {
    */
   async searchReviews(searchCriteria) {
     try {
-      const {
-        starId,
-        userId,
-        minRating,
-        maxRating,
-        limit = 20,
-        offset = 0
-      } = searchCriteria;
+      const { starId, userId, minRating, maxRating, limit = 20, offset = 0 } = searchCriteria;
 
       const whereCondition = {};
 
@@ -360,7 +359,7 @@ class SequelizeReviewRepository extends IReviewRepository {
       if (maxRating !== undefined && maxRating !== null) {
         whereCondition.rating = {
           ...whereCondition.rating,
-          [Op.lte]: maxRating
+          [Op.lte]: maxRating,
         };
       }
 
@@ -369,23 +368,23 @@ class SequelizeReviewRepository extends IReviewRepository {
         include: [
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName']
+            as: "User",
+            attributes: ["id", "firstName", "lastName"],
           },
           {
             model: Star,
-            as: 'Star',
-            attributes: ['starid', 'name', 'image']
-          }
+            as: "Star",
+            attributes: ["starid", "name", "image"],
+          },
         ],
         limit: Math.min(limit, 100),
         offset,
-        order: [['createdAt', 'DESC']]
+        order: [["createdAt", "DESC"]],
       });
 
       return {
         count: result.count,
-        rows: result.rows.map(review => review.toJSON())
+        rows: result.rows.map((review) => review.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to search reviews: ${error.message}`);
@@ -399,29 +398,29 @@ class SequelizeReviewRepository extends IReviewRepository {
    * @private
    */
   validateReviewData(reviewData) {
-    if (!reviewData || typeof reviewData !== 'object') {
-      throw new Error('Review data must be an object');
+    if (!reviewData || typeof reviewData !== "object") {
+      throw new Error("Review data must be an object");
     }
 
-    const requiredFields = ['userId', 'starId', 'rating'];
-    const missingFields = requiredFields.filter(field => reviewData[field] === undefined);
+    const requiredFields = ["userId", "starId", "rating"];
+    const missingFields = requiredFields.filter((field) => reviewData[field] === undefined);
 
     if (missingFields.length > 0) {
-      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
     }
 
     // Validation rating
-    if (typeof reviewData.rating !== 'number' || reviewData.rating < 1 || reviewData.rating > 5) {
-      throw new Error('Rating must be a number between 1 and 5');
+    if (typeof reviewData.rating !== "number" || reviewData.rating < 1 || reviewData.rating > 5) {
+      throw new Error("Rating must be a number between 1 and 5");
     }
 
     // Validation IDs
-    if (typeof reviewData.userId !== 'number') {
-      throw new Error('User ID must be a number');
+    if (typeof reviewData.userId !== "number") {
+      throw new Error("User ID must be a number");
     }
 
-    if (typeof reviewData.starId !== 'number') {
-      throw new Error('Star ID must be a number');
+    if (typeof reviewData.starId !== "number") {
+      throw new Error("Star ID must be a number");
     }
   }
 }

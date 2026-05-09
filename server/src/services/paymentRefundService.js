@@ -1,30 +1,29 @@
 // server/src/services/paymentRefundService.js
 // Service de remboursement des paiements - principe KISS
 
-const crypto = require('crypto');
+const crypto = require("node:crypto");
 
 /**
  * Service dédié aux remboursements
  * Responsabilité unique : gestion complète des remboursements
  */
 class PaymentRefundService {
-
   /**
    * Traiter un remboursement complet
    * Responsabilité unique : orchestration remboursement
    */
-  static async processRefund(transactionId, amount, reason = 'Customer request') {
+  static async processRefund(transactionId, amount, reason = "Customer request") {
     // Validation des paramètres
-    const validation = this.validateRefundRequest(transactionId, amount, reason);
+    const validation = PaymentRefundService.validateRefundRequest(transactionId, amount, reason);
     if (!validation.isValid) {
-      throw new Error(`Refund validation failed: ${validation.errors.join(', ')}`);
+      throw new Error(`Refund validation failed: ${validation.errors.join(", ")}`);
     }
 
     // Génération des données de remboursement
-    const refundId = this.generateRefundId();
+    const refundId = PaymentRefundService.generateRefundId();
 
     // Simulation de délai de traitement
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Simulation de succès/échec
     const isSuccessful = Math.random() > 0.05; // 95% de succès
@@ -35,21 +34,21 @@ class PaymentRefundService {
         originalTransactionId: transactionId,
         amount,
         reason,
-        status: 'failed',
-        error: 'Refund processing failed - please contact support',
-        timestamp: new Date().toISOString()
+        status: "failed",
+        error: "Refund processing failed - please contact support",
+        timestamp: new Date().toISOString(),
       };
     }
 
     return {
       refundId,
       originalTransactionId: transactionId,
-      amount: parseFloat(amount),
+      amount: Number.parseFloat(amount),
       reason,
-      status: 'completed',
-      estimatedArrival: this.calculateRefundArrivalDate(),
-      processingFee: this.calculateRefundFee(amount),
-      timestamp: new Date().toISOString()
+      status: "completed",
+      estimatedArrival: PaymentRefundService.calculateRefundArrivalDate(),
+      processingFee: PaymentRefundService.calculateRefundFee(amount),
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -57,13 +56,18 @@ class PaymentRefundService {
    * Traiter un remboursement partiel
    * Responsabilité unique : remboursements partiels
    */
-  static async processPartialRefund(transactionId, originalAmount, refundAmount, reason = 'Partial refund') {
+  static async processPartialRefund(
+    transactionId,
+    originalAmount,
+    refundAmount,
+    reason = "Partial refund",
+  ) {
     // Validation spécifique aux remboursements partiels
     if (refundAmount > originalAmount) {
-      throw new Error('Refund amount cannot exceed original transaction amount');
+      throw new Error("Refund amount cannot exceed original transaction amount");
     }
 
-    return await this.processRefund(transactionId, refundAmount, reason);
+    return await PaymentRefundService.processRefund(transactionId, refundAmount, reason);
   }
 
   /**
@@ -72,19 +76,20 @@ class PaymentRefundService {
    */
   static async getRefundStatus(refundId) {
     // Simulation de consultation d'une base de données
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Simulation de statuts possibles
-    const statuses = ['completed', 'processing', 'pending', 'failed'];
+    const statuses = ["completed", "processing", "pending", "failed"];
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
 
     return {
       refundId,
       status: randomStatus,
       lastUpdated: new Date().toISOString(),
-      estimatedCompletion: randomStatus === 'processing'
-        ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
-        : null
+      estimatedCompletion:
+        randomStatus === "processing"
+          ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+          : null,
     };
   }
 
@@ -94,7 +99,7 @@ class PaymentRefundService {
    */
   static async getRefundsForTransaction(transactionId) {
     // Simulation de récupération d'historique
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     // Génération d'un historique fictif
     const refundCount = Math.floor(Math.random() * 3); // 0-2 remboursements
@@ -102,12 +107,12 @@ class PaymentRefundService {
 
     for (let i = 0; i < refundCount; i++) {
       refunds.push({
-        refundId: this.generateRefundId(),
+        refundId: PaymentRefundService.generateRefundId(),
         originalTransactionId: transactionId,
         amount: Math.round(Math.random() * 100 * 100) / 100,
-        reason: 'Customer request',
-        status: 'completed',
-        timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString()
+        reason: "Customer request",
+        status: "completed",
+        timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
     }
 
@@ -122,23 +127,23 @@ class PaymentRefundService {
     const errors = [];
 
     // Validation ID transaction
-    if (!transactionId || typeof transactionId !== 'string') {
-      errors.push('Valid transaction ID is required');
+    if (!transactionId || typeof transactionId !== "string") {
+      errors.push("Valid transaction ID is required");
     }
 
     // Validation montant
     if (!amount || amount <= 0) {
-      errors.push('Refund amount must be positive');
+      errors.push("Refund amount must be positive");
     }
 
     // Validation raison
-    if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
-      errors.push('Refund reason is required');
+    if (!reason || typeof reason !== "string" || reason.trim().length === 0) {
+      errors.push("Refund reason is required");
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -148,7 +153,7 @@ class PaymentRefundService {
    */
   static generateRefundId() {
     const timestamp = Date.now().toString();
-    const random = crypto.randomBytes(6).toString('hex');
+    const random = crypto.randomBytes(6).toString("hex");
     return `refund_${timestamp}_${random}`;
   }
 
@@ -159,7 +164,7 @@ class PaymentRefundService {
   static calculateRefundFee(amount) {
     // Frais fixe de remboursement : 0.5% avec minimum 0.50€
     const feeRate = 0.005; // 0.5%
-    const minimumFee = 0.50;
+    const minimumFee = 0.5;
 
     const calculatedFee = amount * feeRate;
     return Math.max(calculatedFee, minimumFee);
@@ -202,11 +207,11 @@ class PaymentRefundService {
       averageRefundAmount: Math.round((totalAmount / totalRefunds) * 100) / 100,
       refundRate: Math.round(Math.random() * 10 * 100) / 100, // 0-10%
       topReasons: [
-        { reason: 'Customer request', count: Math.floor(totalRefunds * 0.4) },
-        { reason: 'Product defect', count: Math.floor(totalRefunds * 0.3) },
-        { reason: 'Billing error', count: Math.floor(totalRefunds * 0.2) },
-        { reason: 'Duplicate charge', count: Math.floor(totalRefunds * 0.1) }
-      ]
+        { reason: "Customer request", count: Math.floor(totalRefunds * 0.4) },
+        { reason: "Product defect", count: Math.floor(totalRefunds * 0.3) },
+        { reason: "Billing error", count: Math.floor(totalRefunds * 0.2) },
+        { reason: "Duplicate charge", count: Math.floor(totalRefunds * 0.1) },
+      ],
     };
   }
 }

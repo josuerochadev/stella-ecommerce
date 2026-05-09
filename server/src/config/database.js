@@ -28,7 +28,7 @@ module.exports = {
     ...defaultConfig,
     ...(process.env.DATABASE_URL
       ? {
-          use_env_variable: 'DATABASE_URL',
+          use_env_variable: "DATABASE_URL",
         }
       : {
           username: process.env.DB_USERNAME,

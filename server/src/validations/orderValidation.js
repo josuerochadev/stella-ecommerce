@@ -16,7 +16,9 @@ const createOrderSchema = Joi.object({
 });
 
 const updateOrderStatusSchema = Joi.object({
-  status: Joi.string().valid(...UPDATABLE_ORDER_STATUS).required(),
+  status: Joi.string()
+    .valid(...UPDATABLE_ORDER_STATUS)
+    .required(),
 });
 
 module.exports = { createOrderSchema, updateOrderStatusSchema };

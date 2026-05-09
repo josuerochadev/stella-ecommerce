@@ -2,9 +2,9 @@
 // Contrôleur pour la gestion des avis
 // Responsabilité unique : orchestration du ReviewRepository et gestion des erreurs HTTP
 
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
-const { getService } = require('../container/containerConfig');
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
+const { getService } = require("../container/containerConfig");
 
 /**
  * Contrôleur des avis utilisant l'injection de dépendances
@@ -23,12 +23,12 @@ class ReviewController {
       const { starId } = req.query;
 
       if (!starId) {
-        return next(new AppError('Star ID is required', 400));
+        return next(new AppError("Star ID is required", 400));
       }
 
-      const parsedStarId = parseInt(starId, 10);
-      if (isNaN(parsedStarId)) {
-        return next(new AppError('Star ID must be a valid number', 400));
+      const parsedStarId = Number.parseInt(starId, 10);
+      if (Number.isNaN(parsedStarId)) {
+        return next(new AppError("Star ID must be a valid number", 400));
       }
 
       const reviews = await this.reviewRepository.findByStarId(parsedStarId);
@@ -36,10 +36,10 @@ class ReviewController {
       res.json({
         success: true,
         data: reviews,
-        count: reviews.length
+        count: reviews.length,
       });
     } catch (error) {
-      logger.error('Error fetching reviews:', error);
+      logger.error("Error fetching reviews:", error);
       next(new AppError(`Error fetching reviews: ${error.message}`, 500));
     }
   };
@@ -54,22 +54,22 @@ class ReviewController {
 
       // Validation
       if (!starId) {
-        return next(new AppError('Star ID is required', 400));
+        return next(new AppError("Star ID is required", 400));
       }
 
       if (!rating || rating < 1 || rating > 5) {
-        return next(new AppError('Rating must be between 1 and 5', 400));
+        return next(new AppError("Rating must be between 1 and 5", 400));
       }
 
-      const parsedStarId = parseInt(starId, 10);
-      if (isNaN(parsedStarId)) {
-        return next(new AppError('Star ID must be a valid number', 400));
+      const parsedStarId = Number.parseInt(starId, 10);
+      if (Number.isNaN(parsedStarId)) {
+        return next(new AppError("Star ID must be a valid number", 400));
       }
 
       // Vérifier si l'utilisateur a déjà évalué cette étoile
       const hasReviewed = await this.reviewRepository.hasUserReviewedStar(userId, parsedStarId);
       if (hasReviewed) {
-        return next(new AppError('You have already reviewed this star', 400));
+        return next(new AppError("You have already reviewed this star", 400));
       }
 
       // Créer l'avis
@@ -77,18 +77,18 @@ class ReviewController {
         userId,
         starId: parsedStarId,
         rating,
-        comment: comment || null
+        comment: comment || null,
       });
 
       res.status(201).json({
         success: true,
-        message: 'Review added',
-        review
+        message: "Review added",
+        review,
       });
     } catch (error) {
-      logger.error('Error in addReview function:', error);
+      logger.error("Error in addReview function:", error);
 
-      if (error.message === 'You have already reviewed this star') {
+      if (error.message === "You have already reviewed this star") {
         return next(new AppError(error.message, 400));
       }
 
@@ -102,22 +102,22 @@ class ReviewController {
   updateReview = async (req, res, next) => {
     try {
       const userId = req.user.userId;
-      const reviewId = parseInt(req.params.id, 10);
+      const reviewId = Number.parseInt(req.params.id, 10);
       const { rating, comment } = req.body;
 
       // Validation
-      if (isNaN(reviewId)) {
-        return next(new AppError('Invalid review ID', 400));
+      if (Number.isNaN(reviewId)) {
+        return next(new AppError("Invalid review ID", 400));
       }
 
       if (rating !== undefined && (rating < 1 || rating > 5)) {
-        return next(new AppError('Rating must be between 1 and 5', 400));
+        return next(new AppError("Rating must be between 1 and 5", 400));
       }
 
       // Vérifier que l'avis existe et appartient à l'utilisateur
       const existingReview = await this.reviewRepository.findById(reviewId);
       if (!existingReview) {
-        return next(new AppError('Review not found', 404));
+        return next(new AppError("Review not found", 404));
       }
 
       if (existingReview.userId !== userId) {
@@ -133,11 +133,11 @@ class ReviewController {
 
       res.json({
         success: true,
-        message: 'Review updated successfully',
-        review: updatedReview
+        message: "Review updated successfully",
+        review: updatedReview,
       });
     } catch (error) {
-      logger.error('Error updating review:', error);
+      logger.error("Error updating review:", error);
       next(new AppError(`Error updating review: ${error.message}`, 400));
     }
   };
@@ -148,17 +148,17 @@ class ReviewController {
   deleteReview = async (req, res, next) => {
     try {
       const userId = req.user.userId;
-      const reviewId = parseInt(req.params.id, 10);
+      const reviewId = Number.parseInt(req.params.id, 10);
 
       // Validation
-      if (isNaN(reviewId)) {
-        return next(new AppError('Invalid review ID', 400));
+      if (Number.isNaN(reviewId)) {
+        return next(new AppError("Invalid review ID", 400));
       }
 
       // Vérifier que l'avis existe et appartient à l'utilisateur
       const existingReview = await this.reviewRepository.findById(reviewId);
       if (!existingReview) {
-        return next(new AppError('Review not found', 404));
+        return next(new AppError("Review not found", 404));
       }
 
       if (existingReview.userId !== userId) {
@@ -169,15 +169,15 @@ class ReviewController {
       const deleted = await this.reviewRepository.delete(reviewId);
 
       if (!deleted) {
-        return next(new AppError('Failed to delete review', 500));
+        return next(new AppError("Failed to delete review", 500));
       }
 
       res.json({
         success: true,
-        message: 'Review deleted successfully'
+        message: "Review deleted successfully",
       });
     } catch (error) {
-      logger.error('Error deleting review:', error);
+      logger.error("Error deleting review:", error);
       next(new AppError(`Error deleting review: ${error.message}`, 400));
     }
   };
@@ -194,10 +194,10 @@ class ReviewController {
       res.json({
         success: true,
         data: reviews,
-        count: reviews.length
+        count: reviews.length,
       });
     } catch (error) {
-      logger.error('Error fetching user reviews:', error);
+      logger.error("Error fetching user reviews:", error);
       next(new AppError(`Error fetching user reviews: ${error.message}`, 500));
     }
   };
@@ -209,9 +209,9 @@ class ReviewController {
     try {
       const { starId } = req.params;
 
-      const parsedStarId = parseInt(starId, 10);
-      if (isNaN(parsedStarId)) {
-        return next(new AppError('Star ID must be a valid number', 400));
+      const parsedStarId = Number.parseInt(starId, 10);
+      if (Number.isNaN(parsedStarId)) {
+        return next(new AppError("Star ID must be a valid number", 400));
       }
 
       const averageRating = await this.reviewRepository.getAverageRating(parsedStarId);
@@ -221,17 +221,17 @@ class ReviewController {
         success: true,
         starId: parsedStarId,
         averageRating: averageRating || 0,
-        reviewCount
+        reviewCount,
       });
     } catch (error) {
-      logger.error('Error getting star average rating:', error);
+      logger.error("Error getting star average rating:", error);
       next(new AppError(`Error getting star average rating: ${error.message}`, 500));
     }
   };
 }
 
 // Instance du contrôleur avec injection de dépendances
-const reviewRepository = getService('reviewRepository');
+const reviewRepository = getService("reviewRepository");
 const reviewControllerInstance = new ReviewController(reviewRepository);
 
 // Export des méthodes pour compatibilité avec les routes existantes
@@ -242,5 +242,5 @@ module.exports = {
   deleteReview: reviewControllerInstance.deleteReview,
   getUserReviews: reviewControllerInstance.getUserReviews,
   getStarAverageRating: reviewControllerInstance.getStarAverageRating,
-  ReviewController
+  ReviewController,
 };

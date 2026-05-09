@@ -89,12 +89,7 @@ router.post("/add", csrfValidate, validate(addToCartSchema), cartController.addT
  *       404:
  *         description: Cart item not found
  */
-router.put(
-  "/update",
-  csrfValidate,
-  validate(updateCartItemSchema),
-  cartController.updateCartItem,
-);
+router.put("/update", csrfValidate, validate(updateCartItemSchema), cartController.updateCartItem);
 
 /**
  * @swagger

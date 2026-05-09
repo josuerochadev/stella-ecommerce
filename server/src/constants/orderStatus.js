@@ -6,14 +6,14 @@
  * Must match the Order model ENUM definition
  */
 const ORDER_STATUS = {
-  PENDING: 'pending',
-  PAID: 'paid',
-  SHIPPED: 'shipped',
-  CANCELLED: 'cancelled',
-  PAYMENT_FAILED: 'payment_failed',
-  REFUNDED: 'refunded',
-  PARTIALLY_REFUNDED: 'partially_refunded',
-  DISPUTED: 'disputed'
+  PENDING: "pending",
+  PAID: "paid",
+  SHIPPED: "shipped",
+  CANCELLED: "cancelled",
+  PAYMENT_FAILED: "payment_failed",
+  REFUNDED: "refunded",
+  PARTIALLY_REFUNDED: "partially_refunded",
+  DISPUTED: "disputed",
 };
 
 /**
@@ -30,11 +30,11 @@ const UPDATABLE_ORDER_STATUS = [
   ORDER_STATUS.PENDING,
   ORDER_STATUS.PAID,
   ORDER_STATUS.SHIPPED,
-  ORDER_STATUS.CANCELLED
+  ORDER_STATUS.CANCELLED,
 ];
 
 module.exports = {
   ORDER_STATUS,
   ORDER_STATUS_VALUES,
-  UPDATABLE_ORDER_STATUS
+  UPDATABLE_ORDER_STATUS,
 };

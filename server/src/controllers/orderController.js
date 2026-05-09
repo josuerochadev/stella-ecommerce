@@ -2,9 +2,9 @@
 // Contrôleur pour la gestion des commandes
 // Responsabilité unique : orchestration du OrderService et gestion des erreurs HTTP
 
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
-const { getService } = require('../container/containerConfig');
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
+const { getService } = require("../container/containerConfig");
 
 /**
  * Contrôleur des commandes utilisant l'injection de dépendances
@@ -25,39 +25,39 @@ class OrderController {
 
       // Validation des données d'entrée
       if (!items || !Array.isArray(items) || items.length === 0) {
-        return next(new AppError('Items array is required and must not be empty', 400));
+        return next(new AppError("Items array is required and must not be empty", 400));
       }
 
       if (!shippingAddress) {
-        return next(new AppError('Shipping address is required', 400));
+        return next(new AppError("Shipping address is required", 400));
       }
 
       if (!paymentMethod) {
-        return next(new AppError('Payment method is required', 400));
+        return next(new AppError("Payment method is required", 400));
       }
 
       const order = await this.orderService.createOrder(
         userId,
         items,
         shippingAddress,
-        paymentMethod
+        paymentMethod,
       );
 
       res.status(201).json({
         success: true,
-        message: 'Order created successfully',
+        message: "Order created successfully",
         orderId: order.orderId,
         total: order.total,
-        status: order.status
+        status: order.status,
       });
     } catch (error) {
-      logger.error('Error in createOrder function:', error);
+      logger.error("Error in createOrder function:", error);
 
-      if (error.message.includes('User with id') && error.message.includes('not found')) {
+      if (error.message.includes("User with id") && error.message.includes("not found")) {
         return next(new AppError(error.message, 404));
       }
 
-      if (error.message.includes('Stars not found')) {
+      if (error.message.includes("Stars not found")) {
         return next(new AppError(error.message, 404));
       }
 
@@ -76,10 +76,10 @@ class OrderController {
       res.json({
         success: true,
         data: orders,
-        count: orders.length
+        count: orders.length,
       });
     } catch (error) {
-      logger.error('Error fetching user orders:', error);
+      logger.error("Error fetching user orders:", error);
       next(new AppError(`Error fetching user orders: ${error.message}`, 500));
     }
   };
@@ -90,26 +90,26 @@ class OrderController {
   getOrderDetails = async (req, res, next) => {
     try {
       const userId = req.user.userId;
-      const orderId = parseInt(req.params.id);
+      const orderId = Number.parseInt(req.params.id);
 
-      if (!orderId || isNaN(orderId)) {
-        return next(new AppError('Invalid order ID', 400));
+      if (!orderId || Number.isNaN(orderId)) {
+        return next(new AppError("Invalid order ID", 400));
       }
 
       const order = await this.orderService.getOrderDetails(orderId, userId);
 
       if (!order) {
-        return next(new AppError('Order not found', 404));
+        return next(new AppError("Order not found", 404));
       }
 
       res.json({
         success: true,
-        data: order
+        data: order,
       });
     } catch (error) {
-      logger.error('Error fetching order details:', error);
+      logger.error("Error fetching order details:", error);
 
-      if (error.message === 'Order not found') {
+      if (error.message === "Order not found") {
         return next(new AppError(error.message, 404));
       }
 
@@ -123,37 +123,33 @@ class OrderController {
   updateOrderStatus = async (req, res, next) => {
     try {
       const adminUserId = req.user.userId;
-      const orderId = parseInt(req.params.id);
+      const orderId = Number.parseInt(req.params.id);
       const { status } = req.body;
 
       // Validation
-      if (!orderId || isNaN(orderId)) {
-        return next(new AppError('Invalid order ID', 400));
+      if (!orderId || Number.isNaN(orderId)) {
+        return next(new AppError("Invalid order ID", 400));
       }
 
       if (!status) {
-        return next(new AppError('Status is required', 400));
+        return next(new AppError("Status is required", 400));
       }
 
-      const updatedOrder = await this.orderService.updateOrderStatus(
-        orderId,
-        status,
-        adminUserId
-      );
+      const updatedOrder = await this.orderService.updateOrderStatus(orderId, status, adminUserId);
 
       res.json({
         success: true,
-        message: 'Order status updated',
-        order: updatedOrder
+        message: "Order status updated",
+        order: updatedOrder,
       });
     } catch (error) {
-      logger.error('Error updating order status:', error);
+      logger.error("Error updating order status:", error);
 
-      if (error.message === 'Only admins can update order status') {
+      if (error.message === "Only admins can update order status") {
         return next(new AppError(error.message, 403));
       }
 
-      if (error.message === 'Order not found') {
+      if (error.message === "Order not found") {
         return next(new AppError(error.message, 404));
       }
 
@@ -171,10 +167,10 @@ class OrderController {
 
       res.json({
         success: true,
-        stats
+        stats,
       });
     } catch (error) {
-      logger.error('Error getting user order stats:', error);
+      logger.error("Error getting user order stats:", error);
       next(new AppError(`Error getting user order stats: ${error.message}`, 500));
     }
   };
@@ -185,27 +181,27 @@ class OrderController {
   cancelOrder = async (req, res, next) => {
     try {
       const userId = req.user.userId;
-      const orderId = parseInt(req.params.id);
+      const orderId = Number.parseInt(req.params.id);
 
-      if (!orderId || isNaN(orderId)) {
-        return next(new AppError('Invalid order ID', 400));
+      if (!orderId || Number.isNaN(orderId)) {
+        return next(new AppError("Invalid order ID", 400));
       }
 
       const cancelledOrder = await this.orderService.cancelOrder(orderId, userId);
 
       res.json({
         success: true,
-        message: 'Order cancelled successfully',
-        order: cancelledOrder
+        message: "Order cancelled successfully",
+        order: cancelledOrder,
       });
     } catch (error) {
-      logger.error('Error cancelling order:', error);
+      logger.error("Error cancelling order:", error);
 
-      if (error.message === 'Order not found') {
+      if (error.message === "Order not found") {
         return next(new AppError(error.message, 404));
       }
 
-      if (error.message === 'Only pending orders can be cancelled') {
+      if (error.message === "Only pending orders can be cancelled") {
         return next(new AppError(error.message, 400));
       }
 
@@ -215,7 +211,7 @@ class OrderController {
 }
 
 // Instance du contrôleur avec injection de dépendances
-const orderService = getService('orderService');
+const orderService = getService("orderService");
 const orderControllerInstance = new OrderController(orderService);
 
 // Export des méthodes pour compatibilité avec les routes existantes
@@ -226,5 +222,5 @@ module.exports = {
   updateOrderStatus: orderControllerInstance.updateOrderStatus,
   getUserOrderStats: orderControllerInstance.getUserOrderStats,
   cancelOrder: orderControllerInstance.cancelOrder,
-  OrderController
+  OrderController,
 };

@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         { fields: ["userId", "isRevoked"] },
         { fields: ["expiresAt"] },
       ],
-    }
+    },
   );
 
   RefreshToken.associate = (models) => {

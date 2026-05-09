@@ -53,7 +53,12 @@ router.get("/", publicCache(300), starController.getAllStars);
  *               items:
  *                 $ref: '#/components/schemas/Star'
  */
-router.get("/filter", publicCache(300), validate(filterSchema, "query"), starController.filterStars);
+router.get(
+  "/filter",
+  publicCache(300),
+  validate(filterSchema, "query"),
+  starController.filterStars,
+);
 
 /**
  * @swagger

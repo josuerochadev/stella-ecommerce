@@ -12,9 +12,14 @@ const initiatePaymentSchema = Joi.object({
   paymentToken: Joi.when("method", {
     is: "credit_card",
     then: Joi.object({
-      token: Joi.string().min(10).max(500).required()
+      token: Joi.string()
+        .min(10)
+        .max(500)
+        .required()
         .messages({ "string.min": "Invalid payment token" }),
-      last4: Joi.string().pattern(/^\d{4}$/).required(),
+      last4: Joi.string()
+        .pattern(/^\d{4}$/)
+        .required(),
       brand: Joi.string().valid("visa", "mastercard", "amex", "discover").required(),
     }).required(),
     otherwise: Joi.optional(),

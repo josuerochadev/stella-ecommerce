@@ -4,7 +4,10 @@
 
 const { AppError } = require("../middlewares/errorHandler");
 const { getService } = require("../container/containerConfig");
-const { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } = require("../config/cookieConfig");
+const {
+  ACCESS_TOKEN_COOKIE_OPTIONS,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+} = require("../config/cookieConfig");
 const logger = require("../utils/logger");
 
 /**
@@ -28,7 +31,7 @@ class AuthController {
       // Validation de la force du mot de passe
       const passwordValidation = await this.hashingService.validatePasswordStrength(password);
       if (!passwordValidation.isValid) {
-        return next(new AppError(`Weak password: ${passwordValidation.errors.join(', ')}`, 400));
+        return next(new AppError(`Weak password: ${passwordValidation.errors.join(", ")}`, 400));
       }
 
       // Vérification de l'existence de l'utilisateur via le repository
@@ -51,14 +54,14 @@ class AuthController {
       // Génération des tokens via le service
       const { accessToken, refreshToken } = this.tokenService.generateTokens({
         userId: newUser.id,
-        role: newUser.role
+        role: newUser.role,
       });
 
       await this.tokenService.saveRefreshToken(newUser.id, refreshToken);
 
       // Configuration des cookies httpOnly pour les tokens
-      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
-      res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+      res.cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
+      res.cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.status(201).json({
         success: true,
@@ -91,24 +94,24 @@ class AuthController {
       }
 
       // Vérification si le mot de passe nécessite un re-hachage
-      if (this.hashingService.needsRehash && this.hashingService.needsRehash(user.password)) {
+      if (this.hashingService.needsRehash?.(user.password)) {
         // Re-hacher et mettre à jour en arrière-plan (sans bloquer la connexion)
-        this.updatePasswordHashInBackground(user.id, password).catch(error => {
-          logger.error('Failed to update password hash:', error);
+        this.updatePasswordHashInBackground(user.id, password).catch((error) => {
+          logger.error("Failed to update password hash:", error);
         });
       }
 
       // Génération des tokens via le service
       const { accessToken, refreshToken } = this.tokenService.generateTokens({
         userId: user.id,
-        role: user.role
+        role: user.role,
       });
 
       await this.tokenService.saveRefreshToken(user.id, refreshToken);
 
       // Configuration des cookies httpOnly pour les tokens
-      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
-      res.cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+      res.cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
+      res.cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,
@@ -139,12 +142,12 @@ class AuthController {
       }
 
       // Suppression des cookies de tokens
-      res.clearCookie('accessToken', { path: '/api' });
-      res.clearCookie('refreshToken');
+      res.clearCookie("accessToken", { path: "/api" });
+      res.clearCookie("refreshToken");
 
       res.status(200).json({
         success: true,
-        message: "Logout successful"
+        message: "Logout successful",
       });
     } catch (error) {
       next(new AppError(`Error during logout: ${error.message}`, 500));
@@ -174,7 +177,7 @@ class AuthController {
       // Génération de nouveaux tokens
       const { accessToken, refreshToken: newRefreshToken } = this.tokenService.generateTokens({
         userId: decoded.userId,
-        role: decoded.role
+        role: decoded.role,
       });
 
       // Remplacement de l'ancien refresh token
@@ -182,8 +185,8 @@ class AuthController {
       await this.tokenService.saveRefreshToken(decoded.userId, newRefreshToken);
 
       // Configuration des nouveaux cookies httpOnly
-      res.cookie('accessToken', accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
-      res.cookie('refreshToken', newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+      res.cookie("accessToken", accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
+      res.cookie("refreshToken", newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
 
       res.json({
         success: true,
@@ -212,9 +215,9 @@ class AuthController {
 
 // Factory function pour créer une instance du contrôleur avec injection de dépendances
 function createAuthController() {
-  const hashingService = getService('hashingService');
-  const userRepository = getService('userRepository');
-  const tokenService = getService('tokenService');
+  const hashingService = getService("hashingService");
+  const userRepository = getService("userRepository");
+  const tokenService = getService("tokenService");
 
   return new AuthController(hashingService, userRepository, tokenService);
 }

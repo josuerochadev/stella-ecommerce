@@ -18,7 +18,7 @@ exports.authenticateUser = (req, _res, next) => {
 
   if (!token) {
     const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
+    if (authHeader?.startsWith("Bearer ")) {
       token = authHeader.split(" ")[1];
     }
   }

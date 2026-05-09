@@ -1,10 +1,10 @@
 // server/src/controllers/paymentWebhookController.js
 // Responsabilité unique : Gestion des webhooks et événements de paiement
 
-const { paymentService } = require('../services/paymentService');
-const { Order } = require('../models');
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
+const { paymentService } = require("../services/paymentService");
+const { Order } = require("../models");
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
 
 /**
  * Contrôleur de gestion des webhooks de paiement
@@ -17,16 +17,16 @@ class PaymentWebhookController {
    */
   static async simulateWebhook(req, res, next) {
     try {
-      const { transactionId, eventType = 'payment.completed' } = req.body;
+      const { transactionId, eventType = "payment.completed" } = req.body;
 
       // Validation de la transaction
       if (transactionId) {
         const order = await Order.findOne({
-          where: { transactionId }
+          where: { transactionId },
         });
 
         if (!order) {
-          return next(new AppError('Transaction not found for webhook simulation', 404));
+          return next(new AppError("Transaction not found for webhook simulation", 404));
         }
       }
 
@@ -34,18 +34,17 @@ class PaymentWebhookController {
       const webhookPayload = paymentService.generateWebhookPayload({
         transactionId,
         eventType,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // Simulation de l'envoi (en production, serait envoyé à une URL)
-      logger.info('🔗 Webhook simulated:', webhookPayload);
+      logger.info("🔗 Webhook simulated:", webhookPayload);
 
       res.json({
         success: true,
         webhook: webhookPayload,
-        message: 'Webhook simulation sent (Demo mode)'
+        message: "Webhook simulation sent (Demo mode)",
       });
-
     } catch (error) {
       next(new AppError(`Webhook simulation failed: ${error.message}`, 500));
     }
@@ -63,7 +62,7 @@ class PaymentWebhookController {
       const isValid = PaymentWebhookController._verifyWebhookSignature(req.body, signature);
 
       if (!isValid) {
-        return next(new AppError('Invalid webhook signature', 401));
+        return next(new AppError("Invalid webhook signature", 401));
       }
 
       // Traitement selon le type d'événement
@@ -72,18 +71,17 @@ class PaymentWebhookController {
       // Log de l'événement
       logger.info(`📥 Webhook processed: ${eventType}`, {
         transactionId: data.transactionId,
-        status: result.status
+        status: result.status,
       });
 
       // Réponse rapide pour le provider
       res.status(200).json({
         received: true,
         processed: result.processed,
-        message: result.message
+        message: result.message,
       });
-
     } catch (error) {
-      logger.error('❌ Webhook processing error:', error);
+      logger.error("❌ Webhook processing error:", error);
       next(new AppError(`Webhook processing failed: ${error.message}`, 500));
     }
   }
@@ -100,24 +98,26 @@ class PaymentWebhookController {
       // Ou permettre l'accès aux admins
       const order = await Order.findOne({
         where: { transactionId },
-        ...(req.user.role !== 'admin' && { where: { ...Order.where, userId: req.user.userId } })
+        ...(req.user.role !== "admin" && { where: { ...Order.where, userId: req.user.userId } }),
       });
 
       if (!order) {
-        return next(new AppError('Transaction not found', 404));
+        return next(new AppError("Transaction not found", 404));
       }
 
       // En mode démo, génération d'événements simulés
-      const events = PaymentWebhookController._generateMockWebhookHistory(transactionId, order.status);
+      const events = PaymentWebhookController._generateMockWebhookHistory(
+        transactionId,
+        order.status,
+      );
 
       res.json({
         success: true,
         transactionId,
         events,
         count: events.length,
-        message: 'Webhook events history (Demo mode)'
+        message: "Webhook events history (Demo mode)",
       });
-
     } catch (error) {
       next(new AppError(`Failed to get webhook events: ${error.message}`, 500));
     }
@@ -137,7 +137,7 @@ class PaymentWebhookController {
         attempt: Math.floor(Math.random() * 3) + 1,
         success: Math.random() > 0.3, // 70% de succès
         timestamp: new Date().toISOString(),
-        nextRetryAt: new Date(Date.now() + 5 * 60 * 1000).toISOString() // Dans 5 minutes
+        nextRetryAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // Dans 5 minutes
       };
 
       logger.info(`🔄 Webhook retry attempted: ${webhookId}`, retryResult);
@@ -145,9 +145,8 @@ class PaymentWebhookController {
       res.json({
         success: true,
         retry: retryResult,
-        message: 'Webhook retry initiated (Demo mode)'
+        message: "Webhook retry initiated (Demo mode)",
       });
-
     } catch (error) {
       next(new AppError(`Webhook retry failed: ${error.message}`, 500));
     }
@@ -160,7 +159,7 @@ class PaymentWebhookController {
   static _verifyWebhookSignature(payload, signature) {
     // En production, utilisation d'une vraie vérification cryptographique
     // Pour la démo, simulation d'une vérification
-    const expectedSignature = 'demo_signature_' + JSON.stringify(payload).length;
+    const expectedSignature = `demo_signature_${JSON.stringify(payload).length}`;
     if (!signature) return false;
     return signature === expectedSignature;
   }
@@ -172,32 +171,32 @@ class PaymentWebhookController {
   static async _processWebhookEvent(eventType, data) {
     try {
       switch (eventType) {
-        case 'payment.completed':
+        case "payment.completed":
           return await PaymentWebhookController._handlePaymentCompleted(data);
 
-        case 'payment.failed':
+        case "payment.failed":
           return await PaymentWebhookController._handlePaymentFailed(data);
 
-        case 'refund.processed':
+        case "refund.processed":
           return await PaymentWebhookController._handleRefundProcessed(data);
 
-        case 'chargeback.created':
+        case "chargeback.created":
           return await PaymentWebhookController._handleChargebackCreated(data);
 
         default:
           logger.warn(`⚠️ Unknown webhook event type: ${eventType}`);
           return {
             processed: false,
-            status: 'ignored',
-            message: `Unknown event type: ${eventType}`
+            status: "ignored",
+            message: `Unknown event type: ${eventType}`,
           };
       }
     } catch (error) {
       logger.error(`❌ Event processing error for ${eventType}:`, error);
       return {
         processed: false,
-        status: 'error',
-        message: error.message
+        status: "error",
+        message: error.message,
       };
     }
   }
@@ -207,18 +206,18 @@ class PaymentWebhookController {
    */
   static async _handlePaymentCompleted(data) {
     const order = await Order.findOne({
-      where: { transactionId: data.transactionId }
+      where: { transactionId: data.transactionId },
     });
 
-    if (order && order.status === 'pending') {
-      order.status = 'paid';
+    if (order && order.status === "pending") {
+      order.status = "paid";
       await order.save();
     }
 
     return {
       processed: true,
-      status: 'completed',
-      message: 'Payment marked as completed'
+      status: "completed",
+      message: "Payment marked as completed",
     };
   }
 
@@ -227,19 +226,19 @@ class PaymentWebhookController {
    */
   static async _handlePaymentFailed(data) {
     const order = await Order.findOne({
-      where: { transactionId: data.transactionId }
+      where: { transactionId: data.transactionId },
     });
 
-    if (order && order.status === 'pending') {
-      order.status = 'payment_failed';
-      order.paymentError = data.error || 'Payment failed';
+    if (order && order.status === "pending") {
+      order.status = "payment_failed";
+      order.paymentError = data.error || "Payment failed";
       await order.save();
     }
 
     return {
       processed: true,
-      status: 'failed',
-      message: 'Payment marked as failed'
+      status: "failed",
+      message: "Payment marked as failed",
     };
   }
 
@@ -248,19 +247,20 @@ class PaymentWebhookController {
    */
   static async _handleRefundProcessed(data) {
     const order = await Order.findOne({
-      where: { transactionId: data.originalTransactionId }
+      where: { transactionId: data.originalTransactionId },
     });
 
     if (order) {
-      order.status = data.amount >= parseFloat(order.totalAmount) ? 'refunded' : 'partially_refunded';
+      order.status =
+        data.amount >= Number.parseFloat(order.totalAmount) ? "refunded" : "partially_refunded";
       order.refundId = data.refundId;
       await order.save();
     }
 
     return {
       processed: true,
-      status: 'refunded',
-      message: 'Refund processed successfully'
+      status: "refunded",
+      message: "Refund processed successfully",
     };
   }
 
@@ -269,18 +269,18 @@ class PaymentWebhookController {
    */
   static async _handleChargebackCreated(data) {
     const order = await Order.findOne({
-      where: { transactionId: data.transactionId }
+      where: { transactionId: data.transactionId },
     });
 
     if (order) {
-      order.status = 'disputed';
+      order.status = "disputed";
       await order.save();
     }
 
     return {
       processed: true,
-      status: 'disputed',
-      message: 'Chargeback dispute created'
+      status: "disputed",
+      message: "Chargeback dispute created",
     };
   }
 
@@ -294,44 +294,44 @@ class PaymentWebhookController {
     // Événement de création
     events.push({
       id: `wh_${Date.now()}_1`,
-      type: 'payment.initiated',
+      type: "payment.initiated",
       transactionId,
       timestamp: new Date(baseTime.getTime()).toISOString(),
-      status: 'processed',
-      attempts: 1
+      status: "processed",
+      attempts: 1,
     });
 
     // Événement selon le statut actuel
-    if (['paid', 'refunded', 'partially_refunded'].includes(orderStatus)) {
+    if (["paid", "refunded", "partially_refunded"].includes(orderStatus)) {
       events.push({
         id: `wh_${Date.now()}_2`,
-        type: 'payment.completed',
+        type: "payment.completed",
         transactionId,
         timestamp: new Date(baseTime.getTime() + 30000).toISOString(),
-        status: 'processed',
-        attempts: 1
+        status: "processed",
+        attempts: 1,
       });
     }
 
-    if (orderStatus === 'payment_failed') {
+    if (orderStatus === "payment_failed") {
       events.push({
         id: `wh_${Date.now()}_2`,
-        type: 'payment.failed',
+        type: "payment.failed",
         transactionId,
         timestamp: new Date(baseTime.getTime() + 30000).toISOString(),
-        status: 'processed',
-        attempts: 2
+        status: "processed",
+        attempts: 2,
       });
     }
 
-    if (['refunded', 'partially_refunded'].includes(orderStatus)) {
+    if (["refunded", "partially_refunded"].includes(orderStatus)) {
       events.push({
         id: `wh_${Date.now()}_3`,
-        type: 'refund.processed',
+        type: "refund.processed",
         transactionId,
         timestamp: new Date(baseTime.getTime() + 3600000).toISOString(),
-        status: 'processed',
-        attempts: 1
+        status: "processed",
+        attempts: 1,
       });
     }
 
