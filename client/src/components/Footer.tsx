@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="border-t border-text/[0.06] mt-20">
       <div className="max-w-[1100px] mx-auto px-10 py-12">
-        <div className="flex justify-between items-end flex-wrap gap-6">
+        <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-end">
           <div>
             <span className="font-display text-xl text-text/70">Stella</span>
             <p className="text-xs text-text/35 max-w-[320px] leading-relaxed mt-3 font-sans">

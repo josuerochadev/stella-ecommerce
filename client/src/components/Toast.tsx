@@ -42,7 +42,7 @@ const Toast: React.FC<ToastProps> = ({ id, type, title, message, duration = 5000
   const getToastStyles = () => {
     const baseStyles = `
       flex items-start space-x-3 p-4 rounded-lg shadow-lg backdrop-blur-sm
-      border-l-4 min-w-[320px] max-w-[480px]
+      border-l-4 w-full max-w-[480px] sm:min-w-[320px] sm:w-auto
       transform transition-all duration-300 ease-in-out
     `;
 

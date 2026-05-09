@@ -313,7 +313,7 @@ L'application possede des fondations solides — composant `FormInput` accessibl
 | 2     | Navigation & Routing             | ✅ Complete  |
 | 3     | Formulaires & Feedback           | ✅ Complete  |
 | 4     | Accessibilite & Semantique       | ✅ Complete  |
-| 5     | Responsive & Polish              | ⬜ A faire   |
+| 5     | Responsive & Polish              | ✅ Complete  |
 
 ## Journal des corrections
 
@@ -343,3 +343,12 @@ L'application possede des fondations solides — composant `FormInput` accessibl
 - `MobileNavigation.tsx` : ajout `aria-current={isActive(item.path) ? "page" : undefined}` et `aria-label` sur chaque lien
 - `Admin.tsx` : ajout `<caption className="sr-only">` sur la table `UsersView`
 - `AccessibleSearchBox.tsx` : `autoFocus={true}` → `autoFocus={isVisible}` (focus conditionnel a l'ouverture du panneau)
+
+### Phase 5 — Responsive & Polish (2026-05-09)
+
+- `Footer.tsx` : `flex justify-between flex-wrap` → `flex flex-col sm:flex-row sm:justify-between` (empilement propre sur mobile)
+- `NotificationProvider.tsx` : conteneur toasts `right-4 left-4 sm:left-auto` — toasts contenu dans le viewport sur XS
+- `Toast.tsx` : `min-w-[320px]` → `w-full sm:min-w-[320px] sm:w-auto` — plus de debordement sur petits ecrans
+- `Checkout.tsx:168` : `sticky top-24` → `md:sticky top-24` — recapitulatif non-sticky sur mobile
+- `FAQ.tsx` : accordion migre de `<button>` + state vers `<details>/<summary>` natif HTML ; suppression de `useState`/`handleToggle` ; fleche rotative `group-open:rotate-180` avec `motion-safe:transition-transform`
+- `index.css` : `--transition-duration` lie aux transitions de `.btn`, `.btn-secondary`, `.card-hover-effect` ; `--animation-duration` lie aux animations `.skeleton-shimmer::before` et `.smooth-bounce` — le panneau d'accessibilite peut maintenant desactiver les transitions via JS

@@ -171,7 +171,7 @@ const Checkout: React.FC = () => {
 
           <div className="lg:col-span-1">
             <FadeInSection>
-              <div className="bg-secondary text-text p-6 rounded-lg shadow-lg sticky top-24">
+              <div className="bg-secondary text-text p-6 rounded-lg shadow-lg md:sticky top-24">
                 <h2 className="text-xl font-display mb-4">Recapitulatif</h2>
                 <div className="space-y-3 mb-4">
                   {cartItems.map((item) => (
