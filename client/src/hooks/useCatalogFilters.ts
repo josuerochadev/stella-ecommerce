@@ -23,23 +23,28 @@ export interface SearchFilters {
 }
 
 export interface UseCatalogFiltersOptions {
-  initialQuery?: string;
+  initialFilters?: Partial<SearchFilters>;
 }
+
+const DEFAULT_FILTERS: SearchFilters = {
+  query: "",
+  constellation: [],
+  priceMin: null,
+  priceMax: null,
+  magnitudeMin: null,
+  magnitudeMax: null,
+  sortBy: "relevance",
+  sortOrder: "asc",
+};
 
 /**
  * Hook pour la gestion des filtres du catalogue
  * Responsabilité unique : État et mutations des filtres
  */
-export const useCatalogFilters = ({ initialQuery = "" }: UseCatalogFiltersOptions = {}) => {
+export const useCatalogFilters = ({ initialFilters = {} }: UseCatalogFiltersOptions = {}) => {
   const [filters, setFilters] = useState<SearchFilters>({
-    query: initialQuery,
-    constellation: [],
-    priceMin: null,
-    priceMax: null,
-    magnitudeMin: null,
-    magnitudeMax: null,
-    sortBy: "relevance",
-    sortOrder: "asc",
+    ...DEFAULT_FILTERS,
+    ...initialFilters,
   });
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -60,16 +65,7 @@ export const useCatalogFilters = ({ initialQuery = "" }: UseCatalogFiltersOption
    * Responsabilité : État par défaut
    */
   const clearFilters = useCallback(() => {
-    setFilters({
-      query: "",
-      constellation: [],
-      priceMin: null,
-      priceMax: null,
-      magnitudeMin: null,
-      magnitudeMax: null,
-      sortBy: "relevance",
-      sortOrder: "asc",
-    });
+    setFilters(DEFAULT_FILTERS);
   }, []);
 
   /**

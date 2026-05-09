@@ -23,7 +23,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ className = 
   const navigationItems = [
     { path: "/", icon: HomeIcon, label: "Accueil" },
     { path: "/catalog", icon: StoreIcon, label: "Catalogue" },
-    { path: "/search", icon: SearchIcon, label: "Recherche" },
+    { path: "/catalog", icon: SearchIcon, label: "Recherche" },
     ...(isAuthenticated
       ? [{ path: "/profile", icon: UserIcon, label: "Profil" }]
       : [{ path: "/auth", icon: UserIcon, label: "Connexion" }]),

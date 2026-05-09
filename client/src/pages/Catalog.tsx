@@ -19,7 +19,7 @@ import { memo, useEffect } from "react";
  */
 const Catalogue: React.FC = () => {
   // Navigation et URL
-  const { initialQuery, updateSearchURL, navigateToStar } = useCatalogNavigation();
+  const { initialFilters, updateFiltersURL, navigateToStar } = useCatalogNavigation();
 
   // Gestion des filtres
   const {
@@ -30,7 +30,7 @@ const Catalogue: React.FC = () => {
     toggleConstellation,
     toggleAdvancedFilters,
     toggleSortOrder,
-  } = useCatalogFilters({ initialQuery });
+  } = useCatalogFilters({ initialFilters });
 
   // Logique de recherche et données
   const {
@@ -49,10 +49,21 @@ const Catalogue: React.FC = () => {
   // Tri des résultats
   const { sortedResults } = useCatalogSorting(searchResults, filters);
 
-  // Synchronisation URL avec query
+  // Synchronisation URL avec tous les filtres actifs
+  // biome-ignore lint/correctness/useExhaustiveDependencies: individual filter fields listed to control re-run granularity
   useEffect(() => {
-    updateSearchURL(filters.query);
-  }, [filters.query, updateSearchURL]);
+    updateFiltersURL(filters);
+  }, [
+    filters.query,
+    filters.constellation,
+    filters.priceMin,
+    filters.priceMax,
+    filters.magnitudeMin,
+    filters.magnitudeMax,
+    filters.sortBy,
+    filters.sortOrder,
+    updateFiltersURL,
+  ]);
 
   // Recherche initiale au montage seulement
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — run once on mount
@@ -84,10 +95,8 @@ const Catalogue: React.FC = () => {
 
   // Suggestions lors du changement de requête
   useEffect(() => {
-    if (filters.query !== initialQuery) {
-      performSuggestions(filters.query);
-    }
-  }, [filters.query, initialQuery, performSuggestions]);
+    performSuggestions(filters.query);
+  }, [filters.query, performSuggestions]);
 
   /**
    * Gestionnaires d'événements

@@ -17,7 +17,16 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({ isOpen, onClose }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+      role="button"
+      tabIndex={0}
+      aria-label="Fermer le menu"
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " " || e.key === "Escape") onClose();
+      }}
+    >
       <div
         className="absolute bottom-0 left-0 right-0 bg-secondary rounded-t-2xl p-6 pb-24 transform transition-transform duration-300 ease-out"
         onClick={(e) => e.stopPropagation()}
@@ -59,12 +68,12 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({ isOpen, onClose }
                   <span>Mes commandes</span>
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/profile"
                   onClick={onClose}
                   className="flex items-center space-x-2 text-text hover:text-special transition-colors"
                 >
                   <span>⚙️</span>
-                  <span>Paramètres</span>
+                  <span>Mon compte</span>
                 </Link>
               </div>
             </div>

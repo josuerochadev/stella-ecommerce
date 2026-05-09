@@ -1,14 +1,14 @@
 const SkipLinks: React.FC = () => (
-  <div className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 z-50">
+  <div>
     <a
       href="#main-content"
-      className="bg-primary text-text p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 z-[200] bg-accent text-primary font-medium px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
     >
       Aller au contenu principal
     </a>
     <a
       href="#navigation"
-      className="bg-primary text-text p-2 rounded focus:outline-none focus:ring-2 focus:ring-accent ml-2"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-52 z-[200] bg-accent text-primary font-medium px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
     >
       Aller à la navigation
     </a>
