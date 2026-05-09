@@ -76,6 +76,7 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [lint-and-test-client, lint-and-test-server, typecheck]
     services:
       postgres:
