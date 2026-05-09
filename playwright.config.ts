@@ -25,7 +25,7 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "npm start",
+      command: "CI= npm start",
       cwd: "./client",
       port: 3001,
       reuseExistingServer: true,

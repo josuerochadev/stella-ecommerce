@@ -1,11 +1,11 @@
-const Sentry = require("@sentry/node");
-
 function initSentry(app) {
   const dsn = process.env.SENTRY_DSN;
 
   if (!dsn) {
     return;
   }
+
+  const Sentry = require("@sentry/node");
 
   Sentry.init({
     dsn,
