@@ -2,7 +2,8 @@
 
 **Date** : 2026-05-09
 **Scope** : Git, CI/CD, Docker, tests, monitoring, dependencies, release, code review
-**Note globale** : 3.5/10
+**Note initiale** : 3.5/10
+**Note apres corrections** : 8/10
 
 ---
 
