@@ -1,19 +1,34 @@
 import FadeInSection from "@/components/FadeInSection";
 import SEO from "@/components/SEO";
+import { sendContactMessage } from "@/services/contactService";
 import { useState } from "react";
 import type React from "react";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await sendContactMessage(formData);
+      setSubmitted(true);
+    } catch {
+      setError(
+        "L'envoi du message a échoué. Veuillez réessayer ou nous contacter directement par email.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -31,16 +46,31 @@ const Contact: React.FC = () => {
             N'hésitez pas à nous contacter. Notre équipe est là pour vous répondre.
           </p>
           {submitted ? (
-            <div className="text-center py-8">
+            <div className="text-center py-8" role="status" aria-live="polite">
+              <p className="text-2xl mb-2" aria-hidden="true">
+                ✓
+              </p>
               <p className="text-lg font-serif">
                 Merci pour votre message ! Nous vous repondrons dans les plus brefs delais.
               </p>
             </div>
           ) : (
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+              {error && (
+                <div
+                  role="alert"
+                  aria-live="assertive"
+                  className="p-3 bg-red-900/80 border border-red-500 text-red-100 rounded-md text-sm"
+                >
+                  {error}
+                </div>
+              )}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2">
-                  Nom
+                  Nom{" "}
+                  <span aria-hidden="true" className="text-special">
+                    *
+                  </span>
                 </label>
                 <input
                   id="name"
@@ -49,12 +79,16 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                  autoComplete="name"
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text/50 focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email
+                  Email{" "}
+                  <span aria-hidden="true" className="text-special">
+                    *
+                  </span>
                 </label>
                 <input
                   id="email"
@@ -63,12 +97,16 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                  autoComplete="email"
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text/50 focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                  Sujet
+                  Sujet{" "}
+                  <span aria-hidden="true" className="text-special">
+                    *
+                  </span>
                 </label>
                 <input
                   id="subject"
@@ -77,12 +115,15 @@ const Contact: React.FC = () => {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text/50 focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium mb-2">
-                  Message
+                  Message{" "}
+                  <span aria-hidden="true" className="text-special">
+                    *
+                  </span>
                 </label>
                 <textarea
                   id="message"
@@ -90,12 +131,12 @@ const Contact: React.FC = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text"
+                  className="w-full p-3 rounded-md bg-primary text-text placeholder-text/50 focus:outline-none focus:ring-2 focus:ring-accent"
                   rows={5}
                 />
               </div>
-              <button type="submit" className="btn">
-                Envoyer
+              <button type="submit" className="btn" disabled={isLoading}>
+                {isLoading ? "Envoi en cours..." : "Envoyer"}
               </button>
             </form>
           )}

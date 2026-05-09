@@ -1,6 +1,7 @@
 // client/src/components/CartStarCard.tsx
 // Responsabilité unique : Affichage d'une étoile dans le panier
 
+import { useNotificationStore } from "@/stores/useNotificationStore";
 import type { Star } from "@/types";
 import { EyeIcon, TrashIcon } from "@/utils/icons";
 import { getStarImagePath, getStarImagePathWebP } from "@/utils/pathHelpers";
@@ -21,6 +22,17 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
   onRemove,
   onUpdateQuantity,
 }) => {
+  const { showConfirm } = useNotificationStore();
+
+  const handleRemove = async () => {
+    const confirmed = await showConfirm(
+      "Retirer du panier",
+      `Voulez-vous retirer "${star.name}" de votre panier ?`,
+      "danger",
+    );
+    if (confirmed) onRemove();
+  };
+
   return (
     <FadeInSection>
       <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
@@ -47,7 +59,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
                   type="button"
                   onClick={() => onUpdateQuantity(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="w-8 h-8 rounded-md bg-primary text-text flex items-center justify-center disabled:opacity-30"
+                  className="w-11 h-11 rounded-md bg-primary text-text flex items-center justify-center disabled:opacity-30"
                   aria-label="Reduire la quantite"
                 >
                   -
@@ -56,7 +68,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onUpdateQuantity(quantity + 1)}
-                  className="w-8 h-8 rounded-md bg-primary text-text flex items-center justify-center"
+                  className="w-11 h-11 rounded-md bg-primary text-text flex items-center justify-center"
                   aria-label="Augmenter la quantite"
                 >
                   +
@@ -72,7 +84,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
               <EyeIcon className="text-xl" />
               <span className="sr-only">Decouvrir</span>
             </Link>
-            <button type="button" onClick={onRemove} className="btn mt-2">
+            <button type="button" onClick={handleRemove} className="btn mt-2">
               <TrashIcon className="text-xl" />
               <span className="sr-only">Retirer du panier</span>
             </button>
