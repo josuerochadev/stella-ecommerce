@@ -29,9 +29,9 @@ test.describe("Navigation & Pages", () => {
     await expect(page.locator("main")).toBeVisible();
   });
 
-  test("unknown routes redirect to home", async ({ page }) => {
+  test("unknown routes show 404 page", async ({ page }) => {
     await page.goto("/nonexistent-page");
-    await expect(page).toHaveURL("/");
+    await expect(page.locator("h1").filter({ hasText: "404" })).toBeVisible();
   });
 
   test("health check endpoint responds", async ({ request }) => {
