@@ -44,7 +44,7 @@ test.describe("Authentication Flow", () => {
     await page.getByRole("button", { name: "Inscrivez-vous ici" }).click();
 
     await expect(page.getByPlaceholder("Prénom")).toBeVisible();
-    await expect(page.getByPlaceholder("Nom")).toBeVisible();
+    await expect(page.getByPlaceholder("Nom", { exact: true })).toBeVisible();
     await expect(page.getByPlaceholder("votre@email.com")).toBeVisible();
     await expect(page.getByPlaceholder("Minimum 8 caractères")).toBeVisible();
   });
