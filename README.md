@@ -9,8 +9,6 @@
 
 Stella is a full-stack e-commerce application for buying stars, built as a portfolio project demonstrating end-to-end web development skills — from database design to a polished React UI.
 
-> **Live demo video:** [`docs/screenshots/demo.m4v`](./docs/screenshots/demo.m4v)
-
 ---
 
 ## Features
@@ -28,29 +26,6 @@ Stella is a full-stack e-commerce application for buying stars, built as a portf
 - Responsive design with custom Design System (Tailwind CSS)
 - Docker support for containerized development
 - CI pipeline via GitHub Actions (lint, typecheck, tests)
-
----
-
-## Screenshots
-
-<table>
-  <tr>
-    <td><img src="./docs/screenshots/homepage.png" alt="Homepage" width="400"/><br/><em>Homepage</em></td>
-    <td><img src="./docs/screenshots/homepage2.png" alt="Homepage sections" width="400"/><br/><em>Homepage sections</em></td>
-  </tr>
-  <tr>
-    <td><img src="./docs/screenshots/catalog.png" alt="Star catalog" width="400"/><br/><em>Star catalog</em></td>
-    <td><img src="./docs/screenshots/productdetail.png" alt="Star detail" width="400"/><br/><em>Star detail</em></td>
-  </tr>
-  <tr>
-    <td><img src="./docs/screenshots/shoppingcart.png" alt="Shopping cart" width="400"/><br/><em>Shopping cart</em></td>
-    <td><img src="./docs/screenshots/login.png" alt="Login" width="400"/><br/><em>Login</em></td>
-  </tr>
-  <tr>
-    <td><img src="./docs/screenshots/profile.png" alt="Profile" width="400"/><br/><em>Profile</em></td>
-    <td><img src="./docs/screenshots/emptyshoppingcart.png" alt="Empty cart" width="400"/><br/><em>Empty cart</em></td>
-  </tr>
-</table>
 
 ---
 
