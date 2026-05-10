@@ -10,7 +10,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const ACCESS_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "strict" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   maxAge: 15 * 60 * 1000, // 15 minutes
   path: "/api",
 };
@@ -22,7 +22,7 @@ const ACCESS_TOKEN_COOKIE_OPTIONS = {
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: isProduction ? "strict" : "lax",
+  sameSite: isProduction ? "none" : "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 

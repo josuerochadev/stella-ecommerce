@@ -1,62 +1,98 @@
-# Deploiement sur Render
+# Deploiement — Vercel + Railway + Neon
 
 ## Architecture
 
 ```
-Render
-├── stella-client  (Static Site - gratuit)
-│   └── Build React → CDN
-├── stella-api     (Web Service - gratuit)
-│   └── Node.js Express
-└── stella-db      (PostgreSQL - gratuit 90 jours)
+Vercel          → Frontend React  (CDN global, gratuit)
+Railway         → Backend Express (Node.js, ~$1-3/mois)
+Neon            → PostgreSQL      (serverless, gratuit)
 ```
 
-## Etapes
+---
 
-### 1. Creer le Blueprint
+## 1. Base de donnees — Neon
 
-- Aller sur [render.com](https://render.com) → Sign up avec GitHub
-- New → Blueprint → selectionner le repo `stella-ecommerce` → branche `main`
-- Render lit le `render.yaml` et cree les 3 services automatiquement
+1. Creer un compte sur [neon.tech](https://neon.tech)
+2. **New Project** → nommer le projet `stella`
+3. Copier la **Connection string** (format `postgresql://user:pass@host/db?sslmode=require`)
+4. Garder cette URL pour l'etape Railway
 
-### 2. Configurer les variables d'environnement
+---
 
-Une fois les services crees, noter les URLs generees par Render (ex: `stella-api-xxxx.onrender.com`).
+## 2. Backend — Railway
 
-**Service `stella-api` (Environment) :**
-
-| Variable | Valeur |
-|----------|--------|
-| `FRONTEND_URL` | `https://stella-client-xxxx.onrender.com` (URL du static site) |
-| `JWT_SECRET` | (auto-genere par render.yaml) |
-| `NODE_ENV` | `production` (auto) |
-| `DATABASE_URL` | (auto-lie a stella-db) |
-
-**Service `stella-client` (Environment) :**
+1. Creer un compte sur [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**
+2. Selectionner `stella-ecommerce`, branche `main`
+3. Railway detecte le projet Node.js. Configurer dans **Settings** :
+   - **Root Directory** : `server`
+   - **Start Command** : `npm start`
+4. Dans **Variables**, ajouter :
 
 | Variable | Valeur |
-|----------|--------|
-| `REACT_APP_API_URL` | `https://stella-api-xxxx.onrender.com/api` (URL du web service) |
+|---|---|
+| `NODE_ENV` | `production` |
+| `DATABASE_URL` | Connection string Neon (copiee a l'etape 1) |
+| `JWT_SECRET` | Chaine aleatoire longue (ex: `openssl rand -hex 64`) |
+| `SESSION_SECRET` | Autre chaine aleatoire longue |
+| `FRONTEND_URL` | URL Vercel du frontend (ex: `https://stella.vercel.app`) — a ajouter apres l'etape 3 |
+| `SENTRY_DSN` | (optionnel) DSN Sentry backend |
 
-### 3. Initialiser la base de donnees
+5. Recuperer l'URL publique du service Railway (ex: `https://stella-api.railway.app`)
 
-Dans le dashboard Render → service `stella-api` → Shell :
+### Initialiser la base de donnees
+
+Depuis l'onglet **Shell** du service Railway (ou via Railway CLI) :
 
 ```bash
 node ../scripts/createTables.js
 node ../scripts/sampleData.js
 ```
 
-### 4. Verifier
+---
 
-- Frontend : `https://stella-client-xxxx.onrender.com`
-- Backend : `https://stella-api-xxxx.onrender.com/api`
-- Swagger : `https://stella-api-xxxx.onrender.com/api-docs`
-- Login test : `john@example.com` / `password123`
+## 3. Frontend — Vercel
+
+1. Creer un compte sur [vercel.com](https://vercel.com) → **Add New Project** → importer `stella-ecommerce`
+2. Configurer le projet :
+   - **Root Directory** : `client`
+   - **Framework Preset** : Create React App
+   - **Build Command** : `npm run build`
+   - **Output Directory** : `build`
+3. Dans **Environment Variables** :
+
+| Variable | Valeur |
+|---|---|
+| `REACT_APP_API_URL` | `https://stella-api.railway.app/api` (URL Railway) |
+| `REACT_APP_SENTRY_DSN` | (optionnel) DSN Sentry frontend |
+
+4. Deployer. Recuperer l'URL Vercel generee (ex: `https://stella.vercel.app`)
+5. **Retourner sur Railway** → mettre a jour `FRONTEND_URL` avec cette URL Vercel
+
+---
+
+## 4. Verification
+
+| Service | URL |
+|---|---|
+| Frontend | `https://stella.vercel.app` |
+| Backend API | `https://stella-api.railway.app/api` |
+| Swagger docs | `https://stella-api.railway.app/api-docs` |
+
+Tester avec le compte admin cree par le seed (`scripts/sampleData.js`).
+
+---
+
+## Deploiements suivants
+
+- **Frontend** : Vercel redeploit automatiquement a chaque push sur `main`
+- **Backend** : Railway redeploit automatiquement a chaque push sur `main`
+- **DB** : Neon ne necessite pas de re-deploiement (schema gere par Sequelize sync au demarrage)
+
+---
 
 ## Notes
 
-- Le free tier Render met le backend en veille apres 15 min d'inactivite
-- Premier chargement apres veille : ~30 secondes
-- La DB PostgreSQL gratuite expire apres 90 jours (puis $7/mois)
-- Les URLs exactes sont generees par Render, remplacer `xxxx` par les vraies valeurs
+- Les cookies d'auth sont en `sameSite=none; Secure` en production pour fonctionner en cross-domain (Vercel ≠ Railway)
+- Neon met le compute en pause apres inactivite — le premier acces apres pause peut prendre ~1s
+- Railway Hobby : $5 de credit inclus/mois, un petit portfolio consomme generalement $1-3
+- Neon free tier : 0.5 GB de stockage, aucune expiration (contrairement a Render qui expire apres 90 jours)
