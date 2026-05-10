@@ -1,5 +1,6 @@
 // client/src/context/AuthContext.tsx
 
+import { setUserAuthenticated } from "@/services/httpClient";
 import { useCartStore } from "@/stores/useCartStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
@@ -33,11 +34,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       .getState()
       .fetchProfile()
       .then(() => {
-        setIsAuthenticated(true);
-        return Promise.all([
-          useCartStore.getState().fetchCart(),
-          useWishlistStore.getState().fetchWishlist(),
-        ]);
+        if (useUserStore.getState().user !== null) {
+          setIsAuthenticated(true);
+          setUserAuthenticated(true);
+          return Promise.all([
+            useCartStore.getState().fetchCart(),
+            useWishlistStore.getState().fetchWishlist(),
+          ]);
+        }
       })
       .catch(() => {
         // No valid session — user is not authenticated
@@ -49,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = () => {
     // Access token is now in httpOnly cookie, set by the server
     setIsAuthenticated(true);
+    setUserAuthenticated(true);
     setIsLoading(true);
 
     Promise.all([
@@ -64,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setIsAuthenticated(false);
+    setUserAuthenticated(false);
     setIsLoading(false);
     resetCart();
     resetWishlist();

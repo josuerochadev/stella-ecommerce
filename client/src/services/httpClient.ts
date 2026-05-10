@@ -16,6 +16,16 @@ function getCookie(name: string): string | undefined {
 }
 
 /**
+ * Flag indiquant si l'utilisateur est authentifié.
+ * Utilisé pour ne déclencher auth:unauthorized que lors d'une expiration de session,
+ * pas lors des vérifications de session initiales.
+ */
+let _isUserAuthenticated = false;
+export const setUserAuthenticated = (val: boolean) => {
+  _isUserAuthenticated = val;
+};
+
+/**
  * Configuration de l'instance Axios centralisée
  * Responsabilité unique : Configuration HTTP globale
  */
@@ -48,7 +58,9 @@ const createHttpClient = (): AxiosInstance => {
     (response) => response,
     (error) => {
       // Gestion globale des erreurs d'authentification
-      if (error.response?.status === 401) {
+      // On ne dispatch que si l'utilisateur était authentifié (expiration de session),
+      // pas lors des vérifications initiales en arrière-plan.
+      if (error.response?.status === 401 && _isUserAuthenticated) {
         // Token expiré ou invalide — cookie sera supprime cote serveur
         window.dispatchEvent(
           new CustomEvent("auth:unauthorized", {
