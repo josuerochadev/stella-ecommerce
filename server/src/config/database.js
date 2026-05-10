@@ -37,8 +37,8 @@ module.exports = {
           host: process.env.DB_HOST,
         }),
     pool: {
-      min: 2,
-      max: 20,
+      min: 0,
+      max: 10,
       acquire: 30000,
       idle: 10000,
     },

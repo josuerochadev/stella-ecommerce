@@ -86,7 +86,7 @@ const SESSION_CONFIG = {
   cookie: {
     httpOnly: true,
     maxAge: APP_CONSTANTS.SESSION_MAX_AGE,
-    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   },
 };
 
