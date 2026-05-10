@@ -151,6 +151,7 @@ const startServer = async () => {
       info(`Server is running in ${NODE_ENV} mode on port ${PORT}`);
     });
   } catch (error) {
+    console.error("Unable to start server:", error);
     _error("Unable to start server:", error);
     process.exit(1);
   }
