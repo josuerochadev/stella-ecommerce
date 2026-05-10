@@ -1,13 +1,13 @@
 // client/src/components/WishlistStarCard.tsx
 // Responsabilité unique : Affichage d'une étoile dans la wishlist
 
+import type { Star } from "@/types";
+import { EyeIcon, TrashIcon } from "@/utils/icons";
+import { getStarImagePath, getStarImagePathWebP } from "@/utils/pathHelpers";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { EyeIcon, TrashIcon } from "@/utils/icons";
 import AddToCartButton from "./AddToCartButton";
 import FadeInSection from "./FadeInSection";
-import { getStarImagePath } from "@/utils/pathHelpers";
-import type { Star } from "@/types";
 
 interface WishlistStarCardProps {
   star: Star;
@@ -21,12 +21,18 @@ const WishlistStarCard: React.FC<WishlistStarCardProps> = ({ star, onRemove }) =
 
   return (
     <FadeInSection>
-      <div className="bg-secondary text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden card-hover-effect">
-        <img
-          src={getStarImagePath(star)}
-          alt={star.name}
-          className="w-1/4 flex-shrink-0 object-cover"
-        />
+      <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
+        <picture className="w-1/4 flex-shrink-0">
+          <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
+          <img
+            src={getStarImagePath(star)}
+            alt={star.name}
+            width={200}
+            height={200}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </picture>
         <div className="p-4 flex-grow flex flex-col justify-between">
           <h2 className="text-xl font-display mb-2 text-text">{star.name}</h2>
           <p className="text-sm mb-4">{star.description}</p>

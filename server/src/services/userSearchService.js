@@ -2,7 +2,7 @@
 // Service spécialisé pour la recherche d'utilisateurs
 // Responsabilité unique : construction des conditions de recherche et pagination
 
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 
 /**
  * Service de recherche d'utilisateurs
@@ -22,7 +22,7 @@ class UserSearchService {
       whereCondition[Op.or] = [
         { firstName: { [Op.iLike]: `%${search}%` } },
         { lastName: { [Op.iLike]: `%${search}%` } },
-        { email: { [Op.iLike]: `%${search}%` } }
+        { email: { [Op.iLike]: `%${search}%` } },
       ];
     }
 
@@ -40,14 +40,14 @@ class UserSearchService {
    * @returns {Object} Paramètres de pagination validés
    */
   static validatePaginationParams(page = 1, limit = 20) {
-    const validatedPage = Math.max(1, parseInt(page) || 1);
-    const validatedLimit = Math.min(100, Math.max(1, parseInt(limit) || 20));
+    const validatedPage = Math.max(1, Number.parseInt(page) || 1);
+    const validatedLimit = Math.min(100, Math.max(1, Number.parseInt(limit) || 20));
     const offset = (validatedPage - 1) * validatedLimit;
 
     return {
       page: validatedPage,
       limit: validatedLimit,
-      offset
+      offset,
     };
   }
 
@@ -57,16 +57,18 @@ class UserSearchService {
    * @param {string} order - Ordre de tri
    * @returns {Object} Paramètres de tri validés
    */
-  static validateSortParams(sortBy = 'createdAt', order = 'DESC') {
-    const allowedSortFields = ['id', 'firstName', 'lastName', 'email', 'role', 'createdAt'];
-    const allowedOrders = ['ASC', 'DESC'];
+  static validateSortParams(sortBy = "createdAt", order = "DESC") {
+    const allowedSortFields = ["id", "firstName", "lastName", "email", "role", "createdAt"];
+    const allowedOrders = ["ASC", "DESC"];
 
-    const validatedSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
-    const validatedOrder = allowedOrders.includes(order.toUpperCase()) ? order.toUpperCase() : 'DESC';
+    const validatedSortBy = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
+    const validatedOrder = allowedOrders.includes(order.toUpperCase())
+      ? order.toUpperCase()
+      : "DESC";
 
     return {
       sortBy: validatedSortBy,
-      order: validatedOrder
+      order: validatedOrder,
     };
   }
 
@@ -78,16 +80,22 @@ class UserSearchService {
   static buildQueryOptions(params) {
     const { search, role, page, limit, sortBy, order } = params;
 
-    const whereCondition = this.buildSearchConditions(search, role);
-    const { offset, limit: validatedLimit } = this.validatePaginationParams(page, limit);
-    const { sortBy: validatedSortBy, order: validatedOrder } = this.validateSortParams(sortBy, order);
+    const whereCondition = UserSearchService.buildSearchConditions(search, role);
+    const { offset, limit: validatedLimit } = UserSearchService.validatePaginationParams(
+      page,
+      limit,
+    );
+    const { sortBy: validatedSortBy, order: validatedOrder } = UserSearchService.validateSortParams(
+      sortBy,
+      order,
+    );
 
     return {
       where: whereCondition,
-      attributes: ['id', 'firstName', 'lastName', 'email', 'role', 'createdAt'],
+      attributes: ["id", "firstName", "lastName", "email", "role", "createdAt"],
       order: [[validatedSortBy, validatedOrder]],
       limit: validatedLimit,
-      offset
+      offset,
     };
   }
 }

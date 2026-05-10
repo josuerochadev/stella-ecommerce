@@ -22,3 +22,9 @@ export const getStarImagePath = (star: Star | string): string => {
   const normalizedName = starName.toLowerCase().replace(/\s+/g, "");
   return `/assets/images/stars/${normalizedName}.jpg`;
 };
+
+export const getStarImagePathWebP = (star: Star | string): string => {
+  const starName = typeof star === "string" ? star : star.name;
+  const normalizedName = starName.toLowerCase().replace(/\s+/g, "");
+  return `/assets/images/stars/${normalizedName}.webp`;
+};

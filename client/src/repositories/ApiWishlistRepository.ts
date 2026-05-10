@@ -2,12 +2,12 @@
 // Implémentation du repository wishlist utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations de wishlist
 
-import { getWishlist, addToWishlist, removeFromWishlist } from "@/services/api";
-import { logger } from "@/utils/logger";
 import type { WishlistRepository } from "@/interfaces/WishlistRepository";
+import { addToWishlist, getWishlist, removeFromWishlist } from "@/services/api";
 import type { WishlistItem } from "@/types";
 import { transformWishlistItem } from "@/utils/dataTransformers";
 import { createFormattedError } from "@/utils/errorHelpers";
+import { logger } from "@/utils/logger";
 
 /**
  * Repository pour la wishlist utilisant l'API REST
@@ -19,14 +19,14 @@ export class ApiWishlistRepository implements WishlistRepository {
    * @returns {Promise<{wishlist: WishlistItem[]}>} Wishlist avec ses articles
    * @throws {Error} Si la récupération échoue
    */
-  async getWishlist(): Promise<{wishlist: WishlistItem[]}> {
+  async getWishlist(): Promise<{ wishlist: WishlistItem[] }> {
     try {
       const response = await getWishlist();
       return {
-        wishlist: response.wishlist || []
+        wishlist: response.wishlist || [],
       };
     } catch (error) {
-      throw createFormattedError(error, 'Failed to fetch wishlist');
+      throw createFormattedError(error, "Failed to fetch wishlist");
     }
   }
 
@@ -36,10 +36,10 @@ export class ApiWishlistRepository implements WishlistRepository {
    * @returns {Promise<{wishlistItem: WishlistItem}>} Article ajouté
    * @throws {Error} Si l'ajout échoue
    */
-  async addToWishlist(starId: number): Promise<{wishlistItem: WishlistItem}> {
+  async addToWishlist(starId: number): Promise<{ wishlistItem: WishlistItem }> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       const response = await addToWishlist(starId);
@@ -48,10 +48,10 @@ export class ApiWishlistRepository implements WishlistRepository {
       const normalizedItem = this.normalizeWishlistItem(response.wishlistItem);
 
       return {
-        wishlistItem: normalizedItem
+        wishlistItem: normalizedItem,
       };
     } catch (error) {
-      throw createFormattedError(error, 'Failed to add item to wishlist');
+      throw createFormattedError(error, "Failed to add item to wishlist");
     }
   }
 
@@ -64,12 +64,12 @@ export class ApiWishlistRepository implements WishlistRepository {
   async removeFromWishlist(starId: number): Promise<void> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       await removeFromWishlist(starId);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to remove item from wishlist');
+      throw createFormattedError(error, "Failed to remove item from wishlist");
     }
   }
 
@@ -82,13 +82,13 @@ export class ApiWishlistRepository implements WishlistRepository {
   async isInWishlist(starId: number): Promise<boolean> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       const wishlist = await this.getWishlist();
-      return wishlist.wishlist.some(item => item.starId === starId);
+      return wishlist.wishlist.some((item) => item.starId === starId);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to check if item is in wishlist');
+      throw createFormattedError(error, "Failed to check if item is in wishlist");
     }
   }
 
@@ -103,13 +103,11 @@ export class ApiWishlistRepository implements WishlistRepository {
       const wishlist = await this.getWishlist();
 
       // Supprimer chaque article
-      const deletePromises = wishlist.wishlist.map(item =>
-        this.removeFromWishlist(item.starId)
-      );
+      const deletePromises = wishlist.wishlist.map((item) => this.removeFromWishlist(item.starId));
 
       await Promise.all(deletePromises);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to clear wishlist');
+      throw createFormattedError(error, "Failed to clear wishlist");
     }
   }
 
@@ -123,7 +121,7 @@ export class ApiWishlistRepository implements WishlistRepository {
       const wishlist = await this.getWishlist();
       return wishlist.wishlist.length;
     } catch (error) {
-      throw createFormattedError(error, 'Failed to get wishlist count');
+      throw createFormattedError(error, "Failed to get wishlist count");
     }
   }
 
@@ -134,28 +132,30 @@ export class ApiWishlistRepository implements WishlistRepository {
    * @returns {Promise<void>} Confirmation du déplacement
    * @throws {Error} Si l'opération échoue
    */
-  async moveToCart(starId: number, quantity: number = 1): Promise<void> {
+  async moveToCart(starId: number, quantity = 1): Promise<void> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       if (!quantity || quantity <= 0) {
-        throw new Error('Quantity must be a positive number');
+        throw new Error("Quantity must be a positive number");
       }
 
       // Vérifier que l'article est dans la wishlist
       const isInWishlist = await this.isInWishlist(starId);
       if (!isInWishlist) {
-        throw new Error('Item not found in wishlist');
+        throw new Error("Item not found in wishlist");
       }
 
       // Note: Cette fonctionnalité nécessiterait une coordination avec CartRepository
       // Pour l'instant, on lance une erreur indiquant que cette fonctionnalité nécessite
       // une implémentation coordonnée
-      throw new Error('Move to cart functionality requires coordinated implementation with CartRepository');
+      throw new Error(
+        "Move to cart functionality requires coordinated implementation with CartRepository",
+      );
     } catch (error) {
-      throw createFormattedError(error, 'Failed to move item to cart');
+      throw createFormattedError(error, "Failed to move item to cart");
     }
   }
 
@@ -165,7 +165,7 @@ export class ApiWishlistRepository implements WishlistRepository {
    * @returns {Promise<{wishlist: WishlistItem[]}>} Wishlist synchronisée
    * @throws {Error} Si la synchronisation échoue
    */
-  async syncWishlist(localItems: WishlistItem[]): Promise<{wishlist: WishlistItem[]}> {
+  async syncWishlist(localItems: WishlistItem[]): Promise<{ wishlist: WishlistItem[] }> {
     try {
       // Stratégie simple : récupérer la wishlist serveur (source de vérité)
       const serverWishlist = await this.getWishlist();
@@ -177,7 +177,7 @@ export class ApiWishlistRepository implements WishlistRepository {
 
       // Pour l'instant, le serveur fait autorité
       return serverWishlist;
-    } catch (error) {
+    } catch (_error) {
       // En cas d'erreur, retourner les articles locaux
       return { wishlist: localItems };
     }
@@ -191,24 +191,26 @@ export class ApiWishlistRepository implements WishlistRepository {
    */
   async searchWishlist(query: string): Promise<WishlistItem[]> {
     try {
-      if (!query || typeof query !== 'string') {
-        throw new Error('Search query must be a non-empty string');
+      if (!query || typeof query !== "string") {
+        throw new Error("Search query must be a non-empty string");
       }
 
       const wishlist = await this.getWishlist();
       const lowercaseQuery = query.toLowerCase().trim();
 
-      return wishlist.wishlist.filter(item => {
-        const starName = item.Star?.name?.toLowerCase() || '';
-        const starDescription = item.Star?.description?.toLowerCase() || '';
-        const constellation = item.Star?.constellation?.toLowerCase() || '';
+      return wishlist.wishlist.filter((item) => {
+        const starName = item.Star?.name?.toLowerCase() || "";
+        const starDescription = item.Star?.description?.toLowerCase() || "";
+        const constellation = item.Star?.constellation?.toLowerCase() || "";
 
-        return starName.includes(lowercaseQuery) ||
-               starDescription.includes(lowercaseQuery) ||
-               constellation.includes(lowercaseQuery);
+        return (
+          starName.includes(lowercaseQuery) ||
+          starDescription.includes(lowercaseQuery) ||
+          constellation.includes(lowercaseQuery)
+        );
       });
     } catch (error) {
-      throw createFormattedError(error, 'Failed to search wishlist');
+      throw createFormattedError(error, "Failed to search wishlist");
     }
   }
 
@@ -217,26 +219,32 @@ export class ApiWishlistRepository implements WishlistRepository {
    * @returns {Promise<{shareUrl: string}>} URL de partage
    * @throws {Error} Si la génération échoue
    */
-  async shareWishlist(): Promise<{shareUrl: string}> {
+  async shareWishlist(): Promise<{ shareUrl: string }> {
     try {
       // Note: Cette fonctionnalité nécessiterait un endpoint API dédié
       // Pour l'instant, générer une URL basique
-      const wishlistCount = await this.getWishlistCount();
+      const _wishlistCount = await this.getWishlistCount();
 
       // Générer un ID de partage temporaire (en production, ceci devrait venir du serveur)
-      const shareId = btoa(`wishlist_${Date.now()}_${Math.random()}`).replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+      const shareId = btoa(`wishlist_${Date.now()}_${Math.random()}`)
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .substring(0, 16);
 
       const shareUrl = `${window.location.origin}/shared/wishlist/${shareId}`;
 
       // En production, cette URL devrait être générée par le serveur
       // et l'ID de partage devrait être sauvegardé en base
-      logger.warn('Share wishlist: Mock implementation - needs server endpoint', undefined, 'ApiWishlistRepository');
+      logger.warn(
+        "Share wishlist: Mock implementation - needs server endpoint",
+        undefined,
+        "ApiWishlistRepository",
+      );
 
       return {
-        shareUrl
+        shareUrl,
       };
     } catch (error) {
-      throw createFormattedError(error, 'Failed to share wishlist');
+      throw createFormattedError(error, "Failed to share wishlist");
     }
   }
 
@@ -259,13 +267,13 @@ export class ApiWishlistRepository implements WishlistRepository {
    */
   private validateWishlistItem(item: WishlistItem): boolean {
     return !!(
-      item &&
-      item.id &&
+      item?.id &&
       item.starId &&
       item.Star &&
       item.Star.starid &&
       item.Star.name &&
-      typeof item.Star.price === 'number' && item.Star.price > 0
+      typeof item.Star.price === "number" &&
+      item.Star.price > 0
     );
   }
 
@@ -277,7 +285,7 @@ export class ApiWishlistRepository implements WishlistRepository {
    */
   private normalizeWishlistItems(items: WishlistItem[]): WishlistItem[] {
     return items
-      .map(item => this.normalizeWishlistItem(item))
-      .filter(item => this.validateWishlistItem(item));
+      .map((item) => this.normalizeWishlistItem(item))
+      .filter((item) => this.validateWishlistItem(item));
   }
 }

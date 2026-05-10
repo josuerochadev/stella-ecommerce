@@ -1,8 +1,8 @@
 // client/src/components/CatalogAdvancedFilters.tsx
 // Responsabilité unique : Panneau des filtres avancés du catalogue
 
-import { ArrowUpIcon, ArrowDownIcon, TimesIcon } from "@/utils/icons";
 import type { SearchFilters } from "@/hooks/useCatalogFilters";
+import { ArrowDownIcon, ArrowUpIcon, TimesIcon } from "@/utils/icons";
 
 interface CatalogAdvancedFiltersProps {
   isVisible: boolean;
@@ -34,7 +34,6 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
   return (
     <div className="bg-primary rounded-lg p-6 mb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
         {/* Fourchette de prix */}
         <div>
           <label className="block text-sm font-medium text-text mb-2">Prix (€)</label>
@@ -43,14 +42,18 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
               type="number"
               placeholder="Min"
               value={filters.priceMin || ""}
-              onChange={(e) => onUpdateFilter("priceMin", e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) =>
+                onUpdateFilter("priceMin", e.target.value ? Number(e.target.value) : null)
+              }
               className="w-full p-2 rounded bg-secondary text-text"
             />
             <input
               type="number"
               placeholder="Max"
               value={filters.priceMax || ""}
-              onChange={(e) => onUpdateFilter("priceMax", e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) =>
+                onUpdateFilter("priceMax", e.target.value ? Number(e.target.value) : null)
+              }
               className="w-full p-2 rounded bg-secondary text-text"
             />
           </div>
@@ -65,7 +68,9 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
               step="0.1"
               placeholder="Min"
               value={filters.magnitudeMin || ""}
-              onChange={(e) => onUpdateFilter("magnitudeMin", e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) =>
+                onUpdateFilter("magnitudeMin", e.target.value ? Number(e.target.value) : null)
+              }
               className="w-full p-2 rounded bg-secondary text-text"
             />
             <input
@@ -73,7 +78,9 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
               step="0.1"
               placeholder="Max"
               value={filters.magnitudeMax || ""}
-              onChange={(e) => onUpdateFilter("magnitudeMax", e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) =>
+                onUpdateFilter("magnitudeMax", e.target.value ? Number(e.target.value) : null)
+              }
               className="w-full p-2 rounded bg-secondary text-text"
             />
           </div>
@@ -85,7 +92,7 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
           <div className="flex space-x-2">
             <select
               value={filters.sortBy}
-              onChange={(e) => onUpdateFilter("sortBy", e.target.value as SearchFilters['sortBy'])}
+              onChange={(e) => onUpdateFilter("sortBy", e.target.value as SearchFilters["sortBy"])}
               className="flex-1 p-2 rounded bg-secondary text-text"
             >
               <option value="relevance">Pertinence</option>
@@ -101,7 +108,11 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
               onClick={onToggleSortOrder}
               className="p-2 bg-secondary text-text rounded hover:bg-special hover:text-primary"
             >
-              {filters.sortOrder === "asc" ? <ArrowUpIcon size={16} /> : <ArrowDownIcon size={16} />}
+              {filters.sortOrder === "asc" ? (
+                <ArrowUpIcon size={16} />
+              ) : (
+                <ArrowDownIcon size={16} />
+              )}
             </button>
           </div>
         </div>
@@ -128,7 +139,8 @@ const CatalogAdvancedFilters: React.FC<CatalogAdvancedFiltersProps> = ({
       {/* Actions et compteur */}
       <div className="mt-4 flex justify-between items-center">
         <span className="text-sm text-text">
-          {resultsCount} résultat{resultsCount !== 1 ? "s" : ""} trouvé{resultsCount !== 1 ? "s" : ""}
+          {resultsCount} résultat{resultsCount !== 1 ? "s" : ""} trouvé
+          {resultsCount !== 1 ? "s" : ""}
         </span>
         <button
           onClick={onClearFilters}

@@ -3,6 +3,7 @@ const { Router } = require("express");
 const router = Router();
 const { authenticateUser } = require("../middlewares/authMiddleware");
 
+const healthRoutes = require("./healthRoutes");
 const starsRoutes = require("./starsRoutes");
 const authRoutes = require("./authRoutes");
 const usersRoutes = require("./usersRoutes");
@@ -12,6 +13,9 @@ const wishlistRoutes = require("./wishlistRoutes");
 const reviewRoutes = require("./reviewRoutes");
 const paymentRoutes = require("./paymentRoutes");
 const adminRoutes = require("./adminRoutes");
+
+// Health check (no auth required)
+router.use("/health", healthRoutes);
 
 // Public routes
 router.use("/stars", starsRoutes);

@@ -1,9 +1,10 @@
 // client/src/components/AddToWishlistButton.tsx
 
-import { useWishlistStore } from "@/stores/useWishlistStore";
 import { useAuth } from "@/context/AuthContext";
-import { HeartIcon } from "@/utils/icons";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { useNotificationStore } from "@/stores/useNotificationStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
+import { HeartIcon } from "@/utils/icons";
 import { useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
@@ -19,6 +20,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
   const fetchWishlist = useWishlistStore((state) => state.fetchWishlist);
   const loading = useWishlistStore((state) => state.loading);
   const error = useWishlistStore((state) => state.error);
+  const { showSuccess } = useNotificationStore();
 
   const inWishlist = wishlistItems.some((item) => item && item.starId === starId);
 
@@ -39,10 +41,11 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
 
     try {
       await addItemToWishlist(starId);
-    } catch (err) {
+      showSuccess("Ajouté aux favoris", "L'étoile a été ajoutée à votre liste de souhaits.");
+    } catch (_err) {
       // L'erreur est gérée par le store useWishlistStore
     }
-  }, [isAuthenticated, redirectToLogin, addItemToWishlist, starId]);
+  }, [isAuthenticated, redirectToLogin, addItemToWishlist, starId, showSuccess]);
 
   return (
     <>

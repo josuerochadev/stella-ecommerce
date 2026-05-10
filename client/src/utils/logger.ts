@@ -1,6 +1,8 @@
 // client/src/utils/logger.ts
 // Centralized logging service for the application
 
+import * as Sentry from "@sentry/react";
+
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogEntry {
@@ -62,10 +64,6 @@ class Logger {
     this.sendToMonitoring("error", message, error, context);
   }
 
-  /**
-   * Send critical logs to monitoring in production.
-   * Replace the fetch URL with a real endpoint (Sentry, LogRocket, etc.)
-   */
   private sendToMonitoring(
     level: LogLevel,
     message: string,
@@ -75,19 +73,16 @@ class Logger {
     if (this.isDevelopment) return;
 
     try {
-      const payload = {
-        level,
-        message,
-        context,
-        timestamp: new Date().toISOString(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        data: data instanceof Error ? { message: data.message, stack: data.stack } : data,
-      };
-
-      // Beacon API for reliable delivery even on page unload
-      const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-      navigator.sendBeacon("/api/logs", blob);
+      if (level === "error" && data instanceof Error) {
+        Sentry.captureException(data, {
+          extra: { message, context },
+        });
+      } else {
+        Sentry.captureMessage(message, {
+          level: level === "warn" ? "warning" : level,
+          extra: { context, data },
+        });
+      }
     } catch {
       // Monitoring failure must never break the app
     }

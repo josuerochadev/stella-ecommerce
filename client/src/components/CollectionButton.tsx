@@ -1,19 +1,19 @@
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate } from 'react-router-dom';
 import { useCollectionOperation } from "@/hooks/useApiCall";
-import { HeartIcon, ShoppingCartIcon } from "@/utils/icons";
 import { ARIA_LABELS } from "@/utils/accessibility";
+import { HeartIcon, ShoppingCartIcon } from "@/utils/icons";
+import { useNavigate } from "react-router-dom";
 
 interface CollectionButtonProps {
-  type: 'cart' | 'wishlist';
+  type: "cart" | "wishlist";
   starId: number;
   isInCollection?: boolean;
   quantity?: number;
   onSuccess?: () => void;
   onError?: (error: string) => void;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'outline';
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "outline";
   showLabel?: boolean;
 }
 
@@ -24,9 +24,9 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
   quantity = 1,
   onSuccess,
   onError,
-  className = '',
-  size = 'md',
-  variant = 'default',
+  className = "",
+  size = "md",
+  variant = "default",
   showLabel = true,
 }) => {
   const { isAuthenticated } = useAuth();
@@ -48,18 +48,18 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
   const config = {
     cart: {
       icon: ShoppingCartIcon,
-      addLabel: 'Ajouter au panier',
-      removeLabel: 'Retirer du panier',
-      inCollectionLabel: 'Dans le panier',
-      loginMessage: 'Connectez-vous pour ajouter au panier',
+      addLabel: "Ajouter au panier",
+      removeLabel: "Retirer du panier",
+      inCollectionLabel: "Dans le panier",
+      loginMessage: "Connectez-vous pour ajouter au panier",
       ariaLabel: ARIA_LABELS.ADD_TO_CART,
     },
     wishlist: {
       icon: HeartIcon,
-      addLabel: 'Ajouter aux favoris',
-      removeLabel: 'Retirer des favoris',
-      inCollectionLabel: 'En favoris',
-      loginMessage: 'Connectez-vous pour ajouter aux favoris',
+      addLabel: "Ajouter aux favoris",
+      removeLabel: "Retirer des favoris",
+      inCollectionLabel: "En favoris",
+      loginMessage: "Connectez-vous pour ajouter aux favoris",
       ariaLabel: ARIA_LABELS.ADD_TO_WISHLIST,
     },
   };
@@ -68,18 +68,18 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
   const Icon = currentConfig.icon;
 
   const sizeClasses = {
-    sm: 'px-2 py-1 text-sm',
-    md: 'px-3 py-2 text-base',
-    lg: 'px-4 py-3 text-lg',
+    sm: "px-2 py-1 text-sm",
+    md: "px-3 py-2 text-base",
+    lg: "px-4 py-3 text-lg",
   };
 
   const variantClasses = {
     default: isInCollection
-      ? 'bg-accent text-white'
-      : 'bg-primary text-text hover:bg-accent hover:text-white',
+      ? "bg-accent text-white"
+      : "bg-primary text-text hover:bg-accent hover:text-white",
     outline: isInCollection
-      ? 'border-2 border-accent text-accent bg-accent/10'
-      : 'border-2 border-primary text-text hover:border-accent hover:text-accent',
+      ? "border-2 border-accent text-accent bg-accent/10"
+      : "border-2 border-primary text-text hover:border-accent hover:text-accent",
   };
 
   const baseClasses = `
@@ -94,7 +94,7 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
 
   const handleClick = async () => {
     if (!isAuthenticated) {
-      navigate('/auth', {
+      navigate("/auth", {
         state: {
           from: window.location.pathname,
           message: currentConfig.loginMessage,
@@ -104,15 +104,15 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
     }
 
     // Import dynamic pour éviter les dépendances circulaires
-    if (type === 'cart') {
-      const { addToCart, removeFromCart } = await import('../services/api');
+    if (type === "cart") {
+      const { addToCart, removeFromCart } = await import("../services/api");
       if (isInCollection) {
         await execute(() => removeFromCart(starId));
       } else {
         await execute(() => addToCart(starId, quantity));
       }
     } else {
-      const { addToWishlist, removeFromWishlist } = await import('../services/api');
+      const { addToWishlist, removeFromWishlist } = await import("../services/api");
       if (isInCollection) {
         await execute(() => removeFromWishlist(starId));
       } else {
@@ -123,17 +123,17 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
 
   const getButtonText = () => {
     if (isLoading) {
-      return isInCollection ? 'Suppression...' : 'Ajout...';
+      return isInCollection ? "Suppression..." : "Ajout...";
     }
     if (isInCollection) {
-      return showLabel ? currentConfig.inCollectionLabel : '';
+      return showLabel ? currentConfig.inCollectionLabel : "";
     }
-    return showLabel ? currentConfig.addLabel : '';
+    return showLabel ? currentConfig.addLabel : "";
   };
 
   const getAriaLabel = () => {
     if (isInCollection) {
-      return type === 'cart' ? ARIA_LABELS.REMOVE_FROM_CART : ARIA_LABELS.REMOVE_FROM_WISHLIST;
+      return type === "cart" ? ARIA_LABELS.REMOVE_FROM_CART : ARIA_LABELS.REMOVE_FROM_WISHLIST;
     }
     return currentConfig.ariaLabel;
   };
@@ -147,14 +147,12 @@ const CollectionButton: React.FC<CollectionButtonProps> = ({
       aria-label={getAriaLabel()}
     >
       {isLoading ? (
-        <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+        <div className="motion-safe:animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
       ) : (
         <Icon className="h-4 w-4" />
       )}
 
-      {showLabel && (
-        <span className="hidden sm:inline">{getButtonText()}</span>
-      )}
+      {showLabel && <span className="hidden sm:inline">{getButtonText()}</span>}
     </button>
   );
 };

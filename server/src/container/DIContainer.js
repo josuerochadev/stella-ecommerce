@@ -20,22 +20,22 @@ class DIContainer {
    * @param {boolean} singleton - Si le service doit être un singleton
    */
   register(name, constructor, dependencies = [], singleton = false) {
-    if (!name || typeof name !== 'string') {
-      throw new Error('Service name must be a non-empty string');
+    if (!name || typeof name !== "string") {
+      throw new Error("Service name must be a non-empty string");
     }
 
-    if (typeof constructor !== 'function') {
-      throw new Error('Service constructor must be a function');
+    if (typeof constructor !== "function") {
+      throw new Error("Service constructor must be a function");
     }
 
     if (!Array.isArray(dependencies)) {
-      throw new Error('Dependencies must be an array');
+      throw new Error("Dependencies must be an array");
     }
 
     this.services.set(name, {
       constructor,
       dependencies,
-      singleton
+      singleton,
     });
   }
 
@@ -45,12 +45,12 @@ class DIContainer {
    * @param {Object} instance - Instance du service
    */
   registerInstance(name, instance) {
-    if (!name || typeof name !== 'string') {
-      throw new Error('Service name must be a non-empty string');
+    if (!name || typeof name !== "string") {
+      throw new Error("Service name must be a non-empty string");
     }
 
     if (!instance) {
-      throw new Error('Instance cannot be null or undefined');
+      throw new Error("Instance cannot be null or undefined");
     }
 
     this.singletons.set(name, instance);
@@ -64,18 +64,18 @@ class DIContainer {
    * @param {boolean} singleton - Si le résultat doit être mis en cache
    */
   registerFactory(name, factory, dependencies = [], singleton = false) {
-    if (!name || typeof name !== 'string') {
-      throw new Error('Service name must be a non-empty string');
+    if (!name || typeof name !== "string") {
+      throw new Error("Service name must be a non-empty string");
     }
 
-    if (typeof factory !== 'function') {
-      throw new Error('Factory must be a function');
+    if (typeof factory !== "function") {
+      throw new Error("Factory must be a function");
     }
 
     this.services.set(name, {
       factory,
       dependencies,
-      singleton
+      singleton,
     });
   }
 
@@ -85,8 +85,8 @@ class DIContainer {
    * @returns {Object} Instance du service
    */
   resolve(name) {
-    if (!name || typeof name !== 'string') {
-      throw new Error('Service name must be a non-empty string');
+    if (!name || typeof name !== "string") {
+      throw new Error("Service name must be a non-empty string");
     }
 
     // Vérifier si c'est déjà une instance singleton
@@ -106,11 +106,13 @@ class DIContainer {
     }
 
     // Résoudre les dépendances
-    const resolvedDependencies = serviceDefinition.dependencies.map(depName => {
+    const resolvedDependencies = serviceDefinition.dependencies.map((depName) => {
       try {
         return this.resolve(depName);
       } catch (error) {
-        throw new Error(`Failed to resolve dependency '${depName}' for service '${name}': ${error.message}`);
+        throw new Error(
+          `Failed to resolve dependency '${depName}' for service '${name}': ${error.message}`,
+        );
       }
     });
 
@@ -188,10 +190,12 @@ class DIContainer {
     visiting.add(serviceName);
 
     const serviceDefinition = this.services.get(serviceName);
-    if (serviceDefinition && serviceDefinition.dependencies) {
+    if (serviceDefinition?.dependencies) {
       for (const dependency of serviceDefinition.dependencies) {
         if (!this.has(dependency)) {
-          throw new Error(`Service '${serviceName}' depends on unregistered service '${dependency}'`);
+          throw new Error(
+            `Service '${serviceName}' depends on unregistered service '${dependency}'`,
+          );
         }
         this.validateDependencies(dependency, visited, visiting);
       }
@@ -223,20 +227,20 @@ class DIContainer {
 
     for (const [name, definition] of this.services) {
       services[name] = {
-        type: definition.factory ? 'factory' : 'constructor',
+        type: definition.factory ? "factory" : "constructor",
         dependencies: definition.dependencies,
         singleton: definition.singleton,
-        instantiated: this.singletons.has(name)
+        instantiated: this.singletons.has(name),
       };
     }
 
     for (const [name] of this.singletons) {
       if (!services[name]) {
         services[name] = {
-          type: 'instance',
+          type: "instance",
           dependencies: [],
           singleton: true,
-          instantiated: true
+          instantiated: true,
         };
       }
     }
@@ -244,7 +248,7 @@ class DIContainer {
     return {
       totalServices: this.getRegisteredServices().length,
       instantiatedSingletons: this.singletons.size,
-      services
+      services,
     };
   }
 }

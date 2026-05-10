@@ -2,9 +2,9 @@
 // Implémentation du repository liste d'envies avec Sequelize
 // Responsabilité unique : opérations de persistance des données liste d'envies
 
-const { Wishlist, Star } = require('../models');
-const { IWishlistRepository } = require('../interfaces/IWishlistRepository');
-const { validateId } = require('../utils/validators');
+const { Wishlist, Star } = require("../models");
+const { IWishlistRepository } = require("../interfaces/IWishlistRepository");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les listes d'envies utilisant Sequelize ORM
@@ -24,20 +24,20 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async findByUserId(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const wishlistItems = await this.Wishlist.findAll({
         where: { userId },
         include: [
           {
             model: Star,
-            as: 'Star'
-          }
+            as: "Star",
+          },
         ],
-        order: [['createdAt', 'DESC']]
+        order: [["createdAt", "DESC"]],
       });
 
-      return wishlistItems.map(item => item.toJSON());
+      return wishlistItems.map((item) => item.toJSON());
     } catch (error) {
       throw new Error(`Failed to find wishlist by user ID: ${error.message}`);
     }
@@ -53,15 +53,15 @@ class SequelizeWishlistRepository extends IWishlistRepository {
   async findItem(userId, starId) {
     try {
       if (!userId || !starId) {
-        throw new Error('User ID and Star ID are required');
+        throw new Error("User ID and Star ID are required");
       }
 
       const wishlistItem = await this.Wishlist.findOne({
         where: {
           userId,
-          starId
+          starId,
         },
-        include: [{ model: Star, as: 'Star' }]
+        include: [{ model: Star, as: "Star" }],
       });
 
       return wishlistItem ? wishlistItem.toJSON() : null;
@@ -81,7 +81,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
       const { userId, starId } = wishlistData;
 
       if (!userId || !starId) {
-        throw new Error('User ID and Star ID are required');
+        throw new Error("User ID and Star ID are required");
       }
 
       // Vérifier si l'item existe déjà
@@ -92,18 +92,18 @@ class SequelizeWishlistRepository extends IWishlistRepository {
 
       const wishlistItem = await this.Wishlist.create({
         userId,
-        starId
+        starId,
       });
 
       // Récupérer l'item avec les relations
       const createdItem = await this.Wishlist.findByPk(wishlistItem.id, {
-        include: [{ model: Star, as: 'Star' }]
+        include: [{ model: Star, as: "Star" }],
       });
 
       return createdItem ? createdItem.toJSON() : null;
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new Error('Item already exists in wishlist');
+      if (error.name === "SequelizeUniqueConstraintError") {
+        throw new Error("Item already exists in wishlist");
       }
       throw new Error(`Failed to add wishlist item: ${error.message}`);
     }
@@ -119,14 +119,14 @@ class SequelizeWishlistRepository extends IWishlistRepository {
   async removeItem(userId, starId) {
     try {
       if (!userId || !starId) {
-        throw new Error('User ID and Star ID are required');
+        throw new Error("User ID and Star ID are required");
       }
 
       const deletedCount = await this.Wishlist.destroy({
         where: {
           userId,
-          starId
-        }
+          starId,
+        },
       });
 
       return deletedCount > 0;
@@ -143,10 +143,10 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async clearWishlist(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       await this.Wishlist.destroy({
-        where: { userId }
+        where: { userId },
       });
 
       return true;
@@ -170,8 +170,8 @@ class SequelizeWishlistRepository extends IWishlistRepository {
       const count = await this.Wishlist.count({
         where: {
           userId,
-          starId
-        }
+          starId,
+        },
       });
 
       return count > 0;
@@ -187,10 +187,10 @@ class SequelizeWishlistRepository extends IWishlistRepository {
    */
   async count(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const count = await this.Wishlist.count({
-        where: { userId }
+        where: { userId },
       });
 
       return count;
@@ -209,7 +209,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
       validateId(id);
 
       const wishlistItem = await this.Wishlist.findByPk(id, {
-        include: [{ model: Star, as: 'Star' }]
+        include: [{ model: Star, as: "Star" }],
       });
 
       return wishlistItem ? wishlistItem.toJSON() : null;
@@ -228,7 +228,7 @@ class SequelizeWishlistRepository extends IWishlistRepository {
       validateId(id);
 
       const deletedCount = await this.Wishlist.destroy({
-        where: { id }
+        where: { id },
       });
 
       return deletedCount > 0;

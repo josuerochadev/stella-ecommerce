@@ -17,9 +17,8 @@ export const useCartStatus = (starid: number) => {
   const [error, setError] = useState<string | null>(null);
   const { handleError, formatError } = useErrorHandler();
 
-  const isAuthenticated = useMemo(() => {
-    return !!localStorage.getItem("token");
-  }, []);
+  // Auth is now cookie-based; assume authenticated if we can fetch cart
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const checkIfInCart = useCallback(async () => {
     if (!isAuthenticated || !starid) return;
@@ -30,6 +29,7 @@ export const useCartStatus = (starid: number) => {
       setInCart(!!isInCart);
       setError(null);
     } catch (err) {
+      setIsAuthenticated(false);
       const apiError = handleError(err as Error);
       if (apiError) {
         setError(formatError(apiError));

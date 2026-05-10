@@ -2,8 +2,8 @@
 // Service spécialisé pour les statistiques des utilisateurs
 // Responsabilité unique : calcul et agrégation des données de commandes
 
-const { sequelize } = require('../models');
-const logger = require('../utils/logger');
+const { sequelize } = require("../models");
+const logger = require("../utils/logger");
 
 /**
  * Service de statistiques utilisateurs
@@ -21,7 +21,8 @@ class UserStatsService {
     }
 
     try {
-      const orderStats = await sequelize.query(`
+      const orderStats = await sequelize.query(
+        `
         SELECT
           user_id,
           COUNT(*) as order_count,
@@ -31,25 +32,27 @@ class UserStatsService {
         FROM orders
         WHERE user_id IN (:userIds) AND status IN ('paid', 'shipped', 'delivered')
         GROUP BY user_id
-      `, {
-        replacements: { userIds },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { userIds },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       // Créer un Map pour accès rapide par ID utilisateur
       return new Map(
-        orderStats.map(stat => [
+        orderStats.map((stat) => [
           stat.user_id,
           {
-            orderCount: parseInt(stat.order_count) || 0,
-            totalSpent: parseFloat(stat.total_spent) || 0,
-            averageOrderValue: parseFloat(stat.avg_order_value) || 0,
-            lastOrderDate: stat.last_order_date
-          }
-        ])
+            orderCount: Number.parseInt(stat.order_count) || 0,
+            totalSpent: Number.parseFloat(stat.total_spent) || 0,
+            averageOrderValue: Number.parseFloat(stat.avg_order_value) || 0,
+            lastOrderDate: stat.last_order_date,
+          },
+        ]),
       );
     } catch (error) {
-      logger.error('Error fetching user order stats:', error);
+      logger.error("Error fetching user order stats:", error);
       return new Map();
     }
   }
@@ -61,7 +64,8 @@ class UserStatsService {
    */
   static async getDetailedUserStats(userId) {
     try {
-      const [userStats] = await sequelize.query(`
+      const [userStats] = await sequelize.query(
+        `
         SELECT
           COUNT(o.id) as total_orders,
           COALESCE(SUM(o.total_amount), 0) as total_spent,
@@ -77,24 +81,28 @@ class UserStatsService {
         LEFT JOIN order_stars os ON o.id = os.order_id
         WHERE u.id = :userId
         GROUP BY u.id
-      `, {
-        replacements: { userId },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { userId },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
-      return userStats || {
-        total_orders: 0,
-        total_spent: 0,
-        avg_order_value: 0,
-        paid_orders: 0,
-        pending_orders: 0,
-        cancelled_orders: 0,
-        first_order_date: null,
-        last_order_date: null,
-        unique_stars_purchased: 0
-      };
+      return (
+        userStats || {
+          total_orders: 0,
+          total_spent: 0,
+          avg_order_value: 0,
+          paid_orders: 0,
+          pending_orders: 0,
+          cancelled_orders: 0,
+          first_order_date: null,
+          last_order_date: null,
+          unique_stars_purchased: 0,
+        }
+      );
     } catch (error) {
-      logger.error('Error fetching detailed user stats:', error);
+      logger.error("Error fetching detailed user stats:", error);
       return null;
     }
   }
@@ -110,12 +118,13 @@ class UserStatsService {
         totalUsers: 0,
         activeUsers: 0,
         totalRevenue: 0,
-        averageUserValue: 0
+        averageUserValue: 0,
       };
     }
 
     try {
-      const [metrics] = await sequelize.query(`
+      const [metrics] = await sequelize.query(
+        `
         SELECT
           COUNT(DISTINCT u.id) as total_users,
           COUNT(DISTINCT CASE WHEN o.id IS NOT NULL THEN u.id END) as active_users,
@@ -130,24 +139,26 @@ class UserStatsService {
           GROUP BY user_id
         ) user_totals ON u.id = user_totals.user_id
         WHERE u.id IN (:userIds)
-      `, {
-        replacements: { userIds },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { userIds },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       return {
-        totalUsers: parseInt(metrics.total_users) || 0,
-        activeUsers: parseInt(metrics.active_users) || 0,
-        totalRevenue: parseFloat(metrics.total_revenue) || 0,
-        averageUserValue: parseFloat(metrics.average_user_value) || 0
+        totalUsers: Number.parseInt(metrics.total_users) || 0,
+        activeUsers: Number.parseInt(metrics.active_users) || 0,
+        totalRevenue: Number.parseFloat(metrics.total_revenue) || 0,
+        averageUserValue: Number.parseFloat(metrics.average_user_value) || 0,
       };
     } catch (error) {
-      logger.error('Error fetching user performance metrics:', error);
+      logger.error("Error fetching user performance metrics:", error);
       return {
         totalUsers: 0,
         activeUsers: 0,
         totalRevenue: 0,
-        averageUserValue: 0
+        averageUserValue: 0,
       };
     }
   }
@@ -161,7 +172,7 @@ class UserStatsService {
       orderCount: 0,
       totalSpent: 0,
       averageOrderValue: 0,
-      lastOrderDate: null
+      lastOrderDate: null,
     };
   }
 }

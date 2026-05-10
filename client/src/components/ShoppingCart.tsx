@@ -1,9 +1,9 @@
 // client/src/components/ShoppingCart.tsx
 // Responsabilité unique : Orchestrateur et affichage principal du panier
 
-import { useEffect, memo } from "react";
 import { useCartActions } from "@/hooks/useCartActions";
 import { CartCalculations } from "@/utils/cartCalculations";
+import { memo, useEffect } from "react";
 import CartEmptyState from "./CartEmptyState";
 import CartItemsList from "./CartItemsList";
 import CartSummary from "./CartSummary";
@@ -52,8 +52,8 @@ const ShoppingCart: React.FC = () => {
     return (
       <CartEmptyState
         isAuthenticated={isAuthenticated}
-        onLoginClick={() => navigateToAuth('login')}
-        onRegisterClick={() => navigateToAuth('register')}
+        onLoginClick={() => navigateToAuth("login")}
+        onRegisterClick={() => navigateToAuth("register")}
       />
     );
   }
@@ -75,10 +75,7 @@ const ShoppingCart: React.FC = () => {
 
         {/* Résumé du panier */}
         <div className="lg:col-span-1">
-          <CartSummary
-            cartItems={cartItems}
-            onCheckout={navigateToCheckout}
-          />
+          <CartSummary cartItems={cartItems} onCheckout={navigateToCheckout} />
         </div>
       </div>
     </div>

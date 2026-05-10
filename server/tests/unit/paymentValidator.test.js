@@ -89,21 +89,15 @@ describe("PaymentValidator", () => {
     });
 
     it("detects MasterCard", () => {
-      expect(PaymentValidator.detectCardBrand("5555555555554444")).toBe(
-        "MasterCard",
-      );
+      expect(PaymentValidator.detectCardBrand("5555555555554444")).toBe("MasterCard");
     });
 
     it("detects American Express", () => {
-      expect(PaymentValidator.detectCardBrand("371449635398431")).toBe(
-        "American Express",
-      );
+      expect(PaymentValidator.detectCardBrand("371449635398431")).toBe("American Express");
     });
 
     it("returns Unknown for unrecognized cards", () => {
-      expect(PaymentValidator.detectCardBrand("9999999999999999")).toBe(
-        "Unknown",
-      );
+      expect(PaymentValidator.detectCardBrand("9999999999999999")).toBe("Unknown");
     });
   });
 

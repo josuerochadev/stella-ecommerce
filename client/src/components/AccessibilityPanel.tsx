@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useAccessibilitySettings, ACCESSIBILITY_THEMES } from "@/utils/accessibilityThemes";
-import AccessibleModal from './AccessibleModal';
 import { ARIA_LABELS } from "@/utils/accessibility";
+import { ACCESSIBILITY_THEMES, useAccessibilitySettings } from "@/utils/accessibilityThemes";
+import { useState } from "react";
+import AccessibleModal from "./AccessibleModal";
 
 interface AccessibilityPanelProps {
   isOpen: boolean;
@@ -9,7 +9,8 @@ interface AccessibilityPanelProps {
 }
 
 const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose }) => {
-  const { settings, updateSettings, resetSettings, themes, currentTheme } = useAccessibilitySettings();
+  const { settings, updateSettings, resetSettings, themes, currentTheme } =
+    useAccessibilitySettings();
 
   const handleThemeChange = (theme: keyof typeof ACCESSIBILITY_THEMES) => {
     updateSettings({ theme });
@@ -28,19 +29,11 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
   };
 
   return (
-    <AccessibleModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Paramètres d'accessibilité"
-      size="lg"
-    >
+    <AccessibleModal isOpen={isOpen} onClose={onClose} title="Paramètres d'accessibilité" size="lg">
       <div className="space-y-6">
-
         {/* Theme Selection */}
         <fieldset className="space-y-3">
-          <legend className="text-lg font-medium text-text mb-3">
-            Thème d'affichage
-          </legend>
+          <legend className="text-lg font-medium text-text mb-3">Thème d'affichage</legend>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {themes.map((themeKey) => {
@@ -53,9 +46,10 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
                   className={`
                     relative flex items-center p-4 border-2 rounded-lg cursor-pointer
                     transition-all duration-200
-                    ${isSelected
-                      ? 'border-accent bg-accent/10'
-                      : 'border-primary/20 hover:border-accent/50'
+                    ${
+                      isSelected
+                        ? "border-accent bg-accent/10"
+                        : "border-primary/20 hover:border-accent/50"
                     }
                     focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2
                   `}
@@ -71,17 +65,12 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
                   />
 
                   <div className="flex-1">
-                    <div className="font-medium text-text">
-                      {theme.name}
-                    </div>
-                    <div
-                      id={`theme-${themeKey}-description`}
-                      className="text-sm text-text/70 mt-1"
-                    >
+                    <div className="font-medium text-text">{theme.name}</div>
+                    <div id={`theme-${themeKey}-description`} className="text-sm text-text/70 mt-1">
                       Police : {theme.fontSize.base}
-                      {themeKey === 'highContrast' && ' • Contraste élevé'}
-                      {themeKey === 'lowVision' && ' • Adapté malvoyants'}
-                      {themeKey === 'largeText' && ' • Texte agrandi'}
+                      {themeKey === "highContrast" && " • Contraste élevé"}
+                      {themeKey === "lowVision" && " • Adapté malvoyants"}
+                      {themeKey === "largeText" && " • Texte agrandi"}
                     </div>
                   </div>
 
@@ -98,16 +87,12 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
 
         {/* Other Accessibility Options */}
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-text mb-3">
-            Options d'accessibilité
-          </legend>
+          <legend className="text-lg font-medium text-text mb-3">Options d'accessibilité</legend>
 
           {/* Reduced Motion */}
           <label className="flex items-center justify-between p-3 border border-primary/20 rounded-lg">
             <div className="flex-1">
-              <div className="font-medium text-text">
-                Réduire les animations
-              </div>
+              <div className="font-medium text-text">Réduire les animations</div>
               <div className="text-sm text-text/70">
                 Désactive ou réduit les animations et transitions
               </div>
@@ -124,12 +109,8 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
           {/* High Contrast Images */}
           <label className="flex items-center justify-between p-3 border border-primary/20 rounded-lg">
             <div className="flex-1">
-              <div className="font-medium text-text">
-                Images haute contraste
-              </div>
-              <div className="text-sm text-text/70">
-                Améliore le contraste des images
-              </div>
+              <div className="font-medium text-text">Images haute contraste</div>
+              <div className="text-sm text-text/70">Améliore le contraste des images</div>
             </div>
             <input
               type="checkbox"
@@ -143,9 +124,7 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
           {/* Screen Reader Optimized */}
           <label className="flex items-center justify-between p-3 border border-primary/20 rounded-lg">
             <div className="flex-1">
-              <div className="font-medium text-text">
-                Mode lecteur d'écran
-              </div>
+              <div className="font-medium text-text">Mode lecteur d'écran</div>
               <div className="text-sm text-text/70">
                 Optimise l'interface pour les lecteurs d'écran
               </div>
@@ -162,9 +141,7 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
 
         {/* Current Theme Info */}
         <div className="p-4 bg-background-inverse/5 rounded-lg border border-primary/10">
-          <h3 className="font-medium text-text mb-2">
-            Thème actuel : {currentTheme.name}
-          </h3>
+          <h3 className="font-medium text-text mb-2">Thème actuel : {currentTheme.name}</h3>
           <div className="text-sm text-text/70 space-y-1">
             <div>Taille de police : {currentTheme.fontSize.base}</div>
             <div>Couleur de fond : {currentTheme.colors.background}</div>
@@ -195,9 +172,8 @@ const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({ isOpen, onClose
 
         {/* Instructions for screen readers */}
         <div className="sr-only" aria-live="polite">
-          Panel de paramètres d'accessibilité.
-          Utilisez les contrôles ci-dessus pour personnaliser votre expérience.
-          Appuyez sur Échap ou cliquez sur Fermer pour quitter.
+          Panel de paramètres d'accessibilité. Utilisez les contrôles ci-dessus pour personnaliser
+          votre expérience. Appuyez sur Échap ou cliquez sur Fermer pour quitter.
         </div>
       </div>
     </AccessibleModal>

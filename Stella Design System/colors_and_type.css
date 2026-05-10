@@ -1,0 +1,612 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Stella Design System v2 — colors_and_type.css
+   Source: stella-ecommerce/client/tailwind.config.js + index.css
+   Enriched: v2 adds cyan accent, neutral scale, light-mode tokens,
+             elevation system, semantic type styles, motion system.
+═══════════════════════════════════════════════════════════════════ */
+
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* ── 1. BRAND PRIMITIVES ──────────────────────────────────────────
+   These raw hex values never change. Use semantic tokens below.   */
+:root {
+  /* Core palette */
+  --stl-purple-950: #0f0a18;
+  --stl-purple-900: #1E1326;   /* secondary */
+  --stl-purple-800: #2a1a3e;
+  --stl-purple-700: #3D2A54;   /* primary */
+  --stl-purple-600: #4e3669;
+  --stl-purple-500: #6247a0;
+  --stl-purple-400: #8b72c8;
+  --stl-purple-300: #b8a3e3;
+  --stl-purple-200: #d8cff4;
+  --stl-purple-100: #f0ecfd;
+
+  /* Periwinkle (foreground / "starlight") */
+  --stl-blue-900:  #1e2d4a;
+  --stl-blue-700:  #2a4680;
+  --stl-blue-500:  #4d7bcc;
+  --stl-blue-300:  #7ea8e8;
+  --stl-blue-200:  #AEC9FF;    /* text (primary fg) */
+  --stl-blue-100:  #d4e4ff;
+  --stl-blue-50:   #eef4ff;
+
+  /* Amber (special / accent / CTA) */
+  --stl-amber-600: #d4811a;
+  --stl-amber-500: #FFB347;    /* special / accent */
+  --stl-amber-400: #ffc76e;
+  --stl-amber-300: #ffd99a;
+  --stl-amber-200: #ffebc5;
+
+  /* Cyan (v2 secondary accent — cosmic teal highlights) */
+  --stl-cyan-700:  #0a4a5c;
+  --stl-cyan-600:  #0d6b86;
+  --stl-cyan-500:  #0ea5c9;
+  --stl-cyan-400:  #38bdf8;
+  --stl-cyan-300:  #7dd3fc;
+  --stl-cyan-200:  #bae6fd;
+
+  /* Magenta (glow / neon FX only — not a UI color) */
+  --stl-magenta-500: #e040fb;
+  --stl-magenta-400: #ea80fc;
+
+  /* Neutral grey (for light mode surfaces) */
+  --stl-grey-950:  #0a0a0b;
+  --stl-grey-900:  #111113;
+  --stl-grey-800:  #1c1c21;
+  --stl-grey-200:  #e4e4e9;
+  --stl-grey-100:  #f4f4f7;
+  --stl-grey-50:   #fafafc;
+
+  /* Status */
+  --stl-green-600: #16a34a;
+  --stl-green-400: #4ade80;
+  --stl-red-600:   #dc2626;
+  --stl-red-400:   #f87171;
+  --stl-yellow-500:#f59e0b;
+  --stl-yellow-300:#fcd34d;
+  --stl-info-600:  #2563eb;
+  --stl-info-400:  #60a5fa;
+}
+
+/* ── 2. DARK MODE SEMANTIC TOKENS (default) ───────────────────── */
+:root, [data-theme="dark"] {
+  /* Backgrounds */
+  --stl-bg:         linear-gradient(135deg, #3D2A54 0%, #1E1326 55%, #0f0a18 100%);
+  --stl-bg-inverse: linear-gradient(135deg, #1E1326 0%, #3D2A54 100%);
+  --stl-bg-header:  linear-gradient(90deg,  #1E1326 0%, #3D2A54 100%);
+  --stl-bg-footer:  #1E1326;
+
+  /* Surfaces (elevation 0 → 5) */
+  --stl-surface-0:  #0f0a18;   /* deepest / sunken */
+  --stl-surface-1:  #1E1326;   /* cards, modals */
+  --stl-surface-2:  #2a1a3e;   /* raised panels, filter bar */
+  --stl-surface-3:  #3D2A54;   /* tooltips, popovers */
+  --stl-surface-4:  #4e3669;   /* highest overlay */
+  --stl-surface-overlay: rgba(15,10,24,.72); /* modal scrim */
+
+  /* Foreground */
+  --stl-fg:         #AEC9FF;              /* default text */
+  --stl-fg-strong:  #ffffff;              /* hover, emphasis */
+  --stl-fg-muted:   rgba(174,201,255,.6); /* hints, captions */
+  --stl-fg-faint:   rgba(174,201,255,.35);/* disabled, placeholders */
+  --stl-fg-on-amber:#3D2A54;             /* text on amber CTAs */
+  --stl-fg-on-cyan: #0a4a5c;             /* text on cyan elements */
+
+  /* Brand accents */
+  --stl-accent-1:   #FFB347;  /* primary CTA, focus ring */
+  --stl-accent-2:   #38bdf8;  /* secondary highlights, links, chips */
+  --stl-accent-glow:rgba(255,179,71,.25); /* amber glow halo */
+  --stl-accent-2-glow: rgba(56,189,248,.2);
+
+  /* Borders */
+  --stl-border:        rgba(174,201,255,.12);
+  --stl-border-strong: rgba(61,42,84,.9);
+  --stl-border-accent: var(--stl-accent-1);
+  --stl-border-accent2:var(--stl-accent-2);
+
+  /* Status */
+  --stl-success:   #16a34a; --stl-success-fg: #4ade80;
+  --stl-danger:    #dc2626; --stl-danger-fg:  #f87171;
+  --stl-warning:   #f59e0b; --stl-warning-fg: #fcd34d;
+  --stl-info:      #2563eb; --stl-info-fg:    #60a5fa;
+
+  /* Shadows (dark mode uses deep purple tint) */
+  --stl-shadow-sm:  0 1px 3px rgb(0 0 0 / .5);
+  --stl-shadow-md:  0 4px 8px -1px rgb(0 0 0 / .55), 0 2px 4px -2px rgb(0 0 0 / .4);
+  --stl-shadow-lg:  0 10px 20px -3px rgb(0 0 0 / .6), 0 4px 8px -4px rgb(0 0 0 / .4);
+  --stl-shadow-xl:  0 20px 32px -5px rgb(0 0 0 / .65), 0 8px 14px -6px rgb(0 0 0 / .4);
+  --stl-shadow-glow-amber:  0 0 20px 4px rgba(255,179,71,.3);
+  --stl-shadow-glow-cyan:   0 0 20px 4px rgba(56,189,248,.25);
+  --stl-shadow-glow-magenta:0 0 30px 6px rgba(224,64,251,.18);
+
+  /* Neon text glow (hero H1 hover) */
+  --stl-text-glow-soft:   0 0 5px #fff, 0 0 12px rgba(255,255,255,.5), 0 0 22px rgba(255,0,255,.2);
+  --stl-text-glow-magenta:0 0 5px #fff, 0 0 18px rgba(255,0,255,.5), 0 0 32px rgba(255,0,255,.3);
+}
+
+/* ── 3. LIGHT MODE SEMANTIC TOKENS ────────────────────────────── */
+[data-theme="light"] {
+  --stl-bg:         linear-gradient(135deg, #f0ecfd 0%, #eef4ff 100%);
+  --stl-bg-inverse: linear-gradient(135deg, #3D2A54 0%, #1E1326 100%);
+  --stl-bg-header:  linear-gradient(90deg, #3D2A54 0%, #4e3669 100%);
+  --stl-bg-footer:  #3D2A54;
+
+  --stl-surface-0:  #ffffff;
+  --stl-surface-1:  #f4f4f7;
+  --stl-surface-2:  #e4e4e9;
+  --stl-surface-3:  #d8cff4;
+  --stl-surface-4:  #b8a3e3;
+  --stl-surface-overlay: rgba(61,42,84,.55);
+
+  --stl-fg:         #2a1a3e;
+  --stl-fg-strong:  #0f0a18;
+  --stl-fg-muted:   rgba(42,26,62,.6);
+  --stl-fg-faint:   rgba(42,26,62,.35);
+  --stl-fg-on-amber:#3D2A54;
+  --stl-fg-on-cyan: #0a4a5c;
+
+  --stl-accent-1:   #d4811a;  /* darker amber for contrast on light */
+  --stl-accent-2:   #0d6b86;  /* darker cyan for contrast */
+  --stl-accent-glow:rgba(212,129,26,.2);
+  --stl-accent-2-glow:rgba(13,107,134,.15);
+
+  --stl-border:        rgba(42,26,62,.15);
+  --stl-border-strong: rgba(61,42,84,.6);
+  --stl-border-accent: var(--stl-accent-1);
+  --stl-border-accent2:var(--stl-accent-2);
+
+  --stl-success:   #15803d; --stl-success-fg: #166534;
+  --stl-danger:    #b91c1c; --stl-danger-fg:  #991b1b;
+  --stl-warning:   #b45309; --stl-warning-fg: #92400e;
+  --stl-info:      #1d4ed8; --stl-info-fg:    #1e3a8a;
+
+  --stl-shadow-sm:  0 1px 3px rgba(42,26,62,.12);
+  --stl-shadow-md:  0 4px 8px -1px rgba(42,26,62,.15), 0 2px 4px rgba(42,26,62,.1);
+  --stl-shadow-lg:  0 10px 20px -3px rgba(42,26,62,.18), 0 4px 8px rgba(42,26,62,.1);
+  --stl-shadow-xl:  0 20px 32px -5px rgba(42,26,62,.2), 0 8px 14px rgba(42,26,62,.12);
+  --stl-shadow-glow-amber:  0 0 16px 3px rgba(212,129,26,.2);
+  --stl-shadow-glow-cyan:   0 0 16px 3px rgba(13,107,134,.18);
+  --stl-shadow-glow-magenta:0 0 24px 5px rgba(224,64,251,.12);
+
+  --stl-text-glow-soft:   none;
+  --stl-text-glow-magenta:none;
+}
+
+/* ── 4. TYPOGRAPHY ────────────────────────────────────────────── */
+:root {
+  /* Families */
+  --stl-font-display: "Dela Gothic One", "Roboto Slab", serif;
+  --stl-font-serif:   "Roboto Slab", Georgia, serif;
+  --stl-font-sans:    "Roboto", system-ui, -apple-system, sans-serif;
+  --stl-font-action:  "Bebas Neue", "Impact", sans-serif;
+  --stl-font-mono:    ui-monospace, SFMono-Regular, Menlo, "Courier New", monospace;
+
+  /* Modular scale (ratio ≈ 1.25 Major Third) */
+  --stl-text-2xs: 0.625rem;   /*  10px */
+  --stl-text-xs:  0.75rem;    /*  12px */
+  --stl-text-sm:  0.875rem;   /*  14px */
+  --stl-text-base:1rem;       /*  16px */
+  --stl-text-lg:  1.125rem;   /*  18px */
+  --stl-text-xl:  1.25rem;    /*  20px */
+  --stl-text-2xl: 1.5rem;     /*  24px */
+  --stl-text-3xl: 1.875rem;   /*  30px */
+  --stl-text-4xl: 2.25rem;    /*  36px */
+  --stl-text-5xl: 3rem;       /*  48px */
+  --stl-text-6xl: 3.75rem;    /*  60px */
+  --stl-text-7xl: 4.5rem;     /*  72px */
+  --stl-text-8xl: 6rem;       /*  96px */
+
+  /* Leading */
+  --stl-leading-tight: 1.1;
+  --stl-leading-snug:  1.3;
+  --stl-leading-normal:1.5;
+  --stl-leading-relaxed:1.65;
+  --stl-leading-loose: 1.85;
+
+  /* Tracking */
+  --stl-tracking-tight:  -0.02em;
+  --stl-tracking-normal:  0;
+  --stl-tracking-wide:    0.04em;
+  --stl-tracking-wider:   0.08em;
+  --stl-tracking-widest:  0.14em;
+  --stl-tracking-action:  0.06em;   /* Bebas Neue buttons */
+
+  /* Font weights */
+  --stl-fw-light:   300;
+  --stl-fw-regular: 400;
+  --stl-fw-medium:  500;
+  --stl-fw-semibold:600;
+  --stl-fw-bold:    700;
+  --stl-fw-black:   900;
+}
+
+/* ── 5. SPACING ───────────────────────────────────────────────── */
+:root {
+  --stl-space-0:   0px;
+  --stl-space-px:  1px;
+  --stl-space-0-5: 2px;
+  --stl-space-1:   4px;
+  --stl-space-1-5: 6px;
+  --stl-space-2:   8px;
+  --stl-space-3:   12px;
+  --stl-space-4:   16px;
+  --stl-space-5:   20px;
+  --stl-space-6:   24px;
+  --stl-space-8:   32px;
+  --stl-space-10:  40px;
+  --stl-space-12:  48px;
+  --stl-space-16:  64px;
+  --stl-space-20:  80px;
+  --stl-space-24:  96px;
+  --stl-space-32:  128px;
+
+  /* Layout */
+  --stl-header-h:   48px;
+  --stl-footer-h:   60px;
+  --stl-container-max: 1280px;
+  --stl-content-max:   900px;
+}
+
+/* ── 6. RADII ─────────────────────────────────────────────────── */
+:root {
+  --stl-radius-none: 0;
+  --stl-radius-xs:   2px;
+  --stl-radius-sm:   4px;
+  --stl-radius-md:   6px;   /* buttons */
+  --stl-radius-lg:   8px;   /* cards */
+  --stl-radius-xl:   12px;  /* mobile cards, modals */
+  --stl-radius-2xl:  20px;
+  --stl-radius-3xl:  28px;
+  --stl-radius-full: 9999px; /* badges, pills */
+}
+
+/* ── 7. MOTION ────────────────────────────────────────────────── */
+:root {
+  --stl-dur-instant:  50ms;
+  --stl-dur-fast:     150ms;
+  --stl-dur-base:     220ms;
+  --stl-dur-slow:     350ms;
+  --stl-dur-hero:     600ms;
+  --stl-dur-hero-img: 15s;   /* background zoom */
+  --stl-dur-phrase:   4000ms;
+
+  --stl-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --stl-ease-decel:    cubic-bezier(0, 0, 0.2, 1);
+  --stl-ease-accel:    cubic-bezier(0.4, 0, 1, 1);
+  --stl-ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --stl-ease-smooth:   cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --stl-dur-instant:  0ms;
+    --stl-dur-fast:     0ms;
+    --stl-dur-base:     0ms;
+    --stl-dur-slow:     0ms;
+    --stl-dur-hero:     0ms;
+    --stl-dur-hero-img: 0ms;
+  }
+}
+
+/* ── 8. BASE RESETS + SEMANTIC STYLES ────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+body, .stl-body {
+  font-family:  var(--stl-font-sans);
+  font-size:    var(--stl-text-base);
+  font-weight:  var(--stl-fw-regular);
+  line-height:  var(--stl-leading-normal);
+  color:        var(--stl-fg);
+  background:   var(--stl-bg);
+  margin: 0; padding: 0;
+}
+
+/* ── Semantic type roles ──────────────────────────────────────── */
+
+.stl-display {
+  font-family:  var(--stl-font-display);
+  font-size:    clamp(var(--stl-text-5xl), 7vw, var(--stl-text-8xl));
+  line-height:  var(--stl-leading-tight);
+  letter-spacing: var(--stl-tracking-tight);
+  color:        var(--stl-fg);
+}
+
+.stl-h1 {
+  font-family:  var(--stl-font-display);
+  font-size:    clamp(var(--stl-text-4xl), 5vw, var(--stl-text-6xl));
+  line-height:  var(--stl-leading-tight);
+  color:        var(--stl-fg);
+}
+
+.stl-h2 {
+  font-family:  var(--stl-font-display);
+  font-size:    clamp(var(--stl-text-2xl), 3vw, var(--stl-text-4xl));
+  line-height:  var(--stl-leading-snug);
+  color:        var(--stl-fg);
+}
+
+.stl-h3 {
+  font-family:  var(--stl-font-serif);
+  font-size:    var(--stl-text-xl);
+  font-weight:  var(--stl-fw-bold);
+  line-height:  var(--stl-leading-snug);
+  color:        var(--stl-fg);
+}
+
+.stl-h4 {
+  font-family:  var(--stl-font-serif);
+  font-size:    var(--stl-text-lg);
+  font-weight:  var(--stl-fw-semibold);
+  color:        var(--stl-fg);
+}
+
+.stl-body-lg {
+  font-family:  var(--stl-font-serif);
+  font-size:    var(--stl-text-lg);
+  line-height:  var(--stl-leading-relaxed);
+  color:        var(--stl-fg);
+}
+
+.stl-body {
+  font-family:  var(--stl-font-sans);
+  font-size:    var(--stl-text-base);
+  line-height:  var(--stl-leading-normal);
+  color:        var(--stl-fg);
+}
+
+.stl-small {
+  font-family:  var(--stl-font-sans);
+  font-size:    var(--stl-text-sm);
+  line-height:  var(--stl-leading-normal);
+  color:        var(--stl-fg-muted);
+}
+
+.stl-caption {
+  font-family:  var(--stl-font-sans);
+  font-size:    var(--stl-text-xs);
+  line-height:  var(--stl-leading-normal);
+  color:        var(--stl-fg-faint);
+}
+
+.stl-eyebrow {
+  font-family:  var(--stl-font-action);
+  font-size:    var(--stl-text-sm);
+  letter-spacing: var(--stl-tracking-widest);
+  text-transform: uppercase;
+  color:        var(--stl-fg-muted);
+}
+
+.stl-action {
+  font-family:  var(--stl-font-action);
+  font-size:    var(--stl-text-lg);
+  letter-spacing: var(--stl-tracking-action);
+  text-transform: uppercase;
+  color:        var(--stl-fg);
+}
+
+.stl-label {
+  font-family:  var(--stl-font-serif);
+  font-size:    var(--stl-text-sm);
+  font-weight:  var(--stl-fw-medium);
+  color:        var(--stl-fg);
+}
+
+.stl-quote {
+  font-family:  var(--stl-font-serif);
+  font-size:    var(--stl-text-xl);
+  font-style:   italic;
+  line-height:  var(--stl-leading-relaxed);
+  color:        var(--stl-fg);
+  border-left:  3px solid var(--stl-accent-1);
+  padding-left: var(--stl-space-4);
+}
+
+.stl-price {
+  font-family:  var(--stl-font-action);
+  font-size:    var(--stl-text-2xl);
+  letter-spacing: var(--stl-tracking-wide);
+  color:        var(--stl-accent-1);
+}
+
+.stl-mono {
+  font-family:  var(--stl-font-mono);
+  font-size:    var(--stl-text-sm);
+  color:        var(--stl-fg-muted);
+}
+
+/* ── 9. COMPONENT CLASSES (globally reusable) ─────────────────── */
+
+/* Button — primary CTA */
+.stl-btn {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content:center;
+  gap:            var(--stl-space-2);
+  font-family:    var(--stl-font-action);
+  letter-spacing: var(--stl-tracking-action);
+  font-size:      var(--stl-text-base);
+  line-height:    1;
+  padding:        var(--stl-space-2) var(--stl-space-4);
+  border-radius:  var(--stl-radius-md);
+  border:         none;
+  cursor:         pointer;
+  white-space:    nowrap;
+  transition:
+    transform      var(--stl-dur-slow) var(--stl-ease-spring),
+    background     var(--stl-dur-base) var(--stl-ease-standard),
+    color          var(--stl-dur-base) var(--stl-ease-standard),
+    box-shadow     var(--stl-dur-slow) var(--stl-ease-standard);
+  background:     var(--stl-accent-1);
+  color:          var(--stl-fg-on-amber);
+}
+.stl-btn:hover {
+  background: var(--stl-surface-3);
+  color:      var(--stl-fg);
+  transform:  scale(1.05);
+  box-shadow: var(--stl-shadow-lg), var(--stl-shadow-glow-amber);
+}
+.stl-btn:active  { transform: scale(0.95); }
+.stl-btn:disabled{ opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.stl-btn:focus-visible {
+  outline:    none;
+  box-shadow: 0 0 0 3px var(--stl-surface-1), 0 0 0 5px var(--stl-accent-1);
+}
+
+/* Button — secondary (cyan outline) */
+.stl-btn-secondary {
+  background:  transparent;
+  color:       var(--stl-accent-2);
+  border:      2px solid var(--stl-accent-2);
+  font-family: var(--stl-font-action);
+  letter-spacing: var(--stl-tracking-action);
+  font-size:   var(--stl-text-base);
+  padding:     calc(var(--stl-space-2) - 2px) calc(var(--stl-space-4) - 2px);
+  border-radius: var(--stl-radius-md);
+  cursor:      pointer;
+  transition:  background var(--stl-dur-base), color var(--stl-dur-base), box-shadow var(--stl-dur-slow);
+}
+.stl-btn-secondary:hover {
+  background:  var(--stl-accent-2);
+  color:       var(--stl-fg-on-cyan);
+  box-shadow:  var(--stl-shadow-glow-cyan);
+}
+
+/* Button — ghost */
+.stl-btn-ghost {
+  background:  transparent;
+  color:       var(--stl-fg);
+  border:      none;
+  font-family: var(--stl-font-action);
+  letter-spacing: var(--stl-tracking-action);
+  padding:     var(--stl-space-2) var(--stl-space-4);
+  border-radius: var(--stl-radius-md);
+  cursor:      pointer;
+  transition:  background var(--stl-dur-base), color var(--stl-dur-base);
+}
+.stl-btn-ghost:hover { background: var(--stl-surface-2); }
+
+/* Card */
+.stl-card {
+  background:   var(--stl-surface-1);
+  border-radius:var(--stl-radius-lg);
+  box-shadow:   var(--stl-shadow-lg);
+  overflow:     hidden;
+  transition:   transform var(--stl-dur-slow) var(--stl-ease-decel),
+                box-shadow var(--stl-dur-slow) var(--stl-ease-decel);
+}
+.stl-card:hover {
+  transform:  translateY(-5px) scale(1.02);
+  box-shadow: var(--stl-shadow-xl), var(--stl-shadow-glow-amber);
+}
+
+/* Input */
+.stl-input {
+  width:         100%;
+  padding:       var(--stl-space-3) var(--stl-space-4);
+  border-radius: var(--stl-radius-md);
+  background:    var(--stl-surface-2);
+  color:         var(--stl-fg);
+  border:        2px solid transparent;
+  font-family:   var(--stl-font-sans);
+  font-size:     var(--stl-text-base);
+  transition:    border-color var(--stl-dur-base), box-shadow var(--stl-dur-base);
+  outline:       none;
+}
+.stl-input::placeholder { color: var(--stl-fg-faint); }
+.stl-input:focus {
+  border-color: var(--stl-accent-1);
+  box-shadow:   0 0 0 3px var(--stl-accent-glow);
+}
+.stl-input.has-error {
+  border-color: var(--stl-danger);
+  box-shadow:   0 0 0 3px rgba(220,38,38,.2);
+}
+
+/* Badge / chip */
+.stl-badge {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--stl-space-1);
+  padding:        var(--stl-space-0-5) var(--stl-space-2);
+  border-radius:  var(--stl-radius-full);
+  font-family:    var(--stl-font-sans);
+  font-size:      var(--stl-text-xs);
+  font-weight:    var(--stl-fw-semibold);
+  background:     var(--stl-surface-3);
+  color:          var(--stl-fg);
+}
+.stl-badge-amber { background: rgba(255,179,71,.2); color: var(--stl-amber-300); }
+.stl-badge-cyan  { background: rgba(56,189,248,.15); color: var(--stl-cyan-300); }
+.stl-badge-green { background: rgba(22,163,74,.15); color: var(--stl-green-400); }
+.stl-badge-red   { background: rgba(220,38,38,.15); color: var(--stl-red-400); }
+
+/* Divider */
+.stl-divider {
+  border:     none;
+  border-top: 1px solid var(--stl-border);
+  margin:     var(--stl-space-4) 0;
+}
+
+/* Focus ring utility */
+.stl-focus:focus-visible {
+  outline:    none;
+  box-shadow: 0 0 0 2px var(--stl-surface-1), 0 0 0 4px var(--stl-accent-1);
+}
+
+/* Skip link */
+.stl-skip-link {
+  position:   absolute;
+  top:        -9999px; left: 0;
+  z-index:    9999;
+  padding:    var(--stl-space-2) var(--stl-space-4);
+  background: var(--stl-accent-1);
+  color:      var(--stl-fg-on-amber);
+  font-family:var(--stl-font-action);
+  border-radius: var(--stl-radius-md);
+}
+.stl-skip-link:focus { top: var(--stl-space-3); }
+
+/* ── 10. BRAND MOTION ANIMATIONS ─────────────────────────────── */
+@keyframes stl-zoom-hero {
+  0%   { transform: scale(1)    translateY(0); }
+  50%  { transform: scale(1.25) translateY(-10px); }
+  100% { transform: scale(1)    translateY(0); }
+}
+@keyframes stl-neon-hero {
+  0%, 100% { text-shadow: var(--stl-text-glow-soft); }
+  50%      { text-shadow: var(--stl-text-glow-magenta); }
+}
+@keyframes stl-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes stl-shimmer {
+  0%   { left: -100%; }
+  100% { left: 150%; }
+}
+@keyframes stl-pulse-glow {
+  0%, 100% { box-shadow: var(--stl-shadow-glow-amber); }
+  50%      { box-shadow: var(--stl-shadow-glow-amber), var(--stl-shadow-glow-magenta); }
+}
+@keyframes stl-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .3; transform: scale(.7); }
+}
+@keyframes stl-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes stl-rotate-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.stl-animate-hero-img { animation: stl-zoom-hero var(--stl-dur-hero-img) ease-in-out infinite; }
+.stl-animate-neon:hover { animation: stl-neon-hero 2s ease-in-out infinite alternate; }
+.stl-animate-fade-up { animation: stl-fade-up var(--stl-dur-hero) var(--stl-ease-decel) both; }
+.stl-animate-float { animation: stl-float 3s ease-in-out infinite; }
+.stl-animate-pulse-glow { animation: stl-pulse-glow 2.5s ease-in-out infinite; }

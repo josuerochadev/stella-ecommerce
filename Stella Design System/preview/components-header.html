@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stella — Header & nav</title>
+<link rel="stylesheet" href="_base.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  .card { padding: 0; gap: 0; min-height: 200px; }
+  header {
+    background: linear-gradient(90deg, #1E1326 0%, #3D2A54 100%);
+    color:#AEC9FF; height: 48px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 40px;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / .3);
+  }
+  header a, header span, header button { color:#AEC9FF; text-decoration: none; cursor:pointer; }
+  header a:hover, header button:hover { color: #fff; }
+  .left, .right { display:flex; align-items:center; gap: 14px; }
+  .right i { font-size: 18px; position: relative; }
+  .badge {
+    position:absolute; top:-8px; right:-8px;
+    background:#dc2626; color:#fff; border-radius:50%;
+    width: 18px; height: 18px; font-size: 10px;
+    display:flex; align-items:center; justify-content:center; font-weight: 700;
+  }
+  .icon-with-badge { position: relative; }
+  .body { padding: 28px 40px; }
+  .body h1 { font-family: 'Dela Gothic One', serif; font-size: 36px; margin: 0 0 6px; color: #AEC9FF; }
+  .body .tagline { font-family: 'Roboto Slab', serif; font-size: 16px; color: rgba(174,201,255,.7); }
+</style>
+</head>
+<body>
+<div class="card">
+  <header>
+    <div class="left">
+      <i class="fas fa-house" style="font-size:18px"></i>
+      <span style="font-family:'Roboto Slab',serif;font-size:16px">Catalogue</span>
+    </div>
+    <div class="right">
+      <i class="fas fa-magnifying-glass"></i>
+      <i class="fas fa-store"></i>
+      <span class="icon-with-badge"><i class="fas fa-cart-shopping"></i><span class="badge">2</span></span>
+      <span class="icon-with-badge"><i class="fas fa-heart"></i><span class="badge">3</span></span>
+      <i class="fas fa-user"></i>
+    </div>
+  </header>
+  <div class="body">
+    <h1>Catalogue</h1>
+    <span class="tagline">Illuminez votre vie</span>
+  </div>
+</div>
+</body>
+</html>

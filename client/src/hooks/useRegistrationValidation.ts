@@ -1,9 +1,9 @@
 // client/src/hooks/useRegistrationValidation.ts
 // Responsabilité unique : Validation des données d'inscription avec gestion des erreurs
 
-import { useCallback } from "react";
 import { FormValidationService } from "@/services/validationService";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { useCallback } from "react";
 
 interface RegistrationData {
   firstName: string;
@@ -42,13 +42,10 @@ export const useRegistrationValidation = () => {
           firstName: "Prénom",
           lastName: "Nom",
           email: "Email",
-          password: "Mot de passe"
+          password: "Mot de passe",
         };
 
-        showError(
-          `${fieldLabels[firstField] || firstField} invalide`,
-          firstError
-        );
+        showError(`${fieldLabels[firstField] || firstField} invalide`, firstError);
 
         return { isValid: false };
       }
@@ -58,7 +55,7 @@ export const useRegistrationValidation = () => {
         sanitizedData: validationResult.sanitizedData,
       };
     },
-    [showError]
+    [showError],
   );
 
   return {

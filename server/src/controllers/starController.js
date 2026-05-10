@@ -2,9 +2,10 @@
 // Contrôleur pour la gestion des étoiles
 // Responsabilité unique : orchestration du StarRepository et gestion des erreurs HTTP
 
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
-const { getService } = require('../container/containerConfig');
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
+const { getService } = require("../container/containerConfig");
+const cacheService = require("../utils/cacheService");
 
 /**
  * Contrôleur des étoiles utilisant l'injection de dépendances
@@ -18,16 +19,24 @@ class StarController {
   /**
    * Récupère toutes les étoiles
    */
-  getAllStars = async (_, res, next) => {
+  getAllStars = async (req, res, next) => {
     try {
-      const stars = await this.starRepository.findAll();
+      const page = Math.max(1, Number.parseInt(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, Number.parseInt(req.query.limit) || 50));
+      const offset = (page - 1) * limit;
+      const cacheKey = `stars:all:${page}:${limit}`;
+
+      const stars = await cacheService.getOrSet(cacheKey, () =>
+        this.starRepository.findAll({}, { limit, offset, order: [["name", "ASC"]] }),
+      );
 
       res.json({
         success: true,
-        data: stars
+        data: stars,
+        pagination: { page, limit, offset },
       });
     } catch (error) {
-      logger.error('Error in getAllStars:', error);
+      logger.error("Error in getAllStars:", error);
       next(new AppError(`Error retrieving stars: ${error.message}`, 500));
     }
   };
@@ -37,24 +46,27 @@ class StarController {
    */
   getStarById = async (req, res, next) => {
     try {
-      const starId = parseInt(req.params.starid);
+      const starId = Number.parseInt(req.params.starid);
 
-      if (!starId || isNaN(starId)) {
-        return next(new AppError('Invalid star ID', 400));
+      if (!starId || Number.isNaN(starId)) {
+        return next(new AppError("Invalid star ID", 400));
       }
 
-      const star = await this.starRepository.findById(starId);
+      const cacheKey = `stars:id:${starId}`;
+      const star = await cacheService.getOrSet(cacheKey, () =>
+        this.starRepository.findById(starId),
+      );
 
       if (!star) {
-        return next(new AppError('Star not found', 404));
+        return next(new AppError("Star not found", 404));
       }
 
       res.json({
         success: true,
-        data: star
+        data: star,
       });
     } catch (error) {
-      logger.error('Error in getStarById:', error);
+      logger.error("Error in getStarById:", error);
       next(new AppError(`Error retrieving star: ${error.message}`, 500));
     }
   };
@@ -69,24 +81,24 @@ class StarController {
       if (!q) {
         return res.status(400).json({
           success: false,
-          error: "Query parameter 'q' is required"
+          error: "Query parameter 'q' is required",
         });
       }
 
       const stars = await this.starRepository.searchStars({
         search: q,
-        limit: parseInt(limit),
-        orderBy: 'name',
-        orderDirection: 'ASC'
+        limit: Number.parseInt(limit),
+        orderBy: "name",
+        orderDirection: "ASC",
       });
 
       res.json({
         success: true,
         data: stars.rows,
-        count: stars.count
+        count: stars.count,
       });
     } catch (error) {
-      logger.error('Error in searchStars:', error);
+      logger.error("Error in searchStars:", error);
       next(new AppError(`Error searching for stars: ${error.message}`, 500));
     }
   };
@@ -106,54 +118,53 @@ class StarController {
         maxDistance,
         minLuminosity,
         maxLuminosity,
-        sortBy = 'name',
-        sortOrder = 'ASC',
-        limit = 50
+        sortBy = "name",
+        sortOrder = "ASC",
+        limit = 50,
       } = req.query;
 
       // Construire les critères de recherche
       const searchCriteria = {
-        limit: parseInt(limit),
+        limit: Number.parseInt(limit),
         orderBy: sortBy,
-        orderDirection: sortOrder.toUpperCase()
+        orderDirection: sortOrder.toUpperCase(),
       };
 
       // Support constellations multiples
       if (constellation) {
         const constellations = Array.isArray(constellation)
           ? constellation
-          : constellation.split(',').map(c => c.trim());
+          : constellation.split(",").map((c) => c.trim());
 
-        searchCriteria.constellation = constellations.length === 1
-          ? constellations[0]
-          : constellations;
+        searchCriteria.constellation =
+          constellations.length === 1 ? constellations[0] : constellations;
       }
 
       // Filtres de prix
-      if (minPrice) searchCriteria.minPrice = parseFloat(minPrice);
-      if (maxPrice) searchCriteria.maxPrice = parseFloat(maxPrice);
+      if (minPrice) searchCriteria.minPrice = Number.parseFloat(minPrice);
+      if (maxPrice) searchCriteria.maxPrice = Number.parseFloat(maxPrice);
 
       // Filtres de magnitude
-      if (minMagnitude) searchCriteria.minMagnitude = parseFloat(minMagnitude);
-      if (maxMagnitude) searchCriteria.maxMagnitude = parseFloat(maxMagnitude);
+      if (minMagnitude) searchCriteria.minMagnitude = Number.parseFloat(minMagnitude);
+      if (maxMagnitude) searchCriteria.maxMagnitude = Number.parseFloat(maxMagnitude);
 
       // Filtres de distance
-      if (minDistance) searchCriteria.minDistance = parseFloat(minDistance);
-      if (maxDistance) searchCriteria.maxDistance = parseFloat(maxDistance);
+      if (minDistance) searchCriteria.minDistance = Number.parseFloat(minDistance);
+      if (maxDistance) searchCriteria.maxDistance = Number.parseFloat(maxDistance);
 
       // Filtres de luminosité
-      if (minLuminosity) searchCriteria.minLuminosity = parseFloat(minLuminosity);
-      if (maxLuminosity) searchCriteria.maxLuminosity = parseFloat(maxLuminosity);
+      if (minLuminosity) searchCriteria.minLuminosity = Number.parseFloat(minLuminosity);
+      if (maxLuminosity) searchCriteria.maxLuminosity = Number.parseFloat(maxLuminosity);
 
       const result = await this.starRepository.searchStars(searchCriteria);
 
       res.json({
         success: true,
         data: result.rows,
-        count: result.count
+        count: result.count,
       });
     } catch (error) {
-      logger.error('Error in filterStars function:', error);
+      logger.error("Error in filterStars function:", error);
       next(new AppError(`Error filtering stars: ${error.message}`, 500));
     }
   };
@@ -161,23 +172,25 @@ class StarController {
   /**
    * Récupère les constellations uniques
    */
-  getConstellations = async (req, res, next) => {
+  getConstellations = async (_req, res, next) => {
     try {
-      const constellations = await this.starRepository.getUniqueConstellations();
+      const constellations = await cacheService.getOrSet("stars:constellations", () =>
+        this.starRepository.getUniqueConstellations(),
+      );
 
       res.json({
         success: true,
-        data: constellations
+        data: constellations,
       });
     } catch (error) {
-      logger.error('Error in getConstellations:', error);
+      logger.error("Error in getConstellations:", error);
       next(new AppError(`Error retrieving constellations: ${error.message}`, 500));
     }
   };
 }
 
 // Instance du contrôleur avec injection de dépendances
-const starRepository = getService('starRepository');
+const starRepository = getService("starRepository");
 const starControllerInstance = new StarController(starRepository);
 
 // Export des méthodes pour compatibilité avec les routes existantes
@@ -187,5 +200,5 @@ module.exports = {
   searchStars: starControllerInstance.searchStars,
   filterStars: starControllerInstance.filterStars,
   getConstellations: starControllerInstance.getConstellations,
-  StarController
+  StarController,
 };

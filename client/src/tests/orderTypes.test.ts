@@ -13,13 +13,7 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   cancelled: "Annulee",
 };
 
-const ALL_STATUSES: OrderStatus[] = [
-  "pending",
-  "processing",
-  "shipped",
-  "delivered",
-  "cancelled",
-];
+const ALL_STATUSES: OrderStatus[] = ["pending", "processing", "shipped", "delivered", "cancelled"];
 
 describe("Order status mapping", () => {
   it("has a label for every status", () => {

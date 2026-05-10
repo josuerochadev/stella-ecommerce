@@ -1,0 +1,37 @@
+/* Stella preview-card base — used by every card in /preview/.
+   Gives every card a consistent surface, padding, and tokens.
+   Each card is sized ~700px wide and 150-400px tall. */
+
+@import url("../colors_and_type.css");
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--stl-bg-default);
+  color: var(--stl-text);
+  font-family: var(--stl-font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+.card {
+  width: 100%;
+  min-height: 100%;
+  padding: 24px;
+  background: var(--stl-bg-default);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.label {
+  font-family: var(--stl-font-action);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(174, 201, 255, 0.55);
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: rgba(174, 201, 255, 0.7);
+}

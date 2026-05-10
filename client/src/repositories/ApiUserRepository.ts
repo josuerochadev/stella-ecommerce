@@ -2,9 +2,9 @@
 // Implémentation du repository utilisateur utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations utilisateur
 
+import type { ActivityItem, UserRepository } from "@/interfaces/UserRepository";
 import { UserService } from "@/services/userService";
-import type { UserRepository, ActivityItem } from "@/interfaces/UserRepository";
-import type { User, UserProfileData, ApiResponse } from "@/types";
+import type { ApiResponse, User, UserProfileData } from "@/types";
 import { createFormattedError } from "@/utils/errorHelpers";
 
 /**
@@ -21,7 +21,7 @@ export class ApiUserRepository implements UserRepository {
     try {
       return await UserService.getProfile();
     } catch (error) {
-      throw createFormattedError(error, 'Failed to fetch user profile');
+      throw createFormattedError(error, "Failed to fetch user profile");
     }
   }
 
@@ -34,12 +34,12 @@ export class ApiUserRepository implements UserRepository {
   async updateProfile(userData: UserProfileData): Promise<ApiResponse<User>> {
     try {
       if (!userData || Object.keys(userData).length === 0) {
-        throw new Error('User data cannot be empty');
+        throw new Error("User data cannot be empty");
       }
 
       return await UserService.updateProfile(userData);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to update user profile');
+      throw createFormattedError(error, "Failed to update user profile");
     }
   }
 
@@ -52,7 +52,7 @@ export class ApiUserRepository implements UserRepository {
     try {
       return await UserService.deleteAccount();
     } catch (error) {
-      throw createFormattedError(error, 'Failed to delete user account');
+      throw createFormattedError(error, "Failed to delete user account");
     }
   }
 
@@ -66,16 +66,16 @@ export class ApiUserRepository implements UserRepository {
   async changePassword(currentPassword: string, newPassword: string): Promise<ApiResponse<null>> {
     try {
       if (!currentPassword || !newPassword) {
-        throw new Error('Current password and new password are required');
+        throw new Error("Current password and new password are required");
       }
 
       if (currentPassword === newPassword) {
-        throw new Error('New password must be different from current password');
+        throw new Error("New password must be different from current password");
       }
 
       return await UserService.changePassword({ currentPassword, newPassword });
     } catch (error) {
-      throw createFormattedError(error, 'Failed to change password');
+      throw createFormattedError(error, "Failed to change password");
     }
   }
 
@@ -92,12 +92,12 @@ export class ApiUserRepository implements UserRepository {
   }): Promise<ApiResponse<User>> {
     try {
       if (!preferences || Object.keys(preferences).length === 0) {
-        throw new Error('Preferences cannot be empty');
+        throw new Error("Preferences cannot be empty");
       }
 
       return await UserService.updatePreferences(preferences);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to update preferences');
+      throw createFormattedError(error, "Failed to update preferences");
     }
   }
 
@@ -115,7 +115,7 @@ export class ApiUserRepository implements UserRepository {
     try {
       return await UserService.getActivityHistory(params);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to fetch activity history');
+      throw createFormattedError(error, "Failed to fetch activity history");
     }
   }
 
@@ -128,12 +128,12 @@ export class ApiUserRepository implements UserRepository {
   async checkUsernameAvailability(username: string): Promise<{ available: boolean }> {
     try {
       if (!username || username.trim().length < 3) {
-        throw new Error('Username must be at least 3 characters long');
+        throw new Error("Username must be at least 3 characters long");
       }
 
       return await UserService.checkUsernameAvailability(username);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to check username availability');
+      throw createFormattedError(error, "Failed to check username availability");
     }
   }
 
@@ -145,13 +145,13 @@ export class ApiUserRepository implements UserRepository {
    */
   async requestPasswordReset(email: string): Promise<ApiResponse<null>> {
     try {
-      if (!email || !email.includes('@')) {
-        throw new Error('Valid email is required');
+      if (!email || !email.includes("@")) {
+        throw new Error("Valid email is required");
       }
 
       return await UserService.requestPasswordReset(email);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to request password reset');
+      throw createFormattedError(error, "Failed to request password reset");
     }
   }
 
@@ -165,12 +165,12 @@ export class ApiUserRepository implements UserRepository {
   async confirmPasswordReset(token: string, newPassword: string): Promise<ApiResponse<null>> {
     try {
       if (!token || !newPassword) {
-        throw new Error('Token and new password are required');
+        throw new Error("Token and new password are required");
       }
 
       return await UserService.confirmPasswordReset({ token, newPassword });
     } catch (error) {
-      throw createFormattedError(error, 'Failed to confirm password reset');
+      throw createFormattedError(error, "Failed to confirm password reset");
     }
   }
 }

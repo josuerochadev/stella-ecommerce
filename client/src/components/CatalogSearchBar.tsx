@@ -1,8 +1,8 @@
 // client/src/components/CatalogSearchBar.tsx
 // Responsabilité unique : Barre de recherche du catalogue avec suggestions
 
-import { SearchIcon } from "@/utils/icons";
 import type { Star } from "@/types";
+import { SearchIcon } from "@/utils/icons";
 
 interface CatalogSearchBarProps {
   query: string;
@@ -44,7 +44,10 @@ const CatalogSearchBar: React.FC<CatalogSearchBarProps> = ({
             placeholder="Rechercher des étoiles par nom, constellation..."
             className="w-full p-4 pr-12 text-lg rounded-l-lg border-2 border-primary focus:outline-none focus:border-special bg-secondary text-text"
           />
-          <SearchIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text" size={20} />
+          <SearchIcon
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text"
+            size={20}
+          />
 
           {/* Dropdown des suggestions */}
           {showSuggestions && suggestions.length > 0 && (
@@ -54,7 +57,7 @@ const CatalogSearchBar: React.FC<CatalogSearchBarProps> = ({
                   key={star.starid}
                   type="button"
                   onClick={() => onSuggestionClick(star)}
-                  onKeyDown={(e) => e.key === 'Enter' && onSuggestionClick(star)}
+                  onKeyDown={(e) => e.key === "Enter" && onSuggestionClick(star)}
                   className="w-full p-3 hover:bg-primary cursor-pointer flex justify-between items-center text-left"
                 >
                   <span className="text-text">{star.name}</span>

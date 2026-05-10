@@ -1,9 +1,9 @@
 // client/src/services/wishlistService.ts
 // Responsabilité unique : Gestion de la liste d'envies
 
-import { httpClient } from "./httpClient";
+import type { AddToWishlistResponse, GetWishlistResponse } from "@/types";
 import { transformWishlistItems } from "@/utils/dataTransformers";
-import type { GetWishlistResponse, AddToWishlistResponse } from "@/types";
+import { httpClient } from "./httpClient";
 
 /**
  * Interface pour la réponse de suppression de wishlist
@@ -47,7 +47,9 @@ export class WishlistService {
    * Responsabilité : Suppression d'un article spécifique
    */
   static async removeItem(starId: number): Promise<RemoveFromWishlistResponse> {
-    const response = await httpClient.delete<RemoveFromWishlistResponse>(`/wishlist/remove/${starId}`);
+    const response = await httpClient.delete<RemoveFromWishlistResponse>(
+      `/wishlist/remove/${starId}`,
+    );
     return response.data;
   }
 
@@ -64,7 +66,10 @@ export class WishlistService {
    * Déplacer un article de la wishlist vers le panier
    * Responsabilité : Transfer entre collections
    */
-  static async moveToCart(starId: number, quantity: number = 1): Promise<{
+  static async moveToCart(
+    starId: number,
+    quantity = 1,
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
@@ -97,7 +102,9 @@ export class WishlistService {
    * Responsabilité : Suppression de tous les articles
    */
   static async clearWishlist(): Promise<{ message: string; success: boolean }> {
-    const response = await httpClient.delete<{ message: string; success: boolean }>("/wishlist/clear");
+    const response = await httpClient.delete<{ message: string; success: boolean }>(
+      "/wishlist/clear",
+    );
     return response.data;
   }
 

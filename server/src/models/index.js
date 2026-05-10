@@ -5,9 +5,7 @@ const { Sequelize } = require("sequelize");
 const env = process.env.NODE_ENV || "development";
 const allConfig = require("../config/database.js");
 const testConfig = require("../config/database.test.config.js");
-const config = env === "test"
-  ? testConfig.test
-  : allConfig[env] || allConfig.development;
+const config = env === "test" ? testConfig.test : allConfig[env] || allConfig.development;
 
 const sequelize = process.env.DATABASE_URL
   ? new Sequelize(process.env.DATABASE_URL, {
@@ -26,8 +24,9 @@ const sequelize = process.env.DATABASE_URL
 
 const models = {};
 
-const files = fs.readdirSync(__dirname)
-  .filter(file => file.indexOf(".") !== 0 && file !== "index.js" && file.slice(-3) === ".js");
+const files = fs
+  .readdirSync(__dirname)
+  .filter((file) => file.indexOf(".") !== 0 && file !== "index.js" && file.slice(-3) === ".js");
 
 for (const file of files) {
   const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);

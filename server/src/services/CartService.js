@@ -2,7 +2,7 @@
 // Service métier pour la gestion du panier
 // Responsabilité unique : logique métier du panier
 
-const { sequelize } = require('../models');
+const { sequelize } = require("../models");
 
 /**
  * Service pour la gestion du panier
@@ -28,8 +28,8 @@ class CartService {
    */
   async getOrCreateCart(userId, transaction = null) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       let cart = await this.cartRepository.findByUserId(userId);
@@ -51,8 +51,8 @@ class CartService {
    */
   async getCart(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const cart = await this.cartRepository.findByUserId(userId);
@@ -60,7 +60,7 @@ class CartService {
       // Retourner un panier vide si aucun panier n'existe
       if (!cart) {
         return {
-          cartItems: []
+          cartItems: [],
         };
       }
 
@@ -81,17 +81,17 @@ class CartService {
     try {
       // Validation
       if (!userId || !starId) {
-        throw new Error('User ID and Star ID are required');
+        throw new Error("User ID and Star ID are required");
       }
 
-      if (typeof quantity !== 'number' || quantity < 1) {
-        throw new Error('Quantity must be a positive number');
+      if (typeof quantity !== "number" || quantity < 1) {
+        throw new Error("Quantity must be a positive number");
       }
 
       // Vérifier que l'étoile existe
       const starExists = await this.starRepository.exists(starId);
       if (!starExists) {
-        throw new Error('Star not found');
+        throw new Error("Star not found");
       }
 
       // Transaction pour éviter la race condition check-then-act
@@ -105,11 +105,14 @@ class CartService {
           return await this.cartRepository.updateCartItemQuantity(existingItem.id, newQuantity, t);
         }
 
-        return await this.cartRepository.addCartItem({
-          cartId: cart.id,
-          starId,
-          quantity
-        }, t);
+        return await this.cartRepository.addCartItem(
+          {
+            cartId: cart.id,
+            starId,
+            quantity,
+          },
+          t,
+        );
       });
     } catch (error) {
       throw new Error(`Failed to add to cart: ${error.message}`);
@@ -127,23 +130,23 @@ class CartService {
     try {
       // Validation
       if (!userId || !cartItemId) {
-        throw new Error('User ID and Cart Item ID are required');
+        throw new Error("User ID and Cart Item ID are required");
       }
 
-      if (typeof quantity !== 'number' || quantity < 1) {
-        throw new Error('Quantity must be a positive number');
+      if (typeof quantity !== "number" || quantity < 1) {
+        throw new Error("Quantity must be a positive number");
       }
 
       // Vérifier que le panier appartient à l'utilisateur
       const cart = await this.cartRepository.findByUserId(userId);
       if (!cart) {
-        throw new Error('Cart not found');
+        throw new Error("Cart not found");
       }
 
       // Vérifier que l'item appartient au panier
-      const cartItem = cart.cartItems?.find(item => item.id === cartItemId);
+      const cartItem = cart.cartItems?.find((item) => item.id === cartItemId);
       if (!cartItem) {
-        throw new Error('Cart item not found');
+        throw new Error("Cart item not found");
       }
 
       // Mettre à jour la quantité
@@ -163,19 +166,19 @@ class CartService {
     try {
       // Validation
       if (!userId || !cartItemId) {
-        throw new Error('User ID and Cart Item ID are required');
+        throw new Error("User ID and Cart Item ID are required");
       }
 
       // Vérifier que le panier appartient à l'utilisateur
       const cart = await this.cartRepository.findByUserId(userId);
       if (!cart) {
-        throw new Error('Cart not found');
+        throw new Error("Cart not found");
       }
 
       // Vérifier que l'item appartient au panier
-      const cartItem = cart.cartItems?.find(item => item.id === cartItemId);
+      const cartItem = cart.cartItems?.find((item) => item.id === cartItemId);
       if (!cartItem) {
-        throw new Error('Cart item not found');
+        throw new Error("Cart item not found");
       }
 
       // Supprimer l'item
@@ -193,8 +196,8 @@ class CartService {
    */
   async clearCart(userId, transaction = null) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const cart = await this.cartRepository.findByUserId(userId);
@@ -216,8 +219,8 @@ class CartService {
    */
   async calculateCartTotal(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const cart = await this.cartRepository.findByUserId(userId);
@@ -228,7 +231,7 @@ class CartService {
 
       return cart.cartItems.reduce((total, item) => {
         const itemPrice = item.Star?.price || 0;
-        return total + (itemPrice * item.quantity);
+        return total + itemPrice * item.quantity;
       }, 0);
     } catch (error) {
       throw new Error(`Failed to calculate cart total: ${error.message}`);
@@ -242,8 +245,8 @@ class CartService {
    */
   async getCartItemCount(userId) {
     try {
-      if (!userId || typeof userId !== 'number') {
-        throw new Error('User ID must be a valid number');
+      if (!userId || typeof userId !== "number") {
+        throw new Error("User ID must be a valid number");
       }
 
       const cart = await this.cartRepository.findByUserId(userId);
@@ -269,7 +272,7 @@ class CartService {
       const errors = [];
 
       if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
-        errors.push('Cart is empty');
+        errors.push("Cart is empty");
         return { valid: false, errors, cart: null };
       }
 
@@ -283,7 +286,7 @@ class CartService {
       return {
         valid: errors.length === 0,
         errors,
-        cart
+        cart,
       };
     } catch (error) {
       throw new Error(`Failed to validate cart: ${error.message}`);

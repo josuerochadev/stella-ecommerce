@@ -30,11 +30,10 @@ services:
       DB_DATABASE: stella_ecommerce
       DB_DIALECT: postgres
       JWT_SECRET: dev_jwt_secret_change_in_production
+      FRONTEND_URL: http://localhost:3001
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./server/src:/app/src
 
   client:
     build:

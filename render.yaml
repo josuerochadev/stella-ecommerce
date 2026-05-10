@@ -41,6 +41,9 @@ services:
         generateValue: true
       - key: FRONTEND_URL
         sync: false
+      - key: SENTRY_DSN
+        sync: false
+    healthCheckPath: /api/health
 
   - type: web
     name: stella-client

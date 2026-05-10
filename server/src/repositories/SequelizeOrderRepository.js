@@ -2,10 +2,10 @@
 // Implémentation du repository commande avec Sequelize
 // Responsabilité unique : opérations de persistance des données commande
 
-const { Order, OrderItem, Star, User } = require('../models');
-const { IOrderRepository } = require('../interfaces/IOrderRepository');
-const { Op } = require('sequelize');
-const { validateId } = require('../utils/validators');
+const { Order, OrderItem, Star, User } = require("../models");
+const { IOrderRepository } = require("../interfaces/IOrderRepository");
+const { Op } = require("sequelize");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les commandes utilisant Sequelize ORM
@@ -31,15 +31,15 @@ class SequelizeOrderRepository extends IOrderRepository {
         include: [
           {
             model: OrderItem,
-            as: 'OrderItems',
-            include: [{ model: Star, as: 'Star' }]
+            as: "OrderItems",
+            include: [{ model: Star, as: "Star" }],
           },
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName', 'email']
-          }
-        ]
+            as: "User",
+            attributes: ["id", "firstName", "lastName", "email"],
+          },
+        ],
       });
 
       return order ? order.toJSON() : null;
@@ -72,21 +72,21 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async findByUserId(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const orders = await this.Order.findAll({
         where: { userId },
         include: [
           {
             model: OrderItem,
-            as: 'OrderItems',
-            include: [{ model: Star, as: 'Star' }]
-          }
+            as: "OrderItems",
+            include: [{ model: Star, as: "Star" }],
+          },
         ],
-        order: [['createdAt', 'DESC']]
+        order: [["createdAt", "DESC"]],
       });
 
-      return orders.map(order => order.toJSON());
+      return orders.map((order) => order.toJSON());
     } catch (error) {
       throw new Error(`Failed to find orders by user ID: ${error.message}`);
     }
@@ -124,13 +124,13 @@ class SequelizeOrderRepository extends IOrderRepository {
     try {
       validateId(id);
 
-      if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Update data must be an object');
+      if (!updateData || typeof updateData !== "object") {
+        throw new Error("Update data must be an object");
       }
 
       const options = {
         where: { id },
-        returning: true
+        returning: true,
       };
 
       if (transaction) {
@@ -140,7 +140,7 @@ class SequelizeOrderRepository extends IOrderRepository {
       const [updatedCount] = await this.Order.update(updateData, options);
 
       if (updatedCount === 0) {
-        throw new Error('Order not found or no changes made');
+        throw new Error("Order not found or no changes made");
       }
 
       const updatedOrder = await this.findById(id);
@@ -175,7 +175,7 @@ class SequelizeOrderRepository extends IOrderRepository {
       validateId(id);
 
       const deletedCount = await this.Order.destroy({
-        where: { id }
+        where: { id },
       });
 
       return deletedCount > 0;
@@ -213,20 +213,20 @@ class SequelizeOrderRepository extends IOrderRepository {
         include: [
           {
             model: OrderItem,
-            as: 'OrderItems',
-            include: [{ model: Star, as: 'Star' }]
+            as: "OrderItems",
+            include: [{ model: Star, as: "Star" }],
           },
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName', 'email']
-          }
+            as: "User",
+            attributes: ["id", "firstName", "lastName", "email"],
+          },
         ],
-        order: [['createdAt', 'DESC']],
-        ...options
+        order: [["createdAt", "DESC"]],
+        ...options,
       });
 
-      return orders.map(order => order.toJSON());
+      return orders.map((order) => order.toJSON());
     } catch (error) {
       throw new Error(`Failed to find orders: ${error.message}`);
     }
@@ -240,8 +240,8 @@ class SequelizeOrderRepository extends IOrderRepository {
    */
   async findAndCountAll(options) {
     try {
-      if (!options || typeof options !== 'object') {
-        throw new Error('Options must be an object');
+      if (!options || typeof options !== "object") {
+        throw new Error("Options must be an object");
       }
 
       const result = await this.Order.findAndCountAll({
@@ -249,22 +249,22 @@ class SequelizeOrderRepository extends IOrderRepository {
         include: [
           {
             model: OrderItem,
-            as: 'OrderItems',
-            include: [{ model: Star, as: 'Star' }]
+            as: "OrderItems",
+            include: [{ model: Star, as: "Star" }],
           },
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName', 'email']
-          }
+            as: "User",
+            attributes: ["id", "firstName", "lastName", "email"],
+          },
         ],
-        order: [['createdAt', 'DESC']],
-        distinct: true
+        order: [["createdAt", "DESC"]],
+        distinct: true,
       });
 
       return {
         count: result.count,
-        rows: result.rows.map(order => order.toJSON())
+        rows: result.rows.map((order) => order.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to find and count orders: ${error.message}`);
@@ -286,7 +286,7 @@ class SequelizeOrderRepository extends IOrderRepository {
         startDate,
         endDate,
         limit = 20,
-        offset = 0
+        offset = 0,
       } = searchCriteria;
 
       const whereCondition = {};
@@ -308,7 +308,7 @@ class SequelizeOrderRepository extends IOrderRepository {
       if (maxTotal !== undefined && maxTotal !== null) {
         whereCondition.total = {
           ...whereCondition.total,
-          [Op.lte]: maxTotal
+          [Op.lte]: maxTotal,
         };
       }
 
@@ -319,7 +319,7 @@ class SequelizeOrderRepository extends IOrderRepository {
       if (endDate) {
         whereCondition.createdAt = {
           ...whereCondition.createdAt,
-          [Op.lte]: new Date(endDate)
+          [Op.lte]: new Date(endDate),
         };
       }
 
@@ -328,24 +328,24 @@ class SequelizeOrderRepository extends IOrderRepository {
         include: [
           {
             model: OrderItem,
-            as: 'OrderItems',
-            include: [{ model: Star, as: 'Star' }]
+            as: "OrderItems",
+            include: [{ model: Star, as: "Star" }],
           },
           {
             model: User,
-            as: 'User',
-            attributes: ['id', 'firstName', 'lastName', 'email']
-          }
+            as: "User",
+            attributes: ["id", "firstName", "lastName", "email"],
+          },
         ],
         limit: Math.min(limit, 100),
         offset,
-        order: [['createdAt', 'DESC']],
-        distinct: true
+        order: [["createdAt", "DESC"]],
+        distinct: true,
       });
 
       return {
         count: result.count,
-        rows: result.rows.map(order => order.toJSON())
+        rows: result.rows.map((order) => order.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to search orders: ${error.message}`);
@@ -367,8 +367,8 @@ class SequelizeOrderRepository extends IOrderRepository {
       const count = await this.Order.count({
         where: {
           id: orderId,
-          userId: userId
-        }
+          userId: userId,
+        },
       });
 
       return count > 0;
@@ -384,25 +384,25 @@ class SequelizeOrderRepository extends IOrderRepository {
    * @private
    */
   validateOrderData(orderData) {
-    if (!orderData || typeof orderData !== 'object') {
-      throw new Error('Order data must be an object');
+    if (!orderData || typeof orderData !== "object") {
+      throw new Error("Order data must be an object");
     }
 
-    const requiredFields = ['userId', 'total'];
-    const missingFields = requiredFields.filter(field => orderData[field] === undefined);
+    const requiredFields = ["userId", "total"];
+    const missingFields = requiredFields.filter((field) => orderData[field] === undefined);
 
     if (missingFields.length > 0) {
-      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
     }
 
     // Validation total
-    if (typeof orderData.total !== 'number' || orderData.total < 0) {
-      throw new Error('Total must be a positive number');
+    if (typeof orderData.total !== "number" || orderData.total < 0) {
+      throw new Error("Total must be a positive number");
     }
 
     // Validation userId
-    if (typeof orderData.userId !== 'number') {
-      throw new Error('User ID must be a number');
+    if (typeof orderData.userId !== "number") {
+      throw new Error("User ID must be a number");
     }
   }
 }

@@ -9,7 +9,7 @@
 
 /* Base styles */
 @layer base {
-  /* CSS Variables pour l'accessibilité */
+  /* CSS Variables pour l'accessibilite */
   :root {
     --accessibility-background: var(--color-background-default);
     --accessibility-text: var(--color-text);
@@ -21,15 +21,27 @@
     --accessibility-font-large: 18px;
     --animation-duration: 0.3s;
     --transition-duration: 0.2s;
+
+    /* Stella DS semantic tokens */
+    --stl-fg: #aec9ff;
+    --stl-fg-strong: #ffffff;
+    --stl-fg-muted: rgba(174, 201, 255, 0.6);
+    --stl-fg-faint: rgba(174, 201, 255, 0.35);
+    --stl-fg-on-amber: #3d2a54;
+    --stl-border: rgba(174, 201, 255, 0.12);
+    --stl-border-strong: rgba(61, 42, 84, 0.9);
+    --stl-surface-overlay: rgba(15, 10, 24, 0.72);
   }
 
   /* Styles du body */
   body {
     @apply bg-background-default text-text font-sans;
     font-size: var(--accessibility-font-base);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Application conditionnelle des couleurs d'accessibilité seulement si explicitement activées */
+  /* Application conditionnelle des couleurs d'accessibilite seulement si explicitement activees */
   body.accessibility-theme-active {
     background-color: var(--accessibility-background);
     color: var(--accessibility-text);
@@ -47,7 +59,7 @@
 
 /* Styles pour les composants */
 @layer components {
-  /* Classes d'accessibilité */
+  /* Classes d'accessibilite */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -72,13 +84,13 @@
     white-space: normal;
   }
 
-  /* Styles pour les préférences d'accessibilité */
+  /* Styles pour les preferences d'accessibilite */
   .high-contrast-images img {
     filter: contrast(1.5) brightness(1.1);
   }
 
   .screen-reader-optimized {
-    /* Améliorer la lisibilité pour les lecteurs d'écran */
+    /* Ameliorer la lisibilite pour les lecteurs d'ecran */
   }
 
   .screen-reader-optimized * {
@@ -86,7 +98,7 @@
     animation: none !important;
   }
 
-  /* Respect des préférences système */
+  /* Respect des preferences systeme */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
@@ -95,7 +107,7 @@
     }
   }
 
-  /* Contraste élevé seulement si explicitement demandé par l'utilisateur */
+  /* Contraste eleve seulement si explicitement demande par l'utilisateur */
   body.high-contrast-mode {
     --accessibility-background: #000000 !important;
     --accessibility-text: #ffffff !important;
@@ -119,13 +131,38 @@
     @apply bg-accent text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-white;
   }
 
-  /* Bouton général avec accessibilité */
+  /* Bouton general avec accessibilite - DS aligned */
   .btn {
-    @apply bg-special text-primary font-action tracking-wider py-2 px-4;
-    @apply transition-transform duration-500 ease-in-out;
-    @apply hover:bg-primary hover:text-text hover:transform hover:scale-105 hover:shadow-lg;
+    @apply bg-special text-primary font-action tracking-wider py-2 px-4 rounded-md;
+    @apply transition-all duration-300 ease-out;
+    transition-duration: var(--transition-duration, 300ms);
+    @apply hover:bg-primary hover:text-text hover:transform hover:scale-105;
     @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
     @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none;
+    @apply active:scale-95;
+  }
+
+  .btn:hover {
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.6), 0 0 20px 4px rgba(255, 179, 71, 0.3);
+  }
+
+  /* Bouton secondary cyan (DS v2) */
+  .btn-secondary {
+    @apply bg-transparent text-cyan-400 border-2 border-cyan-400 font-action tracking-wider py-2 px-4 rounded-md;
+    @apply transition-all duration-300 ease-out cursor-pointer;
+    transition-duration: var(--transition-duration, 300ms);
+    @apply hover:bg-cyan-400 hover:text-cyan-700;
+  }
+
+  .btn-secondary:hover {
+    box-shadow: 0 0 20px 4px rgba(56, 189, 248, 0.25);
+  }
+
+  /* Bouton ghost */
+  .btn-ghost {
+    @apply bg-transparent text-text font-action tracking-wider py-2 px-4 rounded-md;
+    @apply transition-all duration-200 ease-out cursor-pointer border-none;
+    @apply hover:bg-surface-2;
   }
 
   /* Filtre des boutons */
@@ -134,7 +171,6 @@
     @apply transition-colors duration-300 ease-in-out flex items-center;
   }
 
-  /* Styles actifs pour les boutons de filtre */
   .btn-filter:hover {
     @apply bg-primary text-white border-primary;
   }
@@ -143,10 +179,15 @@
     @apply bg-special text-secondary border-primary;
   }
 
-  /* Animations et transitions avancées */
+  /* Card hover effect - DS aligned */
   .card-hover-effect {
     @apply transition-all duration-300 ease-out transform;
-    @apply hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1;
+    transition-duration: var(--transition-duration, 300ms);
+    @apply hover:scale-[1.02] hover:-translate-y-1;
+  }
+
+  .card-hover-effect:hover {
+    box-shadow: 0 20px 32px -5px rgba(0, 0, 0, 0.65), 0 0 20px 4px rgba(255, 179, 71, 0.15);
   }
 
   .skeleton-shimmer {
@@ -155,19 +196,21 @@
   }
 
   .skeleton-shimmer::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(174, 201, 255, 0.08), transparent);
     animation: shimmer 1.5s infinite;
+    animation-duration: var(--animation-duration, 1.5s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer::before {
+      animation: none;
+    }
   }
 
   .button-press {
@@ -177,6 +220,7 @@
 
   .smooth-bounce {
     animation: smooth-bounce 2s infinite;
+    animation-duration: var(--animation-duration, 2s);
   }
 
   .fade-slide-in {
@@ -187,12 +231,32 @@
     animation: fade-slide-in 0.6s ease-out;
   }
 
-  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+  .stagger-children > *:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .stagger-children > *:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .stagger-children > *:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .stagger-children > *:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .stagger-children > *:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+  .stagger-children > *:nth-child(6) {
+    animation-delay: 0.6s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .smooth-bounce,
+    .fade-slide-in,
+    .stagger-children > * {
+      animation: none;
+    }
+  }
 
   /* Interactions tactiles */
   .touch-target {
@@ -214,16 +278,26 @@
   }
 }
 
-/* Animations CSS personnalisées */
+/* Animations CSS personnalisees */
 @layer utilities {
   @keyframes shimmer {
-    0% { left: -100%; }
-    50% { left: 100%; }
-    100% { left: 100%; }
+    0% {
+      left: -100%;
+    }
+    50% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
 
   @keyframes smooth-bounce {
-    0%, 20%, 50%, 80%, 100% {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
       transform: translateY(0);
     }
     40% {
@@ -246,11 +320,12 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% {
-      box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    0%,
+    100% {
+      box-shadow: 0 0 20px 4px rgba(255, 179, 71, 0.3);
     }
     50% {
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 20px 4px rgba(255, 179, 71, 0.3), 0 0 30px 6px rgba(224, 64, 251, 0.18);
     }
   }
 
@@ -271,6 +346,15 @@
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .animate-shimmer,
+    .animate-smooth-bounce,
+    .animate-fade-slide-in,
+    .animate-pulse-glow {
+      animation: none;
+    }
+  }
+
   /* Responsive et mobile-first */
   .mobile-scroll-snap {
     scroll-snap-type: x mandatory;
@@ -282,18 +366,18 @@
     flex: none;
   }
 
-  /* États de focus améliorés pour l'accessibilité */
+  /* Etats de focus ameliores pour l'accessibilite */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
   }
 
-  /* Transitions fluides pour les états interactifs */
+  /* Transitions fluides pour les etats interactifs */
   .interactive-element {
     @apply transition-all duration-200 ease-out;
     @apply hover:brightness-110 active:brightness-90;
   }
 
-  /* Styles pour cacher les barres de défilement */
+  /* Styles pour cacher les barres de defilement */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -303,7 +387,7 @@
     display: none;
   }
 
-  /* Améliorations mobile */
+  /* Ameliorations mobile */
   .mobile-container {
     @apply px-4 sm:px-6 lg:px-8;
     @apply pt-safe-top pb-safe-bottom;
@@ -330,23 +414,29 @@
 
 /* Styles pour les animations */
 @layer utilities {
-  /* Effet néon doux pour le texte */
+  /* Effet neon doux pour le texte - DS aligned */
   @keyframes softNeon {
-    0%, 100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.2);
+    0%,
+    100% {
+      text-shadow: 0 0 5px #fff, 0 0 12px rgba(255, 255, 255, 0.5), 0 0 22px rgba(255, 0, 255, 0.2);
     }
     50% {
-      text-shadow: 0 0 5px #fff, 0 0 15px rgba(255, 0, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.3);
+      text-shadow: 0 0 5px #fff, 0 0 18px rgba(255, 0, 255, 0.5), 0 0 32px rgba(255, 0, 255, 0.3);
     }
   }
 
-  /* Appliquer l'animation de néon au survol du h1 */
   .h1-neon:hover {
     animation: softNeon 2s ease-in-out infinite alternate;
     color: #fff;
   }
 
-  /* Zoom subtil pour l'image d'arrière-plan du héros */
+  @media (prefers-reduced-motion: reduce) {
+    .h1-neon:hover {
+      animation: none;
+    }
+  }
+
+  /* Zoom subtil pour l'image d'arriere-plan du heros */
   @keyframes subtleZoom {
     0% {
       transform: scale(1) translateY(0);
@@ -359,19 +449,23 @@
     }
   }
 
-  /* Animation de l'image de la section héroïque */
   .hero-img-animate {
     @apply relative;
     animation: subtleZoom 15s ease-in-out infinite;
     filter: brightness(50%);
   }
 
-  /* Transition pour l'apparition et la disparition des éléments dans le header */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-img-animate {
+      animation: none;
+    }
+  }
+
+  /* Transition pour l'apparition dans le header */
   header span {
     transition: opacity 0.3s ease-in-out;
   }
 
-  /* Classe pour cacher le texte */
   header span.hidden {
     opacity: 0;
   }
@@ -387,9 +481,18 @@
 }
 
 .star-card-img {
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .star-card-img:hover {
-  transform: scale(1.1); /* Zoom plus prononcé */
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-card-img {
+    transition: none;
+  }
+  .star-card-img:hover {
+    transform: none;
+  }
 }

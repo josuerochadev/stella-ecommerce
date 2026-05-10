@@ -2,31 +2,25 @@
 // Contrôleur pour la gestion de la liste d'envies
 // Responsabilité unique : orchestration du WishlistRepository et gestion des erreurs HTTP
 
-const { AppError } = require('../middlewares/errorHandler');
-const logger = require('../utils/logger');
-const { getService } = require('../container/containerConfig');
+const { AppError } = require("../middlewares/errorHandler");
+const logger = require("../utils/logger");
+const { getService } = require("../container/containerConfig");
 
 const WISHLIST_MESSAGES = {
   ALREADY_EXISTS: "L'étoile est déjà dans la liste de souhaits",
   ADDED: "L'étoile a été ajoutée à la liste de souhaits",
-  RETRIEVED: 'Liste de souhaits récupérée avec succès',
+  RETRIEVED: "Liste de souhaits récupérée avec succès",
   NOT_FOUND: "L'étoile n'a pas été trouvée dans la liste de souhaits",
   REMOVED: "L'étoile a été supprimée de la liste de souhaits",
-  CLEARED: 'Liste de souhaits vidée avec succès',
-  STAR_ID_REQUIRED: 'Star ID is required',
-  STAR_ID_INVALID: 'Star ID must be a valid number',
+  CLEARED: "Liste de souhaits vidée avec succès",
+  STAR_ID_REQUIRED: "Star ID is required",
+  STAR_ID_INVALID: "Star ID must be a valid number",
   DELETE_FAILED: "Échec de la suppression de l'étoile",
 };
 
 function transformStarPrice(item) {
-  if (item.Star && typeof item.Star.price === 'string') {
-    item.Star.price = parseFloat(item.Star.price);
-  }
-  return item;
-}
-function transformStarPrice(item) {
-  if (item.Star && typeof item.Star.price === 'string') {
-    item.Star.price = parseFloat(item.Star.price);
+  if (item.Star && typeof item.Star.price === "string") {
+    item.Star.price = Number.parseFloat(item.Star.price);
   }
   return item;
 }
@@ -49,8 +43,8 @@ class WishlistController {
         return next(new AppError(WISHLIST_MESSAGES.STAR_ID_REQUIRED, 400));
       }
 
-      const parsedStarId = parseInt(starId, 10);
-      if (isNaN(parsedStarId)) {
+      const parsedStarId = Number.parseInt(starId, 10);
+      if (Number.isNaN(parsedStarId)) {
         return next(new AppError(WISHLIST_MESSAGES.STAR_ID_INVALID, 400));
       }
 
@@ -59,14 +53,14 @@ class WishlistController {
       if (exists) {
         return res.status(200).json({
           success: true,
-          message: WISHLIST_MESSAGES.ALREADY_EXISTS
+          message: WISHLIST_MESSAGES.ALREADY_EXISTS,
         });
       }
 
       // Ajouter à la liste d'envies
       const wishlistItem = await this.wishlistRepository.addItem({
         userId,
-        starId: parsedStarId
+        starId: parsedStarId,
       });
 
       transformStarPrice(wishlistItem);
@@ -74,15 +68,15 @@ class WishlistController {
       res.status(201).json({
         success: true,
         message: WISHLIST_MESSAGES.ADDED,
-        wishlistItem
+        wishlistItem,
       });
     } catch (error) {
-      logger.error('Error adding to wishlist:', error);
+      logger.error("Error adding to wishlist:", error);
 
-      if (error.message === 'Item already exists in wishlist') {
+      if (error.message === "Item already exists in wishlist") {
         return res.status(200).json({
           success: true,
-          message: WISHLIST_MESSAGES.ALREADY_EXISTS
+          message: WISHLIST_MESSAGES.ALREADY_EXISTS,
         });
       }
 
@@ -105,11 +99,16 @@ class WishlistController {
         success: true,
         message: WISHLIST_MESSAGES.RETRIEVED,
         wishlist: wishlistItems,
-        count: wishlistItems.length
+        count: wishlistItems.length,
       });
     } catch (error) {
-      logger.error('Error getting wishlist:', error);
-      next(new AppError(`Erreur lors de la récupération de la liste de souhaits: ${error.message}`, 500));
+      logger.error("Error getting wishlist:", error);
+      next(
+        new AppError(
+          `Erreur lors de la récupération de la liste de souhaits: ${error.message}`,
+          500,
+        ),
+      );
     }
   };
 
@@ -122,8 +121,8 @@ class WishlistController {
       const { starId } = req.params;
 
       // Validation
-      const parsedStarId = parseInt(starId, 10);
-      if (isNaN(parsedStarId)) {
+      const parsedStarId = Number.parseInt(starId, 10);
+      if (Number.isNaN(parsedStarId)) {
         return next(new AppError(WISHLIST_MESSAGES.STAR_ID_INVALID, 400));
       }
 
@@ -149,11 +148,16 @@ class WishlistController {
         success: true,
         message: WISHLIST_MESSAGES.REMOVED,
         wishlist: updatedWishlistItems,
-        count: updatedWishlistItems.length
+        count: updatedWishlistItems.length,
       });
     } catch (error) {
-      logger.error('Erreur lors de la suppression de la wishlist:', error);
-      next(new AppError(`Erreur lors de la suppression de l'étoile de la liste de souhaits: ${error.message}`, 400));
+      logger.error("Erreur lors de la suppression de la wishlist:", error);
+      next(
+        new AppError(
+          `Erreur lors de la suppression de l'étoile de la liste de souhaits: ${error.message}`,
+          400,
+        ),
+      );
     }
   };
 
@@ -168,10 +172,10 @@ class WishlistController {
 
       res.json({
         success: true,
-        message: WISHLIST_MESSAGES.CLEARED
+        message: WISHLIST_MESSAGES.CLEARED,
       });
     } catch (error) {
-      logger.error('Error clearing wishlist:', error);
+      logger.error("Error clearing wishlist:", error);
       next(new AppError(`Erreur lors du vidage de la liste de souhaits: ${error.message}`, 400));
     }
   };
@@ -187,17 +191,17 @@ class WishlistController {
 
       res.json({
         success: true,
-        count
+        count,
       });
     } catch (error) {
-      logger.error('Error getting wishlist count:', error);
+      logger.error("Error getting wishlist count:", error);
       next(new AppError(`Erreur lors du comptage de la liste de souhaits: ${error.message}`, 500));
     }
   };
 }
 
 // Instance du contrôleur avec injection de dépendances
-const wishlistRepository = getService('wishlistRepository');
+const wishlistRepository = getService("wishlistRepository");
 const wishlistControllerInstance = new WishlistController(wishlistRepository);
 
 // Export des méthodes pour compatibilité avec les routes existantes
@@ -207,5 +211,5 @@ module.exports = {
   removeFromWishlist: wishlistControllerInstance.removeFromWishlist,
   clearWishlist: wishlistControllerInstance.clearWishlist,
   getWishlistCount: wishlistControllerInstance.getWishlistCount,
-  WishlistController
+  WishlistController,
 };

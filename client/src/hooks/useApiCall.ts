@@ -99,27 +99,16 @@ export const useApiCall = <T = unknown>(options: UseApiCallOptions<T> = {}) => {
  * @param options - Same options as useApiCall
  */
 export const useCollectionOperation = (
-  type: "cart" | "wishlist",
+  _type: "cart" | "wishlist",
   options: UseApiCallOptions = {},
 ) => {
   const apiCall = useApiCall(options);
 
   const executeWithAuth = useCallback(
-    async (apiFunction: () => Promise<unknown>, requireAuth = true) => {
-      if (requireAuth) {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error(
-            `Veuillez vous connecter pour ${
-              type === "cart" ? "ajouter au panier" : "ajouter aux favoris"
-            }.`,
-          );
-        }
-      }
-
+    async (apiFunction: () => Promise<unknown>) => {
       return apiCall.execute(apiFunction);
     },
-    [apiCall, type],
+    [apiCall],
   );
 
   return {

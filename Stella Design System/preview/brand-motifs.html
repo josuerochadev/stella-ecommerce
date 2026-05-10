@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Brand motifs</title>
+<link rel="stylesheet" href="_base.css"/>
+<style>
+.card { padding: 20px; gap: 16px; }
+.lbl  { font-family:'Bebas Neue',sans-serif; letter-spacing:.12em; font-size:10px; text-transform:uppercase; color:rgba(174,201,255,.45); margin-bottom:6px; }
+.row  { display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; }
+.box  { border-radius:8px; overflow:hidden; position:relative; background:#0f0a18; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../brand-motifs.jsx"></script>
+<script type="text/babel">
+function Preview() {
+  return (
+    <div className="card">
+      <div>
+        <div className="lbl">Starfield animé (120 étoiles)</div>
+        <div className="box" style={{width:660,height:160}}>
+          <Starfield count={120}/>
+          <div style={{position:"relative",zIndex:1,padding:"20px 24px",color:"#AEC9FF",fontFamily:"'Dela Gothic One',serif",fontSize:36}}>Stella</div>
+        </div>
+      </div>
+      <div className="row">
+        <div>
+          <div className="lbl">Carte des constellations</div>
+          <div className="box" style={{width:260,height:200,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <ConstellationMap width={220} height={170} animated={true}/>
+          </div>
+        </div>
+        <div>
+          <div className="lbl">StarGlow — variantes</div>
+          <div className="box" style={{width:220,height:200,display:"flex",alignItems:"center",justifyContent:"center",gap:20}}>
+            <StarGlow size={64} animated={true}/>
+            <StarGlow size={40} color="#38bdf8" glowColor="rgba(56,189,248,0.4)" animated={true}/>
+            <StarGlow size={28} color="#AEC9FF" glowColor="rgba(174,201,255,0.3)" animated={false}/>
+          </div>
+        </div>
+        <div>
+          <div className="lbl">Étoiles parsemées</div>
+          <div className="box" style={{width:148,height:200,position:"relative"}}>
+            <SparseStars count={50}/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="lbl">Diviseur cosmique</div>
+        <div style={{background:"#1E1326",borderRadius:8,padding:"20px 24px"}}>
+          <CosmicDivider/>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Preview/>);
+</script>
+</body>
+</html>

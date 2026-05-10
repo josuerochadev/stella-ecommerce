@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import type React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 interface AccessiblePageLayoutProps {
   title?: string;
@@ -12,7 +13,7 @@ interface AccessiblePageLayoutProps {
 const AccessiblePageLayout: React.FC<AccessiblePageLayoutProps> = ({
   title,
   children,
-  className = '',
+  className = "",
   skipToContent = true,
   announcePageChange = true,
 }) => {
@@ -26,11 +27,11 @@ const AccessiblePageLayout: React.FC<AccessiblePageLayoutProps> = ({
 
     if (announcePageChange) {
       // Announce page change to screen readers
-      const announcer = document.createElement('div');
-      announcer.setAttribute('aria-live', 'polite');
-      announcer.setAttribute('aria-atomic', 'true');
-      announcer.className = 'sr-only';
-      announcer.textContent = `Nouvelle page chargée: ${title || 'Page'}`;
+      const announcer = document.createElement("div");
+      announcer.setAttribute("aria-live", "polite");
+      announcer.setAttribute("aria-atomic", "true");
+      announcer.className = "sr-only";
+      announcer.textContent = `Nouvelle page chargée: ${title || "Page"}`;
 
       document.body.appendChild(announcer);
 
@@ -45,7 +46,7 @@ const AccessiblePageLayout: React.FC<AccessiblePageLayoutProps> = ({
 
   // Reset focus to main content on route change
   useEffect(() => {
-    const mainContent = document.getElementById('main-content');
+    const mainContent = document.getElementById("main-content");
     if (mainContent && skipToContent) {
       // Small delay to ensure content is rendered
       setTimeout(() => {
@@ -59,7 +60,6 @@ const AccessiblePageLayout: React.FC<AccessiblePageLayoutProps> = ({
       id="main-content"
       className={`focus:outline-none ${className}`}
       tabIndex={-1}
-      role="main"
       aria-label="Contenu principal"
     >
       {/* Page Title (visible) */}
@@ -70,9 +70,7 @@ const AccessiblePageLayout: React.FC<AccessiblePageLayoutProps> = ({
       )}
 
       {/* Page Content */}
-      <div className="min-h-screen">
-        {children}
-      </div>
+      <div className="min-h-screen">{children}</div>
     </main>
   );
 };
@@ -102,24 +100,26 @@ export const AccessibleSection: React.FC<AccessibleSectionProps> = ({
   level,
   title,
   children,
-  className = '',
+  className = "",
   id,
 }) => {
   const HeadingTag = `h${level}` as any;
-  const sectionId = id || title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  const sectionId =
+    id ||
+    title
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]/g, "");
 
   return (
-    <section
-      className={className}
-      aria-labelledby={sectionId}
-    >
+    <section className={className} aria-labelledby={sectionId}>
       <HeadingTag
         id={sectionId}
         className={`
-          ${level === 1 ? 'text-4xl font-display mb-6' : ''}
-          ${level === 2 ? 'text-3xl font-display mb-4' : ''}
-          ${level === 3 ? 'text-2xl font-serif mb-3' : ''}
-          ${level >= 4 ? 'text-xl font-serif mb-2' : ''}
+          ${level === 1 ? "text-4xl font-display mb-6" : ""}
+          ${level === 2 ? "text-3xl font-display mb-4" : ""}
+          ${level === 3 ? "text-2xl font-serif mb-3" : ""}
+          ${level >= 4 ? "text-xl font-serif mb-2" : ""}
           text-text
         `}
       >
@@ -139,8 +139,8 @@ interface ErrorMessageProps {
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   error,
-  id = 'error-message',
-  className = '',
+  id = "error-message",
+  className = "",
 }) => {
   if (!error) return null;
 
@@ -152,7 +152,9 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
       className={`p-4 bg-red-100 border border-red-300 text-red-800 rounded-md ${className}`}
     >
       <div className="flex items-center">
-        <span className="mr-2" aria-hidden="true">⚠️</span>
+        <span className="mr-2" aria-hidden="true">
+          ⚠️
+        </span>
         <span>{error}</span>
       </div>
     </div>
@@ -168,8 +170,8 @@ interface LoadingStateProps {
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
   isLoading,
-  message = 'Chargement en cours...',
-  className = '',
+  message = "Chargement en cours...",
+  className = "",
 }) => {
   if (!isLoading) return null;
 
@@ -182,7 +184,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     >
       <div className="flex items-center space-x-3">
         <div
-          className="animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full"
+          className="motion-safe:animate-spin h-8 w-8 border-4 border-accent border-t-transparent rounded-full"
           aria-hidden="true"
         />
         <span className="text-text font-medium">{message}</span>

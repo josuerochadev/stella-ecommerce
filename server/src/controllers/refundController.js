@@ -1,9 +1,9 @@
 // server/src/controllers/refundController.js
 // Responsabilité unique : Gestion des remboursements
 
-const { paymentService } = require('../services/paymentService');
-const { Order } = require('../models');
-const { AppError } = require('../middlewares/errorHandler');
+const { paymentService } = require("../services/paymentService");
+const { Order } = require("../models");
+const { AppError } = require("../middlewares/errorHandler");
 
 /**
  * Contrôleur de gestion des remboursements
@@ -23,12 +23,12 @@ class RefundController {
       const order = await RefundController._validateRefundableOrder(transactionId, req.user.userId);
 
       if (!order) {
-        return next(new AppError('Paid order with this transaction not found', 404));
+        return next(new AppError("Paid order with this transaction not found", 404));
       }
 
       // Validation du montant
-      if (amount > parseFloat(order.totalAmount)) {
-        return next(new AppError('Refund amount cannot exceed order total', 400));
+      if (amount > Number.parseFloat(order.totalAmount)) {
+        return next(new AppError("Refund amount cannot exceed order total", 400));
       }
 
       // Traitement du remboursement
@@ -41,7 +41,6 @@ class RefundController {
       const response = RefundController._buildRefundResponse(refundResult, transactionId);
 
       res.json(response);
-
     } catch (error) {
       next(new AppError(`Refund processing failed: ${error.message}`, 500));
     }
@@ -56,24 +55,24 @@ class RefundController {
       const refunds = await Order.findAll({
         where: {
           userId: req.user.userId,
-          status: ['refunded', 'partially_refunded']
+          status: ["refunded", "partially_refunded"],
         },
         attributes: [
-          'id',
-          'transactionId',
-          'refundId',
-          'totalAmount',
-          'refundReason',
-          'status',
-          'createdAt',
-          'updatedAt'
+          "id",
+          "transactionId",
+          "refundId",
+          "totalAmount",
+          "refundReason",
+          "status",
+          "createdAt",
+          "updatedAt",
         ],
-        order: [['updatedAt', 'DESC']]
+        order: [["updatedAt", "DESC"]],
       });
 
       res.json({
         success: true,
-        refunds: refunds.map(refund => ({
+        refunds: refunds.map((refund) => ({
           orderId: refund.id,
           transactionId: refund.transactionId,
           refundId: refund.refundId,
@@ -81,11 +80,10 @@ class RefundController {
           reason: refund.refundReason,
           status: refund.status,
           requestedAt: refund.updatedAt,
-          orderDate: refund.createdAt
+          orderDate: refund.createdAt,
         })),
-        count: refunds.length
+        count: refunds.length,
       });
-
     } catch (error) {
       next(new AppError(`Failed to get refund history: ${error.message}`, 500));
     }
@@ -102,22 +100,22 @@ class RefundController {
       const order = await Order.findOne({
         where: {
           refundId,
-          userId: req.user.userId
+          userId: req.user.userId,
         },
         attributes: [
-          'id',
-          'transactionId',
-          'refundId',
-          'totalAmount',
-          'refundReason',
-          'status',
-          'createdAt',
-          'updatedAt'
-        ]
+          "id",
+          "transactionId",
+          "refundId",
+          "totalAmount",
+          "refundReason",
+          "status",
+          "createdAt",
+          "updatedAt",
+        ],
       });
 
       if (!order) {
-        return next(new AppError('Refund not found', 404));
+        return next(new AppError("Refund not found", 404));
       }
 
       res.json({
@@ -130,10 +128,9 @@ class RefundController {
           reason: order.refundReason,
           status: order.status,
           processedAt: order.updatedAt,
-          estimatedCompletion: RefundController._calculateEstimatedCompletion(order.updatedAt)
-        }
+          estimatedCompletion: RefundController._calculateEstimatedCompletion(order.updatedAt),
+        },
       });
-
     } catch (error) {
       next(new AppError(`Failed to get refund status: ${error.message}`, 500));
     }
@@ -148,8 +145,8 @@ class RefundController {
       where: {
         transactionId,
         userId,
-        status: 'paid'
-      }
+        status: "paid",
+      },
     });
   }
 
@@ -158,9 +155,9 @@ class RefundController {
    * Responsabilité : Gestion des états de commande post-remboursement
    */
   static async _updateOrderRefundStatus(order, amount, refundResult, reason) {
-    const isFullRefund = amount >= parseFloat(order.totalAmount);
+    const isFullRefund = amount >= Number.parseFloat(order.totalAmount);
 
-    order.status = isFullRefund ? 'refunded' : 'partially_refunded';
+    order.status = isFullRefund ? "refunded" : "partially_refunded";
     order.refundId = refundResult.refundId;
     order.refundReason = reason;
 
@@ -180,9 +177,9 @@ class RefundController {
         amount: refundResult.amount,
         reason: refundResult.reason,
         status: refundResult.status,
-        estimatedArrival: refundResult.estimatedArrival
+        estimatedArrival: refundResult.estimatedArrival,
       },
-      message: 'Refund processed successfully (Demo mode)'
+      message: "Refund processed successfully (Demo mode)",
     };
   }
 

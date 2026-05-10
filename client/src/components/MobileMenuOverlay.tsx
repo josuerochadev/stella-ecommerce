@@ -1,9 +1,10 @@
 // client/src/components/MobileMenuOverlay.tsx
 // Responsabilité unique : Menu overlay coulissant avec liens supplémentaires
 
-import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from "@/context/AuthContext";
+import type React from "react";
+import { memo } from "react";
+import { Link } from "react-router-dom";
 
 interface MobileMenuOverlayProps {
   isOpen: boolean;
@@ -18,7 +19,13 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({ isOpen, onClose }
   return (
     <div
       className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+      role="button"
+      tabIndex={0}
+      aria-label="Fermer le menu"
       onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " " || e.key === "Escape") onClose();
+      }}
     >
       <div
         className="absolute bottom-0 left-0 right-0 bg-secondary rounded-t-2xl p-6 pb-24 transform transition-transform duration-300 ease-out"
@@ -27,15 +34,15 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({ isOpen, onClose }
         <div className="flex flex-col space-y-4">
           <div className="text-center mb-4">
             <h3 className="text-lg font-display text-text">Menu</h3>
-            <div className="w-12 h-1 bg-primary rounded mx-auto mt-2"></div>
+            <div className="w-12 h-1 bg-primary rounded mx-auto mt-2" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { path: '/about', label: 'À propos', icon: '🌟' },
-              { path: '/contact', label: 'Contact', icon: '📞' },
-              { path: '/faq', label: 'FAQ', icon: '❓' },
-              { path: '/legal', label: 'Mentions légales', icon: '📋' },
+              { path: "/about", label: "À propos", icon: "🌟" },
+              { path: "/contact", label: "Contact", icon: "📞" },
+              { path: "/faq", label: "FAQ", icon: "❓" },
+              { path: "/legal", label: "Mentions légales", icon: "📋" },
             ].map((item) => (
               <Link
                 key={item.path}
@@ -61,12 +68,12 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({ isOpen, onClose }
                   <span>Mes commandes</span>
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/profile"
                   onClick={onClose}
                   className="flex items-center space-x-2 text-text hover:text-special transition-colors"
                 >
                   <span>⚙️</span>
-                  <span>Paramètres</span>
+                  <span>Mon compte</span>
                 </Link>
               </div>
             </div>

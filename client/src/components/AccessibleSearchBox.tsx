@@ -1,12 +1,12 @@
 // client/src/components/AccessibleSearchBox.tsx
 // Responsabilité unique : Orchestrateur de la boîte de recherche accessible
 
-import { useRef } from 'react';
 import { useKeyboardNavigation } from "@/hooks/useFocusManagement";
 import { useSearchLogic } from "@/hooks/useSearchLogic";
-import SearchToggleButton from './SearchToggleButton';
-import SearchInputField from './SearchInputField';
-import SearchSuggestionsList from './SearchSuggestionsList';
+import { useRef } from "react";
+import SearchInputField from "./SearchInputField";
+import SearchSuggestionsList from "./SearchSuggestionsList";
+import SearchToggleButton from "./SearchToggleButton";
 
 interface AccessibleSearchBoxProps {
   isVisible: boolean;
@@ -21,11 +21,11 @@ interface AccessibleSearchBoxProps {
 const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
   isVisible,
   onToggle,
-  className = '',
+  className = "",
 }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchId = 'main-search';
-  const suggestionsId = 'search-suggestions';
+  const searchId = "main-search";
+  const suggestionsId = "search-suggestions";
 
   // Logique métier de recherche
   const {
@@ -46,7 +46,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
   const { containerRef, activeIndex } = useKeyboardNavigation(
     suggestions,
     selectSuggestion,
-    showSuggestions
+    showSuggestions,
   );
 
   /**
@@ -88,7 +88,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
    * Responsabilité : Navigation clavier dans les suggestions
    */
   const handleSuggestionsKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setShowSuggestions(false);
       searchInputRef.current?.focus();
     }
@@ -97,10 +97,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
   return (
     <div className={`relative ${className}`}>
       {/* Bouton de toggle */}
-      <SearchToggleButton
-        isVisible={isVisible}
-        onToggle={onToggle}
-      />
+      <SearchToggleButton isVisible={isVisible} onToggle={onToggle} />
 
       {/* Panneau de recherche */}
       {isVisible && (
@@ -117,7 +114,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
             showSuggestions={showSuggestions}
             searchId={searchId}
             suggestionsId={suggestionsId}
-            autoFocus={true}
+            autoFocus={isVisible}
           />
 
           {/* Liste des suggestions */}

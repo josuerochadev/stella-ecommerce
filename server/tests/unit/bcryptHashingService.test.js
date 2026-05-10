@@ -1,6 +1,4 @@
-const {
-  BcryptHashingService,
-} = require("../../src/services/BcryptHashingService");
+const { BcryptHashingService } = require("../../src/services/BcryptHashingService");
 
 describe("BcryptHashingService", () => {
   // Use low salt rounds for fast tests
@@ -20,22 +18,16 @@ describe("BcryptHashingService", () => {
     });
 
     it("rejects empty password", async () => {
-      await expect(service.hash("")).rejects.toThrow(
-        "Password must be a non-empty string",
-      );
+      await expect(service.hash("")).rejects.toThrow("Password must be a non-empty string");
     });
 
     it("rejects null password", async () => {
-      await expect(service.hash(null)).rejects.toThrow(
-        "Password must be a non-empty string",
-      );
+      await expect(service.hash(null)).rejects.toThrow("Password must be a non-empty string");
     });
 
     it("rejects password longer than 72 characters", async () => {
       const longPassword = "a".repeat(73);
-      await expect(service.hash(longPassword)).rejects.toThrow(
-        "Password too long",
-      );
+      await expect(service.hash(longPassword)).rejects.toThrow("Password too long");
     });
   });
 
@@ -70,41 +62,31 @@ describe("BcryptHashingService", () => {
     it("rejects short password", async () => {
       const result = await service.validatePasswordStrength("Ab1!");
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Password must be at least 8 characters long",
-      );
+      expect(result.errors).toContain("Password must be at least 8 characters long");
     });
 
     it("rejects password without uppercase", async () => {
       const result = await service.validatePasswordStrength("mypassword1!");
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Password must contain at least one uppercase letter",
-      );
+      expect(result.errors).toContain("Password must contain at least one uppercase letter");
     });
 
     it("rejects password without lowercase", async () => {
       const result = await service.validatePasswordStrength("MYPASSWORD1!");
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Password must contain at least one lowercase letter",
-      );
+      expect(result.errors).toContain("Password must contain at least one lowercase letter");
     });
 
     it("rejects password without digit", async () => {
       const result = await service.validatePasswordStrength("MyPassword!!");
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Password must contain at least one number",
-      );
+      expect(result.errors).toContain("Password must contain at least one number");
     });
 
     it("rejects password without special character", async () => {
       const result = await service.validatePasswordStrength("MyPassword123");
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Password must contain at least one special character",
-      );
+      expect(result.errors).toContain("Password must contain at least one special character");
     });
 
     it("rejects common passwords", async () => {

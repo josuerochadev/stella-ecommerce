@@ -94,11 +94,11 @@ class ProfileController {
       await user.destroy();
 
       // Suppression du cookie de refresh token
-      res.clearCookie('refreshToken');
+      res.clearCookie("refreshToken");
 
       res.status(200).json({
         success: true,
-        message: "Account deleted successfully"
+        message: "Account deleted successfully",
       });
     } catch (error) {
       next(new AppError(`Error deleting user: ${error.message}`, 500));
@@ -151,10 +151,10 @@ class ProfileController {
     try {
       const user = await User.findByPk(req.user.userId, {
         include: [
-          { association: 'orders', attributes: ['id', 'status'] },
-          { association: 'reviews', attributes: ['id', 'rating'] },
-          { association: 'cart', attributes: ['id'] },
-          { association: 'wishlist', attributes: ['id'] },
+          { association: "orders", attributes: ["id", "status"] },
+          { association: "reviews", attributes: ["id", "rating"] },
+          { association: "cart", attributes: ["id"] },
+          { association: "wishlist", attributes: ["id"] },
         ],
       });
 
@@ -164,11 +164,14 @@ class ProfileController {
 
       const stats = {
         totalOrders: user.orders?.length || 0,
-        completedOrders: user.orders?.filter(order => order.status === 'delivered')?.length || 0,
+        completedOrders: user.orders?.filter((order) => order.status === "delivered")?.length || 0,
         totalReviews: user.reviews?.length || 0,
-        averageRating: user.reviews?.length > 0
-          ? (user.reviews.reduce((sum, review) => sum + review.rating, 0) / user.reviews.length).toFixed(1)
-          : 0,
+        averageRating:
+          user.reviews?.length > 0
+            ? (
+                user.reviews.reduce((sum, review) => sum + review.rating, 0) / user.reviews.length
+              ).toFixed(1)
+            : 0,
         cartItems: user.cart?.length || 0,
         wishlistItems: user.wishlist?.length || 0,
       };

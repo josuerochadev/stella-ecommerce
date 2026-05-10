@@ -23,12 +23,10 @@ const config = {
 
 // Validation des variables critiques au demarrage
 function validateConfig() {
-  const required = ["JWT_SECRET"];
+  const required = ["JWT_SECRET", "DB_USERNAME", "DB_PASSWORD", "DB_DATABASE"];
   const missing = required.filter((key) => !config[key]);
   if (missing.length > 0 && config.NODE_ENV !== "test") {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
-    );
+    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
   }
 }
 

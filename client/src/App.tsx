@@ -1,14 +1,17 @@
 // client/src/App.tsx
 
 import React, { Suspense, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from "react-router-dom";
 import CookieBanner from "./components/CookieBanner";
 import ErrorBoundary from "./components/ErrorBoundary";
 import FeatureErrorBoundary from "./components/FeatureErrorBoundary";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import { MobileNavigation } from "./components/MobileNavigation";
 import NotificationProvider from "./components/NotificationProvider";
 import ShoppingCart from "./components/ShoppingCart";
+import SkipLinks from "./components/SkipLinks";
 import Wishlist from "./components/Wishlist";
 import { useAuth } from "./context/AuthContext";
 
@@ -27,6 +30,7 @@ const Checkout = React.lazy(() => import("./pages/Checkout"));
 const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Admin = React.lazy(() => import("./pages/Admin"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Component to handle auth unauthorized events
 const AuthEventListener: React.FC = () => {
@@ -51,10 +55,28 @@ const App: React.FC = () => {
   return (
     <Router>
       <AuthEventListener />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Stella",
+            url: "https://stella-ecommerce.fr",
+            description: "Adoptez une etoile et offrez un cadeau unique.",
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: "+33-1-23-45-67-89",
+              contactType: "customer service",
+              availableLanguage: "French",
+            },
+          })}
+        </script>
+      </Helmet>
       <ErrorBoundary>
+        <SkipLinks />
         <div className="flex flex-col min-h-screen">
           <Header />
-          <main id="main-content" className="flex-grow">
+          <main id="main-content" className="flex-grow pb-16 md:pb-0">
             <CookieBanner />
             <NotificationProvider />
             <Suspense fallback={<div className="text-center text-text">Loading...</div>}>
@@ -121,13 +143,13 @@ const App: React.FC = () => {
                 />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/legal" element={<Legal />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} /> {/* Privacy Policy */}
-                <Route path="*" element={<Navigate to="/" />} />{" "}
-                {/* Default redirect to home page */}
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
           </main>
           <Footer />
+          <MobileNavigation />
         </div>
       </ErrorBoundary>
     </Router>

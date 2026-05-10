@@ -29,11 +29,9 @@ global.beforeAll(async () => {
       });
 
       testContext.userId = user.id;
-      testContext.token = jwt.sign(
-        { userId: user.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" },
-      );
+      testContext.token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       isDBSynced = true;
     } catch (error) {

@@ -41,7 +41,7 @@ const sendErrorDev = (err, res) => {
       path: err.path,
     },
     timestamp: new Date().toISOString(),
-    requestId: res.locals.requestId || 'unknown'
+    requestId: res.locals.requestId || "unknown",
   };
 
   res.status(err.statusCode).json(filteredError);
@@ -55,7 +55,7 @@ const sendErrorProd = (err, res) => {
       message: err.message,
       errors: err.errors || {},
       timestamp: new Date().toISOString(),
-      requestId: res.locals.requestId || 'unknown'
+      requestId: res.locals.requestId || "unknown",
     });
   } else {
     logger.error("ERROR 💥", {
@@ -70,13 +70,13 @@ const sendErrorProd = (err, res) => {
       status: "error",
       message: "Something went very wrong!",
       timestamp: new Date().toISOString(),
-      requestId: res.locals.requestId || 'unknown'
+      requestId: res.locals.requestId || "unknown",
     });
   }
 };
 
 // Import du Strategy Manager
-const { ErrorStrategyManager } = require('./errorStrategies');
+const { ErrorStrategyManager } = require("./errorStrategies");
 
 // Instance singleton du gestionnaire de stratégies
 const errorStrategyManager = new ErrorStrategyManager();
@@ -85,7 +85,7 @@ const errorHandler = (err, _req, res, _next) => {
   logger.error("Error caught in errorHandler:", {
     message: err.message,
     stack: err.stack,
-    statusCode: err.statusCode
+    statusCode: err.statusCode,
   });
 
   err.statusCode = err.statusCode || 500;
@@ -93,7 +93,7 @@ const errorHandler = (err, _req, res, _next) => {
 
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test") {
+  } else {
     let error = { ...err };
     error.message = err.message;
 
@@ -107,5 +107,5 @@ const errorHandler = (err, _req, res, _next) => {
 module.exports = {
   AppError,
   errorHandler,
-  errorStrategyManager
+  errorStrategyManager,
 };

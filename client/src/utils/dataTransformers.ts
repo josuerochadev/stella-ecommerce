@@ -1,7 +1,7 @@
 // client/src/utils/dataTransformers.ts
 // Responsabilité unique : Transformations de données réutilisables
 
-import type { Star, CartItem, WishlistItem } from "@/types";
+import type { CartItem, Star, WishlistItem } from "@/types";
 
 /**
  * Transformateur pour normaliser les prix des étoiles
@@ -64,10 +64,8 @@ export const transformCartItems = (items: CartItem[]): CartItem[] => {
  * Utilitaire pour normaliser les prix dans toute structure contenant une étoile
  * Responsabilité : Transformation générique pour objets avec propriété Star
  */
-export const normalizeStarPrices = <T extends { Star?: Star }>(
-  items: T[]
-): T[] => {
-  return items.map(item => {
+export const normalizeStarPrices = <T extends { Star?: Star }>(items: T[]): T[] => {
+  return items.map((item) => {
     if (!item.Star) {
       return item;
     }
@@ -83,11 +81,11 @@ export const normalizeStarPrices = <T extends { Star?: Star }>(
  * Validation et transformation sécurisée des nombres
  * Responsabilité : Conversion string → number avec validation
  */
-export const safeNumberTransform = (value: string | number, fallback: number = 0): number => {
+export const safeNumberTransform = (value: string | number, fallback = 0): number => {
   if (typeof value === "number") {
-    return isNaN(value) ? fallback : value;
+    return Number.isNaN(value) ? fallback : value;
   }
 
   const parsed = Number.parseFloat(value);
-  return isNaN(parsed) ? fallback : parsed;
+  return Number.isNaN(parsed) ? fallback : parsed;
 };

@@ -13,19 +13,20 @@ const tokenService = require("../services/tokenService");
  * @param {Function} next - The next middleware function.
  */
 exports.authenticateUser = (req, _res, next) => {
-  const authHeader = req.headers.authorization;
+  // Read access token from httpOnly cookie (preferred) or Authorization header (fallback)
+  let token = req.cookies?.accessToken;
 
-  if (!authHeader) {
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  }
+
+  if (!token) {
     req.user = null;
     return next();
   }
-
-  if (!authHeader.startsWith("Bearer ")) {
-    req.user = null;
-    return next();
-  }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = tokenService.verifyAccessToken(token);

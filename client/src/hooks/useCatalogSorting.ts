@@ -1,9 +1,9 @@
 // client/src/hooks/useCatalogSorting.ts
 // Responsabilité unique : Logique de tri des résultats de catalogue
 
-import { useMemo } from 'react';
 import type { Star } from "@/types";
-import type { SearchFilters } from './useCatalogFilters';
+import { useMemo } from "react";
+import type { SearchFilters } from "./useCatalogFilters";
 
 /**
  * Hook pour le tri des résultats du catalogue
@@ -11,32 +11,46 @@ import type { SearchFilters } from './useCatalogFilters';
  */
 export const useCatalogSorting = (searchResults: Star[], filters: SearchFilters) => {
   const sortedResults = useMemo(() => {
-    let sorted = [...searchResults];
+    const sorted = [...searchResults];
 
     switch (filters.sortBy) {
       case "price":
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.price - b.price : b.price - a.price);
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc" ? a.price - b.price : b.price - a.price,
+        );
         break;
 
       case "name":
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name),
+        );
         break;
 
       case "magnitude":
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.magnitude - b.magnitude : b.magnitude - a.magnitude);
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc" ? a.magnitude - b.magnitude : b.magnitude - a.magnitude,
+        );
         break;
 
       case "distance":
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.distanceFromEarth - b.distanceFromEarth : b.distanceFromEarth - a.distanceFromEarth);
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc"
+            ? a.distanceFromEarth - b.distanceFromEarth
+            : b.distanceFromEarth - a.distanceFromEarth,
+        );
         break;
 
       case "luminosity":
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.luminosity - b.luminosity : b.luminosity - a.luminosity);
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc" ? a.luminosity - b.luminosity : b.luminosity - a.luminosity,
+        );
         break;
 
       case "popularity":
         // Tri par luminosité (magnitude plus faible = plus visible = plus populaire)
-        sorted.sort((a, b) => filters.sortOrder === "asc" ? a.magnitude - b.magnitude : b.magnitude - a.magnitude);
+        sorted.sort((a, b) =>
+          filters.sortOrder === "asc" ? a.magnitude - b.magnitude : b.magnitude - a.magnitude,
+        );
         break;
 
       case "newest":

@@ -28,7 +28,7 @@ module.exports = {
     ...defaultConfig,
     ...(process.env.DATABASE_URL
       ? {
-          use_env_variable: 'DATABASE_URL',
+          use_env_variable: "DATABASE_URL",
         }
       : {
           username: process.env.DB_USERNAME,
@@ -36,10 +36,16 @@ module.exports = {
           database: process.env.DB_DATABASE,
           host: process.env.DB_HOST,
         }),
+    pool: {
+      min: 2,
+      max: 20,
+      acquire: 30000,
+      idle: 10000,
+    },
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       },
     },
   },

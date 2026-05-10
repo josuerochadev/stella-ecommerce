@@ -2,10 +2,10 @@
 // Implémentation du repository étoile avec Sequelize
 // Responsabilité unique : opérations de persistance des données étoile
 
-const { Star } = require('../models');
-const { IStarRepository } = require('../interfaces/IStarRepository');
-const { Op } = require('sequelize');
-const { validateId } = require('../utils/validators');
+const { Star } = require("../models");
+const { IStarRepository } = require("../interfaces/IStarRepository");
+const { Op } = require("sequelize");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les étoiles utilisant Sequelize ORM
@@ -42,15 +42,15 @@ class SequelizeStarRepository extends IStarRepository {
    */
   async findAndCountAll(options) {
     try {
-      if (!options || typeof options !== 'object') {
-        throw new Error('Options must be an object');
+      if (!options || typeof options !== "object") {
+        throw new Error("Options must be an object");
       }
 
       const result = await this.Star.findAndCountAll(options);
 
       return {
         count: result.count,
-        rows: result.rows.map(star => star.toJSON())
+        rows: result.rows.map((star) => star.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to find and count stars: ${error.message}`);
@@ -68,10 +68,10 @@ class SequelizeStarRepository extends IStarRepository {
     try {
       const stars = await this.Star.findAll({
         where,
-        ...options
+        ...options,
       });
 
-      return stars.map(star => star.toJSON());
+      return stars.map((star) => star.toJSON());
     } catch (error) {
       throw new Error(`Failed to find stars: ${error.message}`);
     }
@@ -105,17 +105,17 @@ class SequelizeStarRepository extends IStarRepository {
     try {
       validateId(id);
 
-      if (!updateData || typeof updateData !== 'object') {
-        throw new Error('Update data must be an object');
+      if (!updateData || typeof updateData !== "object") {
+        throw new Error("Update data must be an object");
       }
 
       const [updatedCount] = await this.Star.update(updateData, {
         where: { starid: id },
-        returning: true
+        returning: true,
       });
 
       if (updatedCount === 0) {
-        throw new Error('Star not found or no changes made');
+        throw new Error("Star not found or no changes made");
       }
 
       const updatedStar = await this.findById(id);
@@ -136,7 +136,7 @@ class SequelizeStarRepository extends IStarRepository {
       validateId(id);
 
       const deletedCount = await this.Star.destroy({
-        where: { starid: id }
+        where: { starid: id },
       });
 
       return deletedCount > 0;
@@ -180,8 +180,8 @@ class SequelizeStarRepository extends IStarRepository {
         maxLuminosity,
         limit = 20,
         offset = 0,
-        orderBy = 'name',
-        orderDirection = 'ASC'
+        orderBy = "name",
+        orderDirection = "ASC",
       } = searchCriteria;
 
       const whereCondition = {};
@@ -191,7 +191,7 @@ class SequelizeStarRepository extends IStarRepository {
         whereCondition[Op.or] = [
           { name: { [Op.iLike]: `%${search}%` } },
           { description: { [Op.iLike]: `%${search}%` } },
-          { constellation: { [Op.iLike]: `%${search}%` } }
+          { constellation: { [Op.iLike]: `%${search}%` } },
         ];
       }
 
@@ -207,7 +207,7 @@ class SequelizeStarRepository extends IStarRepository {
       if (maxPrice !== undefined && maxPrice !== null) {
         whereCondition.price = {
           ...whereCondition.price,
-          [Op.lte]: maxPrice
+          [Op.lte]: maxPrice,
         };
       }
 
@@ -218,7 +218,7 @@ class SequelizeStarRepository extends IStarRepository {
       if (maxMagnitude !== undefined && maxMagnitude !== null) {
         whereCondition.magnitude = {
           ...whereCondition.magnitude,
-          [Op.lte]: maxMagnitude
+          [Op.lte]: maxMagnitude,
         };
       }
 
@@ -229,7 +229,7 @@ class SequelizeStarRepository extends IStarRepository {
       if (maxDistance !== undefined && maxDistance !== null) {
         whereCondition.distanceFromEarth = {
           ...whereCondition.distanceFromEarth,
-          [Op.lte]: maxDistance
+          [Op.lte]: maxDistance,
         };
       }
 
@@ -240,27 +240,34 @@ class SequelizeStarRepository extends IStarRepository {
       if (maxLuminosity !== undefined && maxLuminosity !== null) {
         whereCondition.luminosity = {
           ...whereCondition.luminosity,
-          [Op.lte]: maxLuminosity
+          [Op.lte]: maxLuminosity,
         };
       }
 
       // Validation de l'ordre
-      const validOrderFields = ['name', 'price', 'magnitude', 'distanceFromEarth', 'luminosity', 'createdAt'];
-      const validatedOrderBy = validOrderFields.includes(orderBy) ? orderBy : 'name';
-      const validatedOrderDirection = ['ASC', 'DESC'].includes(orderDirection.toUpperCase())
+      const validOrderFields = [
+        "name",
+        "price",
+        "magnitude",
+        "distanceFromEarth",
+        "luminosity",
+        "createdAt",
+      ];
+      const validatedOrderBy = validOrderFields.includes(orderBy) ? orderBy : "name";
+      const validatedOrderDirection = ["ASC", "DESC"].includes(orderDirection.toUpperCase())
         ? orderDirection.toUpperCase()
-        : 'ASC';
+        : "ASC";
 
       const result = await this.Star.findAndCountAll({
         where: whereCondition,
         limit: Math.min(limit, 100),
         offset,
-        order: [[validatedOrderBy, validatedOrderDirection]]
+        order: [[validatedOrderBy, validatedOrderDirection]],
       });
 
       return {
         count: result.count,
-        rows: result.rows.map(star => star.toJSON())
+        rows: result.rows.map((star) => star.toJSON()),
       };
     } catch (error) {
       throw new Error(`Failed to search stars: ${error.message}`);
@@ -275,12 +282,12 @@ class SequelizeStarRepository extends IStarRepository {
   async getUniqueConstellations() {
     try {
       const stars = await this.Star.findAll({
-        attributes: ['constellation'],
-        group: ['constellation'],
-        raw: true
+        attributes: ["constellation"],
+        group: ["constellation"],
+        raw: true,
       });
 
-      return stars.map(star => star.constellation).filter(Boolean);
+      return stars.map((star) => star.constellation).filter(Boolean);
     } catch (error) {
       throw new Error(`Failed to get unique constellations: ${error.message}`);
     }
@@ -293,12 +300,12 @@ class SequelizeStarRepository extends IStarRepository {
    */
   async exists(id) {
     try {
-      if (!id || typeof id !== 'number') {
+      if (!id || typeof id !== "number") {
         return false;
       }
 
       const count = await this.Star.count({
-        where: { starid: id }
+        where: { starid: id },
       });
 
       return count > 0;
@@ -314,25 +321,25 @@ class SequelizeStarRepository extends IStarRepository {
    * @private
    */
   validateStarData(starData) {
-    if (!starData || typeof starData !== 'object') {
-      throw new Error('Star data must be an object');
+    if (!starData || typeof starData !== "object") {
+      throw new Error("Star data must be an object");
     }
 
-    const requiredFields = ['name', 'price', 'magnitude'];
-    const missingFields = requiredFields.filter(field => !starData[field]);
+    const requiredFields = ["name", "price", "magnitude"];
+    const missingFields = requiredFields.filter((field) => !starData[field]);
 
     if (missingFields.length > 0) {
-      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
     }
 
     // Validation prix
-    if (typeof starData.price !== 'number' || starData.price < 0) {
-      throw new Error('Price must be a positive number');
+    if (typeof starData.price !== "number" || starData.price < 0) {
+      throw new Error("Price must be a positive number");
     }
 
     // Validation magnitude
-    if (typeof starData.magnitude !== 'number') {
-      throw new Error('Magnitude must be a number');
+    if (typeof starData.magnitude !== "number") {
+      throw new Error("Magnitude must be a number");
     }
   }
 }

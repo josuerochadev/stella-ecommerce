@@ -2,7 +2,7 @@
 // Service pour les statistiques système
 // Responsabilité unique : collecte des métriques système et base de données
 
-const { sequelize } = require('../models');
+const { sequelize } = require("../models");
 
 /**
  * Service pour les statistiques système
@@ -15,7 +15,8 @@ class SystemStatsService {
    */
   static async getDatabaseTableStats() {
     try {
-      const dbStats = await sequelize.query(`
+      const dbStats = await sequelize.query(
+        `
         SELECT
           schemaname,
           tablename,
@@ -24,7 +25,9 @@ class SystemStatsService {
           n_tup_del as deletes
         FROM pg_stat_user_tables
         ORDER BY n_tup_ins DESC
-      `, { type: sequelize.QueryTypes.SELECT });
+      `,
+        { type: sequelize.QueryTypes.SELECT },
+      );
 
       return dbStats;
     } catch (error) {
@@ -39,9 +42,10 @@ class SystemStatsService {
    */
   static async getDatabaseIndexStats(limit = 10) {
     try {
-      const validatedLimit = Math.min(Math.max(parseInt(limit), 1), 50);
+      const validatedLimit = Math.min(Math.max(Number.parseInt(limit), 1), 50);
 
-      const indexStats = await sequelize.query(`
+      const indexStats = await sequelize.query(
+        `
         SELECT
           indexname,
           idx_tup_read,
@@ -50,10 +54,12 @@ class SystemStatsService {
         WHERE idx_tup_read > 0
         ORDER BY idx_tup_read DESC
         LIMIT :limit
-      `, {
-        replacements: { limit: validatedLimit },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { limit: validatedLimit },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       return indexStats;
     } catch (error) {
@@ -70,7 +76,7 @@ class SystemStatsService {
       nodeVersion: process.version,
       platform: process.platform,
       uptime: Math.floor(process.uptime()),
-      memoryUsage: process.memoryUsage()
+      memoryUsage: process.memoryUsage(),
     };
   }
 
@@ -81,7 +87,7 @@ class SystemStatsService {
   static getApplicationInfo() {
     return {
       environment: process.env.NODE_ENV,
-      port: process.env.PORT || 3000
+      port: process.env.PORT || 3000,
     };
   }
 
@@ -92,17 +98,17 @@ class SystemStatsService {
   static async getSystemStats() {
     try {
       const [tableStats, indexStats] = await Promise.all([
-        this.getDatabaseTableStats(),
-        this.getDatabaseIndexStats(10)
+        SystemStatsService.getDatabaseTableStats(),
+        SystemStatsService.getDatabaseIndexStats(10),
       ]);
 
       return {
         database: {
           tables: tableStats,
-          indexes: indexStats
+          indexes: indexStats,
         },
-        server: this.getServerInfo(),
-        application: this.getApplicationInfo()
+        server: SystemStatsService.getServerInfo(),
+        application: SystemStatsService.getApplicationInfo(),
       };
     } catch (error) {
       throw new Error(`Failed to get system stats: ${error.message}`);
@@ -115,20 +121,25 @@ class SystemStatsService {
    */
   static async getDatabaseConnectionStats() {
     try {
-      const connectionStats = await sequelize.query(`
+      const connectionStats = await sequelize.query(
+        `
         SELECT
           count(*) as total_connections,
           count(*) FILTER (WHERE state = 'active') as active_connections,
           count(*) FILTER (WHERE state = 'idle') as idle_connections
         FROM pg_stat_activity
         WHERE datname = current_database()
-      `, { type: sequelize.QueryTypes.SELECT });
+      `,
+        { type: sequelize.QueryTypes.SELECT },
+      );
 
-      return connectionStats[0] || {
-        total_connections: 0,
-        active_connections: 0,
-        idle_connections: 0
-      };
+      return (
+        connectionStats[0] || {
+          total_connections: 0,
+          active_connections: 0,
+          idle_connections: 0,
+        }
+      );
     } catch (error) {
       throw new Error(`Failed to get database connection stats: ${error.message}`);
     }
@@ -140,16 +151,21 @@ class SystemStatsService {
    */
   static async getDatabaseSize() {
     try {
-      const sizeData = await sequelize.query(`
+      const sizeData = await sequelize.query(
+        `
         SELECT
           pg_size_pretty(pg_database_size(current_database())) as pretty_size,
           pg_database_size(current_database()) as size_bytes
-      `, { type: sequelize.QueryTypes.SELECT });
+      `,
+        { type: sequelize.QueryTypes.SELECT },
+      );
 
-      return sizeData[0] || {
-        pretty_size: '0 bytes',
-        size_bytes: 0
-      };
+      return (
+        sizeData[0] || {
+          pretty_size: "0 bytes",
+          size_bytes: 0,
+        }
+      );
     } catch (error) {
       throw new Error(`Failed to get database size: ${error.message}`);
     }
@@ -162,9 +178,10 @@ class SystemStatsService {
    */
   static async getSlowestQueries(limit = 10) {
     try {
-      const validatedLimit = Math.min(Math.max(parseInt(limit), 1), 50);
+      const validatedLimit = Math.min(Math.max(Number.parseInt(limit), 1), 50);
 
-      const slowQueries = await sequelize.query(`
+      const slowQueries = await sequelize.query(
+        `
         SELECT
           query,
           calls,
@@ -175,10 +192,12 @@ class SystemStatsService {
         WHERE query NOT LIKE '%pg_stat_statements%'
         ORDER BY mean_time DESC
         LIMIT :limit
-      `, {
-        replacements: { limit: validatedLimit },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { limit: validatedLimit },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       return slowQueries;
     } catch (error) {
@@ -196,16 +215,11 @@ class SystemStatsService {
    */
   static async getDetailedStats() {
     try {
-      const [
-        systemStats,
-        connectionStats,
-        databaseSize,
-        slowQueries
-      ] = await Promise.all([
-        this.getSystemStats(),
-        this.getDatabaseConnectionStats(),
-        this.getDatabaseSize(),
-        this.getSlowestQueries(10)
+      const [systemStats, connectionStats, databaseSize, slowQueries] = await Promise.all([
+        SystemStatsService.getSystemStats(),
+        SystemStatsService.getDatabaseConnectionStats(),
+        SystemStatsService.getDatabaseSize(),
+        SystemStatsService.getSlowestQueries(10),
       ]);
 
       return {
@@ -214,8 +228,8 @@ class SystemStatsService {
           ...systemStats.database,
           connections: connectionStats,
           size: databaseSize,
-          slowQueries
-        }
+          slowQueries,
+        },
       };
     } catch (error) {
       throw new Error(`Failed to get detailed stats: ${error.message}`);

@@ -2,9 +2,9 @@
 // Implémentation du repository panier avec Sequelize
 // Responsabilité unique : opérations de persistance des données panier
 
-const { Cart, CartItem, Star } = require('../models');
-const { ICartRepository } = require('../interfaces/ICartRepository');
-const { validateId } = require('../utils/validators');
+const { Cart, CartItem, Star } = require("../models");
+const { ICartRepository } = require("../interfaces/ICartRepository");
+const { validateId } = require("../utils/validators");
 
 /**
  * Repository pour les paniers utilisant Sequelize ORM
@@ -25,22 +25,22 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async findByUserId(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const cart = await this.Cart.findOne({
         where: { userId },
         include: [
           {
             model: CartItem,
-            as: 'cartItems',
+            as: "cartItems",
             include: [
               {
                 model: Star,
-                as: 'Star'
-              }
-            ]
-          }
-        ]
+                as: "Star",
+              },
+            ],
+          },
+        ],
       });
 
       return cart ? cart.toJSON() : null;
@@ -63,15 +63,15 @@ class SequelizeCartRepository extends ICartRepository {
         include: [
           {
             model: CartItem,
-            as: 'cartItems',
+            as: "cartItems",
             include: [
               {
                 model: Star,
-                as: 'Star'
-              }
-            ]
-          }
-        ]
+                as: "Star",
+              },
+            ],
+          },
+        ],
       });
 
       return cart ? cart.toJSON() : null;
@@ -90,7 +90,7 @@ class SequelizeCartRepository extends ICartRepository {
   async create(cartData, transaction = null) {
     try {
       if (!cartData || !cartData.userId) {
-        throw new Error('User ID is required to create a cart');
+        throw new Error("User ID is required to create a cart");
       }
 
       const options = transaction ? { transaction } : {};
@@ -113,7 +113,7 @@ class SequelizeCartRepository extends ICartRepository {
       validateId(id);
 
       const deletedCount = await this.Cart.destroy({
-        where: { id }
+        where: { id },
       });
 
       return deletedCount > 0;
@@ -129,10 +129,10 @@ class SequelizeCartRepository extends ICartRepository {
    */
   async deleteByUserId(userId) {
     try {
-      validateId(userId, 'User ID');
+      validateId(userId, "User ID");
 
       const deletedCount = await this.Cart.destroy({
-        where: { userId }
+        where: { userId },
       });
 
       return deletedCount > 0;
@@ -150,15 +150,15 @@ class SequelizeCartRepository extends ICartRepository {
   async findCartItem(cartId, starId, transaction = null) {
     try {
       if (!cartId || !starId) {
-        throw new Error('Cart ID and Star ID are required');
+        throw new Error("Cart ID and Star ID are required");
       }
 
       const options = {
         where: {
           cartId,
-          starId
+          starId,
         },
-        include: [{ model: Star, as: 'Star' }]
+        include: [{ model: Star, as: "Star" }],
       };
 
       if (transaction) {
@@ -184,7 +184,7 @@ class SequelizeCartRepository extends ICartRepository {
       const { cartId, starId, quantity } = cartItemData;
 
       if (!cartId || !starId) {
-        throw new Error('Cart ID and Star ID are required');
+        throw new Error("Cart ID and Star ID are required");
       }
 
       const options = transaction ? { transaction } : {};
@@ -192,15 +192,15 @@ class SequelizeCartRepository extends ICartRepository {
         {
           cartId,
           starId,
-          quantity: quantity || 1
+          quantity: quantity || 1,
         },
-        options
+        options,
       );
 
       // Récupérer l'item avec les relations
       const createdItem = await this.CartItem.findByPk(cartItem.id, {
-        include: [{ model: Star, as: 'Star' }],
-        ...(transaction ? { transaction } : {})
+        include: [{ model: Star, as: "Star" }],
+        ...(transaction ? { transaction } : {}),
       });
 
       return createdItem ? createdItem.toJSON() : null;
@@ -219,34 +219,31 @@ class SequelizeCartRepository extends ICartRepository {
   async updateCartItemQuantity(cartItemId, quantity, transaction = null) {
     try {
       if (!cartItemId) {
-        throw new Error('Cart item ID is required');
+        throw new Error("Cart item ID is required");
       }
 
-      if (typeof quantity !== 'number' || quantity < 1) {
-        throw new Error('Quantity must be a positive number');
+      if (typeof quantity !== "number" || quantity < 1) {
+        throw new Error("Quantity must be a positive number");
       }
 
       const options = {
         where: { id: cartItemId },
-        returning: true
+        returning: true,
       };
 
       if (transaction) {
         options.transaction = transaction;
       }
 
-      const [updatedCount] = await this.CartItem.update(
-        { quantity },
-        options
-      );
+      const [updatedCount] = await this.CartItem.update({ quantity }, options);
 
       if (updatedCount === 0) {
-        throw new Error('Cart item not found');
+        throw new Error("Cart item not found");
       }
 
       const updatedItem = await this.CartItem.findByPk(cartItemId, {
-        include: [{ model: Star, as: 'Star' }],
-        ...(transaction ? { transaction } : {})
+        include: [{ model: Star, as: "Star" }],
+        ...(transaction ? { transaction } : {}),
       });
 
       return updatedItem ? updatedItem.toJSON() : null;
@@ -264,7 +261,7 @@ class SequelizeCartRepository extends ICartRepository {
   async removeCartItem(cartItemId, transaction = null) {
     try {
       if (!cartItemId) {
-        throw new Error('Cart item ID is required');
+        throw new Error("Cart item ID is required");
       }
 
       const options = { where: { id: cartItemId } };
@@ -288,7 +285,7 @@ class SequelizeCartRepository extends ICartRepository {
   async clearCart(cartId, transaction = null) {
     try {
       if (!cartId) {
-        throw new Error('Cart ID is required');
+        throw new Error("Cart ID is required");
       }
 
       const options = { where: { cartId } };
@@ -311,11 +308,11 @@ class SequelizeCartRepository extends ICartRepository {
   async countCartItems(cartId) {
     try {
       if (!cartId) {
-        throw new Error('Cart ID is required');
+        throw new Error("Cart ID is required");
       }
 
       const count = await this.CartItem.count({
-        where: { cartId }
+        where: { cartId },
       });
 
       return count;
@@ -336,7 +333,7 @@ class SequelizeCartRepository extends ICartRepository {
       }
 
       const count = await this.Cart.count({
-        where: { userId }
+        where: { userId },
       });
 
       return count > 0;

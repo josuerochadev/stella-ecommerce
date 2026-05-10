@@ -80,43 +80,33 @@ describe("OrderService", () => {
 
     it("throws on invalid userId", async () => {
       await expect(
-        orderService.createOrder(
-          null,
-          validItems,
-          "123 Rue",
-          "credit_card",
-        ),
+        orderService.createOrder(null, validItems, "123 Rue", "credit_card"),
       ).rejects.toThrow("User ID must be a valid number");
     });
 
     it("throws on empty items array", async () => {
-      await expect(
-        orderService.createOrder(1, [], "123 Rue", "credit_card"),
-      ).rejects.toThrow("Items must be a non-empty array");
+      await expect(orderService.createOrder(1, [], "123 Rue", "credit_card")).rejects.toThrow(
+        "Items must be a non-empty array",
+      );
     });
 
     it("throws on missing shipping address", async () => {
-      await expect(
-        orderService.createOrder(1, validItems, "", "credit_card"),
-      ).rejects.toThrow("Shipping address is required");
+      await expect(orderService.createOrder(1, validItems, "", "credit_card")).rejects.toThrow(
+        "Shipping address is required",
+      );
     });
 
     it("throws on missing payment method", async () => {
-      await expect(
-        orderService.createOrder(1, validItems, "123 Rue", ""),
-      ).rejects.toThrow("Payment method is required");
+      await expect(orderService.createOrder(1, validItems, "123 Rue", "")).rejects.toThrow(
+        "Payment method is required",
+      );
     });
 
     it("throws when user not found", async () => {
       userRepo.findById.mockResolvedValue(null);
 
       await expect(
-        orderService.createOrder(
-          999,
-          validItems,
-          "123 Rue",
-          "credit_card",
-        ),
+        orderService.createOrder(999, validItems, "123 Rue", "credit_card"),
       ).rejects.toThrow("User with id 999 not found");
     });
 
@@ -124,12 +114,7 @@ describe("OrderService", () => {
       starRepo.findAll.mockResolvedValue([]);
 
       await expect(
-        orderService.createOrder(
-          1,
-          validItems,
-          "123 Rue",
-          "credit_card",
-        ),
+        orderService.createOrder(1, validItems, "123 Rue", "credit_card"),
       ).rejects.toThrow("Stars not found");
     });
   });
@@ -169,9 +154,7 @@ describe("OrderService", () => {
     it("throws when order does not belong to user", async () => {
       orderRepo.belongsToUser.mockResolvedValue(false);
 
-      await expect(orderService.getOrderDetails(1, 2)).rejects.toThrow(
-        "Order not found",
-      );
+      await expect(orderService.getOrderDetails(1, 2)).rejects.toThrow("Order not found");
     });
   });
 
@@ -200,9 +183,7 @@ describe("OrderService", () => {
     it("throws when order not found", async () => {
       orderRepo.belongsToUser.mockResolvedValue(false);
 
-      await expect(orderService.cancelOrder(999, 1)).rejects.toThrow(
-        "Order not found",
-      );
+      await expect(orderService.cancelOrder(999, 1)).rejects.toThrow("Order not found");
     });
   });
 

@@ -1,9 +1,9 @@
 // client/src/components/CartSummary.tsx
 // Responsabilité unique : Affichage du résumé et total du panier
 
-import React from "react";
-import { CartCalculations } from "@/utils/cartCalculations";
 import type { CartItem } from "@/types";
+import { CartCalculations } from "@/utils/cartCalculations";
+import type React from "react";
 
 interface CartSummaryProps {
   cartItems: CartItem[];
@@ -18,7 +18,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({ cartItems, onCheckout }) => {
   const stats = CartCalculations.getCartStats(cartItems);
 
   return (
-    <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+    <div className="mt-6 p-4 bg-surface-2 rounded-lg border border-text/10">
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-text">
           <span>Articles ({stats.totalItems})</span>
@@ -33,7 +33,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({ cartItems, onCheckout }) => {
         )}
       </div>
 
-      <hr className="my-4" />
+      <hr className="my-4 border-text/10" />
 
       <div className="flex justify-between text-xl font-bold">
         <span>Total</span>
@@ -41,10 +41,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({ cartItems, onCheckout }) => {
       </div>
 
       {onCheckout && stats.totalItems > 0 && (
-        <button
-          onClick={onCheckout}
-          className="w-full mt-4 btn btn-primary"
-        >
+        <button type="button" onClick={onCheckout} className="w-full mt-4 btn btn-primary">
           Procéder au paiement
         </button>
       )}

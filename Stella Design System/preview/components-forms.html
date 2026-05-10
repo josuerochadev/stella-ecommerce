@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Stella — Form input</title>
+<link rel="stylesheet" href="_base.css" />
+<style>
+  .card { padding: 24px; gap: 16px; }
+  .field { display:flex; flex-direction: column; gap: 6px; }
+  label { font-family: 'Roboto Slab', serif; font-size: 13px; color: #AEC9FF; }
+  .req { color: #f87171; margin-left: 4px; }
+  input[type=text], input[type=email] {
+    width:100%; padding: 12px; border-radius: 6px;
+    background:#3D2A54; color:#AEC9FF; border: none; outline: none;
+    font-size: 14px;
+  }
+  input:focus { box-shadow: 0 0 0 2px #FFB347; }
+  .hint { font-size: 12px; color: rgba(174,201,255,.7); }
+  .err { font-size: 12px; color: #f87171; }
+  .search-wrap { display:flex; }
+  .search-wrap input { background:#1E1326; border-radius: 6px 0 0 6px; padding: 14px; font-size: 16px; border: 2px solid #3D2A54; }
+  .search-wrap button { background:#3D2A54; color:#AEC9FF; border:2px solid #3D2A54; border-left:none; padding: 0 18px; border-radius: 0 6px 6px 0; font-family:'Bebas Neue', sans-serif; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="field">
+    <label>Email<span class="req">*</span></label>
+    <input type="email" value="exemple@email.com" />
+    <span class="hint">Saisissez votre adresse e-mail de connexion</span>
+  </div>
+  <div class="field">
+    <label>Mot de passe<span class="req">*</span></label>
+    <input type="text" value="" placeholder="Votre mot de passe" />
+    <span class="err">Le mot de passe est requis</span>
+  </div>
+  <div class="field">
+    <label>Recherche catalogue</label>
+    <div class="search-wrap">
+      <input style="flex:1" type="text" placeholder="Rechercher des étoiles par nom, constellation..." />
+      <button type="button">Filtres avancés</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

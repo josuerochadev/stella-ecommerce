@@ -2,12 +2,12 @@
 // Container d'injection de dépendances simple pour le frontend
 // Responsabilité unique : gestion et résolution des dépendances frontend
 
-import { ApiCartRepository } from "@/repositories/ApiCartRepository";
-import { ApiWishlistRepository } from "@/repositories/ApiWishlistRepository";
-import { ApiUserRepository } from "@/repositories/ApiUserRepository";
 import type { CartRepository } from "@/interfaces/CartRepository";
-import type { WishlistRepository } from "@/interfaces/WishlistRepository";
 import type { UserRepository } from "@/interfaces/UserRepository";
+import type { WishlistRepository } from "@/interfaces/WishlistRepository";
+import { ApiCartRepository } from "@/repositories/ApiCartRepository";
+import { ApiUserRepository } from "@/repositories/ApiUserRepository";
+import { ApiWishlistRepository } from "@/repositories/ApiWishlistRepository";
 
 /**
  * Type pour les services disponibles dans le container
@@ -121,9 +121,9 @@ const container = new FrontendDIContainer();
  */
 export function configureContainer(): void {
   // Enregistrer les repositories
-  container.registerFactory('cartRepository', () => new ApiCartRepository());
-  container.registerFactory('wishlistRepository', () => new ApiWishlistRepository());
-  container.registerFactory('userRepository', () => new ApiUserRepository());
+  container.registerFactory("cartRepository", () => new ApiCartRepository());
+  container.registerFactory("wishlistRepository", () => new ApiWishlistRepository());
+  container.registerFactory("userRepository", () => new ApiUserRepository());
 }
 
 /**
@@ -131,9 +131,7 @@ export function configureContainer(): void {
  * @param serviceName - Nom du service
  * @returns Instance du service
  */
-export function getService<K extends keyof ServiceContainer>(
-  serviceName: K
-): ServiceContainer[K] {
+export function getService<K extends keyof ServiceContainer>(serviceName: K): ServiceContainer[K] {
   return container.resolve(serviceName);
 }
 
@@ -144,7 +142,7 @@ export function getService<K extends keyof ServiceContainer>(
  */
 export function registerService<K extends keyof ServiceContainer>(
   serviceName: K,
-  instance: ServiceContainer[K]
+  instance: ServiceContainer[K],
 ): void {
   container.registerSingleton(serviceName, instance);
 }
@@ -156,7 +154,7 @@ export function registerService<K extends keyof ServiceContainer>(
  */
 export function registerServiceFactory<K extends keyof ServiceContainer>(
   serviceName: K,
-  factory: () => ServiceContainer[K]
+  factory: () => ServiceContainer[K],
 ): void {
   container.registerFactory(serviceName, factory);
 }
@@ -166,9 +164,7 @@ export function registerServiceFactory<K extends keyof ServiceContainer>(
  * @param serviceName - Nom du service
  * @returns True si disponible
  */
-export function hasService<K extends keyof ServiceContainer>(
-  serviceName: K
-): boolean {
+export function hasService<K extends keyof ServiceContainer>(serviceName: K): boolean {
   return container.has(serviceName);
 }
 
@@ -194,13 +190,13 @@ export function configureTestContainer(mocks: Partial<ServiceContainer>): void {
 
   // Enregistrer les services par défaut pour ceux non mockés
   if (!mocks.cartRepository) {
-    container.registerFactory('cartRepository', () => new ApiCartRepository());
+    container.registerFactory("cartRepository", () => new ApiCartRepository());
   }
   if (!mocks.wishlistRepository) {
-    container.registerFactory('wishlistRepository', () => new ApiWishlistRepository());
+    container.registerFactory("wishlistRepository", () => new ApiWishlistRepository());
   }
   if (!mocks.userRepository) {
-    container.registerFactory('userRepository', () => new ApiUserRepository());
+    container.registerFactory("userRepository", () => new ApiUserRepository());
   }
 }
 
@@ -208,9 +204,7 @@ export function configureTestContainer(mocks: Partial<ServiceContainer>): void {
  * Hook React pour récupérer un service
  * Utilise la convention React pour les hooks personnalisés
  */
-export function useService<K extends keyof ServiceContainer>(
-  serviceName: K
-): ServiceContainer[K] {
+export function useService<K extends keyof ServiceContainer>(serviceName: K): ServiceContainer[K] {
   // En production, on pourrait ajouter une optimisation avec useMemo
   // pour éviter les re-créations inutiles
   return getService(serviceName);
@@ -224,7 +218,7 @@ export function useService<K extends keyof ServiceContainer>(
  */
 export function createStoreWithDI<T, D extends Partial<ServiceContainer>>(
   createStore: (dependencies: D) => T,
-  dependencies: (keyof ServiceContainer)[]
+  dependencies: (keyof ServiceContainer)[],
 ): T {
   const resolvedDependencies = {} as D;
 

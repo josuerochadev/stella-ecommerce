@@ -2,20 +2,20 @@
 // Configuration du container d'injection de dépendances
 // Responsabilité unique : enregistrement de tous les services
 
-const { DIContainer } = require('./DIContainer');
-const { BcryptHashingService } = require('../services/BcryptHashingService');
-const { SequelizeUserRepository } = require('../repositories/SequelizeUserRepository');
-const { SequelizeStarRepository } = require('../repositories/SequelizeStarRepository');
-const { SequelizeOrderRepository } = require('../repositories/SequelizeOrderRepository');
-const { SequelizeCartRepository } = require('../repositories/SequelizeCartRepository');
-const { SequelizeWishlistRepository } = require('../repositories/SequelizeWishlistRepository');
-const { SequelizeReviewRepository } = require('../repositories/SequelizeReviewRepository');
-const { CartService } = require('../services/CartService');
-const { StarAdminService } = require('../services/StarAdminService');
-const { OrderService } = require('../services/OrderService');
-const tokenService = require('../services/tokenService');
-const { paymentService } = require('../services/paymentService');
-const { emailService } = require('../services/emailService');
+const { DIContainer } = require("./DIContainer");
+const { BcryptHashingService } = require("../services/BcryptHashingService");
+const { SequelizeUserRepository } = require("../repositories/SequelizeUserRepository");
+const { SequelizeStarRepository } = require("../repositories/SequelizeStarRepository");
+const { SequelizeOrderRepository } = require("../repositories/SequelizeOrderRepository");
+const { SequelizeCartRepository } = require("../repositories/SequelizeCartRepository");
+const { SequelizeWishlistRepository } = require("../repositories/SequelizeWishlistRepository");
+const { SequelizeReviewRepository } = require("../repositories/SequelizeReviewRepository");
+const { CartService } = require("../services/CartService");
+const { StarAdminService } = require("../services/StarAdminService");
+const { OrderService } = require("../services/OrderService");
+const tokenService = require("../services/tokenService");
+const { paymentService } = require("../services/paymentService");
+const { emailService } = require("../services/emailService");
 
 /**
  * Configure et retourne le container d'injection de dépendances
@@ -27,81 +27,81 @@ function createContainer() {
   try {
     // Services de base
     container.register(
-      'hashingService',
+      "hashingService",
       BcryptHashingService,
       [], // Pas de dépendances
-      true // Singleton
+      true, // Singleton
     );
 
     // Repositories
     container.register(
-      'userRepository',
+      "userRepository",
       SequelizeUserRepository,
       [], // Pas de dépendances (User model injecté dans le constructeur)
-      true // Singleton
+      true, // Singleton
     );
 
     container.register(
-      'starRepository',
+      "starRepository",
       SequelizeStarRepository,
       [],
-      true // Singleton
+      true, // Singleton
     );
 
     container.register(
-      'orderRepository',
+      "orderRepository",
       SequelizeOrderRepository,
       [],
-      true // Singleton
+      true, // Singleton
     );
 
     container.register(
-      'cartRepository',
+      "cartRepository",
       SequelizeCartRepository,
       [],
-      true // Singleton
+      true, // Singleton
     );
 
     container.register(
-      'wishlistRepository',
+      "wishlistRepository",
       SequelizeWishlistRepository,
       [],
-      true // Singleton
+      true, // Singleton
     );
 
     container.register(
-      'reviewRepository',
+      "reviewRepository",
       SequelizeReviewRepository,
       [],
-      true // Singleton
+      true, // Singleton
     );
 
     // Services métier
     container.register(
-      'cartService',
+      "cartService",
       CartService,
-      ['cartRepository', 'starRepository'], // Dépendances
-      true // Singleton
+      ["cartRepository", "starRepository"], // Dépendances
+      true, // Singleton
     );
 
     container.register(
-      'starAdminService',
+      "starAdminService",
       StarAdminService,
-      ['starRepository'], // Dépendances
-      true // Singleton
+      ["starRepository"], // Dépendances
+      true, // Singleton
     );
 
     container.register(
-      'orderService',
+      "orderService",
       OrderService,
-      ['orderRepository', 'starRepository', 'userRepository'], // Dépendances
-      true // Singleton
+      ["orderRepository", "starRepository", "userRepository"], // Dépendances
+      true, // Singleton
     );
 
     // Services existants (instances pre-configurees)
-    container.registerInstance('tokenService', tokenService);
-    container.registerInstance('paymentService', paymentService);
-    container.registerInstance('emailService', emailService);
+    container.registerInstance("tokenService", tokenService);
+    container.registerInstance("paymentService", paymentService);
+    container.registerInstance("emailService", emailService);
 
     // Validation des dépendances
     container.validateAllDependencies();
@@ -152,7 +152,7 @@ function createTestContainer(mocks = {}) {
     cartRepository: new SequelizeCartRepository(),
     wishlistRepository: new SequelizeWishlistRepository(),
     reviewRepository: new SequelizeReviewRepository(),
-    tokenService: tokenService
+    tokenService: tokenService,
   };
 
   // Merger avec les mocks
@@ -190,5 +190,5 @@ module.exports = {
   resetContainer,
   createTestContainer,
   getService,
-  hasService
+  hasService,
 };

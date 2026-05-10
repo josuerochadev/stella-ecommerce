@@ -1,9 +1,9 @@
 // server/src/services/paymentService.js
 // Service principal de paiement - orchestrateur suivant principe KISS
 
-const { PaymentValidator } = require('./paymentValidator');
-const { PaymentProcessor } = require('./paymentProcessor');
-const { PaymentRefundService } = require('./paymentRefundService');
+const { PaymentValidator } = require("./paymentValidator");
+const { PaymentProcessor } = require("./paymentProcessor");
+const { PaymentRefundService } = require("./paymentRefundService");
 
 const PAYMENT_METHOD_DISTRIBUTION = {
   credit_card: { percentage: 60, share: 0.6 },
@@ -105,7 +105,7 @@ class PaymentOrchestrator {
 
     return {
       ...paymentStats,
-      refunds: refundStats
+      refunds: refundStats,
     };
   }
 
@@ -123,11 +123,13 @@ class PaymentOrchestrator {
       totalRevenue,
       averageTransactionAmount: Math.round((totalRevenue / totalTransactions) * 100) / 100,
       successRate: Math.round((Math.random() * 10 + 90) * 100) / 100, // 90-100%
-      topPaymentMethods: Object.entries(PAYMENT_METHOD_DISTRIBUTION).map(([method, { share, percentage }]) => ({
-        method,
-        count: Math.floor(totalTransactions * share),
-        percentage
-      }))
+      topPaymentMethods: Object.entries(PAYMENT_METHOD_DISTRIBUTION).map(
+        ([method, { share, percentage }]) => ({
+          method,
+          count: Math.floor(totalTransactions * share),
+          percentage,
+        }),
+      ),
     };
   }
 }

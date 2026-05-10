@@ -3,9 +3,7 @@ const { CartService } = require("../../src/services/CartService");
 // Mock sequelize.transaction
 jest.mock("../../src/models", () => ({
   sequelize: {
-    transaction: jest.fn((callback) =>
-      callback({ commit: jest.fn(), rollback: jest.fn() }),
-    ),
+    transaction: jest.fn((callback) => callback({ commit: jest.fn(), rollback: jest.fn() })),
   },
 }));
 
@@ -61,12 +59,8 @@ describe("CartService", () => {
     });
 
     it("throws on invalid userId", async () => {
-      await expect(cartService.getCart(null)).rejects.toThrow(
-        "User ID must be a valid number",
-      );
-      await expect(cartService.getCart("abc")).rejects.toThrow(
-        "User ID must be a valid number",
-      );
+      await expect(cartService.getCart(null)).rejects.toThrow("User ID must be a valid number");
+      await expect(cartService.getCart("abc")).rejects.toThrow("User ID must be a valid number");
     });
   });
 
@@ -102,19 +96,13 @@ describe("CartService", () => {
 
       const result = await cartService.addToCart(1, 10, 1);
       expect(result.quantity).toBe(3);
-      expect(cartRepo.updateCartItemQuantity).toHaveBeenCalledWith(
-        5,
-        3,
-        expect.anything(),
-      );
+      expect(cartRepo.updateCartItemQuantity).toHaveBeenCalledWith(5, 3, expect.anything());
     });
 
     it("throws when star does not exist", async () => {
       starRepo.exists.mockResolvedValue(false);
 
-      await expect(cartService.addToCart(1, 999, 1)).rejects.toThrow(
-        "Star not found",
-      );
+      await expect(cartService.addToCart(1, 999, 1)).rejects.toThrow("Star not found");
     });
 
     it("throws when userId or starId is missing", async () => {
@@ -152,9 +140,7 @@ describe("CartService", () => {
     it("throws when cart does not exist", async () => {
       cartRepo.findByUserId.mockResolvedValue(null);
 
-      await expect(cartService.removeFromCart(1, 5)).rejects.toThrow(
-        "Cart not found",
-      );
+      await expect(cartService.removeFromCart(1, 5)).rejects.toThrow("Cart not found");
     });
 
     it("throws when cart item not in cart", async () => {
@@ -163,9 +149,7 @@ describe("CartService", () => {
         cartItems: [{ id: 3, starId: 5 }],
       });
 
-      await expect(cartService.removeFromCart(1, 99)).rejects.toThrow(
-        "Cart item not found",
-      );
+      await expect(cartService.removeFromCart(1, 99)).rejects.toThrow("Cart item not found");
     });
   });
 

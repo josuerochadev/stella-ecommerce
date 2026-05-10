@@ -63,7 +63,21 @@ coverage/
 cookies.txt
 *.cookies
 
-# Fichiers spécifiques à votre projet
+# Fichiers specifiques au projet
 combined.log
 error.log
 .eslintcache
+
+# Archives (doublons des dossiers sources)
+*.zip
+
+# Docs internes agent / IA
+CLAUDE.md
+SKILL.md
+
+# Bundle analyzer report
+bundle-report.html
+
+# Playwright
+test-results/
+playwright-report/

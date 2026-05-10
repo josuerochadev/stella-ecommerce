@@ -1,0 +1,20 @@
+# CODEOWNERS — Stella E-Commerce
+# Chaque ligne definit les reviewers responsables d'une zone de code.
+# Docs : https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default — tout le repo
+* @josuexavierrocha
+
+# Frontend
+/client/ @josuexavierrocha
+
+# Backend
+/server/ @josuexavierrocha
+
+# Infrastructure & CI/CD
+/docker-compose.yml @josuexavierrocha
+/render.yaml @josuexavierrocha
+/.github/ @josuexavierrocha
+
+# Database scripts
+/scripts/ @josuexavierrocha

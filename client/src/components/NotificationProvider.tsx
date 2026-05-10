@@ -1,14 +1,14 @@
-import React from 'react';
 import { useNotificationStore } from "@/stores/useNotificationStore";
-import Toast from './Toast';
-import AccessibleModal from './AccessibleModal';
+import type React from "react";
+import AccessibleModal from "./AccessibleModal";
+import Toast from "./Toast";
 
 const NotificationProvider: React.FC = () => {
   const { toasts, modals, removeToast, closeModal } = useNotificationStore();
 
   return (
     <>
-      <div className="fixed top-4 right-4 z-50 space-y-2">
+      <div className="fixed top-4 right-4 left-4 sm:left-auto z-50 space-y-2">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}

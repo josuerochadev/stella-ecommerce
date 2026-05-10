@@ -1,0 +1,49 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+# Ensure only one deployment runs at a time
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  # Run full CI checks before deploying
+  ci-gate:
+    name: CI Gate
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: ci-gate
+    environment: production
+    steps:
+      - name: Deploy API
+        if: env.RENDER_API_DEPLOY_HOOK != ''
+        run: curl -s "${{ secrets.RENDER_API_DEPLOY_HOOK }}"
+        env:
+          RENDER_API_DEPLOY_HOOK: ${{ secrets.RENDER_API_DEPLOY_HOOK }}
+
+      - name: Deploy Client
+        if: env.RENDER_CLIENT_DEPLOY_HOOK != ''
+        run: curl -s "${{ secrets.RENDER_CLIENT_DEPLOY_HOOK }}"
+        env:
+          RENDER_CLIENT_DEPLOY_HOOK: ${{ secrets.RENDER_CLIENT_DEPLOY_HOOK }}
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Health check
+        if: env.RENDER_API_URL != ''
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.RENDER_API_URL }}/api/health" || echo "000")
+          if [ "$status" = "200" ]; then
+            echo "Health check passed"
+          else
+            echo "Warning: Health check returned status $status (service may be waking up on free tier)"
+          fi
+        env:
+          RENDER_API_URL: ${{ secrets.RENDER_API_URL }}

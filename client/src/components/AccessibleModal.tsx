@@ -1,12 +1,12 @@
 // client/src/components/AccessibleModal.tsx
 // Responsabilité unique : Orchestrateur principal de modal accessible
 
-import { createPortal } from 'react-dom';
 import { useFocusTrap } from "@/hooks/useFocusManagement";
 import { useModalBehavior } from "@/hooks/useModalBehavior";
-import { ModalStylesService, ModalType, ModalSize } from "@/utils/modalStyles";
-import ModalContent from './ModalContent';
-import ModalActions from './ModalActions';
+import { type ModalSize, ModalStylesService, type ModalType } from "@/utils/modalStyles";
+import { createPortal } from "react-dom";
+import ModalActions from "./ModalActions";
+import ModalContent from "./ModalContent";
 
 interface AccessibleModalProps {
   isOpen: boolean;
@@ -36,13 +36,13 @@ const AccessibleModal: React.FC<AccessibleModalProps> = ({
   title,
   children,
   message,
-  confirmText = 'Confirmer',
-  cancelText = 'Annuler',
-  type = 'custom',
-  size = 'md',
+  confirmText = "Confirmer",
+  cancelText = "Annuler",
+  type = "custom",
+  size = "md",
   closeOnOverlayClick = true,
   closeOnEscape = true,
-  className = '',
+  className = "",
   showCloseButton = true,
 }) => {
   const modalRef = useFocusTrap(isOpen);
@@ -72,11 +72,7 @@ const AccessibleModal: React.FC<AccessibleModalProps> = ({
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
-      <div
-        ref={modalRef as any}
-        className={modalClasses}
-        role="document"
-      >
+      <div ref={modalRef as any} className={modalClasses} role="document">
         {/* Contenu principal */}
         <ModalContent
           type={type}
@@ -99,7 +95,7 @@ const AccessibleModal: React.FC<AccessibleModalProps> = ({
         />
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

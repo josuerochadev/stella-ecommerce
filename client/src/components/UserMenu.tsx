@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
-import { UserIcon, ShoppingCartIcon, HeartIcon, StoreIcon } from "@/utils/icons";
 import { useAuth } from "@/context/AuthContext";
 import { useCartStore } from "@/stores/useCartStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
+import { HeartIcon, ShoppingCartIcon, StoreIcon, UserIcon } from "@/utils/icons";
+import { Link } from "react-router-dom";
 
 const UserMenu: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -12,12 +12,12 @@ const UserMenu: React.FC = () => {
   const CartIcon = () => (
     <Link
       to="/cart"
-      className="relative text-lg text-text hover:text-white"
+      className="relative text-lg text-text/70 hover:text-white transition-colors duration-200"
       aria-label="Panier"
     >
       <ShoppingCartIcon />
       {cartItemCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-special text-primary rounded-full text-xs w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold font-sans">
           {cartItemCount}
         </span>
       )}
@@ -27,12 +27,12 @@ const UserMenu: React.FC = () => {
   const WishlistIcon = () => (
     <Link
       to="/wishlist"
-      className="relative text-lg text-text hover:text-white"
+      className="relative text-lg text-text/70 hover:text-white transition-colors duration-200"
       aria-label="Wishlist"
     >
       <HeartIcon />
       {wishlistItemCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-special text-primary rounded-full text-xs w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold font-sans">
           {wishlistItemCount}
         </span>
       )}
@@ -42,7 +42,11 @@ const UserMenu: React.FC = () => {
   return (
     <>
       {/* Catalog link */}
-      <Link to="/catalog" className="text-lg text-text hover:text-white" aria-label="Catalogue">
+      <Link
+        to="/catalog"
+        className="text-lg text-text/70 hover:text-white transition-colors duration-200"
+        aria-label="Catalogue"
+      >
         <StoreIcon className="text-xl" />
       </Link>
 
@@ -50,13 +54,17 @@ const UserMenu: React.FC = () => {
       <WishlistIcon />
 
       {isAuthenticated ? (
-        <Link to="/profile" className="text-lg text-text hover:text-white" aria-label="Profil">
+        <Link
+          to="/profile"
+          className="text-lg text-text/70 hover:text-white transition-colors duration-200"
+          aria-label="Profil"
+        >
           <UserIcon />
         </Link>
       ) : (
         <Link
           to="/auth"
-          className="text-lg text-text hover:text-white"
+          className="text-lg text-text/70 hover:text-white transition-colors duration-200"
           aria-label="Authentification"
         >
           <UserIcon />

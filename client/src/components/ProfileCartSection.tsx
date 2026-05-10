@@ -1,8 +1,8 @@
 // client/src/components/ProfileCartSection.tsx
 // Responsabilité unique : Affichage du panier dans le profil
 
-import { memo } from "react";
 import type { CartItem } from "@/types";
+import { memo } from "react";
 
 interface ProfileCartSectionProps {
   cartItems: CartItem[];

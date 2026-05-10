@@ -28,7 +28,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^10.52.0",
     "bcrypt": "^5.1.1",
+    "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dompurify": "^3.2.7",
@@ -41,6 +43,7 @@
     "jsdom": "^27.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "node-cache": "^5.1.2",
     "node-cron": "^4.2.1",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
@@ -58,9 +61,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "./jest.setup.js"
-    ]
+    "setupFilesAfterEnv": ["./jest.setup.js"]
   },
   "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }

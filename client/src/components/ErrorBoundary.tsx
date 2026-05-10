@@ -1,8 +1,8 @@
-import React, { Component, type ErrorInfo, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { ROUTES } from "@/constants/app";
 import { errorService } from "@/services/errorService";
 import { logger } from "@/utils/logger";
-import { ROUTES } from "@/constants/app";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 interface Props {
   children: ReactNode;
@@ -28,13 +28,13 @@ class ErrorBoundary extends Component<Props, State> {
     // Log l'erreur avec le service d'erreur
     errorService.logError({
       message: error.message,
-      code: 'BOUNDARY_ERROR',
+      code: "BOUNDARY_ERROR",
       timestamp: new Date().toISOString(),
       errors: {
-        stack: error.stack || '',
-        componentStack: errorInfo.componentStack || '',
+        stack: error.stack || "",
+        componentStack: errorInfo.componentStack || "",
         errorBoundary: this.constructor.name,
-      }
+      },
     });
 
     this.setState({ errorId });
@@ -57,9 +57,7 @@ class ErrorBoundary extends Component<Props, State> {
             Désolé pour le désagrément. Vous pouvez essayer de recharger l'application.
           </p>
           {this.state.errorId && (
-            <p className="text-sm text-text mb-4">
-              ID d'erreur : {this.state.errorId}
-            </p>
+            <p className="text-sm text-text mb-4">ID d'erreur : {this.state.errorId}</p>
           )}
           <div className="mt-4 space-x-4">
             <button type="button" onClick={this.handleReload} className="btn">

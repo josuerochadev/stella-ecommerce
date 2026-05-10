@@ -2,7 +2,7 @@
 // Service métier pour l'administration des étoiles
 // Responsabilité unique : logique métier et statistiques des étoiles
 
-const { sequelize } = require('../models');
+const { sequelize } = require("../models");
 
 /**
  * Service pour l'administration des étoiles
@@ -24,11 +24,12 @@ class StarAdminService {
    */
   async getStarStats(starId) {
     try {
-      if (!starId || typeof starId !== 'number') {
-        throw new Error('Star ID must be a valid number');
+      if (!starId || typeof starId !== "number") {
+        throw new Error("Star ID must be a valid number");
       }
 
-      const salesData = await sequelize.query(`
+      const salesData = await sequelize.query(
+        `
         SELECT
           COUNT(os.star_id) as sales_count,
           COALESCE(AVG(r.rating), 0) as avg_rating
@@ -38,16 +39,18 @@ class StarAdminService {
         LEFT JOIN reviews r ON s.starid = r.star_id
         WHERE s.starid = :starId
         GROUP BY s.starid
-      `, {
-        replacements: { starId },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { starId },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       const stats = salesData[0] || { sales_count: 0, avg_rating: 0 };
 
       return {
-        salesCount: parseInt(stats.sales_count),
-        averageRating: parseFloat(stats.avg_rating)
+        salesCount: Number.parseInt(stats.sales_count),
+        averageRating: Number.parseFloat(stats.avg_rating),
       };
     } catch (error) {
       throw new Error(`Failed to get star stats: ${error.message}`);
@@ -66,7 +69,8 @@ class StarAdminService {
         return new Map();
       }
 
-      const salesData = await sequelize.query(`
+      const salesData = await sequelize.query(
+        `
         SELECT
           s.starid,
           COUNT(os.star_id) as sales_count,
@@ -77,18 +81,20 @@ class StarAdminService {
         LEFT JOIN reviews r ON s.starid = r.star_id
         WHERE s.starid IN (:starIds)
         GROUP BY s.starid
-      `, {
-        replacements: { starIds },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { starIds },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
       // Créer une Map pour accès O(1)
       const statsMap = new Map();
 
       for (const stat of salesData) {
         statsMap.set(stat.starid, {
-          salesCount: parseInt(stat.sales_count),
-          averageRating: parseFloat(stat.avg_rating)
+          salesCount: Number.parseInt(stat.sales_count),
+          averageRating: Number.parseFloat(stat.avg_rating),
         });
       }
 
@@ -97,7 +103,7 @@ class StarAdminService {
         if (!statsMap.has(starId)) {
           statsMap.set(starId, {
             salesCount: 0,
-            averageRating: 0
+            averageRating: 0,
           });
         }
       }
@@ -120,13 +126,13 @@ class StarAdminService {
         limit = 20,
         search,
         constellation,
-        sortBy = 'createdAt',
-        order = 'DESC'
+        sortBy = "createdAt",
+        order = "DESC",
       } = searchCriteria;
 
       // Validation
-      const validatedLimit = Math.min(Math.max(parseInt(limit), 1), 100);
-      const validatedPage = Math.max(parseInt(page), 1);
+      const validatedLimit = Math.min(Math.max(Number.parseInt(limit), 1), 100);
+      const validatedPage = Math.max(Number.parseInt(page), 1);
       const offset = (validatedPage - 1) * validatedLimit;
 
       // Utiliser le repository pour la recherche
@@ -134,23 +140,23 @@ class StarAdminService {
         where: this._buildWhereCondition(search, constellation),
         order: [[sortBy, order.toUpperCase()]],
         limit: validatedLimit,
-        offset
+        offset,
       });
 
       // Récupérer les statistiques pour toutes les étoiles
-      const starIds = stars.map(star => star.starid);
+      const starIds = stars.map((star) => star.starid);
       const statsMap = await this.getMultipleStarStats(starIds);
 
       // Formater les étoiles avec leurs stats
-      const starsWithStats = stars.map(star => ({
+      const starsWithStats = stars.map((star) => ({
         id: star.starid,
         name: star.name,
         constellation: star.constellation,
-        price: parseFloat(star.price),
+        price: Number.parseFloat(star.price),
         magnitude: star.magnitude,
         distance: star.distanceFromEarth,
         createdAt: star.createdAt,
-        stats: statsMap.get(star.starid) || { salesCount: 0, averageRating: 0 }
+        stats: statsMap.get(star.starid) || { salesCount: 0, averageRating: 0 },
       }));
 
       return {
@@ -160,8 +166,8 @@ class StarAdminService {
           totalPages: Math.ceil(count / validatedLimit),
           totalStars: count,
           hasNext: validatedPage * validatedLimit < count,
-          hasPrev: validatedPage > 1
-        }
+          hasPrev: validatedPage > 1,
+        },
       };
     } catch (error) {
       throw new Error(`Failed to get stars with stats: ${error.message}`);
@@ -177,21 +183,21 @@ class StarAdminService {
   async updateStarPrice(starId, newPrice) {
     try {
       // Validation
-      if (!starId || typeof starId !== 'number') {
-        throw new Error('Star ID must be a valid number');
+      if (!starId || typeof starId !== "number") {
+        throw new Error("Star ID must be a valid number");
       }
 
-      if (typeof newPrice !== 'number' || newPrice <= 0) {
-        throw new Error('Price must be a positive number');
+      if (typeof newPrice !== "number" || newPrice <= 0) {
+        throw new Error("Price must be a positive number");
       }
 
       // Récupérer l'étoile
       const star = await this.starRepository.findById(starId);
       if (!star) {
-        throw new Error('Star not found');
+        throw new Error("Star not found");
       }
 
-      const oldPrice = parseFloat(star.price);
+      const oldPrice = Number.parseFloat(star.price);
 
       // Mettre à jour le prix
       const updatedStar = await this.starRepository.update(starId, { price: newPrice });
@@ -201,10 +207,10 @@ class StarAdminService {
           id: updatedStar.starid,
           name: updatedStar.name,
           oldPrice,
-          newPrice: parseFloat(newPrice)
+          newPrice: Number.parseFloat(newPrice),
         },
         oldPrice,
-        newPrice: parseFloat(newPrice)
+        newPrice: Number.parseFloat(newPrice),
       };
     } catch (error) {
       throw new Error(`Failed to update star price: ${error.message}`);
@@ -218,9 +224,10 @@ class StarAdminService {
    */
   async getTopSellingStars(limit = 10) {
     try {
-      const validatedLimit = Math.min(Math.max(parseInt(limit), 1), 50);
+      const validatedLimit = Math.min(Math.max(Number.parseInt(limit), 1), 50);
 
-      const topStars = await sequelize.query(`
+      const topStars = await sequelize.query(
+        `
         SELECT
           s.starid,
           s.name,
@@ -235,20 +242,22 @@ class StarAdminService {
         GROUP BY s.starid, s.name, s.constellation, s.price
         ORDER BY sales_count DESC
         LIMIT :limit
-      `, {
-        replacements: { limit: validatedLimit },
-        type: sequelize.QueryTypes.SELECT
-      });
+      `,
+        {
+          replacements: { limit: validatedLimit },
+          type: sequelize.QueryTypes.SELECT,
+        },
+      );
 
-      return topStars.map(star => ({
+      return topStars.map((star) => ({
         id: star.starid,
         name: star.name,
         constellation: star.constellation,
-        price: parseFloat(star.price),
+        price: Number.parseFloat(star.price),
         stats: {
-          salesCount: parseInt(star.sales_count),
-          averageRating: parseFloat(star.avg_rating)
-        }
+          salesCount: Number.parseInt(star.sales_count),
+          averageRating: Number.parseFloat(star.avg_rating),
+        },
       }));
     } catch (error) {
       throw new Error(`Failed to get top selling stars: ${error.message}`);
@@ -261,7 +270,8 @@ class StarAdminService {
    */
   async getSalesByConstellation() {
     try {
-      const constellationStats = await sequelize.query(`
+      const constellationStats = await sequelize.query(
+        `
         SELECT
           s.constellation,
           COUNT(DISTINCT os.order_id) as order_count,
@@ -275,14 +285,16 @@ class StarAdminService {
         WHERE s.constellation IS NOT NULL
         GROUP BY s.constellation
         ORDER BY stars_sold DESC
-      `, { type: sequelize.QueryTypes.SELECT });
+      `,
+        { type: sequelize.QueryTypes.SELECT },
+      );
 
-      return constellationStats.map(stat => ({
+      return constellationStats.map((stat) => ({
         constellation: stat.constellation,
-        orderCount: parseInt(stat.order_count) || 0,
-        starsSold: parseInt(stat.stars_sold) || 0,
-        totalRevenue: parseFloat(stat.total_revenue) || 0,
-        averageRating: parseFloat(stat.avg_rating) || 0
+        orderCount: Number.parseInt(stat.order_count) || 0,
+        starsSold: Number.parseInt(stat.stars_sold) || 0,
+        totalRevenue: Number.parseFloat(stat.total_revenue) || 0,
+        averageRating: Number.parseFloat(stat.avg_rating) || 0,
       }));
     } catch (error) {
       throw new Error(`Failed to get sales by constellation: ${error.message}`);
@@ -297,13 +309,13 @@ class StarAdminService {
    * @private
    */
   _buildWhereCondition(search, constellation) {
-    const { Op } = require('sequelize');
+    const { Op } = require("sequelize");
     const whereCondition = {};
 
     if (search) {
       whereCondition[Op.or] = [
         { name: { [Op.iLike]: `%${search}%` } },
-        { description: { [Op.iLike]: `%${search}%` } }
+        { description: { [Op.iLike]: `%${search}%` } },
       ];
     }
 

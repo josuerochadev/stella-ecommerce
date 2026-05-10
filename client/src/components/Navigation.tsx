@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { HomeIcon } from "@/utils/icons";
+import { Link, useLocation } from "react-router-dom";
 
 interface NavigationProps {
   pageTitle: string;
@@ -7,10 +7,18 @@ interface NavigationProps {
 }
 
 const Navigation: React.FC<NavigationProps> = ({ pageTitle, isTitleVisible }) => {
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
+
   return (
     <div className="flex items-center space-x-3">
       {/* Home link */}
-      <Link to="/" className="text-lg text-text hover:text-white">
+      <Link
+        to="/"
+        aria-label="Accueil"
+        aria-current={isHome ? "page" : undefined}
+        className="text-lg text-text hover:text-white"
+      >
         <HomeIcon className="text-xl text-text" />
       </Link>
 

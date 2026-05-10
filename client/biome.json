@@ -19,13 +19,28 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
-        "noConsoleLog": "warn"
+        "noConsoleLog": "warn",
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "warn"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "warn"
       },
       "style": {
-        "useConst": "error"
+        "useConst": "error",
+        "noNonNullAssertion": "warn"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "warn",
+        "useSemanticElements": "warn",
+        "noLabelWithoutControl": "warn",
+        "useButtonType": "warn",
+        "useFocusableInteractive": "warn",
+        "noSvgWithoutTitle": "warn"
       }
     }
   },

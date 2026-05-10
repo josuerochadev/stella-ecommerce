@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import type { ToastType } from "@/components/Toast";
+import { create } from "zustand";
 
 export interface Toast {
   id: string;
@@ -14,7 +14,7 @@ export interface Modal {
   isOpen: boolean;
   title: string;
   message: string;
-  type?: 'danger' | 'warning' | 'info';
+  type?: "danger" | "warning" | "info";
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
@@ -24,15 +24,19 @@ export interface Modal {
 interface NotificationState {
   toasts: Toast[];
   modals: Modal[];
-  addToast: (toast: Omit<Toast, 'id'>) => void;
+  addToast: (toast: Omit<Toast, "id">) => void;
   removeToast: (id: string) => void;
-  showModal: (modal: Omit<Modal, 'id' | 'isOpen'>) => Promise<boolean>;
+  showModal: (modal: Omit<Modal, "id" | "isOpen">) => Promise<boolean>;
   closeModal: (id: string) => void;
   showSuccess: (title: string, message?: string) => void;
   showError: (title: string, message?: string) => void;
   showWarning: (title: string, message?: string) => void;
   showInfo: (title: string, message?: string) => void;
-  showConfirm: (title: string, message: string, type?: 'danger' | 'warning' | 'info') => Promise<boolean>;
+  showConfirm: (
+    title: string,
+    message: string,
+    type?: "danger" | "warning" | "info",
+  ) => Promise<boolean>;
 }
 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
@@ -83,7 +87,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   showSuccess: (title, message) => {
     get().addToast({
-      type: 'success',
+      type: "success",
       title,
       message,
       duration: 5000,
@@ -92,7 +96,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   showError: (title, message) => {
     get().addToast({
-      type: 'error',
+      type: "error",
       title,
       message,
       duration: 7000,
@@ -101,7 +105,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   showWarning: (title, message) => {
     get().addToast({
-      type: 'warning',
+      type: "warning",
       title,
       message,
       duration: 6000,
@@ -110,20 +114,20 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   showInfo: (title, message) => {
     get().addToast({
-      type: 'info',
+      type: "info",
       title,
       message,
       duration: 5000,
     });
   },
 
-  showConfirm: (title, message, type = 'info') => {
+  showConfirm: (title, message, type = "info") => {
     return get().showModal({
       title,
       message,
       type,
-      confirmText: 'Confirmer',
-      cancelText: 'Annuler',
+      confirmText: "Confirmer",
+      cancelText: "Annuler",
     });
   },
 }));

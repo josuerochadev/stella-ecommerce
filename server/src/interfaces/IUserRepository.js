@@ -13,8 +13,8 @@ class IUserRepository {
    * @returns {Promise<Object|null>} Utilisateur trouvé ou null
    * @throws {Error} Si la recherche échoue
    */
-  async findByEmail(email) {
-    throw new Error('Method findByEmail() must be implemented');
+  async findByEmail(_email) {
+    throw new Error("Method findByEmail() must be implemented");
   }
 
   /**
@@ -23,8 +23,8 @@ class IUserRepository {
    * @returns {Promise<Object|null>} Utilisateur trouvé ou null
    * @throws {Error} Si la recherche échoue
    */
-  async findById(id) {
-    throw new Error('Method findById() must be implemented');
+  async findById(_id) {
+    throw new Error("Method findById() must be implemented");
   }
 
   /**
@@ -38,8 +38,8 @@ class IUserRepository {
    * @returns {Promise<Object>} Utilisateur créé
    * @throws {Error} Si la création échoue
    */
-  async create(userData) {
-    throw new Error('Method create() must be implemented');
+  async create(_userData) {
+    throw new Error("Method create() must be implemented");
   }
 
   /**
@@ -49,8 +49,8 @@ class IUserRepository {
    * @returns {Promise<Object>} Utilisateur mis à jour
    * @throws {Error} Si la mise à jour échoue
    */
-  async update(id, updateData) {
-    throw new Error('Method update() must be implemented');
+  async update(_id, _updateData) {
+    throw new Error("Method update() must be implemented");
   }
 
   /**
@@ -59,8 +59,8 @@ class IUserRepository {
    * @returns {Promise<boolean>} True si supprimé avec succès
    * @throws {Error} Si la suppression échoue
    */
-  async delete(id) {
-    throw new Error('Method delete() must be implemented');
+  async delete(_id) {
+    throw new Error("Method delete() must be implemented");
   }
 
   /**
@@ -70,8 +70,8 @@ class IUserRepository {
    * @returns {Promise<boolean>} True si l'email existe
    * @throws {Error} Si la vérification échoue
    */
-  async emailExists(email, excludeId = null) {
-    throw new Error('Method emailExists() must be implemented');
+  async emailExists(_email, _excludeId = null) {
+    throw new Error("Method emailExists() must be implemented");
   }
 
   /**
@@ -85,8 +85,8 @@ class IUserRepository {
    * @returns {Promise<{count: number, rows: Array}>} Résultats paginés
    * @throws {Error} Si la recherche échoue
    */
-  async findAndCountAll(options) {
-    throw new Error('Method findAndCountAll() must be implemented');
+  async findAndCountAll(_options) {
+    throw new Error("Method findAndCountAll() must be implemented");
   }
 
   /**
@@ -96,8 +96,8 @@ class IUserRepository {
    * @returns {Promise<Array>} Liste des utilisateurs
    * @throws {Error} Si la recherche échoue
    */
-  async findAll(where = {}, options = {}) {
-    throw new Error('Method findAll() must be implemented');
+  async findAll(_where = {}, _options = {}) {
+    throw new Error("Method findAll() must be implemented");
   }
 
   /**
@@ -106,8 +106,8 @@ class IUserRepository {
    * @returns {Promise<number>} Nombre d'utilisateurs
    * @throws {Error} Si le comptage échoue
    */
-  async count(where = {}) {
-    throw new Error('Method count() must be implemented');
+  async count(_where = {}) {
+    throw new Error("Method count() must be implemented");
   }
 }
 

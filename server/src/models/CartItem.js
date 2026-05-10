@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "CartItems",
+      indexes: [
+        { fields: ["cart_id"] },
+        { fields: ["star_id"] },
+        { fields: ["cart_id", "star_id"], unique: true },
+      ],
     },
   );
 

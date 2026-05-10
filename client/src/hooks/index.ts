@@ -16,6 +16,7 @@ export { useLatestStars } from "./useLatestStars";
 export { useLoadingState, useAsyncOperation } from "./useLoadingState";
 export { useModalBehavior } from "./useModalBehavior";
 export { usePageTitleOnScroll } from "./usePageTitleOnScroll";
+export { useReducedMotion } from "./useReducedMotion";
 export { useRegistrationValidation } from "./useRegistrationValidation";
 export { useSearchLogic } from "./useSearchLogic";
 export { useStarDetail } from "./useStarDetail";

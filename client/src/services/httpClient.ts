@@ -16,6 +16,16 @@ function getCookie(name: string): string | undefined {
 }
 
 /**
+ * Flag indiquant si l'utilisateur est authentifié.
+ * Utilisé pour ne déclencher auth:unauthorized que lors d'une expiration de session,
+ * pas lors des vérifications de session initiales.
+ */
+let _isUserAuthenticated = false;
+export const setUserAuthenticated = (val: boolean) => {
+  _isUserAuthenticated = val;
+};
+
+/**
  * Configuration de l'instance Axios centralisée
  * Responsabilité unique : Configuration HTTP globale
  */
@@ -28,19 +38,14 @@ const createHttpClient = (): AxiosInstance => {
     withCredentials: true, // Permet l'envoi de cookies
   });
 
-  // Interceptor pour ajouter les tokens d'authentification et CSRF
+  // Interceptor pour ajouter le token CSRF
+  // Note: access token is sent automatically via httpOnly cookie (withCredentials: true)
   client.interceptors.request.use(
     (config) => {
       // Ajouter le token CSRF depuis les cookies
       const csrfToken = getCookie("XSRF-TOKEN");
       if (csrfToken) {
         config.headers["X-CSRF-Token"] = csrfToken;
-      }
-
-      // Ajouter le token d'authentification si présent
-      const authToken = localStorage.getItem("token");
-      if (authToken) {
-        config.headers.Authorization = `Bearer ${authToken}`;
       }
 
       return config;
@@ -53,15 +58,15 @@ const createHttpClient = (): AxiosInstance => {
     (response) => response,
     (error) => {
       // Gestion globale des erreurs d'authentification
-      if (error.response?.status === 401) {
-        // Token expiré ou invalide
-        localStorage.removeItem("token");
-
-        // Émettre un événement personnalisé pour la navigation
-        // L'App écoutera cet événement et naviguera avec React Router
-        window.dispatchEvent(new CustomEvent('auth:unauthorized', {
-          detail: { redirectTo: '/auth' }
-        }));
+      // On ne dispatch que si l'utilisateur était authentifié (expiration de session),
+      // pas lors des vérifications initiales en arrière-plan.
+      if (error.response?.status === 401 && _isUserAuthenticated) {
+        // Token expiré ou invalide — cookie sera supprime cote serveur
+        window.dispatchEvent(
+          new CustomEvent("auth:unauthorized", {
+            detail: { redirectTo: "/auth" },
+          }),
+        );
       }
 
       return Promise.reject(error);
@@ -82,6 +87,24 @@ export const httpClient = createHttpClient();
  * Utile pour les tests ou configurations spéciales
  */
 export const createNewHttpClient = createHttpClient;
+
+/**
+ * Creates an AbortController-backed cancel token for API calls.
+ * Use with httpClient requests to cancel them on component unmount.
+ *
+ * @example
+ * const { signal, cancel } = createCancelToken();
+ * httpClient.get("/stars", { signal });
+ * // on cleanup:
+ * cancel();
+ */
+export const createCancelToken = () => {
+  const controller = new AbortController();
+  return {
+    signal: controller.signal,
+    cancel: () => controller.abort(),
+  };
+};
 
 /**
  * Utilitaires de cookies réexportés pour les services

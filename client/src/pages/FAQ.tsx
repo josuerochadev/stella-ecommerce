@@ -1,5 +1,6 @@
-import { useState } from "react";
 import FadeInSection from "@/components/FadeInSection";
+import SEO from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 
 const faqItems = [
   {
@@ -35,34 +36,47 @@ const faqItems = [
 ];
 
 const FAQ: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0);
-
-  const handleToggle = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index);
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.content,
+      },
+    })),
   };
 
   return (
     <div className="container mx-auto pt-20 px-4">
+      <SEO
+        title="Foire aux questions"
+        description="Trouvez les reponses a vos questions sur l'achat d'etoiles, la propriete symbolique et les cadeaux sur Stella."
+        path="/faq"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+      </Helmet>
       <h1 className="text-4xl font-display mb-6 text-center">Foire aux questions</h1>
       <FadeInSection>
         <div className="space-y-4">
-          {faqItems.map((item, index) => (
-            <div key={item.key} className="border-b border-secondary">
-              <button
-                type="button"
-                onClick={() => handleToggle(index)}
-                className="w-full text-left py-4 px-2 font-serif text-lg text-text focus:outline-none"
-                aria-expanded={activeIndex === index}
-                aria-controls={`faq-content-${index}`}
-              >
+          {faqItems.map((item) => (
+            <details key={item.key} className="border-b border-secondary group">
+              <summary className="flex items-center justify-between w-full py-4 px-2 font-serif text-lg text-text cursor-pointer list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm">
                 {item.title}
-              </button>
-              {activeIndex === index && (
-                <div className="px-4 pb-4 text-text">
-                  <p>{item.content}</p>
-                </div>
-              )}
-            </div>
+                <span
+                  className="ml-4 text-text/50 motion-safe:transition-transform motion-safe:duration-200 group-open:rotate-180"
+                  aria-hidden="true"
+                >
+                  ▾
+                </span>
+              </summary>
+              <div className="px-4 pb-4 text-text">
+                <p>{item.content}</p>
+              </div>
+            </details>
           ))}
         </div>
       </FadeInSection>

@@ -1,26 +1,26 @@
 // server/src/routes/adminRoutes.js
 // Routes pour le panel d'administration
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const { csrfValidate } = require('../middlewares/modernCsrf');
-const { authenticateUser, requireAuth, requireRole } = require('../middlewares/authMiddleware');
-const validate = require('../middlewares/validate');
-const Joi = require('joi');
+const adminController = require("../controllers/adminController");
+const { csrfValidate } = require("../middlewares/modernCsrf");
+const { authenticateUser, requireAuth, requireRole } = require("../middlewares/authMiddleware");
+const validate = require("../middlewares/validate");
+const Joi = require("joi");
 
 // Middleware: toutes les routes admin nécessitent une authentification admin
 router.use(authenticateUser);
 router.use(requireAuth);
-router.use(requireRole('admin'));
+router.use(requireRole("admin"));
 
 // Schémas de validation
 const updateUserRoleSchema = Joi.object({
-  role: Joi.string().valid('client', 'admin').required()
+  role: Joi.string().valid("client", "admin").required(),
 });
 
 const updateStarPriceSchema = Joi.object({
-  price: Joi.number().positive().precision(2).max(99999.99).required()
+  price: Joi.number().positive().precision(2).max(99999.99).required(),
 });
 
 /**
@@ -60,7 +60,7 @@ const updateStarPriceSchema = Joi.object({
  *       403:
  *         description: Admin access required
  */
-router.get('/dashboard', adminController.getDashboard);
+router.get("/dashboard", adminController.getDashboard);
 
 /**
  * @swagger
@@ -108,7 +108,7 @@ router.get('/dashboard', adminController.getDashboard);
  *       403:
  *         description: Admin access required
  */
-router.get('/users', adminController.getUsers);
+router.get("/users", adminController.getUsers);
 
 /**
  * @swagger
@@ -144,10 +144,11 @@ router.get('/users', adminController.getUsers);
  *       403:
  *         description: Admin access required
  */
-router.put('/users/:userId/role',
+router.put(
+  "/users/:userId/role",
   csrfValidate,
   validate(updateUserRoleSchema),
-  adminController.updateUserRole
+  adminController.updateUserRole,
 );
 
 /**
@@ -195,7 +196,7 @@ router.put('/users/:userId/role',
  *       403:
  *         description: Admin access required
  */
-router.get('/stars', adminController.getStars);
+router.get("/stars", adminController.getStars);
 
 /**
  * @swagger
@@ -232,10 +233,11 @@ router.get('/stars', adminController.getStars);
  *       403:
  *         description: Admin access required
  */
-router.put('/stars/:starId/price',
+router.put(
+  "/stars/:starId/price",
   csrfValidate,
   validate(updateStarPriceSchema),
-  adminController.updateStarPrice
+  adminController.updateStarPrice,
 );
 
 /**
@@ -268,18 +270,15 @@ router.put('/stars/:starId/price',
  *       403:
  *         description: Admin access required
  */
-router.get('/system', adminController.getSystemStats);
+router.get("/system", adminController.getSystemStats);
 
 // Routes pour les statistiques de paiement (réutilise le contrôleur payment)
-const paymentController = require('../controllers/paymentController');
+const paymentController = require("../controllers/paymentController");
 
 // Payment stats and webhook simulation are also available via /payments/stats
 // and /payments/webhook/simulate (see paymentRoutes.js).
 // These admin aliases provide the same functionality under the /admin prefix.
-router.get('/payments/stats', paymentController.getPaymentStats);
-router.post('/payments/webhook/simulate',
-  csrfValidate,
-  paymentController.simulateWebhook
-);
+router.get("/payments/stats", paymentController.getPaymentStats);
+router.post("/payments/webhook/simulate", csrfValidate, paymentController.simulateWebhook);
 
 module.exports = router;

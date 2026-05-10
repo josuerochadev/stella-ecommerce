@@ -2,10 +2,10 @@
 // Implémentation du repository panier utilisant l'API REST
 // Responsabilité unique : communication avec l'API pour les opérations de panier
 
-import { getCart, addToCart, removeFromCart, updateCartItem } from "@/services/api";
 import type { CartRepository } from "@/interfaces/CartRepository";
+import { addToCart, getCart, removeFromCart, updateCartItem } from "@/services/api";
 import type { CartItem } from "@/types";
-import { transformCartItem, safeNumberTransform } from "@/utils/dataTransformers";
+import { safeNumberTransform, transformCartItem } from "@/utils/dataTransformers";
 import { createFormattedError } from "@/utils/errorHelpers";
 
 /**
@@ -18,14 +18,14 @@ export class ApiCartRepository implements CartRepository {
    * @returns {Promise<{cartItems: CartItem[]}>} Panier avec ses articles
    * @throws {Error} Si la récupération échoue
    */
-  async getCart(): Promise<{cartItems: CartItem[]}> {
+  async getCart(): Promise<{ cartItems: CartItem[] }> {
     try {
       const response = await getCart();
       return {
-        cartItems: response.cartItems || []
+        cartItems: response.cartItems || [],
       };
     } catch (error) {
-      throw createFormattedError(error, 'Failed to fetch cart');
+      throw createFormattedError(error, "Failed to fetch cart");
     }
   }
 
@@ -39,16 +39,16 @@ export class ApiCartRepository implements CartRepository {
   async addToCart(starId: number, quantity: number): Promise<void> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       if (!quantity || quantity <= 0) {
-        throw new Error('Quantity must be a positive number');
+        throw new Error("Quantity must be a positive number");
       }
 
       await addToCart(starId, quantity);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to add item to cart');
+      throw createFormattedError(error, "Failed to add item to cart");
     }
   }
 
@@ -61,12 +61,12 @@ export class ApiCartRepository implements CartRepository {
   async removeFromCart(cartItemId: number): Promise<void> {
     try {
       if (!cartItemId || cartItemId <= 0) {
-        throw new Error('Cart item ID must be a positive number');
+        throw new Error("Cart item ID must be a positive number");
       }
 
       await removeFromCart(cartItemId);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to remove item from cart');
+      throw createFormattedError(error, "Failed to remove item from cart");
     }
   }
 
@@ -80,16 +80,16 @@ export class ApiCartRepository implements CartRepository {
   async updateCartItemQuantity(cartItemId: number, quantity: number): Promise<void> {
     try {
       if (!cartItemId || cartItemId <= 0) {
-        throw new Error('Cart item ID must be a positive number');
+        throw new Error("Cart item ID must be a positive number");
       }
 
       if (!quantity || quantity <= 0) {
-        throw new Error('Quantity must be a positive number');
+        throw new Error("Quantity must be a positive number");
       }
 
       await updateCartItem(cartItemId, quantity);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to update cart item quantity');
+      throw createFormattedError(error, "Failed to update cart item quantity");
     }
   }
 
@@ -104,13 +104,11 @@ export class ApiCartRepository implements CartRepository {
       const cart = await this.getCart();
 
       // Supprimer chaque article
-      const deletePromises = cart.cartItems.map(item =>
-        this.removeFromCart(item.id)
-      );
+      const deletePromises = cart.cartItems.map((item) => this.removeFromCart(item.id));
 
       await Promise.all(deletePromises);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to clear cart');
+      throw createFormattedError(error, "Failed to clear cart");
     }
   }
 
@@ -119,23 +117,23 @@ export class ApiCartRepository implements CartRepository {
    * @returns {Promise<{total: number, itemCount: number}>} Totaux du panier
    * @throws {Error} Si le calcul échoue
    */
-  async getCartSummary(): Promise<{total: number, itemCount: number}> {
+  async getCartSummary(): Promise<{ total: number; itemCount: number }> {
     try {
       const cart = await this.getCart();
 
       const total = cart.cartItems.reduce((sum, item) => {
         const price = safeNumberTransform(item.Star.price, 0);
-        return sum + (price * item.quantity);
+        return sum + price * item.quantity;
       }, 0);
 
       const itemCount = cart.cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
       return {
         total: Math.round(total * 100) / 100, // Arrondir à 2 décimales
-        itemCount
+        itemCount,
       };
     } catch (error) {
-      throw createFormattedError(error, 'Failed to calculate cart summary');
+      throw createFormattedError(error, "Failed to calculate cart summary");
     }
   }
 
@@ -148,13 +146,13 @@ export class ApiCartRepository implements CartRepository {
   async isInCart(starId: number): Promise<boolean> {
     try {
       if (!starId || starId <= 0) {
-        throw new Error('Star ID must be a positive number');
+        throw new Error("Star ID must be a positive number");
       }
 
       const cart = await this.getCart();
-      return cart.cartItems.some(item => item.starId === starId);
+      return cart.cartItems.some((item) => item.starId === starId);
     } catch (error) {
-      throw createFormattedError(error, 'Failed to check if item is in cart');
+      throw createFormattedError(error, "Failed to check if item is in cart");
     }
   }
 
@@ -164,7 +162,7 @@ export class ApiCartRepository implements CartRepository {
    * @returns {Promise<{cartItems: CartItem[]}>} Panier synchronisé
    * @throws {Error} Si la synchronisation échoue
    */
-  async syncCart(localItems: CartItem[]): Promise<{cartItems: CartItem[]}> {
+  async syncCart(localItems: CartItem[]): Promise<{ cartItems: CartItem[] }> {
     try {
       // Stratégie simple : récupérer le panier serveur (source de vérité)
       const serverCart = await this.getCart();
@@ -176,7 +174,7 @@ export class ApiCartRepository implements CartRepository {
 
       // Pour l'instant, le serveur fait autorité
       return serverCart;
-    } catch (error) {
+    } catch (_error) {
       // En cas d'erreur, retourner les articles locaux
       return { cartItems: localItems };
     }
@@ -190,14 +188,14 @@ export class ApiCartRepository implements CartRepository {
    */
   private validateCartItem(item: CartItem): boolean {
     return !!(
-      item &&
-      item.id &&
+      item?.id &&
       item.starId &&
       item.quantity > 0 &&
       item.Star &&
       item.Star.starid &&
       item.Star.name &&
-      typeof item.Star.price === 'number' && item.Star.price > 0
+      typeof item.Star.price === "number" &&
+      item.Star.price > 0
     );
   }
 
@@ -209,7 +207,7 @@ export class ApiCartRepository implements CartRepository {
    */
   private normalizeCartItems(items: CartItem[]): CartItem[] {
     return items
-      .map(item => transformCartItem(item))
-      .filter(item => this.validateCartItem(item));
+      .map((item) => transformCartItem(item))
+      .filter((item) => this.validateCartItem(item));
   }
 }

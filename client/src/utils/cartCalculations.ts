@@ -22,7 +22,7 @@ export class CartCalculations {
    */
   static calculateCartTotal(cartItems: CartItem[]): number {
     return cartItems.reduce((total, item) => {
-      return total + this.calculateItemTotal(item.Star.price, item.quantity);
+      return total + CartCalculations.calculateItemTotal(item.Star.price, item.quantity);
     }, 0);
   }
 
@@ -39,8 +39,8 @@ export class CartCalculations {
    * Responsabilité : Calcul et formatage combinés
    */
   static getFormattedCartTotal(cartItems: CartItem[]): string {
-    const total = this.calculateCartTotal(cartItems);
-    return this.formatPrice(total);
+    const total = CartCalculations.calculateCartTotal(cartItems);
+    return CartCalculations.formatPrice(total);
   }
 
   /**
@@ -54,13 +54,13 @@ export class CartCalculations {
     averageItemPrice: number;
   } {
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    const totalAmount = this.calculateCartTotal(cartItems);
+    const totalAmount = CartCalculations.calculateCartTotal(cartItems);
     const averageItemPrice = totalItems > 0 ? totalAmount / totalItems : 0;
 
     return {
       totalItems,
       totalAmount,
-      formattedTotal: this.formatPrice(totalAmount),
+      formattedTotal: CartCalculations.formatPrice(totalAmount),
       averageItemPrice,
     };
   }

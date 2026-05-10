@@ -1,8 +1,8 @@
 // client/src/components/ProfileWishlistSection.tsx
 // Responsabilité unique : Affichage de la wishlist dans le profil
 
-import { memo } from "react";
 import type { WishlistItem } from "@/types";
+import { memo } from "react";
 
 interface ProfileWishlistSectionProps {
   wishlistItems: WishlistItem[];

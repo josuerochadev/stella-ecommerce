@@ -1,17 +1,17 @@
 // server/src/controllers/paymentStatsController.js
 // Responsabilité unique : Statistiques et analytics de paiement
 
-const { paymentService } = require('../services/paymentService');
-const { Order } = require('../models');
-const { AppError } = require('../middlewares/errorHandler');
+const { paymentService } = require("../services/paymentService");
+const { Order } = require("../models");
+const { AppError } = require("../middlewares/errorHandler");
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const MIN_DAYS = 1;
 const MAX_DAYS = 365;
 
 function parseDays(days) {
-  const parsed = parseInt(days, 10);
-  if (isNaN(parsed) || parsed < MIN_DAYS || parsed > MAX_DAYS) {
+  const parsed = Number.parseInt(days, 10);
+  if (Number.isNaN(parsed) || parsed < MIN_DAYS || parsed > MAX_DAYS) {
     throw new AppError(`days must be between ${MIN_DAYS} and ${MAX_DAYS}`, 400);
   }
   return parsed;
@@ -46,9 +46,8 @@ class PaymentStatsController {
         demoStats,
         realStats,
         methodStats,
-        message: 'Payment statistics (Combined demo + real data)'
+        message: "Payment statistics (Combined demo + real data)",
       });
-
     } catch (error) {
       next(new AppError(`Failed to get payment stats: ${error.message}`, 500));
     }
@@ -69,9 +68,8 @@ class PaymentStatsController {
         success: true,
         period: `${period} days`,
         metrics,
-        message: 'Payment conversion metrics'
+        message: "Payment conversion metrics",
       });
-
     } catch (error) {
       next(new AppError(`Failed to get conversion metrics: ${error.message}`, 500));
     }
@@ -83,7 +81,7 @@ class PaymentStatsController {
    */
   static async getRevenueReport(req, res, next) {
     try {
-      const { days = 30, groupBy = 'day' } = req.query;
+      const { days = 30, groupBy = "day" } = req.query;
       const period = parseDays(days);
 
       const revenueData = await PaymentStatsController._getRevenueData(period, groupBy);
@@ -93,9 +91,8 @@ class PaymentStatsController {
         period: `${period} days`,
         groupBy,
         data: revenueData,
-        message: 'Revenue report generated'
+        message: "Revenue report generated",
       });
-
     } catch (error) {
       next(new AppError(`Failed to generate revenue report: ${error.message}`, 500));
     }
@@ -110,33 +107,44 @@ class PaymentStatsController {
 
     const stats = await Order.findAll({
       attributes: [
-        [require('sequelize').fn('COUNT', '*'), 'totalOrders'],
-        [require('sequelize').fn('SUM', require('sequelize').col('totalAmount')), 'totalRevenue'],
-        [require('sequelize').fn('AVG', require('sequelize').col('totalAmount')), 'averageOrderValue'],
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'paid'
-        )), 'successfulPayments'],
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'payment_failed'
-        )), 'failedPayments']
+        [require("sequelize").fn("COUNT", "*"), "totalOrders"],
+        [require("sequelize").fn("SUM", require("sequelize").col("totalAmount")), "totalRevenue"],
+        [
+          require("sequelize").fn("AVG", require("sequelize").col("totalAmount")),
+          "averageOrderValue",
+        ],
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "paid"),
+          ),
+          "successfulPayments",
+        ],
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "payment_failed"),
+          ),
+          "failedPayments",
+        ],
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: cutoffDate
-        }
-      }
+          [require("sequelize").Op.gte]: cutoffDate,
+        },
+      },
     });
 
     const data = stats[0]?.dataValues || {};
 
     return {
-      totalOrders: parseInt(data.totalOrders) || 0,
-      totalRevenue: parseFloat(data.totalRevenue) || 0,
-      averageOrderValue: parseFloat(data.averageOrderValue) || 0,
-      successfulPayments: parseInt(data.successfulPayments) || 0,
-      failedPayments: parseInt(data.failedPayments) || 0,
-      successRate: data.totalOrders > 0 ?
-        ((data.successfulPayments / data.totalOrders) * 100).toFixed(2) : 0
+      totalOrders: Number.parseInt(data.totalOrders) || 0,
+      totalRevenue: Number.parseFloat(data.totalRevenue) || 0,
+      averageOrderValue: Number.parseFloat(data.averageOrderValue) || 0,
+      successfulPayments: Number.parseInt(data.successfulPayments) || 0,
+      failedPayments: Number.parseInt(data.failedPayments) || 0,
+      successRate:
+        data.totalOrders > 0 ? ((data.successfulPayments / data.totalOrders) * 100).toFixed(2) : 0,
     };
   }
 
@@ -149,28 +157,28 @@ class PaymentStatsController {
 
     const methodStats = await Order.findAll({
       attributes: [
-        'paymentMethod',
-        [require('sequelize').fn('COUNT', '*'), 'count'],
-        [require('sequelize').fn('SUM', require('sequelize').col('totalAmount')), 'revenue']
+        "paymentMethod",
+        [require("sequelize").fn("COUNT", "*"), "count"],
+        [require("sequelize").fn("SUM", require("sequelize").col("totalAmount")), "revenue"],
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: cutoffDate
+          [require("sequelize").Op.gte]: cutoffDate,
         },
-        status: 'paid',
+        status: "paid",
         paymentMethod: {
-          [require('sequelize').Op.ne]: null
-        }
+          [require("sequelize").Op.ne]: null,
+        },
       },
-      group: ['paymentMethod'],
-      order: [[require('sequelize').literal('revenue'), 'DESC']]
+      group: ["paymentMethod"],
+      order: [[require("sequelize").literal("revenue"), "DESC"]],
     });
 
-    return methodStats.map(stat => ({
+    return methodStats.map((stat) => ({
       method: stat.paymentMethod,
-      transactions: parseInt(stat.dataValues.count),
-      revenue: parseFloat(stat.dataValues.revenue),
-      percentage: 0 // Calculé côté client si nécessaire
+      transactions: Number.parseInt(stat.dataValues.count),
+      revenue: Number.parseFloat(stat.dataValues.revenue),
+      percentage: 0, // Calculé côté client si nécessaire
     }));
   }
 
@@ -183,38 +191,54 @@ class PaymentStatsController {
 
     const conversionData = await Order.findAll({
       attributes: [
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'pending'
-        )), 'pendingOrders'],
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'paid'
-        )), 'completedPayments'],
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'payment_failed'
-        )), 'failedPayments'],
-        [require('sequelize').fn('COUNT', require('sequelize').where(
-          require('sequelize').col('status'), 'cancelled'
-        )), 'abandonedOrders']
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "pending"),
+          ),
+          "pendingOrders",
+        ],
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "paid"),
+          ),
+          "completedPayments",
+        ],
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "payment_failed"),
+          ),
+          "failedPayments",
+        ],
+        [
+          require("sequelize").fn(
+            "COUNT",
+            require("sequelize").where(require("sequelize").col("status"), "cancelled"),
+          ),
+          "abandonedOrders",
+        ],
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: cutoffDate
-        }
-      }
+          [require("sequelize").Op.gte]: cutoffDate,
+        },
+      },
     });
 
     const data = conversionData[0]?.dataValues || {};
-    const total = Object.values(data).reduce((sum, val) => sum + (parseInt(val) || 0), 0);
+    const total = Object.values(data).reduce((sum, val) => sum + (Number.parseInt(val) || 0), 0);
 
     return {
       totalInitiated: total,
-      completed: parseInt(data.completedPayments) || 0,
-      failed: parseInt(data.failedPayments) || 0,
-      abandoned: parseInt(data.abandonedOrders) || 0,
-      pending: parseInt(data.pendingOrders) || 0,
+      completed: Number.parseInt(data.completedPayments) || 0,
+      failed: Number.parseInt(data.failedPayments) || 0,
+      abandoned: Number.parseInt(data.abandonedOrders) || 0,
+      pending: Number.parseInt(data.pendingOrders) || 0,
       conversionRate: total > 0 ? ((data.completedPayments / total) * 100).toFixed(2) : 0,
       abandonmentRate: total > 0 ? ((data.abandonedOrders / total) * 100).toFixed(2) : 0,
-      failureRate: total > 0 ? ((data.failedPayments / total) * 100).toFixed(2) : 0
+      failureRate: total > 0 ? ((data.failedPayments / total) * 100).toFixed(2) : 0,
     };
   }
 
@@ -228,39 +252,42 @@ class PaymentStatsController {
     // Format de groupement selon la période
     let dateFormat;
     switch (groupBy) {
-      case 'hour':
-        dateFormat = '%Y-%m-%d %H:00:00';
+      case "hour":
+        dateFormat = "%Y-%m-%d %H:00:00";
         break;
-      case 'week':
-        dateFormat = '%Y-%u';
+      case "week":
+        dateFormat = "%Y-%u";
         break;
-      case 'month':
-        dateFormat = '%Y-%m';
+      case "month":
+        dateFormat = "%Y-%m";
         break;
       default:
-        dateFormat = '%Y-%m-%d';
+        dateFormat = "%Y-%m-%d";
     }
 
     const revenueData = await Order.findAll({
       attributes: [
-        [require('sequelize').fn('DATE_FORMAT', require('sequelize').col('createdAt'), dateFormat), 'period'],
-        [require('sequelize').fn('COUNT', '*'), 'transactions'],
-        [require('sequelize').fn('SUM', require('sequelize').col('totalAmount')), 'revenue']
+        [
+          require("sequelize").fn("DATE_FORMAT", require("sequelize").col("createdAt"), dateFormat),
+          "period",
+        ],
+        [require("sequelize").fn("COUNT", "*"), "transactions"],
+        [require("sequelize").fn("SUM", require("sequelize").col("totalAmount")), "revenue"],
       ],
       where: {
         createdAt: {
-          [require('sequelize').Op.gte]: cutoffDate
+          [require("sequelize").Op.gte]: cutoffDate,
         },
-        status: 'paid'
+        status: "paid",
       },
-      group: [require('sequelize').literal('period')],
-      order: [[require('sequelize').literal('period'), 'ASC']]
+      group: [require("sequelize").literal("period")],
+      order: [[require("sequelize").literal("period"), "ASC"]],
     });
 
-    return revenueData.map(item => ({
+    return revenueData.map((item) => ({
       period: item.dataValues.period,
-      transactions: parseInt(item.dataValues.transactions),
-      revenue: parseFloat(item.dataValues.revenue)
+      transactions: Number.parseInt(item.dataValues.transactions),
+      revenue: Number.parseFloat(item.dataValues.revenue),
     }));
   }
 }

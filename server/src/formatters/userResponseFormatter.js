@@ -24,8 +24,8 @@ class UserResponseFormatter {
         orderCount: 0,
         totalSpent: 0,
         averageOrderValue: 0,
-        lastOrderDate: null
-      }
+        lastOrderDate: null,
+      },
     };
 
     return formattedUser;
@@ -38,15 +38,15 @@ class UserResponseFormatter {
    * @returns {Array} Liste formatée des utilisateurs
    */
   static formatUserList(users, statsMap = new Map()) {
-    return users.map(user => {
+    return users.map((user) => {
       const userStats = statsMap.get(user.id) || {
         orderCount: 0,
         totalSpent: 0,
         averageOrderValue: 0,
-        lastOrderDate: null
+        lastOrderDate: null,
       };
 
-      return this.formatUser(user, userStats);
+      return UserResponseFormatter.formatUser(user, userStats);
     });
   }
 
@@ -61,12 +61,12 @@ class UserResponseFormatter {
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      currentPage: parseInt(currentPage),
+      currentPage: Number.parseInt(currentPage),
       totalPages,
       totalUsers: totalCount,
       hasNext: currentPage < totalPages,
       hasPrev: currentPage > 1,
-      limit: parseInt(limit)
+      limit: Number.parseInt(limit),
     };
   }
 
@@ -83,13 +83,13 @@ class UserResponseFormatter {
 
     return {
       success: true,
-      users: this.formatUserList(users, statsMap),
-      pagination: this.formatPagination(page, limit, totalCount),
+      users: UserResponseFormatter.formatUserList(users, statsMap),
+      pagination: UserResponseFormatter.formatPagination(page, limit, totalCount),
       meta: {
         totalUsers: totalCount,
         usersOnPage: users.length,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 
@@ -107,9 +107,9 @@ class UserResponseFormatter {
         id: user.id,
         name: `${user.firstName} ${user.lastName}`,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -123,26 +123,26 @@ class UserResponseFormatter {
     return {
       success: true,
       user: {
-        ...this.formatUser(user),
+        ...UserResponseFormatter.formatUser(user),
         detailedStats: {
           orders: {
-            total: parseInt(detailedStats.total_orders) || 0,
-            paid: parseInt(detailedStats.paid_orders) || 0,
-            pending: parseInt(detailedStats.pending_orders) || 0,
-            cancelled: parseInt(detailedStats.cancelled_orders) || 0
+            total: Number.parseInt(detailedStats.total_orders) || 0,
+            paid: Number.parseInt(detailedStats.paid_orders) || 0,
+            pending: Number.parseInt(detailedStats.pending_orders) || 0,
+            cancelled: Number.parseInt(detailedStats.cancelled_orders) || 0,
           },
           financial: {
-            totalSpent: parseFloat(detailedStats.total_spent) || 0,
-            averageOrderValue: parseFloat(detailedStats.avg_order_value) || 0
+            totalSpent: Number.parseFloat(detailedStats.total_spent) || 0,
+            averageOrderValue: Number.parseFloat(detailedStats.avg_order_value) || 0,
           },
           activity: {
             firstOrderDate: detailedStats.first_order_date,
             lastOrderDate: detailedStats.last_order_date,
-            uniqueStarsPurchased: parseInt(detailedStats.unique_stars_purchased) || 0
-          }
-        }
+            uniqueStarsPurchased: Number.parseInt(detailedStats.unique_stars_purchased) || 0,
+          },
+        },
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -154,9 +154,9 @@ class UserResponseFormatter {
   static formatValidationError(errors) {
     return {
       success: false,
-      error: 'Validation failed',
+      error: "Validation failed",
       details: errors,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -171,7 +171,7 @@ class UserResponseFormatter {
       success: false,
       error: message,
       statusCode,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

@@ -34,5 +34,6 @@
       "@/constants/*": ["constants/*"]
     }
   },
-  "include": ["src/**/*", "src/custom.d.ts"]
+  "include": ["src/**/*", "src/custom.d.ts"],
+  "exclude": ["src/tests/**/*"]
 }

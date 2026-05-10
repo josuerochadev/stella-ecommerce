@@ -1,4 +1,4 @@
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 /**
  * Nettoie le texte brut (supprime les balises HTML)
@@ -27,42 +27,43 @@ export const validateUsername = (username: string): boolean => {
 /**
  * Valide la force d'un mot de passe
  */
-export const validatePassword = (password: string): {
+export const validatePassword = (
+  password: string,
+): {
   isValid: boolean;
   errors: string[];
 } => {
   const errors: string[] = [];
 
   if (password.length < 8) {
-    errors.push('Le mot de passe doit contenir au moins 8 caractères');
+    errors.push("Le mot de passe doit contenir au moins 8 caractères");
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push('Le mot de passe doit contenir au moins une majuscule');
+    errors.push("Le mot de passe doit contenir au moins une majuscule");
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push('Le mot de passe doit contenir au moins une minuscule');
+    errors.push("Le mot de passe doit contenir au moins une minuscule");
   }
 
   if (!/\d/.test(password)) {
-    errors.push('Le mot de passe doit contenir au moins un chiffre');
+    errors.push("Le mot de passe doit contenir au moins un chiffre");
   }
 
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Le mot de passe doit contenir au moins un caractère spécial');
+    errors.push("Le mot de passe doit contenir au moins un caractère spécial");
   }
 
   if (password.length > 128) {
-    errors.push('Le mot de passe ne peut pas dépasser 128 caractères');
+    errors.push("Le mot de passe ne peut pas dépasser 128 caractères");
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
-
 
 /**
  * Valide les entrées de recherche pour éviter l'injection
@@ -70,11 +71,10 @@ export const validatePassword = (password: string): {
 export const sanitizeSearchQuery = (query: string): string => {
   // Supprimer les caractères dangereux et limiter la longueur
   return query
-    .replace(/[<>'"&]/g, '') // Supprimer les caractères potentiellement dangereux
+    .replace(/[<>'"&]/g, "") // Supprimer les caractères potentiellement dangereux
     .trim()
     .substring(0, 100); // Limiter à 100 caractères
 };
-
 
 /**
  * Fonction pour détecter les tentatives d'injection potentielles
@@ -88,9 +88,8 @@ export const detectInjectionAttempt = (input: string): boolean => {
     /expression\s*\(/i,
     /<iframe/i,
     /<object/i,
-    /<embed/i
+    /<embed/i,
   ];
 
-  return dangerousPatterns.some(pattern => pattern.test(input));
+  return dangerousPatterns.some((pattern) => pattern.test(input));
 };
-

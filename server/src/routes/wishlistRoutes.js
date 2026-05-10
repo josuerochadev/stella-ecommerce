@@ -58,12 +58,7 @@ router.get("/", wishlistController.getWishlist);
  *       401:
  *         description: Unauthorized
  */
-router.post(
-  "/add",
-  csrfValidate,
-  validate(addToWishlistSchema),
-  wishlistController.addToWishlist,
-);
+router.post("/add", csrfValidate, validate(addToWishlistSchema), wishlistController.addToWishlist);
 
 /**
  * @swagger

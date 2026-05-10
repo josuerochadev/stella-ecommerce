@@ -4,6 +4,7 @@ const router = express.Router();
 const starController = require("../controllers/starController");
 const validate = require("../middlewares/validate");
 const { idSchema, filterSchema } = require("../validations/starValidation");
+const { publicCache } = require("../middlewares/contentSecurity");
 
 /**
  * @swagger
@@ -21,7 +22,7 @@ const { idSchema, filterSchema } = require("../validations/starValidation");
  *               items:
  *                 $ref: '#/components/schemas/Star'
  */
-router.get("/", starController.getAllStars);
+router.get("/", publicCache(300), starController.getAllStars);
 
 /**
  * @swagger
@@ -52,7 +53,12 @@ router.get("/", starController.getAllStars);
  *               items:
  *                 $ref: '#/components/schemas/Star'
  */
-router.get("/filter", validate(filterSchema, "query"), starController.filterStars);
+router.get(
+  "/filter",
+  publicCache(300),
+  validate(filterSchema, "query"),
+  starController.filterStars,
+);
 
 /**
  * @swagger
@@ -77,7 +83,7 @@ router.get("/filter", validate(filterSchema, "query"), starController.filterStar
  *               items:
  *                 $ref: '#/components/schemas/Star'
  */
-router.get("/search", starController.searchStars);
+router.get("/search", publicCache(120), starController.searchStars);
 
 /**
  * @swagger
@@ -101,6 +107,6 @@ router.get("/search", starController.searchStars);
  *       404:
  *         description: Star not found
  */
-router.get("/:starid", validate(idSchema, "params"), starController.getStarById);
+router.get("/:starid", publicCache(300), validate(idSchema, "params"), starController.getStarById);
 
 module.exports = router;

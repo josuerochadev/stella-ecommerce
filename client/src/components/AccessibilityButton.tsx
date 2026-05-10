@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import AccessibilityPanel from './AccessibilityPanel';
 import { ARIA_LABELS } from "@/utils/accessibility";
+import { useState } from "react";
+import AccessibilityPanel from "./AccessibilityPanel";
 
 const AccessibilityButton: React.FC = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -34,10 +34,7 @@ const AccessibilityButton: React.FC = () => {
         </svg>
       </button>
 
-      <AccessibilityPanel
-        isOpen={isPanelOpen}
-        onClose={closePanel}
-      />
+      <AccessibilityPanel isOpen={isPanelOpen} onClose={closePanel} />
     </>
   );
 };

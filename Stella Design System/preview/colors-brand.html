@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stella — Brand palette v2</title>
+<link rel="stylesheet" href="_base.css"/>
+<style>
+.card { padding: 20px; gap: 16px; }
+.section-label { font-family: 'Bebas Neue', sans-serif; letter-spacing: .12em; font-size: 11px; color: rgba(174,201,255,.45); text-transform: uppercase; margin-bottom: 6px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatch {
+  flex: 1; min-width: 80px;
+  aspect-ratio: 1.5/1; border-radius: 8px;
+  padding: 8px 10px; display: flex; flex-direction: column;
+  justify-content: space-between; box-shadow: 0 4px 8px rgb(0 0 0 / .4);
+}
+.swatch .name { font-family: 'Bebas Neue', sans-serif; letter-spacing: .08em; font-size: 11px; text-transform: uppercase; }
+.swatch .hex  { font-family: ui-monospace, Menlo, monospace; font-size: 10px; opacity: .8; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div>
+    <div class="section-label">Core brand</div>
+    <div class="row">
+      <div class="swatch" style="background:#3D2A54;color:#AEC9FF"><span class="name">Primary</span><span class="hex">#3D2A54</span></div>
+      <div class="swatch" style="background:#1E1326;color:#AEC9FF"><span class="name">Secondary</span><span class="hex">#1E1326</span></div>
+      <div class="swatch" style="background:#0f0a18;color:#AEC9FF"><span class="name">Deep</span><span class="hex">#0F0A18</span></div>
+      <div class="swatch" style="background:#AEC9FF;color:#1E1326"><span class="name">Text</span><span class="hex">#AEC9FF</span></div>
+      <div class="swatch" style="background:#FFB347;color:#3D2A54"><span class="name">Accent 1</span><span class="hex">#FFB347</span></div>
+      <div class="swatch" style="background:#38bdf8;color:#0a4a5c"><span class="name">Accent 2</span><span class="hex">#38BDF8</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="section-label">Purple scale</div>
+    <div class="row">
+      <div class="swatch" style="background:#6247a0;color:#fff"><span class="name">500</span><span class="hex">#6247A0</span></div>
+      <div class="swatch" style="background:#4e3669;color:#fff"><span class="name">600</span><span class="hex">#4E3669</span></div>
+      <div class="swatch" style="background:#3D2A54;color:#AEC9FF"><span class="name">700</span><span class="hex">#3D2A54</span></div>
+      <div class="swatch" style="background:#2a1a3e;color:#AEC9FF"><span class="name">800</span><span class="hex">#2A1A3E</span></div>
+      <div class="swatch" style="background:#1E1326;color:#AEC9FF"><span class="name">900</span><span class="hex">#1E1326</span></div>
+      <div class="swatch" style="background:#0f0a18;color:#AEC9FF"><span class="name">950</span><span class="hex">#0F0A18</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="section-label">Cyan accent scale</div>
+    <div class="row">
+      <div class="swatch" style="background:#7dd3fc;color:#0a4a5c"><span class="name">300</span><span class="hex">#7DD3FC</span></div>
+      <div class="swatch" style="background:#38bdf8;color:#0a4a5c"><span class="name">400</span><span class="hex">#38BDF8</span></div>
+      <div class="swatch" style="background:#0ea5c9;color:#fff"><span class="name">500</span><span class="hex">#0EA5C9</span></div>
+      <div class="swatch" style="background:#0d6b86;color:#fff"><span class="name">600</span><span class="hex">#0D6B86</span></div>
+      <div class="swatch" style="background:#0a4a5c;color:#7dd3fc"><span class="name">700</span><span class="hex">#0A4A5C</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

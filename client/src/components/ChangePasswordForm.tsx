@@ -66,8 +66,16 @@ const ChangePasswordForm: React.FC = () => {
           isRequired
         />
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-500 text-sm">Mot de passe modifié avec succès.</p>}
+        {error && (
+          <p role="alert" aria-live="assertive" className="text-red-500 text-sm">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p role="status" aria-live="polite" className="text-green-500 text-sm">
+            Mot de passe modifié avec succès.
+          </p>
+        )}
 
         <button type="submit" disabled={loading} className="btn">
           {loading ? "Modification..." : "Modifier le mot de passe"}

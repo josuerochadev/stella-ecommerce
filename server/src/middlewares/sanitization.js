@@ -1,11 +1,11 @@
 // src/middlewares/sanitization.js
 // Middleware pour la sanitisation des entrées utilisateur
 
-const DOMPurify = require('dompurify');
-const { JSDOM } = require('jsdom');
+const DOMPurify = require("dompurify");
+const { JSDOM } = require("jsdom");
 
 // Configuration JSDOM pour DOMPurify côté serveur
-const window = new JSDOM('').window;
+const window = new JSDOM("").window;
 const purify = DOMPurify(window);
 
 /**
@@ -21,7 +21,7 @@ const sanitizeConfigs = {
 
   // Configuration pour le contenu HTML basique (commentaires, descriptions)
   basicHtml: {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u'],
+    ALLOWED_TAGS: ["p", "br", "strong", "em", "u"],
     ALLOWED_ATTR: [],
     KEEP_CONTENT: true,
   },
@@ -31,7 +31,7 @@ const sanitizeConfigs = {
     ALLOWED_TAGS: [],
     ALLOWED_ATTR: [],
     KEEP_CONTENT: true,
-  }
+  },
 };
 
 /**
@@ -40,30 +40,30 @@ const sanitizeConfigs = {
  * @param {string} mode - Mode de sanitisation ('strict', 'basicHtml', 'url')
  * @returns {any} Données sanitisées
  */
-const sanitizeData = (data, mode = 'strict') => {
-  if (typeof data === 'string') {
+const sanitizeData = (data, mode = "strict") => {
+  if (typeof data === "string") {
     // Appliquer la sanitisation selon le mode
     return purify.sanitize(data, sanitizeConfigs[mode]);
   }
 
   if (Array.isArray(data)) {
-    return data.map(item => sanitizeData(item, mode));
+    return data.map((item) => sanitizeData(item, mode));
   }
 
-  if (data && typeof data === 'object') {
+  if (data && typeof data === "object") {
     const sanitized = {};
     for (const [key, value] of Object.entries(data)) {
       // Certains champs peuvent avoir des modes spécifiques
       let fieldMode = mode;
 
       // Champs qui acceptent du HTML basique
-      if (['description', 'comment', 'review', 'bio'].includes(key.toLowerCase())) {
-        fieldMode = 'basicHtml';
+      if (["description", "comment", "review", "bio"].includes(key.toLowerCase())) {
+        fieldMode = "basicHtml";
       }
 
       // Champs URL
-      if (['url', 'website', 'avatar', 'image'].includes(key.toLowerCase())) {
-        fieldMode = 'url';
+      if (["url", "website", "avatar", "image"].includes(key.toLowerCase())) {
+        fieldMode = "url";
       }
 
       sanitized[key] = sanitizeData(value, fieldMode);
@@ -78,21 +78,21 @@ const sanitizeData = (data, mode = 'strict') => {
  * Middleware de sanitisation pour les requêtes
  * Sanitise automatiquement req.body, req.query, et req.params
  */
-const sanitizeInput = (mode = 'strict') => {
-  return (req, res, next) => {
+const sanitizeInput = (mode = "strict") => {
+  return (req, _res, next) => {
     try {
       // Sanitiser le body de la requête
-      if (req.body && typeof req.body === 'object') {
+      if (req.body && typeof req.body === "object") {
         req.body = sanitizeData(req.body, mode);
       }
 
       // Sanitiser les query parameters
-      if (req.query && typeof req.query === 'object') {
+      if (req.query && typeof req.query === "object") {
         req.query = sanitizeData(req.query, mode);
       }
 
       // Sanitiser les paramètres de route
-      if (req.params && typeof req.params === 'object') {
+      if (req.params && typeof req.params === "object") {
         req.params = sanitizeData(req.params, mode);
       }
 
@@ -109,7 +109,7 @@ const sanitizeInput = (mode = 'strict') => {
  * @param {string} mode - Mode de sanitisation
  * @returns {any} Données sanitisées
  */
-const sanitize = (data, mode = 'strict') => {
+const sanitize = (data, mode = "strict") => {
   return sanitizeData(data, mode);
 };
 
@@ -117,7 +117,7 @@ const sanitize = (data, mode = 'strict') => {
  * Middleware spécialisé pour les champs de recherche
  * Applique une sanitisation plus permissive pour la recherche
  */
-const sanitizeSearch = (req, res, next) => {
+const sanitizeSearch = (req, _res, next) => {
   if (req.query.search || req.query.q || req.query.query) {
     const searchField = req.query.search || req.query.q || req.query.query;
 
@@ -126,8 +126,8 @@ const sanitizeSearch = (req, res, next) => {
       ALLOWED_TAGS: [],
       ALLOWED_ATTR: [],
       KEEP_CONTENT: true,
-      FORBID_ATTR: ['style', 'onclick', 'onerror'],
-      FORBID_TAGS: ['script', 'iframe', 'object', 'embed']
+      FORBID_ATTR: ["style", "onclick", "onerror"],
+      FORBID_TAGS: ["script", "iframe", "object", "embed"],
     });
 
     if (req.query.search) req.query.search = sanitized;
@@ -142,5 +142,5 @@ module.exports = {
   sanitizeInput,
   sanitizeSearch,
   sanitize,
-  sanitizeData
+  sanitizeData,
 };

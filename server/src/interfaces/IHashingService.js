@@ -13,8 +13,8 @@ class IHashingService {
    * @returns {Promise<string>} Mot de passe haché
    * @throws {Error} Si le hachage échoue
    */
-  async hash(password) {
-    throw new Error('Method hash() must be implemented');
+  async hash(_password) {
+    throw new Error("Method hash() must be implemented");
   }
 
   /**
@@ -24,8 +24,8 @@ class IHashingService {
    * @returns {Promise<boolean>} True si le mot de passe correspond
    * @throws {Error} Si la comparaison échoue
    */
-  async compare(password, hash) {
-    throw new Error('Method compare() must be implemented');
+  async compare(_password, _hash) {
+    throw new Error("Method compare() must be implemented");
   }
 
   /**
@@ -33,8 +33,8 @@ class IHashingService {
    * @param {string} password - Mot de passe à valider
    * @returns {Promise<{isValid: boolean, errors: string[]}>} Résultat de validation
    */
-  async validatePasswordStrength(password) {
-    throw new Error('Method validatePasswordStrength() must be implemented');
+  async validatePasswordStrength(_password) {
+    throw new Error("Method validatePasswordStrength() must be implemented");
   }
 
   /**
@@ -42,8 +42,8 @@ class IHashingService {
    * @param {number} rounds - Nombre de rounds pour le sel (optionnel)
    * @returns {Promise<string>} Sel généré
    */
-  async generateSalt(rounds = 10) {
-    throw new Error('Method generateSalt() must be implemented');
+  async generateSalt(_rounds = 10) {
+    throw new Error("Method generateSalt() must be implemented");
   }
 }
 
