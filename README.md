@@ -1,93 +1,103 @@
-# Stella - Star E-commerce 🌟
+# Stella — Star E-Commerce
 
-Stella is a modern e-commerce application that allows you to buy stars. This project was developed to demonstrate my full stack web development skills, using the latest technologies and industry best practices.
+![CI](https://github.com/josuerochadev/stella-ecommerce/actions/workflows/ci.yml/badge.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?logo=postgresql)
+
+Stella is a full-stack e-commerce application for buying stars, built as a portfolio project demonstrating end-to-end web development skills — from database design to a polished React UI.
+
+> **Live demo video:** [`docs/screenshots/demo.m4v`](./docs/screenshots/demo.m4v)
+
+---
 
 ## Features
 
-- Interactive star catalog with filters and search
-- Secure user authentication (JWT + CSRF)
-- Dynamic shopping cart and wishlist
-- Complete checkout flow with order tracking
-- User reviews and ratings system
-- Admin dashboard with statistics
-- RESTful API with Swagger documentation
-- Responsive user interface with React and TypeScript
-- Optimized relational database with PostgreSQL and Sequelize
-- Automatic linting and formatting with Biome
+- Star catalog with search, filters, and detail pages
+- Secure authentication — JWT (httpOnly cookies) + CSRF protection
+- Shopping cart with quantity controls and wishlist
+- Full checkout flow — address form, order summary, payment simulation
+- Order history with status tracking
+- User reviews and star ratings
+- Admin dashboard with stats and user management
+- RESTful API with Swagger/OpenAPI documentation
+- Rate limiting, input sanitization (DOMPurify + Joi), CSP headers (Helmet)
+- Structured logging (Winston) and error monitoring (Sentry)
+- Responsive design with custom Design System (Tailwind CSS)
 - Docker support for containerized development
+- CI pipeline via GitHub Actions (lint, typecheck, tests)
 
-## Project Overview
+---
 
-### Image Gallery
+## Screenshots
 
-Here are some screenshots of the application:
+<table>
+  <tr>
+    <td><img src="./docs/screenshots/homepage.png" alt="Homepage" width="400"/><br/><em>Homepage</em></td>
+    <td><img src="./docs/screenshots/homepage2.png" alt="Homepage sections" width="400"/><br/><em>Homepage sections</em></td>
+  </tr>
+  <tr>
+    <td><img src="./docs/screenshots/catalog.png" alt="Star catalog" width="400"/><br/><em>Star catalog</em></td>
+    <td><img src="./docs/screenshots/productdetail.png" alt="Star detail" width="400"/><br/><em>Star detail</em></td>
+  </tr>
+  <tr>
+    <td><img src="./docs/screenshots/shoppingcart.png" alt="Shopping cart" width="400"/><br/><em>Shopping cart</em></td>
+    <td><img src="./docs/screenshots/login.png" alt="Login" width="400"/><br/><em>Login</em></td>
+  </tr>
+  <tr>
+    <td><img src="./docs/screenshots/profile.png" alt="Profile" width="400"/><br/><em>Profile</em></td>
+    <td><img src="./docs/screenshots/emptyshoppingcart.png" alt="Empty cart" width="400"/><br/><em>Empty cart</em></td>
+  </tr>
+</table>
 
-<img src="./docs/screenshots/homepage.png" alt="Homepage" width="500"/>
+---
 
-*Homepage*
-
-<img src="./docs/screenshots/homepage2.png" alt="Homepage sections" width="500"/>
-
-*Homepage sections*
-
-<img src="./docs/screenshots/catalog.png" alt="Star catalog" width="500"/>
-
-*Star catalog*
-
-<img src="./docs/screenshots/productdetail.png" alt="Star detail" width="500"/>
-
-*Star detail*
-
-<img src="./docs/screenshots/shoppingcart.png" alt="Shopping cart" width="500"/>
-
-*Shopping cart*
-
-<img src="./docs/screenshots/emptyshoppingcart.png" alt="Empty shopping cart" width="500"/>
-
-*Empty shopping cart*
-
-<img src="./docs/screenshots/login.png" alt="Login page" width="500"/>
-
-*Login page*
-
-<img src="./docs/screenshots/profile.png" alt="Profile" width="500"/>
-
-*Profile*
-
-## Technologies Used
+## Tech Stack
 
 ### Frontend
 
-- React with TypeScript for a robust and typed interface
-- Zustand for global state management
-- Tailwind CSS for modern and responsive design
-- React Router v7 for client-side navigation
-- Axios for HTTP requests
+| Technology | Purpose |
+|---|---|
+| React 18 + TypeScript 5 | UI framework with full type safety |
+| Zustand | Global state management |
+| TanStack Query (React Query) | Server state, caching, and data fetching |
+| React Router v7 | Client-side routing |
+| Tailwind CSS | Utility-first styling with custom design system |
+| Axios | HTTP client with CSRF interceptors |
+| Sentry | Frontend error monitoring |
 
 ### Backend
 
-- Node.js with Express for a performant RESTful API
-- Sequelize as ORM to interact with PostgreSQL
-- JSON Web Tokens (JWT) for authentication and security
-- Swagger/OpenAPI for API documentation
-- Winston for structured logging
-- Jest for unit and integration testing
+| Technology | Purpose |
+|---|---|
+| Node.js + Express | RESTful API server |
+| Sequelize + PostgreSQL | ORM with relational data model |
+| JWT + CSRF tokens | Authentication and session security |
+| Helmet + express-rate-limit | HTTP hardening and rate limiting |
+| DOMPurify + Joi | Input sanitization and schema validation |
+| Winston | Structured logging (file + console) |
+| Sentry | Backend error monitoring |
+| node-cache | In-memory caching |
+| Swagger/OpenAPI | Interactive API documentation |
+| Jest + Supertest | Unit and integration tests |
 
-### Database
+### Infrastructure
 
-- PostgreSQL for efficient relational data management
+| Technology | Purpose |
+|---|---|
+| Docker + docker-compose | Containerized local development |
+| GitHub Actions | CI pipeline (lint, typecheck, tests) |
+| Husky + lint-staged | Pre-commit quality gates |
+| Biome | Unified linter and formatter (client + server) |
+| Render | Production deployment (`render.yaml`) |
 
-### Tools and Practices
-
-- Biome for code linting and formatting
-- Husky + lint-staged for pre-commit hooks
-- Docker + docker-compose for containerized development
-- GitHub Actions for CI (lint, test, typecheck)
-- Git with conventional commits for version control
+---
 
 ## Architecture
 
-The project follows an MVC (Model-View-Controller) architecture with dependency injection on the backend and a repository pattern on the frontend.
+The project follows an **MVC** pattern on the backend with a **dependency injection container**, and a **repository pattern** on the frontend to decouple API calls from components.
 
 ```
 stella-ecommerce/
@@ -95,31 +105,40 @@ stella-ecommerce/
 │   └── src/
 │       ├── components/    # Reusable UI components
 │       ├── pages/         # Route-based page components
-│       ├── services/      # API calls and external services
-│       ├── stores/        # Zustand state management
-│       ├── hooks/         # Custom React hooks
 │       ├── repositories/  # Data access layer (API abstraction)
+│       ├── services/      # Business logic helpers
+│       ├── stores/        # Zustand global state
+│       ├── hooks/         # Custom React hooks
 │       ├── types/         # TypeScript type definitions
-│       ├── utils/         # Helper utilities
 │       └── tests/         # Jest test files
 ├── server/                # Node.js/Express backend API (port 3000)
 │   └── src/
 │       ├── controllers/   # Route handlers
 │       ├── services/      # Business logic
-│       ├── models/        # Sequelize ORM models
 │       ├── repositories/  # Data access layer
+│       ├── models/        # Sequelize ORM models
 │       ├── routes/        # Express route definitions
-│       ├── middlewares/   # Custom middleware functions
-│       ├── validations/   # Joi validation schemas
+│       ├── middlewares/   # Auth, CSRF, error handling
+│       ├── validations/   # Joi schemas
 │       ├── container/     # Dependency injection container
-│       ├── config/        # Configuration files
+│       ├── config/        # App and DB configuration
 │       └── utils/         # Helper utilities
 ├── scripts/               # Database utility scripts
-├── docs/                  # Project documentation
-├── .github/workflows/     # CI pipeline
+├── docs/                  # Documentation, ADRs, audits, screenshots
+├── .github/workflows/     # CI/CD pipeline
 ├── docker-compose.yml     # Docker orchestration
 └── render.yaml            # Render deployment config
 ```
+
+Key architectural decisions are documented as ADRs in [`docs/adr/`](./docs/adr/):
+
+- [001 — Zustand over Redux](./docs/adr/001-zustand-over-redux.md)
+- [002 — DI container on the backend](./docs/adr/002-di-container-backend.md)
+- [003 — JavaScript backend (no TypeScript)](./docs/adr/003-javascript-backend.md)
+- [004 — Sequelize sync over migrations](./docs/adr/004-sequelize-sync-no-migrations.md)
+- [005 — Repository pattern on the frontend](./docs/adr/005-repository-pattern-frontend.md)
+
+---
 
 ## Installation
 
@@ -127,9 +146,9 @@ stella-ecommerce/
 
 - Node.js >= 18 (recommended: 22, see `.nvmrc`)
 - npm
-- PostgreSQL
+- PostgreSQL 15
 
-### Option A: Standard Setup
+### Option A — Standard Setup
 
 1. **Clone the repository**
    ```bash
@@ -139,42 +158,33 @@ stella-ecommerce/
 
 2. **Install dependencies**
    ```bash
-   # Install server dependencies
-   cd server
-   npm install
-
-   # Install client dependencies
-   cd ../client
-   npm install
+   cd server && npm install
+   cd ../client && npm install
    ```
 
 3. **Configure environment variables**
    ```bash
-   # Server
    cp server/.env.example server/.env
-   # Edit server/.env with your database credentials and JWT secret
+   # Edit server/.env — database credentials, JWT secret, etc.
 
-   # Client
    cp client/src/.env.example client/.env
    # Edit client/.env if your API runs on a different URL
    ```
 
-4. **Setup PostgreSQL database**
+4. **Initialize the database**
    ```bash
-   # Start PostgreSQL service
-   brew services start postgresql@15   # macOS
-   # sudo systemctl start postgresql   # Linux
+   # macOS
+   brew services start postgresql@15
+   # Linux: sudo systemctl start postgresql
 
-   # Create database
    createdb stella_ecommerce
 
-   # Initialize tables and seed data
    cd server
-   npm run create-tables
-   npm run generate-data
+   npm run create-tables   # Create schema
+   npm run generate-data   # Seed sample data
    ```
 
-### Option B: Docker Setup
+### Option B — Docker Setup
 
 ```bash
 # Start all services (client + server + postgres)
@@ -185,76 +195,81 @@ docker-compose exec server node ../scripts/createTables.js
 docker-compose exec server node ../scripts/sampleData.js
 ```
 
-The application will be available at:
-- Frontend: http://localhost:3001
-- Backend API: http://localhost:3000/api
-- Swagger docs: http://localhost:3000/api-docs
+Once running, the application is available at:
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3001 |
+| Backend API | http://localhost:3000/api |
+| Swagger docs | http://localhost:3000/api-docs |
+
+---
 
 ## Usage
 
-### Starting the Application (without Docker)
+### Starting Without Docker
 
-1. **Start the backend server**
-   ```bash
-   cd server
-   npm run dev
-   ```
-   Server will run on http://localhost:3000
+```bash
+# Terminal 1 — backend
+cd server && npm run dev
 
-2. **Start the frontend** (in a new terminal)
-   ```bash
-   cd client
-   npm start
-   ```
-   Frontend will run on http://localhost:3001
+# Terminal 2 — frontend
+cd client && npm start
+```
 
-3. **Open your browser**
-   Navigate to **http://localhost:3001** to view the application
+Open **http://localhost:3001** in your browser.
 
 ### Demo Accounts
 
-The seed data creates test accounts. Credentials are available in the application's seed script (`scripts/sampleData.js`).
+Sample accounts are created by the seed script. See `scripts/sampleData.js` for credentials, including a regular user and an admin account.
 
 ### Development Commands
 
 | Command | Location | Description |
-|---------|----------|-------------|
-| `npm run dev` | server/ | Start dev server with hot reload |
-| `npm start` | client/ | Start React dev server |
+|---|---|---|
+| `npm run dev` | `server/` | Start dev server with hot reload |
+| `npm start` | `client/` | Start React dev server |
 | `npm test` | both | Run tests |
+| `npm run test:unit` | `server/` | Unit tests only |
+| `npm run test:integration` | `server/` | Integration tests only |
+| `npm run test:coverage` | `client/` | Tests with coverage report |
 | `npm run lint` | both | Run Biome linter |
 | `npm run format` | both | Format code with Biome |
-| `npm run create-tables` | server/ | Initialize database tables |
-| `npm run generate-data` | server/ | Populate with sample data |
-| `npm run reset-db` | server/ | Reset database completely |
+| `npm run create-tables` | `server/` | Initialize database tables |
+| `npm run generate-data` | `server/` | Populate with sample data |
+| `npm run reset-db` | `server/` | Reset database (dev only) |
+| `npm run create-admin` | `server/` | Create an admin user |
+
+---
 
 ## API Documentation
 
-The API is documented with Swagger/OpenAPI. Once the server is running, visit:
+Swagger/OpenAPI is available once the server is running:
 
 **http://localhost:3000/api-docs**
 
-All endpoints are organized by tags: Stars, Authentication, Cart, Orders, Reviews, Wishlist, Payments, Admin, Profile.
+Endpoints are grouped by tag: `Stars`, `Auth`, `Cart`, `Orders`, `Reviews`, `Wishlist`, `Payments`, `Admin`, `Profile`.
+
+---
 
 ## Contributing
 
-Contributions are welcome! Please read our guidelines before submitting a PR:
-
 1. **Fork** the repository
-2. Create a **branch** for the feature (`git checkout -b feature/AmazingFeature`)
-3. **Commit** using [conventional commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `refactor:`, etc.)
-4. **Push** to the branch (`git push origin feature/AmazingFeature`)
-5. Open a **Pull Request** (1 PR = 1 topic, no catch-all PRs)
+2. Create a **feature branch** — `git checkout -b feat/my-feature`
+3. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/) — `feat:`, `fix:`, `refactor:`, etc.
+4. **Push** and open a **Pull Request** (one PR per topic)
 
-Pre-commit hooks (Husky + Biome) run automatically. Do not bypass with `--no-verify`.
+Pre-commit hooks (Husky + Biome) run automatically on staged files. Do not bypass with `--no-verify`.
 
-### Issues
+If you find a bug or have an improvement idea, open an [issue](https://github.com/josuerochadev/stella-ecommerce/issues).
 
-If there are any issues or improvement ideas, go to issues on the repository. I appreciate all feedback and suggestions.
+---
 
 ## Roadmap
 
-See [docs/ROADMAP.md](./docs/ROADMAP.md) for the detailed project roadmap.
+See [docs/ROADMAP.md](./docs/ROADMAP.md) for the full project roadmap. All phases are complete — the project is production-ready as a portfolio piece.
+
+---
 
 ## License
 
