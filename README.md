@@ -9,6 +9,8 @@
 
 Stella is a full-stack e-commerce application for buying stars, built as a portfolio project demonstrating end-to-end web development skills — from database design to a polished React UI.
 
+**Live:** https://stella-ecommerce.vercel.app
+
 ---
 
 ## Features
