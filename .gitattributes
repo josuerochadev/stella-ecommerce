@@ -31,6 +31,6 @@
 package-lock.json -diff linguist-generated
 
 # Design System previews — generated HTML/CSS, exclude from language stats
-Stella\ Design\ System/preview/** linguist-generated
-Stella\ Design\ System/*.css linguist-generated
-Stella\ Design\ System/ui_kits/** linguist-generated
+"Stella Design System/preview/**" linguist-generated
+"Stella Design System/*.css" linguist-generated
+"Stella Design System/ui_kits/**" linguist-generated
