@@ -51,7 +51,7 @@ export const ModalStylesService = {
   getBaseModalClasses(size: ModalSize): string {
     return `
       relative mx-auto my-8 w-full ${ModalStylesService.getSizeClasses(size)}
-      bg-white rounded-lg shadow-xl transform transition-all
+      bg-surface-2 rounded-lg shadow-xl transform transition-all
       max-h-[90vh] overflow-hidden
     `
       .trim()
@@ -60,7 +60,7 @@ export const ModalStylesService = {
 
   getOverlayClasses(): string {
     return `
-      fixed inset-0 bg-black bg-opacity-50
+      fixed inset-0 bg-black/60 backdrop-blur-sm
       flex items-center justify-center p-4 z-50
       transition-opacity duration-200
     `

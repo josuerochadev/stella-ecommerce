@@ -35,7 +35,7 @@ const ModalActions: React.FC<ModalActionsProps> = ({
     : "bg-blue-600 hover:bg-blue-700 text-white";
 
   return (
-    <div className="px-6 py-4 bg-gray-50 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0">
+    <div className="px-6 py-4 bg-surface-1 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0">
       {/* Bouton Annuler */}
       <button
         type="button"
