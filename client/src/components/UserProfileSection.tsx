@@ -2,6 +2,7 @@
 // Responsabilité unique : Gestion du profil utilisateur
 
 import { useAuth } from "@/context/AuthContext";
+import { UserService } from "@/services/userService";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { User } from "@/types";
@@ -126,6 +127,29 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
           </button>
           <button type="button" className="btn" onClick={handleLogout}>
             Se déconnecter
+          </button>
+          <button
+            type="button"
+            className="btn-secondary py-2 px-4 rounded-md"
+            onClick={async () => {
+              try {
+                const data = await UserService.exportData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `stella-data-export-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showSuccess("Vos données ont été exportées.");
+              } catch (_error) {
+                setErrorMessage("Erreur lors de l'export des données.");
+              }
+            }}
+          >
+            Exporter mes données
           </button>
           <button
             type="button"

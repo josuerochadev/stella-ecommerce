@@ -59,7 +59,7 @@ class OrderService {
       const starIds = items.map((item) => item.starId);
       const stars = await this.starRepository.findAll(
         { starid: starIds },
-        { attributes: ["starid", "price"], raw: true },
+        { attributes: ["starid", "price"] },
       );
 
       // Créer un map pour accès O(1)

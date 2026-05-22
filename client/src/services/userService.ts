@@ -105,6 +105,14 @@ export class UserService {
     const response = await httpClient.post<ApiResponse<null>>("/users/reset-password", data);
     return response.data;
   }
+
+  /**
+   * Exporter toutes les données personnelles (RGPD — droit à la portabilité)
+   */
+  static async exportData(): Promise<object> {
+    const response = await httpClient.get("/users/me/export");
+    return response.data;
+  }
 }
 
 // Exports nommés pour compatibilité avec l'API existante

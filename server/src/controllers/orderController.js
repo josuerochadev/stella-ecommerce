@@ -36,10 +36,14 @@ class OrderController {
         return next(new AppError("Payment method is required", 400));
       }
 
+      // Serialize address object to string for TEXT column storage
+      const serializedAddress =
+        typeof shippingAddress === "object" ? JSON.stringify(shippingAddress) : shippingAddress;
+
       const order = await this.orderService.createOrder(
         userId,
         items,
-        shippingAddress,
+        serializedAddress,
         paymentMethod,
       );
 

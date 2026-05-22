@@ -49,6 +49,9 @@ const OrderConfirmation: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to={`/certificate/${state.orderId}`} className="btn btn-primary">
+              Voir mon certificat
+            </Link>
             <Link to="/orders" className="btn">
               Voir mes commandes
             </Link>

@@ -30,6 +30,7 @@ const Checkout = React.lazy(() => import("./pages/Checkout"));
 const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Admin = React.lazy(() => import("./pages/Admin"));
+const Certificate = React.lazy(() => import("./pages/Certificate"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Component to handle auth unauthorized events
@@ -140,6 +141,10 @@ const App: React.FC = () => {
                       <Navigate to="/auth" />
                     )
                   }
+                />
+                <Route
+                  path="/certificate/:orderId"
+                  element={isAuthenticated ? <Certificate /> : <Navigate to="/auth" />}
                 />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/legal" element={<Legal />} />

@@ -7,6 +7,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
 import { memo, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ChangePasswordForm from "./ChangePasswordForm";
 import FadeInSection from "./FadeInSection";
 import ProfileCartSection from "./ProfileCartSection";
@@ -91,6 +92,13 @@ const Profile: React.FC = () => {
 
       <FadeInSection>
         <UserProfileSection user={user} />
+
+        <div className="bg-secondary text-text p-6 rounded-lg shadow-lg mb-6">
+          <h2 className="text-xl font-display mb-3">Mes commandes</h2>
+          <Link to="/orders" className="text-cyan-400 hover:text-cyan-300 font-serif text-sm">
+            Voir l'historique de mes commandes
+          </Link>
+        </div>
 
         <ChangePasswordForm />
 

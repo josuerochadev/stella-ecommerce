@@ -52,7 +52,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
       <button
         type="button"
         onClick={handleAddToWishlist}
-        className={`btn mt-2 ${inWishlist ? "bg-gray-500 cursor-not-allowed" : ""}`}
+        className={`btn ${inWishlist ? "bg-gray-500 cursor-not-allowed" : ""}`}
         disabled={loading || inWishlist}
         aria-live="polite"
         aria-label={

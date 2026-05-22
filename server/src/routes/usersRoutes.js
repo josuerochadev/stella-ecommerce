@@ -154,4 +154,29 @@ router.get("/profile/stats", requireAuth, profileController.getProfileStats);
  */
 router.delete("/me", requireAuth, csrfValidate, profileController.deleteAccount);
 
+/**
+ * @swagger
+ * /users/me/export:
+ *   get:
+ *     summary: Export all personal data (GDPR portability)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: JSON file containing all user data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/me/export", requireAuth, profileController.exportData);
+
 module.exports = router;

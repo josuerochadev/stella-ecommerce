@@ -62,12 +62,17 @@ const Checkout: React.FC = () => {
       };
 
       const response = await OrderService.createOrder(orderData);
+      const result = response as unknown as {
+        orderId: number;
+        total: number;
+        status: string;
+      };
       await clearCart();
       navigate("/order-confirmation", {
         state: {
-          orderId: response.data?.id,
-          total: stats.totalAmount,
-          status: "pending",
+          orderId: result.orderId,
+          total: result.total ?? stats.totalAmount,
+          status: result.status ?? "pending",
         },
       });
     } catch (err) {

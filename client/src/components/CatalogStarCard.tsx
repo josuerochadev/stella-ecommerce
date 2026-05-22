@@ -60,8 +60,8 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
             </span>
           </div>
 
-          <div className="flex mt-4 gap-1">
-            <Link to={`/star/${star.starid}`} className="btn text-sm py-1.5 px-3">
+          <div className="flex items-center mt-4 gap-2">
+            <Link to={`/star/${star.starid}`} className="btn">
               <EyeIcon className="text-lg" />
               <span className="sr-only">Decouvrir</span>
             </Link>

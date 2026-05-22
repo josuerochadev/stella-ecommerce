@@ -46,7 +46,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
       <button
         type="button"
         onClick={handleAddToCart}
-        className={`btn mt-2 ${inCart ? "bg-gray-500 cursor-not-allowed" : ""}`}
+        className={`btn ${inCart ? "bg-gray-500 cursor-not-allowed" : ""}`}
         disabled={loading || inCart}
         aria-live="polite"
         aria-label={inCart ? "Produit déjà ajouté au panier" : "Ajouter au panier"}
