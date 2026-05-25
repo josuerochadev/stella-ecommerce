@@ -6,6 +6,7 @@ const { User } = require("../models");
 const { IUserRepository } = require("../interfaces/IUserRepository");
 const { Op } = require("sequelize");
 const { validateId } = require("../utils/validators");
+const { USER_ROLES, VALID_ROLES } = require("../constants/app");
 
 /**
  * Repository pour les utilisateurs utilisant Sequelize ORM
@@ -74,7 +75,7 @@ class SequelizeUserRepository extends IUserRepository {
         lastName: userData.lastName.trim(),
         email: userData.email.toLowerCase().trim(),
         password: userData.password,
-        role: userData.role || "client",
+        role: userData.role || USER_ROLES.CLIENT,
       };
 
       const user = await this.User.create(userToCreate);
@@ -281,8 +282,8 @@ class SequelizeUserRepository extends IUserRepository {
     }
 
     // Validation rôle
-    if (userData.role && !["client", "admin"].includes(userData.role)) {
-      throw new Error("Invalid role. Must be client or admin");
+    if (userData.role && !VALID_ROLES.includes(userData.role)) {
+      throw new Error(`Invalid role. Must be one of: ${VALID_ROLES.join(", ")}`);
     }
   }
 

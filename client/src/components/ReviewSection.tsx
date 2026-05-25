@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { ReviewService } from "@/services/reviewService";
+import { useUserStore } from "@/stores/useUserStore";
 import type { Review } from "@/types";
 import { logger } from "@/utils/logger";
 import { useCallback, useEffect, useState } from "react";
@@ -36,6 +37,7 @@ const StarRating: React.FC<{
 
 const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
   const { isAuthenticated } = useAuth();
+  const currentUser = useUserStore((state) => state.user);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [newRating, setNewRating] = useState(0);
@@ -60,11 +62,10 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ starId }) => {
   }, [fetchReviews]);
 
   useEffect(() => {
-    if (isAuthenticated && reviews.length > 0) {
-      const userId = Number(localStorage.getItem("userId"));
-      setHasReviewed(reviews.some((r) => r.userId === userId));
+    if (isAuthenticated && currentUser && reviews.length > 0) {
+      setHasReviewed(reviews.some((r) => r.userId === currentUser.id));
     }
-  }, [reviews, isAuthenticated]);
+  }, [reviews, isAuthenticated, currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

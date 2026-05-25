@@ -31,8 +31,10 @@ export class UserService {
    * Supprimer le compte utilisateur
    * Responsabilité : Suppression définitive du compte
    */
-  static async deleteAccount(): Promise<ApiResponse<null>> {
-    const response = await httpClient.delete<ApiResponse<null>>("/users/me");
+  static async deleteAccount(password: string): Promise<ApiResponse<null>> {
+    const response = await httpClient.delete<ApiResponse<null>>("/users/me", {
+      data: { password },
+    });
     return response.data;
   }
 

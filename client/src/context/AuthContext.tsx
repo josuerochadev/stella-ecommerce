@@ -2,6 +2,7 @@
 
 import { setUserAuthenticated } from "@/services/httpClient";
 import { useCartStore } from "@/stores/useCartStore";
+import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useUserStore } from "@/stores/useUserStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
 import { logger } from "@/utils/logger";
@@ -11,7 +12,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: () => void;
+  login: () => Promise<void>;
   logout: () => void;
 }
 
@@ -50,21 +51,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const login = () => {
+  const login = async () => {
     // Access token is now in httpOnly cookie, set by the server
-    setIsAuthenticated(true);
-    setUserAuthenticated(true);
     setIsLoading(true);
 
-    Promise.all([
-      useCartStore.getState().fetchCart(),
-      useWishlistStore.getState().fetchWishlist(),
-      useUserStore.getState().fetchProfile(),
-    ])
-      .catch((error) => {
-        logger.warn("Error fetching user data after login:", error, "AuthContext");
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      await Promise.all([
+        useCartStore.getState().fetchCart(),
+        useWishlistStore.getState().fetchWishlist(),
+        useUserStore.getState().fetchProfile(),
+      ]);
+      setIsAuthenticated(true);
+      setUserAuthenticated(true);
+    } catch (error) {
+      logger.warn("Error fetching user data after login:", error, "AuthContext");
+      setIsAuthenticated(true);
+      setUserAuthenticated(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
@@ -74,6 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     resetCart();
     resetWishlist();
     resetUser();
+    useNotificationStore.setState({ toasts: [], modals: [] });
   };
 
   return (

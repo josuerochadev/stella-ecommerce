@@ -8,15 +8,18 @@ const { csrfValidate } = require("../middlewares/modernCsrf");
 const { authenticateUser, requireAuth, requireRole } = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validate");
 const Joi = require("joi");
+const { USER_ROLES, VALID_ROLES } = require("../constants/app");
 
 // Middleware: toutes les routes admin nécessitent une authentification admin
 router.use(authenticateUser);
 router.use(requireAuth);
-router.use(requireRole("admin"));
+router.use(requireRole(USER_ROLES.ADMIN));
 
 // Schémas de validation
 const updateUserRoleSchema = Joi.object({
-  role: Joi.string().valid("client", "admin").required(),
+  role: Joi.string()
+    .valid(...VALID_ROLES)
+    .required(),
 });
 
 const updateStarPriceSchema = Joi.object({

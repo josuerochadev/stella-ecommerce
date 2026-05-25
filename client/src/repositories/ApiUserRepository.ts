@@ -48,9 +48,9 @@ export class ApiUserRepository implements UserRepository {
    * @returns {Promise<ApiResponse<null>>} Confirmation de suppression
    * @throws {Error} Si la suppression échoue
    */
-  async deleteAccount(): Promise<ApiResponse<null>> {
+  async deleteAccount(password: string): Promise<ApiResponse<null>> {
     try {
-      return await UserService.deleteAccount();
+      return await UserService.deleteAccount(password);
     } catch (error) {
       throw createFormattedError(error, "Failed to delete user account");
     }

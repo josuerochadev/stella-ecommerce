@@ -1,10 +1,11 @@
 // server/src/controllers/profileController.js
 // Responsabilité unique : Gestion des profils utilisateur
 
-const { User } = require("../models");
+const { User, Order, Review, Cart, CartItem, Wishlist } = require("../models");
 const { AppError } = require("../middlewares/errorHandler");
 const tokenService = require("../services/tokenService");
 const bcrypt = require("bcrypt");
+const { fn, col } = require("sequelize");
 
 /**
  * Contrôleur de gestion des profils
@@ -82,9 +83,20 @@ class ProfileController {
    */
   static async deleteAccount(req, res, next) {
     try {
+      const { password } = req.body;
+      if (!password) {
+        return next(new AppError("Password confirmation is required to delete your account", 400));
+      }
+
       const user = await User.findByPk(req.user.userId);
       if (!user) {
         return next(new AppError("User not found", 404));
+      }
+
+      // Vérification du mot de passe avant suppression
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return next(new AppError("Incorrect password", 401));
       }
 
       // Révocation de tous les tokens avant suppression
@@ -149,31 +161,33 @@ class ProfileController {
    */
   static async getProfileStats(req, res, next) {
     try {
-      const user = await User.findByPk(req.user.userId, {
-        include: [
-          { association: "orders", attributes: ["id", "status"] },
-          { association: "reviews", attributes: ["id", "rating"] },
-          { association: "cart", attributes: ["id"] },
-          { association: "wishlist", attributes: ["id"] },
-        ],
-      });
+      const userId = req.user.userId;
 
-      if (!user) {
-        return next(new AppError("User not found", 404));
-      }
+      const [totalOrders, completedOrders, reviewStats, cartItemCount, wishlistItems] =
+        await Promise.all([
+          Order.count({ where: { userId } }),
+          Order.count({ where: { userId, status: "delivered" } }),
+          Review.findOne({
+            where: { userId },
+            attributes: [
+              [fn("COUNT", col("id")), "totalReviews"],
+              [fn("COALESCE", fn("AVG", col("rating")), 0), "averageRating"],
+            ],
+            raw: true,
+          }),
+          Cart.findOne({ where: { userId } }).then((cart) =>
+            cart ? CartItem.count({ where: { cartId: cart.id } }) : 0,
+          ),
+          Wishlist.count({ where: { userId } }),
+        ]);
 
       const stats = {
-        totalOrders: user.orders?.length || 0,
-        completedOrders: user.orders?.filter((order) => order.status === "delivered")?.length || 0,
-        totalReviews: user.reviews?.length || 0,
-        averageRating:
-          user.reviews?.length > 0
-            ? (
-                user.reviews.reduce((sum, review) => sum + review.rating, 0) / user.reviews.length
-              ).toFixed(1)
-            : 0,
-        cartItems: user.cart?.length || 0,
-        wishlistItems: user.wishlist?.length || 0,
+        totalOrders,
+        completedOrders,
+        totalReviews: Number(reviewStats?.totalReviews) || 0,
+        averageRating: Number(Number(reviewStats?.averageRating || 0).toFixed(1)),
+        cartItems: cartItemCount,
+        wishlistItems,
       };
 
       res.json({

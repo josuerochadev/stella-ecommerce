@@ -6,6 +6,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { ShoppingCartIcon } from "@/utils/icons";
 import type React from "react";
+import { memo } from "react";
 
 interface AddToCartButtonProps {
   starId: number;
@@ -58,4 +59,4 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
   );
 };
 
-export default AddToCartButton;
+export default memo(AddToCartButton);

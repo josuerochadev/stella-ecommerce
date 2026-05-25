@@ -40,7 +40,7 @@ export interface UserRepository {
    * @returns Promise<ApiResponse<null>> Confirmation de suppression
    * @throws {Error} Si la suppression échoue
    */
-  deleteAccount(): Promise<ApiResponse<null>>;
+  deleteAccount(password: string): Promise<ApiResponse<null>>;
 
   /**
    * Change le mot de passe de l'utilisateur

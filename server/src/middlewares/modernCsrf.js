@@ -3,10 +3,18 @@
 
 const crypto = require("node:crypto");
 const jwt = require("jsonwebtoken");
+const logger = require("../utils/logger");
+
+const DEFAULT_CSRF_SECRET =
+  process.env.CSRF_SECRET ||
+  (() => {
+    logger.warn("CSRF_SECRET not set, falling back to derived secret. Set it in production!");
+    return `${process.env.JWT_SECRET}_csrf`;
+  })();
 
 class ModernCSRF {
   constructor(options = {}) {
-    this.secret = options.secret || process.env.CSRF_SECRET || `${process.env.JWT_SECRET}_csrf`;
+    this.secret = options.secret || DEFAULT_CSRF_SECRET;
     this.tokenName = options.tokenName || "X-CSRF-Token";
     this.cookieName = options.cookieName || "XSRF-TOKEN";
     this.ignoreMethods = options.ignoreMethods || ["GET", "HEAD", "OPTIONS"];

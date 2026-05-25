@@ -8,7 +8,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }], // Support TypeScript avec ts-jest
+    '^.+\\.tsx?$': ['ts-jest', { diagnostics: false }], // Support TypeScript avec ts-jest
   },
   modulePaths: ['<rootDir>/src'], // Facilite les imports relatifs
   testMatch: ['**/tests/**/*.(test|spec).[jt]s?(x)'], // Correspond aux fichiers de test
@@ -22,10 +22,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 0,
-      functions: 1,
-      lines: 1,
-      statements: 1,
+      branches: 15,
+      functions: 15,
+      lines: 20,
+      statements: 20,
     },
   },
 };

@@ -33,8 +33,15 @@ const UPDATABLE_ORDER_STATUS = [
   ORDER_STATUS.CANCELLED,
 ];
 
+/**
+ * Allowed payment methods
+ * Must match Swagger documentation and frontend options
+ */
+const PAYMENT_METHODS = ["credit_card", "paypal", "bank_transfer"];
+
 module.exports = {
   ORDER_STATUS,
   ORDER_STATUS_VALUES,
   UPDATABLE_ORDER_STATUS,
+  PAYMENT_METHODS,
 };

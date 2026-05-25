@@ -6,6 +6,9 @@ const router = express.Router();
 const profileController = require("../controllers/profileController");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
 const { csrfValidate } = require("../middlewares/modernCsrf");
+const validate = require("../middlewares/validate");
+const { updateProfileSchema } = require("../validations/userValidation");
+const { exportLimiter } = require("../middlewares/rateLimiter");
 
 router.use(authenticateUser);
 
@@ -55,7 +58,13 @@ router.get("/profile", requireAuth, profileController.getUserProfile);
  *       401:
  *         description: Unauthorized
  */
-router.put("/profile", requireAuth, csrfValidate, profileController.updateProfile);
+router.put(
+  "/profile",
+  requireAuth,
+  csrfValidate,
+  validate(updateProfileSchema),
+  profileController.updateProfile,
+);
 
 /**
  * @swagger
@@ -177,6 +186,6 @@ router.delete("/me", requireAuth, csrfValidate, profileController.deleteAccount)
  *       401:
  *         description: Unauthorized
  */
-router.get("/me/export", requireAuth, profileController.exportData);
+router.get("/me/export", requireAuth, exportLimiter, profileController.exportData);
 
 module.exports = router;

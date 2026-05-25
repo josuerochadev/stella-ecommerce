@@ -69,11 +69,7 @@ export const validatePassword = (
  * Valide les entrées de recherche pour éviter l'injection
  */
 export const sanitizeSearchQuery = (query: string): string => {
-  // Supprimer les caractères dangereux et limiter la longueur
-  return query
-    .replace(/[<>'"&]/g, "") // Supprimer les caractères potentiellement dangereux
-    .trim()
-    .substring(0, 100); // Limiter à 100 caractères
+  return DOMPurify.sanitize(query, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim().substring(0, 100);
 };
 
 /**

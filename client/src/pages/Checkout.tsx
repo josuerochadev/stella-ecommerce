@@ -61,12 +61,7 @@ const Checkout: React.FC = () => {
         paymentMethod,
       };
 
-      const response = await OrderService.createOrder(orderData);
-      const result = response as unknown as {
-        orderId: number;
-        total: number;
-        status: string;
-      };
+      const result = await OrderService.createOrder(orderData);
       await clearCart();
       navigate("/order-confirmation", {
         state: {

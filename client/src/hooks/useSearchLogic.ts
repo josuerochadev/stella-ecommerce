@@ -7,7 +7,7 @@ import type { Star } from "@/types";
 import { debounce } from "@/utils/debounce";
 import { logger } from "@/utils/logger";
 import { detectInjectionAttempt, sanitizeSearchQuery } from "@/utils/security";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -148,23 +148,37 @@ export const useSearchLogic = () => {
     [suggestions, navigateToStar, clearSearch],
   );
 
-  return {
-    // État
-    searchValue,
-    suggestions,
-    isLoading,
-    showSuggestions,
+  return useMemo(
+    () => ({
+      // État
+      searchValue,
+      suggestions,
+      isLoading,
+      showSuggestions,
 
-    // Actions
-    handleSearchChange,
-    performSearch,
-    clearSearch,
-    selectSuggestion,
-    handleFocus,
-    handleBlur,
+      // Actions
+      handleSearchChange,
+      performSearch,
+      clearSearch,
+      selectSuggestion,
+      handleFocus,
+      handleBlur,
 
-    // Contrôles des suggestions
-    setSuggestions,
-    setShowSuggestions,
-  };
+      // Contrôles des suggestions
+      setSuggestions,
+      setShowSuggestions,
+    }),
+    [
+      searchValue,
+      suggestions,
+      isLoading,
+      showSuggestions,
+      handleSearchChange,
+      performSearch,
+      clearSearch,
+      selectSuggestion,
+      handleFocus,
+      handleBlur,
+    ],
+  );
 };

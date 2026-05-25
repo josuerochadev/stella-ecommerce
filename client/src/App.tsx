@@ -116,7 +116,15 @@ const App: React.FC = () => {
                 />
                 <Route
                   path="/order-confirmation"
-                  element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />}
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="la confirmation de commande">
+                        <OrderConfirmation />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
                 />
                 <Route
                   path="/orders"
@@ -144,9 +152,24 @@ const App: React.FC = () => {
                 />
                 <Route
                   path="/certificate/:orderId"
-                  element={isAuthenticated ? <Certificate /> : <Navigate to="/auth" />}
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="le certificat">
+                        <Certificate />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
                 />
-                <Route path="/wishlist" element={<Wishlist />} />
+                <Route
+                  path="/wishlist"
+                  element={
+                    <FeatureErrorBoundary featureName="la liste de souhaits">
+                      <Wishlist />
+                    </FeatureErrorBoundary>
+                  }
+                />
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="*" element={<NotFound />} />

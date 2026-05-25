@@ -76,7 +76,6 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
-    continue-on-error: true
     needs: [lint-and-test-client, lint-and-test-server, typecheck]
     services:
       postgres:
@@ -150,8 +149,6 @@ jobs:
       - name: Audit client dependencies
         run: npm audit --audit-level=high --omit=dev
         working-directory: client
-        continue-on-error: true
       - name: Audit server dependencies
         run: npm audit --audit-level=high --omit=dev
         working-directory: server
-        continue-on-error: true

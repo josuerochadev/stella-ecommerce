@@ -20,7 +20,7 @@ interface UserState {
     language?: string;
     theme?: string;
   }) => Promise<void>;
-  deleteAccount: () => Promise<void>;
+  deleteAccount: (password: string) => Promise<void>;
   resetUser: () => void;
   setUser: (user: User | null) => void;
 }
@@ -88,10 +88,10 @@ export const createUserStore = (userRepository: UserRepository) =>
       }
     },
 
-    deleteAccount: async () => {
+    deleteAccount: async (password: string) => {
       set({ loading: true, error: null });
       try {
-        await userRepository.deleteAccount();
+        await userRepository.deleteAccount(password);
         set({ user: null, loading: false, error: null });
       } catch (error) {
         const errorMessage = getErrorMessage(error, "Erreur lors de la suppression du compte.");

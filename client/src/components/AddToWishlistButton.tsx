@@ -5,7 +5,7 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
 import { HeartIcon } from "@/utils/icons";
-import { useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
   starId: number;
@@ -68,4 +68,4 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
   );
 };
 
-export default AddToWishlistButton;
+export default memo(AddToWishlistButton);
