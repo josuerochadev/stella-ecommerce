@@ -23,11 +23,11 @@ class SequelizeCartRepository extends ICartRepository {
    * @returns {Promise<Object|null>} Panier trouvé ou null
    * @throws {Error} Si la recherche échoue
    */
-  async findByUserId(userId) {
+  async findByUserId(userId, transaction = null) {
     try {
       validateId(userId, "User ID");
 
-      const cart = await this.Cart.findOne({
+      const options = {
         where: { userId },
         include: [
           {
@@ -41,7 +41,13 @@ class SequelizeCartRepository extends ICartRepository {
             ],
           },
         ],
-      });
+      };
+
+      if (transaction) {
+        options.transaction = transaction;
+      }
+
+      const cart = await this.Cart.findOne(options);
 
       return cart ? cart.toJSON() : null;
     } catch (error) {
