@@ -50,9 +50,22 @@ const passwordResetLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Data export limiter (GDPR - heavy operation)
+const exportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // Limit each IP to 3 exports per hour
+  message: {
+    success: false,
+    message: "Too many data export requests, please try again in 1 hour.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
   generalLimiter,
   authLimiter,
   createAccountLimiter,
   passwordResetLimiter,
+  exportLimiter,
 };

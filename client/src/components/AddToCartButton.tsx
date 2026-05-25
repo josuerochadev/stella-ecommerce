@@ -6,6 +6,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { ShoppingCartIcon } from "@/utils/icons";
 import type React from "react";
+import { memo } from "react";
 
 interface AddToCartButtonProps {
   starId: number;
@@ -46,7 +47,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
       <button
         type="button"
         onClick={handleAddToCart}
-        className={`btn mt-2 ${inCart ? "bg-gray-500 cursor-not-allowed" : ""}`}
+        className={`btn ${inCart ? "bg-gray-500 cursor-not-allowed" : ""}`}
         disabled={loading || inCart}
         aria-live="polite"
         aria-label={inCart ? "Produit déjà ajouté au panier" : "Ajouter au panier"}
@@ -58,4 +59,4 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ starId }) => {
   );
 };
 
-export default AddToCartButton;
+export default memo(AddToCartButton);

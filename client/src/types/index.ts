@@ -78,6 +78,14 @@ export interface Order {
   updatedAt: string;
 }
 
+export interface CreateOrderResponse {
+  success: boolean;
+  message: string;
+  orderId: number;
+  total: number;
+  status: string;
+}
+
 // Cart related types
 export interface Cart {
   id: number;

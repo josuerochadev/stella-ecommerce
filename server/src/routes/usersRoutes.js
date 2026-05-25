@@ -6,6 +6,9 @@ const router = express.Router();
 const profileController = require("../controllers/profileController");
 const { authenticateUser, requireAuth } = require("../middlewares/authMiddleware");
 const { csrfValidate } = require("../middlewares/modernCsrf");
+const validate = require("../middlewares/validate");
+const { updateProfileSchema } = require("../validations/userValidation");
+const { exportLimiter } = require("../middlewares/rateLimiter");
 
 router.use(authenticateUser);
 
@@ -55,7 +58,13 @@ router.get("/profile", requireAuth, profileController.getUserProfile);
  *       401:
  *         description: Unauthorized
  */
-router.put("/profile", requireAuth, csrfValidate, profileController.updateProfile);
+router.put(
+  "/profile",
+  requireAuth,
+  csrfValidate,
+  validate(updateProfileSchema),
+  profileController.updateProfile,
+);
 
 /**
  * @swagger
@@ -153,5 +162,30 @@ router.get("/profile/stats", requireAuth, profileController.getProfileStats);
  *         description: Server error
  */
 router.delete("/me", requireAuth, csrfValidate, profileController.deleteAccount);
+
+/**
+ * @swagger
+ * /users/me/export:
+ *   get:
+ *     summary: Export all personal data (GDPR portability)
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: JSON file containing all user data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/me/export", requireAuth, exportLimiter, profileController.exportData);
 
 module.exports = router;

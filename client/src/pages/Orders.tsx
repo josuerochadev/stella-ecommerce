@@ -5,7 +5,7 @@ import { OrderService } from "@/services/orderService";
 import type { Order, OrderStatus } from "@/types";
 import { CartCalculations } from "@/utils/cartCalculations";
 import { memo, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "En attente",
@@ -34,7 +34,8 @@ const Orders: React.FC = () => {
       try {
         const response = await OrderService.getUserOrders();
         setOrders(response.data || []);
-      } catch (_err) {
+      } catch (err) {
+        console.error("Orders fetch error:", err);
         setError("Impossible de charger vos commandes.");
       } finally {
         setLoading(false);
@@ -112,8 +113,16 @@ const Orders: React.FC = () => {
                 <div className="flex justify-between items-center pt-4 border-t border-primary/20">
                   <span className="font-serif">Total</span>
                   <span className="text-lg font-bold">
-                    {CartCalculations.formatPrice(order.totalAmount)}
+                    {CartCalculations.formatPrice(Number(order.totalAmount))}
                   </span>
+                </div>
+                <div className="mt-4">
+                  <Link
+                    to={`/certificate/${order.id}`}
+                    className="text-sm text-cyan-400 hover:text-cyan-300 font-serif"
+                  >
+                    Voir le certificat
+                  </Link>
                 </div>
               </div>
             </FadeInSection>

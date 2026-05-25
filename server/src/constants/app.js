@@ -90,9 +90,18 @@ const SESSION_CONFIG = {
   },
 };
 
+const USER_ROLES = {
+  CLIENT: "client",
+  ADMIN: "admin",
+};
+
+const VALID_ROLES = Object.values(USER_ROLES);
+
 module.exports = {
   APP_CONSTANTS,
   HTTP_STATUS,
   CORS_OPTIONS,
   SESSION_CONFIG,
+  USER_ROLES,
+  VALID_ROLES,
 };

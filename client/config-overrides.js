@@ -4,7 +4,8 @@
 const path = require('path');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-module.exports = function override(config) {
+module.exports = {
+  webpack: function override(config) {
   // Ajouter les alias de résolution pour Webpack
   config.resolve = {
     ...config.resolve,
@@ -24,4 +25,26 @@ module.exports = function override(config) {
   }
 
   return config;
+  },
+  devServer: function (configFunction) {
+    return function (proxy, allowedHost) {
+      const config = configFunction(proxy, allowedHost);
+      // Migrate deprecated onBeforeSetupMiddleware/onAfterSetupMiddleware
+      // to setupMiddlewares for webpack-dev-server v5 compatibility
+      const { onBeforeSetupMiddleware, onAfterSetupMiddleware, https, ...rest } = config;
+      return {
+        ...rest,
+        ...(https ? { server: { type: 'https', options: typeof https === 'object' ? https : {} } } : {}),
+        setupMiddlewares: (middlewares, devServer) => {
+          if (onBeforeSetupMiddleware) {
+            onBeforeSetupMiddleware(devServer);
+          }
+          if (onAfterSetupMiddleware) {
+            onAfterSetupMiddleware(devServer);
+          }
+          return middlewares;
+        },
+      };
+    };
+  },
 };

@@ -64,15 +64,19 @@ const AccessibleModal: React.FC<AccessibleModalProps> = ({
 
   // Contenu de la modal
   return createPortal(
+    // biome-ignore lint/a11y/useSemanticElements: dialog element would require refactoring focus trap hook
     <div
       className={ModalStylesService.getOverlayClasses()}
       onClick={(e) => handleOverlayClick(e, closeOnOverlayClick)}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
-      <div ref={modalRef as any} className={modalClasses} role="document">
+      <div ref={modalRef as React.RefObject<HTMLDivElement>} className={modalClasses}>
         {/* Contenu principal */}
         <ModalContent
           type={type}

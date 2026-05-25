@@ -70,8 +70,8 @@ const DetailStarCard: React.FC<DetailStarCardProps> = ({ star }) => {
             </span>
           </div>
 
-          <div className="flex mt-4 gap-2">
-            <button type="button" onClick={handleBackClick} className="btn mt-2">
+          <div className="flex items-center mt-4 gap-2">
+            <button type="button" onClick={handleBackClick} className="btn">
               <ArrowLeftIcon className="text-xl" />
               <span className="sr-only">Retour</span>
             </button>

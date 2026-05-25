@@ -31,8 +31,10 @@ export class UserService {
    * Supprimer le compte utilisateur
    * Responsabilité : Suppression définitive du compte
    */
-  static async deleteAccount(): Promise<ApiResponse<null>> {
-    const response = await httpClient.delete<ApiResponse<null>>("/users/me");
+  static async deleteAccount(password: string): Promise<ApiResponse<null>> {
+    const response = await httpClient.delete<ApiResponse<null>>("/users/me", {
+      data: { password },
+    });
     return response.data;
   }
 
@@ -103,6 +105,14 @@ export class UserService {
     newPassword: string;
   }): Promise<ApiResponse<null>> {
     const response = await httpClient.post<ApiResponse<null>>("/users/reset-password", data);
+    return response.data;
+  }
+
+  /**
+   * Exporter toutes les données personnelles (RGPD — droit à la portabilité)
+   */
+  static async exportData(): Promise<object> {
+    const response = await httpClient.get("/users/me/export");
     return response.data;
   }
 }

@@ -41,13 +41,13 @@ const WishlistStarCard: React.FC<WishlistStarCardProps> = ({ star, onRemove }) =
             <span className="text-lg font-semibold">{star.price} €</span>
           </div>
 
-          <div className="flex mt-4">
-            <Link to={`/star/${star.starid}`} className="btn mt-2">
+          <div className="flex items-center mt-4 gap-2">
+            <Link to={`/star/${star.starid}`} className="btn">
               <EyeIcon className="text-xl" />
               <span className="sr-only">Découvrir</span>
             </Link>
             <AddToCartButton starId={star.starid} />
-            <button type="button" onClick={handleRemoveClick} className="btn mt-2">
+            <button type="button" onClick={handleRemoveClick} className="btn">
               <TrashIcon className="text-xl" />
               <span className="sr-only">Retirer de la liste d'envies</span>
             </button>

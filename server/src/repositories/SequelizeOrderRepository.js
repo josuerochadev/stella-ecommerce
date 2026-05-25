@@ -2,7 +2,7 @@
 // Implémentation du repository commande avec Sequelize
 // Responsabilité unique : opérations de persistance des données commande
 
-const { Order, OrderItem, Star, User } = require("../models");
+const { Order, OrderStar, Star, User } = require("../models");
 const { IOrderRepository } = require("../interfaces/IOrderRepository");
 const { Op } = require("sequelize");
 const { validateId } = require("../utils/validators");
@@ -30,13 +30,11 @@ class SequelizeOrderRepository extends IOrderRepository {
       const order = await this.Order.findByPk(id, {
         include: [
           {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Star, as: "Star" }],
+            model: OrderStar,
+            include: [{ model: Star }],
           },
           {
             model: User,
-            as: "User",
             attributes: ["id", "firstName", "lastName", "email"],
           },
         ],
@@ -78,9 +76,8 @@ class SequelizeOrderRepository extends IOrderRepository {
         where: { userId },
         include: [
           {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Star, as: "Star" }],
+            model: OrderStar,
+            include: [{ model: Star }],
           },
         ],
         order: [["createdAt", "DESC"]],
@@ -212,13 +209,11 @@ class SequelizeOrderRepository extends IOrderRepository {
         where,
         include: [
           {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Star, as: "Star" }],
+            model: OrderStar,
+            include: [{ model: Star }],
           },
           {
             model: User,
-            as: "User",
             attributes: ["id", "firstName", "lastName", "email"],
           },
         ],
@@ -248,13 +243,11 @@ class SequelizeOrderRepository extends IOrderRepository {
         ...options,
         include: [
           {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Star, as: "Star" }],
+            model: OrderStar,
+            include: [{ model: Star }],
           },
           {
             model: User,
-            as: "User",
             attributes: ["id", "firstName", "lastName", "email"],
           },
         ],
@@ -327,13 +320,11 @@ class SequelizeOrderRepository extends IOrderRepository {
         where: whereCondition,
         include: [
           {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Star, as: "Star" }],
+            model: OrderStar,
+            include: [{ model: Star }],
           },
           {
             model: User,
-            as: "User",
             attributes: ["id", "firstName", "lastName", "email"],
           },
         ],
@@ -388,15 +379,16 @@ class SequelizeOrderRepository extends IOrderRepository {
       throw new Error("Order data must be an object");
     }
 
-    const requiredFields = ["userId", "total"];
+    const requiredFields = ["userId"];
     const missingFields = requiredFields.filter((field) => orderData[field] === undefined);
 
     if (missingFields.length > 0) {
       throw new Error(`Missing required fields: ${missingFields.join(", ")}`);
     }
 
-    // Validation total
-    if (typeof orderData.total !== "number" || orderData.total < 0) {
+    // Validation total (accepte total ou totalAmount)
+    const total = orderData.total ?? orderData.totalAmount;
+    if (typeof total !== "number" || total < 0) {
       throw new Error("Total must be a positive number");
     }
 

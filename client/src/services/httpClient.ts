@@ -53,22 +53,66 @@ const createHttpClient = (): AxiosInstance => {
     (error) => Promise.reject(error),
   );
 
+  // Flag pour éviter les boucles de refresh
+  let isRefreshing = false;
+  let failedQueue: Array<{
+    resolve: (value?: unknown) => void;
+    reject: (reason?: unknown) => void;
+  }> = [];
+
+  const processQueue = (error: unknown | null) => {
+    for (const prom of failedQueue) {
+      if (error) {
+        prom.reject(error);
+      } else {
+        prom.resolve();
+      }
+    }
+    failedQueue = [];
+  };
+
   // Interceptor de réponse pour gestion globale des erreurs
   client.interceptors.response.use(
     (response) => response,
-    (error) => {
-      // Gestion globale des erreurs d'authentification
-      // On ne dispatch que si l'utilisateur était authentifié (expiration de session),
-      // pas lors des vérifications initiales en arrière-plan.
-      if (error.response?.status === 401 && _isUserAuthenticated) {
-        // Token expiré ou invalide — cookie sera supprime cote serveur
-        window.dispatchEvent(
-          new CustomEvent("auth:unauthorized", {
-            detail: { redirectTo: "/auth" },
-          }),
-        );
+    async (error) => {
+      const originalRequest = error.config;
+
+      // Si 401 et pas déjà un retry, tenter un refresh du token
+      if (
+        error.response?.status === 401 &&
+        _isUserAuthenticated &&
+        !originalRequest._retry &&
+        !originalRequest.url?.includes("/auth/refresh")
+      ) {
+        if (isRefreshing) {
+          // Attendre que le refresh en cours se termine
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then(() => client(originalRequest));
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          await client.post("/auth/refresh");
+          processQueue(null);
+          return client(originalRequest);
+        } catch (refreshError) {
+          processQueue(refreshError);
+          // Refresh échoué — session expirée
+          window.dispatchEvent(
+            new CustomEvent("auth:unauthorized", {
+              detail: { redirectTo: "/auth" },
+            }),
+          );
+          return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
+        }
       }
 
+      // 401 sans auth préalable (vérification initiale)
       return Promise.reject(error);
     },
   );

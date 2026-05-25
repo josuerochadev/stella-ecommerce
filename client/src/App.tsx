@@ -30,6 +30,7 @@ const Checkout = React.lazy(() => import("./pages/Checkout"));
 const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 const Admin = React.lazy(() => import("./pages/Admin"));
+const Certificate = React.lazy(() => import("./pages/Certificate"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Component to handle auth unauthorized events
@@ -115,7 +116,15 @@ const App: React.FC = () => {
                 />
                 <Route
                   path="/order-confirmation"
-                  element={isAuthenticated ? <OrderConfirmation /> : <Navigate to="/auth" />}
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="la confirmation de commande">
+                        <OrderConfirmation />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
                 />
                 <Route
                   path="/orders"
@@ -141,7 +150,26 @@ const App: React.FC = () => {
                     )
                   }
                 />
-                <Route path="/wishlist" element={<Wishlist />} />
+                <Route
+                  path="/certificate/:orderId"
+                  element={
+                    isAuthenticated ? (
+                      <FeatureErrorBoundary featureName="le certificat">
+                        <Certificate />
+                      </FeatureErrorBoundary>
+                    ) : (
+                      <Navigate to="/auth" />
+                    )
+                  }
+                />
+                <Route
+                  path="/wishlist"
+                  element={
+                    <FeatureErrorBoundary featureName="la liste de souhaits">
+                      <Wishlist />
+                    </FeatureErrorBoundary>
+                  }
+                />
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="*" element={<NotFound />} />

@@ -38,6 +38,7 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
               width={400}
               height={192}
               loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="w-full h-48 object-cover motion-safe:transition-transform motion-safe:duration-300 ease-out motion-safe:hover:scale-105 brightness-75 saturate-90"
             />
           </picture>
@@ -60,8 +61,8 @@ const CatalogStarCard: React.FC<CatalogStarCardProps> = ({ star }) => {
             </span>
           </div>
 
-          <div className="flex mt-4 gap-1">
-            <Link to={`/star/${star.starid}`} className="btn text-sm py-1.5 px-3">
+          <div className="flex items-center mt-4 gap-2">
+            <Link to={`/star/${star.starid}`} className="btn">
               <EyeIcon className="text-lg" />
               <span className="sr-only">Decouvrir</span>
             </Link>

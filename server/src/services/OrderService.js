@@ -3,6 +3,7 @@
 // Responsabilité unique : logique métier des commandes
 
 const { sequelize, OrderStar } = require("../models");
+const { USER_ROLES } = require("../constants/app");
 
 /**
  * Service pour la gestion des commandes
@@ -59,7 +60,7 @@ class OrderService {
       const starIds = items.map((item) => item.starId);
       const stars = await this.starRepository.findAll(
         { starid: starIds },
-        { attributes: ["starid", "price"], raw: true },
+        { attributes: ["starid", "price"] },
       );
 
       // Créer un map pour accès O(1)
@@ -202,7 +203,7 @@ class OrderService {
 
       // Vérifier que l'utilisateur est admin
       const adminUser = await this.userRepository.findById(adminUserId);
-      if (!adminUser || adminUser.role !== "admin") {
+      if (!adminUser || adminUser.role !== USER_ROLES.ADMIN) {
         throw new Error("Only admins can update order status");
       }
 

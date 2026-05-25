@@ -2,6 +2,7 @@
 // Responsabilité unique : Gestion du profil utilisateur
 
 import { useAuth } from "@/context/AuthContext";
+import { UserService } from "@/services/userService";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { User } from "@/types";
@@ -18,6 +19,8 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
   const { updateProfile, deleteAccount, loading } = useUserStore();
   const { showSuccess, showConfirm } = useNotificationStore();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [email, setEmail] = useState(user.email);
@@ -48,7 +51,12 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
     }
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deletePassword) {
+      setErrorMessage("Veuillez entrer votre mot de passe pour confirmer.");
+      return;
+    }
     const confirmed = await showConfirm(
       "Supprimer le compte",
       "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
@@ -56,12 +64,13 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
     );
     if (confirmed) {
       try {
-        await deleteAccount();
+        await deleteAccount(deletePassword);
         showSuccess("Compte supprimé avec succès.");
         logout();
         navigate("/");
       } catch (_error) {
-        // Error already handled by store
+        setErrorMessage("Mot de passe incorrect ou erreur lors de la suppression.");
+        setDeletePassword("");
       }
     }
   };
@@ -73,37 +82,43 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
       {isEditingProfile ? (
         <form onSubmit={handleProfileUpdate}>
           <div>
-            <label className="block text-sm font-serif mb-2">Prénom :</label>
+            <label htmlFor="profile-firstName" className="block text-sm font-serif mb-2">
+              Prénom :
+            </label>
             <input
+              id="profile-firstName"
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="w-full p-3 rounded-md bg-primary text-text"
-              aria-label="Prénom"
               placeholder="Prénom"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-serif mb-2">Nom :</label>
+            <label htmlFor="profile-lastName" className="block text-sm font-serif mb-2">
+              Nom :
+            </label>
             <input
+              id="profile-lastName"
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="w-full p-3 rounded-md bg-primary text-text"
-              aria-label="Nom"
               placeholder="Nom"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-serif mb-2">Email :</label>
+            <label htmlFor="profile-email" className="block text-sm font-serif mb-2">
+              Email :
+            </label>
             <input
+              id="profile-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 rounded-md bg-primary text-text"
-              aria-label="Email"
               placeholder="Email"
               required
             />
@@ -129,11 +144,67 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user }) => {
           </button>
           <button
             type="button"
-            className="btn bg-red-500 text-white mt-4"
-            onClick={handleDeleteAccount}
+            className="btn-secondary py-2 px-4 rounded-md"
+            onClick={async () => {
+              try {
+                const data = await UserService.exportData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `stella-data-export-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showSuccess("Vos données ont été exportées.");
+              } catch (_error) {
+                setErrorMessage("Erreur lors de l'export des données.");
+              }
+            }}
           >
-            Supprimer le compte
+            Exporter mes données
           </button>
+          {isDeletingAccount ? (
+            <form onSubmit={handleDeleteAccount} className="mt-4 space-y-3">
+              <p className="text-sm text-red-400">
+                Entrez votre mot de passe pour confirmer la suppression :
+              </p>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="w-full p-3 rounded-md bg-primary text-text"
+                aria-label="Mot de passe de confirmation"
+                placeholder="Votre mot de passe"
+                required
+              />
+              <div className="flex gap-2">
+                <button type="submit" className="btn bg-red-500 text-white" disabled={loading}>
+                  {loading ? "Suppression..." : "Confirmer la suppression"}
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    setIsDeletingAccount(false);
+                    setDeletePassword("");
+                    setErrorMessage("");
+                  }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button
+              type="button"
+              className="btn bg-red-500 text-white mt-4"
+              onClick={() => setIsDeletingAccount(true)}
+            >
+              Supprimer le compte
+            </button>
+          )}
         </>
       )}
     </div>

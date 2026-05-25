@@ -1,7 +1,7 @@
 // client/src/services/orderService.ts
 // Responsabilité unique : Gestion des commandes
 
-import type { ApiResponse, Order, OrderData, OrderStatus } from "@/types";
+import type { ApiResponse, CreateOrderResponse, Order, OrderData, OrderStatus } from "@/types";
 import { httpClient } from "./httpClient";
 
 /**
@@ -12,8 +12,8 @@ export class OrderService {
   /**
    * Créer une nouvelle commande
    */
-  static async createOrder(orderData: OrderData): Promise<ApiResponse<Order>> {
-    const response = await httpClient.post<ApiResponse<Order>>("/orders", orderData);
+  static async createOrder(orderData: OrderData): Promise<CreateOrderResponse> {
+    const response = await httpClient.post<CreateOrderResponse>("/orders", orderData);
     return response.data;
   }
 

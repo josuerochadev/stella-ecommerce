@@ -5,7 +5,7 @@ import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useWishlistStore } from "@/stores/useWishlistStore";
 import { HeartIcon } from "@/utils/icons";
-import { useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 
 interface AddToWishlistButtonProps {
   starId: number;
@@ -52,7 +52,7 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
       <button
         type="button"
         onClick={handleAddToWishlist}
-        className={`btn mt-2 ${inWishlist ? "bg-gray-500 cursor-not-allowed" : ""}`}
+        className={`btn ${inWishlist ? "bg-gray-500 cursor-not-allowed" : ""}`}
         disabled={loading || inWishlist}
         aria-live="polite"
         aria-label={
@@ -68,4 +68,4 @@ const AddToWishlistButton: React.FC<AddToWishlistButtonProps> = ({ starId }) => 
   );
 };
 
-export default AddToWishlistButton;
+export default memo(AddToWishlistButton);

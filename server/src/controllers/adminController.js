@@ -10,6 +10,7 @@ const { UserStatsService } = require("../services/userStatsService");
 const { UserResponseFormatter } = require("../formatters/userResponseFormatter");
 const { SystemStatsService } = require("../services/SystemStatsService");
 const { getService } = require("../container/containerConfig");
+const { VALID_ROLES } = require("../constants/app");
 
 /**
  * Dashboard général avec statistiques
@@ -80,8 +81,8 @@ exports.updateUserRole = async (req, res, next) => {
     const { role } = req.body;
 
     // Validation des données d'entrée
-    if (!["client", "admin"].includes(role)) {
-      return next(new AppError("Invalid role. Must be client or admin", 400));
+    if (!VALID_ROLES.includes(role)) {
+      return next(new AppError(`Invalid role. Must be one of: ${VALID_ROLES.join(", ")}`, 400));
     }
 
     const user = await User.findByPk(userId);

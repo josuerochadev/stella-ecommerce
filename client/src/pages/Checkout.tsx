@@ -61,13 +61,13 @@ const Checkout: React.FC = () => {
         paymentMethod,
       };
 
-      const response = await OrderService.createOrder(orderData);
+      const result = await OrderService.createOrder(orderData);
       await clearCart();
       navigate("/order-confirmation", {
         state: {
-          orderId: response.data?.id,
-          total: stats.totalAmount,
-          status: "pending",
+          orderId: result.orderId,
+          total: result.total ?? stats.totalAmount,
+          status: result.status ?? "pending",
         },
       });
     } catch (err) {

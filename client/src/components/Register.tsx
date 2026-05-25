@@ -5,7 +5,7 @@ import { registerUser } from "@/services/api";
 import type { RegisterResponse } from "@/services/authService";
 import { FormValidationService } from "@/services/validationService";
 import { memo, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import FadeInSection from "./FadeInSection";
 import FormContainer from "./FormContainer";
 import FormInput from "./FormInput";
@@ -136,6 +136,15 @@ const Register: React.FC = () => {
             error={getError("password")}
             description="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
           />
+
+          <p className="text-xs text-text/50 text-center">
+            En vous inscrivant, vous acceptez que vos donnees (nom, email) soient traitees pour la
+            gestion de votre compte. Vous pouvez exercer vos droits d'acces, de rectification et de
+            suppression a tout moment depuis votre profil.{" "}
+            <Link to="/privacy-policy" className="text-special underline hover:text-special/80">
+              Politique de confidentialite
+            </Link>
+          </p>
 
           <div className="text-center">
             <button type="submit" className="btn" disabled={isLoading}>

@@ -2,6 +2,16 @@
 const jwt = require("jsonwebtoken");
 const _crypto = require("node:crypto");
 const { RefreshToken } = require("../models");
+const logger = require("../utils/logger");
+
+const REFRESH_SECRET =
+  process.env.JWT_REFRESH_SECRET ||
+  (() => {
+    logger.warn(
+      "JWT_REFRESH_SECRET not set, falling back to derived secret. Set it in production!",
+    );
+    return `${process.env.JWT_SECRET}_refresh`;
+  })();
 
 class TokenService {
   generateTokens(payload) {
@@ -9,13 +19,9 @@ class TokenService {
       expiresIn: "15m", // Short-lived access token
     });
 
-    const refreshToken = jwt.sign(
-      payload,
-      process.env.JWT_REFRESH_SECRET || `${process.env.JWT_SECRET}_refresh`,
-      {
-        expiresIn: "7d", // Long-lived refresh token
-      },
-    );
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET, {
+      expiresIn: "7d", // Long-lived refresh token
+    });
 
     return { accessToken, refreshToken };
   }
@@ -55,10 +61,7 @@ class TokenService {
         return null;
       }
 
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_REFRESH_SECRET || `${process.env.JWT_SECRET}_refresh`,
-      );
+      const decoded = jwt.verify(token, REFRESH_SECRET);
       return { tokenRecord, decoded };
     } catch (_error) {
       return null;
