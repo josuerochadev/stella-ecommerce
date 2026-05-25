@@ -7,7 +7,7 @@
  * Définit les méthodes que toute implémentation doit fournir
  */
 class ICartRepository {
-  async findByUserId(_userId) {
+  async findByUserId(_userId, _transaction) {
     throw new Error("Method findByUserId() must be implemented");
   }
 

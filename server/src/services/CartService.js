@@ -32,7 +32,7 @@ class CartService {
         throw new Error("User ID must be a valid number");
       }
 
-      let cart = await this.cartRepository.findByUserId(userId);
+      let cart = await this.cartRepository.findByUserId(userId, transaction);
 
       if (!cart) {
         cart = await this.cartRepository.create({ userId }, transaction);

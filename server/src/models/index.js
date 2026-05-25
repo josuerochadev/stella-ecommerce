@@ -15,6 +15,15 @@ const sequelize = process.env.DATABASE_URL
       dialectOptions: {
         ssl: { require: true, rejectUnauthorized: false },
       },
+      pool: {
+        min: 0,
+        max: 10,
+        acquire: 30000,
+        idle: 10000,
+      },
+      retry: {
+        max: 3,
+      },
     })
   : new Sequelize({
       ...config,
