@@ -25,7 +25,7 @@
     "slick-carousel": "^1.8.1",
     "typescript": "^5.9.3",
     "web-vitals": "^5.2.0",
-    "zustand": "^4.5.5"
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
