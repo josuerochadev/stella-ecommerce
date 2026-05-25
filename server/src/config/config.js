@@ -34,13 +34,19 @@ function validateConfig() {
   const hasDbVars = config.DB_USERNAME && config.DB_PASSWORD && config.DB_DATABASE;
   if (!hasDbUrl && !hasDbVars)
     missing.push("DATABASE_URL (or DB_USERNAME + DB_PASSWORD + DB_DATABASE)");
-  // In production, require dedicated secrets instead of fallbacks
-  if (config.NODE_ENV === "production") {
-    if (!config.JWT_REFRESH_SECRET) missing.push("JWT_REFRESH_SECRET");
-    if (!config.CSRF_SECRET) missing.push("CSRF_SECRET");
-  }
   if (missing.length > 0 && config.NODE_ENV !== "test") {
     throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+  }
+  // Warn about missing dedicated secrets in production (fallbacks will be used)
+  if (config.NODE_ENV === "production") {
+    const warnings = [];
+    if (!config.JWT_REFRESH_SECRET) warnings.push("JWT_REFRESH_SECRET");
+    if (!config.CSRF_SECRET) warnings.push("CSRF_SECRET");
+    if (warnings.length > 0) {
+      console.warn(
+        `⚠️  Missing recommended env vars: ${warnings.join(", ")}. Using derived fallbacks. Set these for better security.`,
+      );
+    }
   }
 }
 
