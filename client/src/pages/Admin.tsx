@@ -144,10 +144,10 @@ const DashboardView: React.FC<{ data: DashboardData }> = ({ data }) => {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <FadeInSection key={stat.label}>
-            <div className="bg-secondary text-text p-6 rounded-lg shadow-lg text-center">
+            <div className="bg-secondary text-text p-4 sm:p-6 rounded-lg shadow-lg text-center">
               <p className="text-2xl font-bold">{stat.value}</p>
               <p className="text-sm font-serif text-text/70">{stat.label}</p>
             </div>
@@ -188,25 +188,29 @@ const DashboardView: React.FC<{ data: DashboardData }> = ({ data }) => {
 const UsersView: React.FC<{ users: AdminUser[] }> = ({ users }) => {
   return (
     <FadeInSection>
-      <div className="bg-secondary text-text rounded-lg shadow-lg overflow-hidden">
-        <table className="w-full">
+      <div className="bg-secondary text-text rounded-lg shadow-lg overflow-x-auto">
+        <table className="w-full min-w-[500px]">
           <caption className="sr-only">Liste des utilisateurs inscrits</caption>
           <thead>
             <tr className="border-b border-primary/20">
-              <th className="text-left p-4 font-display">Nom</th>
-              <th className="text-left p-4 font-display">Email</th>
-              <th className="text-left p-4 font-display">Role</th>
-              <th className="text-left p-4 font-display">Inscription</th>
+              <th className="text-left p-3 sm:p-4 font-display">Nom</th>
+              <th className="text-left p-3 sm:p-4 font-display">Email</th>
+              <th className="text-left p-3 sm:p-4 font-display">Role</th>
+              <th className="text-left p-3 sm:p-4 font-display hidden sm:table-cell">
+                Inscription
+              </th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-b border-primary/10">
-                <td className="p-4 font-serif">
+                <td className="p-3 sm:p-4 font-serif">
                   {u.firstName} {u.lastName}
                 </td>
-                <td className="p-4 text-sm">{u.email}</td>
-                <td className="p-4">
+                <td className="p-3 sm:p-4 text-sm truncate max-w-[120px] sm:max-w-none">
+                  {u.email}
+                </td>
+                <td className="p-3 sm:p-4">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
                       u.role === "admin"
@@ -217,7 +221,7 @@ const UsersView: React.FC<{ users: AdminUser[] }> = ({ users }) => {
                     {u.role}
                   </span>
                 </td>
-                <td className="p-4 text-sm text-text/70">
+                <td className="p-3 sm:p-4 text-sm text-text/70 hidden sm:table-cell">
                   {new Date(u.createdAt).toLocaleDateString("fr-FR")}
                 </td>
               </tr>

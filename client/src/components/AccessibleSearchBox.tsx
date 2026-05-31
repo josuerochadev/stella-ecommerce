@@ -101,7 +101,7 @@ const AccessibleSearchBox: React.FC<AccessibleSearchBoxProps> = ({
 
       {/* Panneau de recherche */}
       {isVisible && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-secondary border border-primary/20 rounded-lg shadow-lg p-4 z-50">
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-secondary border border-primary/20 rounded-lg shadow-lg p-4 z-50">
           {/* Champ de recherche */}
           <SearchInputField
             ref={searchInputRef}

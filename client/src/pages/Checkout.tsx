@@ -101,7 +101,7 @@ const Checkout: React.FC = () => {
                     placeholder="123 Rue des Etoiles"
                     isRequired
                   />
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormInput
                       label="Ville"
                       name="city"
@@ -119,7 +119,7 @@ const Checkout: React.FC = () => {
                       isRequired
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormInput
                       label="Region"
                       name="state"

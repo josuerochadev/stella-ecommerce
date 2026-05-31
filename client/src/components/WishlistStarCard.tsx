@@ -22,7 +22,7 @@ const WishlistStarCard: React.FC<WishlistStarCardProps> = ({ star, onRemove }) =
   return (
     <FadeInSection>
       <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
-        <picture className="w-1/4 flex-shrink-0">
+        <picture className="w-1/3 sm:w-1/4 flex-shrink-0">
           <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
           <img
             src={getStarImagePath(star)}

@@ -28,7 +28,7 @@ const Header: React.FC = () => {
 
   const headerClasses = [
     "fixed top-0 left-0 right-0 z-50",
-    "flex justify-between items-center px-6 md:px-10 lg:px-20 h-[52px]",
+    "flex justify-between items-center px-4 sm:px-6 md:px-10 lg:px-20 h-[52px]",
     "transition-all duration-300 ease-in-out",
     scrolled
       ? "bg-purple-950/88 backdrop-blur-xl border-b border-text/[0.06]"
