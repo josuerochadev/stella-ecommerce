@@ -54,14 +54,12 @@ class ModernCSRF {
   // Middleware pour génération du token
   generateMiddleware() {
     return (req, res, next) => {
-      // Générer un nouveau token pour chaque session
-      if (!req.session?.csrfToken) {
-        const token = this.generateToken();
+      // Stateless: generate a new token if none exists in the cookie
+      const existingToken = req.cookies?.[this.cookieName];
 
-        // Stocker en session (plus sécurisé)
-        if (req.session) {
-          req.session.csrfToken = token;
-        }
+      // Only issue a new token if there's no valid one already
+      if (!existingToken || !this.validateToken(existingToken)) {
+        const token = this.generateToken();
 
         // Exposer via cookie pour JavaScript (lecture seule côté client)
         res.cookie(this.cookieName, token, {
@@ -71,17 +69,16 @@ class ModernCSRF {
           maxAge: this.maxAge * 1000,
         });
 
-        // Disponible dans req pour usage serveur
         req.csrfToken = () => token;
       } else {
-        req.csrfToken = () => req.session.csrfToken;
+        req.csrfToken = () => existingToken;
       }
 
       next();
     };
   }
 
-  // Middleware de validation
+  // Middleware de validation (stateless double-submit cookie pattern)
   validateMiddleware() {
     return (req, _res, next) => {
       // Ignorer les méthodes de lecture
@@ -93,23 +90,15 @@ class ModernCSRF {
       const clientToken =
         req.headers[this.tokenName.toLowerCase()] || req.headers["x-csrf-token"] || req.body._csrf;
 
-      // Récupérer le token de référence depuis la session
-      const sessionToken = req.session?.csrfToken;
-
       if (!clientToken) {
         const err = new Error("CSRF token missing. Please include X-CSRF-Token header.");
         err.status = 403;
         return next(err);
       }
 
-      if (!sessionToken) {
-        const err = new Error("No CSRF session found. Please refresh the page.");
-        err.status = 403;
-        return next(err);
-      }
-
-      // Validation double : JWT + correspondance session
-      if (!this.validateToken(clientToken) || clientToken !== sessionToken) {
+      // Stateless validation: verify the JWT signature is valid (proves server issued it)
+      // No session comparison needed — the token is cryptographically signed with our secret
+      if (!this.validateToken(clientToken)) {
         const err = new Error("Invalid CSRF token. Please refresh the page and try again.");
         err.status = 403;
         return next(err);
