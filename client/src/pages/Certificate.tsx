@@ -118,7 +118,7 @@ const Certificate: React.FC = () => {
           <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-cyan-400/50" />
           <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-cyan-400/50" />
 
-          <div className="px-8 py-12 sm:px-16 sm:py-16 text-center">
+          <div className="px-4 py-8 sm:px-8 sm:py-12 md:px-16 md:py-16 text-center">
             {/* En-tête */}
             <div className="mb-8">
               <div className="text-cyan-400 text-sm tracking-[0.3em] uppercase mb-2 font-serif">

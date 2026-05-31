@@ -80,7 +80,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isVisible, onToggle }) => {
 
       {/* Search panel */}
       {isVisible && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-secondary border border-primary/20 rounded-lg shadow-lg p-4 z-50">
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-secondary border border-primary/20 rounded-lg shadow-lg p-4 z-50">
           <form onSubmit={handleSubmit} className="relative">
             <input
               ref={(input) => {

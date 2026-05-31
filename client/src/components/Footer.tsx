@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Footer: React.FC = () => {
   return (
     <footer className="border-t border-text/[0.06] mt-20">
-      <div className="max-w-[1100px] mx-auto px-10 py-12">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-10 py-12">
         <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-end">
           <div>
             <span className="font-display text-xl text-text/70">Stella</span>

@@ -57,8 +57,8 @@ const Home: React.FC = () => {
 
       {/* Section Qui sommes-nous ? */}
       <FadeInSection>
-        <section className="max-w-[1100px] mx-auto text-text py-24 px-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <section className="max-w-[1100px] mx-auto text-text py-24 px-4 sm:px-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] text-special/60 mb-4 font-sans">
                 QUI SOMMES-NOUS
@@ -96,7 +96,7 @@ const Home: React.FC = () => {
       {/* Section Nouveautés */}
       <FadeInSection>
         <section className="pb-24 text-text">
-          <div className="max-w-[1100px] mx-auto px-10">
+          <div className="max-w-[1100px] mx-auto px-4 sm:px-10">
             <div className="flex items-baseline justify-between mb-10">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-special/60 mb-2 font-sans">
@@ -144,7 +144,7 @@ const Home: React.FC = () => {
       {/* Afficher la section "Rejoignez-nous" seulement si l'utilisateur n'est pas connecté */}
       {!isAuthenticated && (
         <FadeInSection>
-          <section className="py-24 text-text text-center px-10">
+          <section className="py-24 text-text text-center px-4 sm:px-10">
             <h2 className="text-3xl md:text-[clamp(32px,5vw,64px)] font-display mb-4 text-periwinkle-100 tracking-tight leading-none">
               Rejoignez-nous
             </h2>

@@ -36,7 +36,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
   return (
     <FadeInSection>
       <div className="bg-surface-1 text-text rounded-lg shadow-lg flex flex-row h-full mb-4 overflow-hidden border border-text/[0.07] transition-all duration-300 hover:border-text/20">
-        <picture className="w-1/4 flex-shrink-0">
+        <picture className="w-1/3 sm:w-1/4 flex-shrink-0">
           <source srcSet={getStarImagePathWebP(star)} type="image/webp" />
           <img
             src={getStarImagePath(star)}
@@ -51,7 +51,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
           <h2 className="text-xl font-display mb-2 text-text">{star.name}</h2>
           <p className="text-sm mb-4">{star.description}</p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <span className="text-lg font-semibold">{star.price} €</span>
             {onUpdateQuantity ? (
               <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
                   type="button"
                   onClick={() => onUpdateQuantity(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="w-11 h-11 rounded-md bg-primary text-text flex items-center justify-center disabled:opacity-30"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-md bg-primary text-text flex items-center justify-center disabled:opacity-30"
                   aria-label="Reduire la quantite"
                 >
                   -
@@ -68,7 +68,7 @@ const CartStarCard: React.FC<CartStarCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onUpdateQuantity(quantity + 1)}
-                  className="w-11 h-11 rounded-md bg-primary text-text flex items-center justify-center"
+                  className="w-9 h-9 sm:w-11 sm:h-11 rounded-md bg-primary text-text flex items-center justify-center"
                   aria-label="Augmenter la quantite"
                 >
                   +
