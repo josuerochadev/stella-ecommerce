@@ -11,7 +11,7 @@
     "test:e2e:headed": "npx playwright test --headed"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.1",
+    "@commitlint/cli": "^21.1.0",
     "@commitlint/config-conventional": "^21.0.1",
     "@playwright/test": "^1.60.0",
     "husky": "^9.1.0",
