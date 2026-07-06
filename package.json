@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "@playwright/test": "^1.60.0",
     "husky": "^9.1.0",
     "lint-staged": "^17.0.5"
